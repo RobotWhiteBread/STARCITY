@@ -10,24 +10,34 @@
 html,body{margin:0;height:100%;overflow:hidden;background:#10141a;color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-.lb{position:absolute;left:0;top:0;white-space:nowrap;transform:translate(-9999px,-9999px);will-change:transform;text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 6px rgba(0,0,0,.6);font-size:11px;color:#fff;letter-spacing:.02em}
-.lb.k0{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#ffe9a8}
-.lb.k1{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#e8eef5;opacity:.92}
-.lb.k2{font-size:11px;font-style:italic;color:#d6f0c2}
-.lb.k3{font-size:10.5px;color:#fff}
-.lb.k4{font-size:10px;color:#f2e7c4;letter-spacing:.05em}
-.lb.k5{font-size:11px;font-style:italic;color:#bfe0ff}
-.lb.k6{font-size:11.5px;font-weight:700;color:#ffd3e8;letter-spacing:.03em}
-.lb{text-align:center}
-.lb .sub{display:block;margin-top:1px;font-size:11px;font-weight:700;font-style:italic;letter-spacing:.03em;text-transform:none;color:#fff}
+.lb{position:absolute;left:0;top:0;white-space:nowrap;transform:translate(-9999px,-9999px);will-change:transform;text-align:center;font-size:calc(11px*var(--ls,1));font-weight:600;color:#fff;letter-spacing:.02em;
+ text-shadow:-1px -1px 0 #090c11,1px -1px 0 #090c11,-1px 1px 0 #090c11,1px 1px 0 #090c11,0 -1.5px 0 #090c11,0 1.5px 0 #090c11,-1.5px 0 0 #090c11,1.5px 0 0 #090c11,0 2px 7px rgba(0,0,0,.95)}
+.lb.k0{font-size:calc(13px*var(--ls,1));font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ffe9a8}
+.lb.k1{font-size:calc(12px*var(--ls,1));font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+.lb.k2{font-size:calc(11px*var(--ls,1));font-style:italic;color:#dcf7c8}
+.lb.k3{font-size:calc(11.5px*var(--ls,1));font-weight:700;color:#fff;background:rgba(11,15,21,.82);border:1px solid rgba(255,255,255,.28);border-radius:8px;padding:2px 8px 3px;text-shadow:none;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.lb.k4{font-size:calc(10px*var(--ls,1));color:#f8efcc;letter-spacing:.05em}
+.lb.k5{font-size:calc(11px*var(--ls,1));font-style:italic;color:#cde8ff}
+.lb.k6{font-size:calc(11.5px*var(--ls,1));font-weight:700;color:#ffd3e8;letter-spacing:.03em}
+.lb.k7{font-size:calc(11.5px*var(--ls,1));font-weight:700;color:#fff;background:rgba(11,15,21,.62);border-radius:8px;padding:2px 8px 3px;text-shadow:none}
+.lb.k7 .sub{font-weight:400;color:#e4ecf5}
+.lb .sub{display:block;margin-top:1px;font-size:calc(11px*var(--ls,1));font-weight:700;font-style:italic;letter-spacing:.03em;text-transform:none;color:#fff}
+.lb.k3 .sub{font-weight:600;color:#ffe9a8}
 #top{position:fixed;left:12px;top:calc(10px + env(safe-area-inset-top));right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;gap:8px}
 #title{min-width:0;background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:8px 12px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);pointer-events:auto}
 #title b{display:block;font-size:15px;letter-spacing:.32em;font-weight:800}
 #title b i{color:var(--accent);font-style:normal}
 #title span{display:block;font-size:10.5px;color:var(--dim);margin-top:2px}
 #tools{display:grid;grid-template-columns:auto auto;gap:6px;pointer-events:auto;justify-items:stretch}
-#tools .btn{padding:8px 9px;text-align:center}
+#tools .btn{padding:7px 9px;text-align:center}
+#bMore{display:none}
+#nav{position:fixed;right:12px;bottom:calc(150px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:6px;z-index:2}
+#nav .btn{width:38px;height:38px;padding:0;font-size:19px;line-height:1}
+#nav.mob{display:none}
+#tools.mob #bMore{display:block}
+#tools.mob.min .x{display:none}
 #wx{display:block;font-size:10.5px;color:#e9d9a6;margin-top:2px}
+#wx.big{font-size:12.5px;font-weight:700;color:#ffe9a8;margin-top:4px;max-width:520px}
 .btn{white-space:nowrap;background:var(--glass);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 11px;font-size:12px;font-weight:600;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer;font-family:inherit}
 .btn.on{background:rgba(233,185,73,.92);color:#1b1608;border-color:transparent}
 #bottom{position:fixed;left:0;right:0;bottom:0;padding:0 0 calc(8px + env(safe-area-inset-bottom));pointer-events:none}
@@ -41,7 +51,12 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 #card h3{margin:0 0 3px;font-size:15px}
 #card p{margin:0;font-size:12px;color:var(--dim);line-height:1.45}
 #cx{position:absolute;right:8px;top:6px;background:none;border:0;color:var(--dim);font-size:18px;cursor:pointer}
+#cp{max-height:34vh;overflow-y:auto;overscroll-behavior:contain}
 #cride,#cspd{display:none;margin-top:9px;padding:7px 12px;font-size:12px}
+#crange{display:none;align-items:center;gap:10px;margin-top:9px;font-size:12px;color:var(--ink)}
+#crange input{flex:1;accent-color:#ff4fa3;min-width:0}
+#clinks a{display:inline-block;margin-top:9px;margin-right:6px;padding:7px 12px;font-size:12px;text-decoration:none}
+#cty{display:inline-block;margin-top:5px;font-size:11.5px;font-weight:600;color:var(--ink);background:var(--glass);border:1px solid var(--line);border-radius:9px;padding:6px 10px;text-decoration:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 #cspd{margin-left:6px}
 #load{position:fixed;inset:0;background:#10141a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9;transition:opacity .6s}
 #load b{font-size:26px;letter-spacing:.45em;font-weight:800;padding-left:.45em}
@@ -79,22 +94,32 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
   <div id="title"><b>STAR<i>CITY</i></b><span id="stats">Lincoln, Nebraska</span><span id="wx"></span></div>
   <div id="tools">
     <div id="tools2"><button class="btn" id="bFind">Search</button><button class="btn" id="bTour">▶ Tour</button></div>
+    <button class="btn" id="bMe">Find me</button>
     <button class="btn" id="bNow">Now</button>
-    <button class="btn on" id="bBus">Buses</button>
-    <button class="btn" id="bGame">Game day</button>
-    <button class="btn" id="bWalk">Walk</button>
-    <button class="btn" id="bNorth">North up</button>
-    <button class="btn on" id="bLabels">Labels</button>
-    <button class="btn on" id="bShadow">Shadows</button>
-    <button class="btn on" id="bTrails">Trails</button>
     <button class="btn" id="bRide">Bike ride</button>
+    <button class="btn" id="bWx">Weather</button>
+    <button class="btn on" id="bTrails">Trails</button>
+    <button class="btn" id="bMore">More ▾</button>
+    <button class="btn x" id="bWalk">Walk</button>
+    <button class="btn x" id="b2D">2D view</button>
+    <button class="btn x" id="bNorth">North up</button>
+    <button class="btn x" id="bShare">Share view</button>
+    <button class="btn on x" id="bBus">Buses</button>
+    <button class="btn x" id="bGame">Game day</button>
+    <button class="btn on x" id="bLabels">Labels</button>
+    <button class="btn on x" id="bShadow">Shadows</button>
+    <button class="btn on x" id="bBirds">Birds</button>
+    <button class="btn x" id="bPride">Pride</button>
+    <button class="btn x" id="bVB">Volleyballs</button>
+    <button class="btn x" id="bTraf">Traffic</button>
   </div>
 </div>
+<div id="nav"><button class="btn" id="bZin" aria-label="Zoom in">+</button><button class="btn" id="bZout" aria-label="Zoom out">−</button></div>
 <div id="joy"><i></i></div><div id="walkHint">Left side moves · right side looks</div>
-<div id="find"><input id="q" type="search" placeholder="Search a street, address or building" autocomplete="off" enterkeyhint="search"><div id="res"></div></div>
-<div id="card"><button id="cx" aria-label="Close">×</button><h3 id="ch"></h3><p id="cp"></p><button class="btn" id="cride">▶ Ride this trail</button><button class="btn" id="cspd">Speed 1×</button></div>
+<div id="find"><input id="q" type="search" placeholder="Search a street, address or building" autocomplete="off" enterkeyhint="search"><div id="res"></div><a id="cty" href="https://orion.lancaster.ne.gov/Advanced-Search" target="_blank" rel="noopener noreferrer">Lancaster County property search ↗</a></div>
+<div id="card"><button id="cx" aria-label="Close">×</button><h3 id="ch"></h3><p id="cp"></p><div id="crange"><label for="cR">Intensity</label><input id="cR" type="range" min="0" max="100" value="60" aria-label="Pride intensity"></div><span id="clinks"></span><button class="btn" id="cride">▶ Ride this trail</button><button class="btn" id="cspd">Speed 1×</button></div>
 <div id="bottom">
-  <div id="row0"><div id="legend"></div><div id="attr">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · <button id="srcBtn">all sources</button><span id="srcMore"> · City of Lincoln/Lancaster County GIS (2026 building footprints, assessor year built and story counts, trail layers) · <a href="https://github.com/microsoft/GlobalMLBuildingFootprints">Microsoft</a> building footprints · Mapzen terrain · StarTran · National Weather Service · USGS</span></div></div>
+  <div id="row0"><div id="legend"></div><div id="attr">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · <button id="srcBtn">all sources</button><span id="srcMore"> · City of Lincoln/Lancaster County GIS (2026 building footprints, assessor year built and story counts, trail layers, parcel numbers that link a building to its public county property record) · <a href="https://www.inaturalist.org">iNaturalist</a> (recent bird reports) · <a href="https://github.com/microsoft/GlobalMLBuildingFootprints">Microsoft</a> building footprints · Mapzen terrain · StarTran · National Weather Service · USGS</span></div></div>
   <div id="sun"><label id="sunL">2:00 PM</label><input id="sunR" type="range" min="5" max="22.5" step="0.05" value="14.5" aria-label="Time of day"></div>
   <div id="chips"></div>
 </div>
@@ -121,7 +146,7 @@ async function unpack(){
   const buf=await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate'))).arrayBuffer();
   const hl=new DataView(buf).getUint32(0,true);
   const head=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,hl)));
-  const base=4+hl;const T={B:Uint8Array,H:Uint16Array,h:Int16Array};const S={};
+  const base=4+hl;const T={B:Uint8Array,H:Uint16Array,h:Int16Array,I:Uint32Array};const S={};
   for(const k in head.secs){const [o,n,t]=head.secs[k];const C=T[t];S[k]=new C(buf.slice(base+o,base+o+n*C.BYTES_PER_ELEMENT));}
   return {head,S};
 }
@@ -148,6 +173,7 @@ function tri(outer,holes){ // arrays of [x,z]
 const canvas=$('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
 const mobile=matchMedia('(pointer:coarse)').matches||innerWidth<700;
+if(mobile){document.getElementById('tools').classList.add('mob','min');document.getElementById('nav').classList.add('mob')}
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.75:2));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
 renderer.toneMapping=THREE.NoToneMapping;
@@ -156,7 +182,7 @@ const camera=new THREE.PerspectiveCamera(45,1,3,60000);
 const controls=new OrbitControls(camera,canvas);
 controls.enableDamping=true;controls.dampingFactor=.09;controls.maxPolarAngle=Math.PI/2-0.035;controls.minDistance=25;controls.maxDistance=24000;
 controls.screenSpacePanning=false;controls.zoomSpeed=1.1;controls.rotateSpeed=.55;
-controls.touches={ONE:THREE.TOUCH.PAN,TWO:THREE.TOUCH.DOLLY_ROTATE};
+controls.touches={ONE:THREE.TOUCH.PAN,TWO:THREE.TOUCH.DOLLY_ROTATE};controls.enablePan=false;controls.zoomToCursor=true;
 controls.mouseButtons={LEFT:THREE.MOUSE.PAN,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.ROTATE};
 const hemi=new THREE.HemisphereLight(0xcfe3ff,0x8a8468,1.0);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xfff2dc,2.6);sun.castShadow=true;sun.shadow.mapSize.set(mobile?2048:4096,mobile?2048:4096);
@@ -278,14 +304,14 @@ async function build(){
       nb++}
     if(BR.nv){const m=new THREE.Mesh(BR.geo(),matB);m.castShadow=true;m.receiveShadow=true;scene.add(m)}LM.nbridges=nb}
    // bike trails: bright lines of constant screen width, following the terrain and the bridge decks
-   {const TC=[0xff2a8a,0xff8a00,0x8a4dff,0x00b3a4,0x00b3a4].map(h=>new THREE.Color(h));const offP=[],offC=[],onP=[],onC=[];LM.trails=[];
+   {const TC=[0xff2a8a,0xff8a00,0x8a4dff,0x00b3a4,0x00b3a4].map(h=>new THREE.Color(h));const offP=[],offC=[],onP=[],onC=[];LM.trails=[];LM.trailOf=new Int32Array(rn.length).fill(-1);LM.road={rn,rc,rf,xy,rtc,off,rsn:S.r_sn};
     for(let i=0;i<rn.length;i++){const tc=rtc[i];if(tc===255)continue;const p=get(i);const bi=brInfo.get(i);const step=bi?8:35;
-      const d=[p[0],p[1]];for(let k=1;k<p.length/2;k++){const ax=p[2*k-2],az=p[2*k-1],bx=p[2*k],bz=p[2*k+1];const L=Math.hypot(bx-ax,bz-az);const n=Math.max(1,Math.ceil(L/step));for(let j=1;j<=n;j++)d.push(ax+(bx-ax)*j/n,az+(bz-az)*j/n)}
+      const d=[p[0],p[1]];const ix=new Int32Array(p.length/2);for(let k=1;k<p.length/2;k++){const ax=p[2*k-2],az=p[2*k-1],bx=p[2*k],bz=p[2*k+1];const L=Math.hypot(bx-ax,bz-az);const n=Math.max(1,Math.ceil(L/step));for(let j=1;j<=n;j++)d.push(ax+(bx-ax)*j/n,az+(bz-az)*j/n);ix[k]=d.length/2-1}
       const n=d.length/2;const ys=new Float32Array(n);let sl=0;
       for(let k=0;k<n;k++){if(k>0)sl+=Math.hypot(d[2*k]-d[2*k-2],d[2*k+1]-d[2*k-1]);let y=hAt(d[2*k],d[2*k+1])+.7;if(bi){const t=Math.min(1,Math.max(0,(bi[0]+sl)/bi[1]));y+=.3+bi[2]*Math.pow(Math.sin(Math.PI*t),.75)}ys[k]=y}
       const P=tc<3?offP:onP,C=tc<3?offC:onC,col=TC[tc],dim=tc===4?.72:1;
       for(let k=1;k<n;k++){P.push(d[2*k-2],ys[k-1],d[2*k-1],d[2*k],ys[k],d[2*k+1]);C.push(col.r*dim,col.g*dim,col.b*dim,col.r*dim,col.g*dim,col.b*dim)}
-      LM.trails.push({tc,tn:rtn[i],d:Float32Array.from(d),len:sl,ts:S.r_ts?S.r_ts[i]:0,gs:(bi||(rf[i]&9))?1:0})}
+      LM.trailOf[i]=LM.trails.length;LM.trails.push({tc,tn:rtn[i],d:Float32Array.from(d),len:sl,ts:S.r_ts?S.r_ts[i]:0,ri:i,ix,ys})}
     const mk=(P,C,w)=>{const g=new LineSegmentsGeometry();g.setPositions(P);g.setColors(C);const m=new LineMaterial({linewidth:w,vertexColors:true,worldUnits:false,fog:false});m.resolution.set(innerWidth,innerHeight);const l=new LineSegments2(g,m);l.frustumCulled=false;scene.add(l);return l};
     LM.trailLines=[];if(onP.length)LM.trailLines.push(mk(onP,onC,mobile?1.8:2.1));if(offP.length)LM.trailLines.push(mk(offP,offC,mobile?3:3.3))}
    // rails
@@ -304,11 +330,16 @@ async function build(){
   const br=S.b_rings,brs=S.b_rs,bxy=S.b_xy,bh=S.b_h,bmh=S.b_minh,btc=S.b_tc,brf=S.b_roof;
   const pipB=(x,z,r)=>{let c=false;for(let i=0,j=r.length-1;i<r.length;j=i++){const a=r[i],q=r[j];if((a[1]>z)!==(q[1]>z)&&x<(q[0]-a[0])*(z-a[1])/(q[1]-a[1])+a[0])c=!c}return c};
   const CHIM=[0x8a5a48,0x9a6b56,0x77706a,0xa58a78].map(hex),PENT=[0x8f9296,0xa4a29c,0x7d8388].map(hex);
+  const OC=3,ON=Math.ceil(16400/OC),occ=new Uint8Array(Math.ceil(ON*ON/8));
+  LM.occ=(x,z)=>{const i=Math.floor((x+8200)/OC),j=Math.floor((z+8200)/OC);if(i<0||j<0||i>=ON||j>=ON)return 0;const k=j*ON+i;return (occ[k>>3]>>(k&7))&1};
+  const occFill=o=>{let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of o){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}
+    const i0=Math.max(0,Math.floor((x0+8200)/OC)),i1=Math.min(ON-1,Math.floor((x1+8200)/OC)),j0=Math.max(0,Math.floor((z0+8200)/OC)),j1=Math.min(ON-1,Math.floor((z1+8200)/OC)),n=o.length;
+    for(let j=j0;j<=j1;j++){const zc=(j+.5)*OC-8200;for(let i=i0;i<=i1;i++){const xc=(i+.5)*OC-8200;let c=false;for(let a=0,b2=n-1;a<n;b2=a++){const pa=o[a],pb=o[b2];if((pa[1]>zc)!==(pb[1]>zc)&&xc<(pb[0]-pa[0])*(zc-pa[1])/(pb[1]-pa[1])+pa[0])c=!c}if(c){const k=j*ON+i;occ[k>>3]|=1<<(k&7)}}}};
   let ri=0,xi=0;const NB=br.length;LM.bc=new Float32Array(NB*2);const devInfo=H.infos.indexOf('Devaney Sports Center');let devA=0;
   for(let b=0;b<NB;b++){
     const rings=[];let cx=0,cz=0;
     for(let k=0;k<br[b];k++){const n=brs[ri++];const r=new Array(n);for(let j=0;j<n;j++){r[j]=[bxy[xi]*Qm,-bxy[xi+1]*Qm];xi+=2}rings.push(r)}
-    const o=rings[0];for(const p of o){cx+=p[0];cz+=p[1]}cx/=o.length;cz/=o.length;LM.bc[2*b]=cx;LM.bc[2*b+1]=cz;
+    const o=rings[0];for(const p of o){cx+=p[0];cz+=p[1]}cx/=o.length;cz/=o.length;LM.bc[2*b]=cx;LM.bc[2*b+1]=cz;occFill(o);
     if(Math.abs(cx-LM.capitol[0])<70&&Math.abs(cz-LM.capitol[1])<70)continue;
     if(Math.abs(cx-LM.stadium[0])<100&&Math.abs(cz-LM.stadium[1])<124)continue;
     const gx=Math.min(NG-1,Math.max(0,Math.floor((cx+8200)/CS))),gz=Math.min(NG-1,Math.max(0,Math.floor((cz+8200)/CS)));
@@ -417,13 +448,14 @@ async function build(){
   for(const ch of chunks){if(!ch.m.nv)continue;const m=new THREE.Mesh(ch.m.geo(),matB);m.castShadow=true;m.receiveShadow=true;m.userData={start:Uint32Array.from(ch.start),ids:Uint32Array.from(ch.ids)};scene.add(m);pickables.push(m);ch.m=null}
   await prog(.82,'Planting trees…');
   // ===== trees
-  {const pts=[];const t=S.t_xy;for(let i=0;i<t.length;i+=2)pts.push([t[i]*Qm,-t[i+1]*Qm,0]);
+  {const pts=[];const t=S.t_xy;let roofed=0;for(let i=0;i<t.length;i+=2){const x=t[i]*Qm,z=-t[i+1]*Qm;if(LM.occ(x,z)){roofed++;continue}pts.push([x,z,0])}
    const pip=(x,z,r)=>{let c=false;for(let i=0,j=r.length-1;i<r.length;j=i++){const a=r[i],b=r[j];if((a[1]>z)!==(b[1]>z)&&x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])c=!c}return c};
    const wet=(x,z)=>{for(const w of LM.waters){if(x>w[1]&&x<w[2]&&z>w[3]&&z<w[4]&&pip(x,z,w[0]))return true}return false};
    let k=0;const cap=mobile?26000:48000;
    for(const [r,nm] of LM.woods){let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of r){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}
      const dens=nm==='wood'?1/260:1/2600;const n=Math.min(2500,Math.ceil((x1-x0)*(z1-z0)*dens));
-     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);if(Math.abs(x)<8100&&Math.abs(z)<8100&&pip(x,z,r)&&!wet(x,z))pts.push([x,z,1])}}
+     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);if(Math.abs(x)<8100&&Math.abs(z)<8100&&pip(x,z,r)&&!wet(x,z)){if(LM.occ(x,z))roofed++;else pts.push([x,z,1])}}}
+   LM.roofed=roofed;
    const tg=new THREE.BufferGeometry();
    {const P=[],I=[];const ring=(y,r,n)=>{const b=P.length/3;for(let i=0;i<n;i++){const a=i/n*Math.PI*2;P.push(Math.cos(a)*r,y,Math.sin(a)*r)}return b};
     const a=ring(0,.22,5),b2=ring(.32,.2,5);for(let i=0;i<5;i++){const j=(i+1)%5;I.push(a+i,b2+i,a+j,a+j,b2+i,b2+j)}
@@ -435,7 +467,7 @@ async function build(){
    const m4=new THREE.Matrix4(),qq=new THREE.Quaternion(),sc=new THREE.Vector3(),ps=new THREE.Vector3(),col=new THREE.Color(),up=new THREE.Vector3(0,1,0);
    for(let i=0;i<pts.length;i++){const s=7+7*rnd(i*5+1);ps.set(pts[i][0],hAt(pts[i][0],pts[i][1]),pts[i][1]);sc.set(s*(.9+.5*rnd(i*5+2)),s,s*(.9+.5*rnd(i*5+3)));qq.setFromAxisAngle(up,rnd(i)*6.28);m4.compose(ps,qq,sc);tm.setMatrixAt(i,m4);
      const g=rnd(i*5+4);col.setRGB(.8+.35*g,.85+.25*rnd(i*9),.7+.3*g);tm.setColorAt(i,col)}
-   tm.castShadow=true;tm.receiveShadow=false;tm.frustumCulled=false;scene.add(tm);LM.ntrees=pts.length;LM.woods=null;LM.waters=null}
+   tm.castShadow=true;tm.receiveShadow=false;tm.frustumCulled=false;scene.add(tm);LM.ntrees=pts.length;LM.treeMesh=tm;LM.treePts=pts;LM.woods=null;LM.waters=null}
   {const cv=document.createElement('canvas');cv.width=cv.height=64;const c=cv.getContext('2d');const gr=c.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,220,150,.75)');gr.addColorStop(1,'rgba(255,180,80,0)');c.fillStyle=gr;c.fillRect(0,0,64,64);
    const tex=new THREE.CanvasTexture(cv);const n=LM.lamps.length/2;const P=new Float32Array(n*3);for(let i=0;i<n;i++){P[3*i]=LM.lamps[2*i];P[3*i+2]=LM.lamps[2*i+1];P[3*i+1]=7+hAt(P[3*i],P[3*i+2])}
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));
@@ -490,7 +522,7 @@ function landmarks(cap,std){
   add(new THREE.SphereGeometry(.42,10,8),gold,0,126.35,0);
   const arm=add(new THREE.CylinderGeometry(.16,.2,2.1,6),gold,.85,125.1,0);arm.rotation.z=-1.05;
   g.userData.info=['Nebraska State Capitol','Hand-modeled from its real footprint. Tower about 400 ft (122 m), gold dome topped by The Sower.'];
-  scene.add(g);pickables.push(g);
+  scene.add(g);pickables.push(g);LM.capG=g;LM.capTop={x:cap.x,y:g.position.y+127.5,z:-cap.n};
 
   // ---- Memorial Stadium
   const s=new THREE.Group();s.position.set(std.x,hAt(std.x,-std.n)-.5,-std.n);s.rotation.y=std.ang-Math.PI;
@@ -549,23 +581,39 @@ function landmarks(cap,std){
   if(LM.dev){const D=LM.dev;const cv=document.createElement('canvas');cv.width=2048;cv.height=560;const c=cv.getContext('2d');const F='"Arial Black",Impact,"Helvetica Neue",Arial,sans-serif';
     const line=(txt,y,fs,room)=>{c.font=`900 ${fs}px ${F}`;const tw=c.measureText(txt).width;if(tw>room){fs=Math.floor(fs*room/tw);c.font=`900 ${fs}px ${F}`}
       c.textAlign='center';c.textBaseline='middle';c.lineJoin='round';c.lineWidth=Math.max(10,fs*.17);c.strokeStyle='#b00d28';c.strokeText(txt,cv.width/2,y);c.fillStyle='#ffffff';c.fillText(txt,cv.width/2,y)};
-    line('CENTER OF THE',150,170,cv.width-2*330);line('VOLLEYBALL UNIVERSE',392,250,cv.width-2*40);
-    for(const bx of [165,cv.width-165]){const r=112,by=150;c.beginPath();c.arc(bx,by,r,0,Math.PI*2);c.fillStyle='#ffffff';c.fill();c.lineWidth=12;c.strokeStyle='#b00d28';c.stroke();
-      c.save();c.beginPath();c.arc(bx,by,r-5,0,Math.PI*2);c.clip();c.lineWidth=9;for(let k=0;k<3;k++){const a=k*Math.PI*2/3+.5;c.beginPath();c.arc(bx+Math.cos(a)*r*1.05,by+Math.sin(a)*r*1.05,r*1.02,0,Math.PI*2);c.stroke()}c.restore()}
+    const ball=(bx,by,r)=>{c.beginPath();c.arc(bx,by,r,0,Math.PI*2);c.fillStyle='#ffffff';c.fill();c.lineWidth=r*.11;c.strokeStyle='#b00d28';c.stroke();
+      c.save();c.beginPath();c.arc(bx,by,r-5,0,Math.PI*2);c.clip();c.lineWidth=r*.08;for(let k=0;k<3;k++){const a=k*Math.PI*2/3+.5;c.beginPath();c.arc(bx+Math.cos(a)*r*1.05,by+Math.sin(a)*r*1.05,r*1.02,0,Math.PI*2);c.stroke()}c.restore()};
     const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;
+    LM.devDraw=i=>{const m=VBMSG[i%VBMSG.length];c.clearRect(0,0,cv.width,cv.height);line(m[0],150,150,cv.width-2*330);line(m[1],392,250,cv.width-2*40);ball(165,150,112);ball(cv.width-165,150,112);tex.needsUpdate=true;dirty=true};LM.devDraw(0);
     const len=Math.min(104,D.L*.66),hgt=len*cv.height/cv.width;const g=new THREE.Group();g.position.set(D.x,D.top+1.2+hgt/2,D.z);g.rotation.y=Math.atan2(-D.uz,D.ux);
     const mat=new THREE.MeshBasicMaterial({map:tex,alphaTest:.4,fog:false});
-    const f1=new THREE.Mesh(new THREE.PlaneGeometry(len,hgt),mat);f1.position.z=.3;g.add(f1);LM.devSign=g;
+    const f1=new THREE.Mesh(new THREE.PlaneGeometry(len,hgt),mat);f1.position.z=.3;g.add(f1);LM.devSign=g;LM.devDim=[len,hgt];
     const pm=new THREE.MeshLambertMaterial({color:0x3c4046});for(let k=0;k<7;k++){const p=new THREE.Mesh(new THREE.BoxGeometry(.6,hgt+1.2,.5),pm);p.position.set(-len/2+len*k/6,-.6,0);g.add(p)}
     for(const yy of [-hgt/2,-hgt*.02,hgt/2]){const rail=new THREE.Mesh(new THREE.BoxGeometry(len,.4,.5),pm);rail.position.y=yy;g.add(rail)}
-    LM.devLabelY=D.top+1.2+hgt+15;
-    g.userData.info=['Devaney Sports Center',TAG+'. The rooftop sign is this map\'s own addition, not a real one. It turns to face you.'];scene.add(g);pickables.push(g)}
+    // a giant volleyball over the sign
+    {const vb=new THREE.Mesh(new THREE.SphereGeometry(13,28,18),new THREE.MeshLambertMaterial({map:vbTexture(),emissive:0x331111}));vb.position.set(D.x,D.top+1.2+hgt+15,D.z);scene.add(vb);LM.devBall=vb;vb.userData.info=['Devaney Sports Center',VBREC];vb.userData.dev=true;pickables.push(vb)}
+    // the John Cook statue: a bronze figure on a plinth, north of the building (the real one is on the north side; this exact spot is a guess)
+    {const hN=Math.abs(D.L/2*D.uz)+Math.abs(D.W/2*D.ux),sx=D.x,sz=D.z-hN-6,sy=hAt(sx,sz),br=new THREE.MeshLambertMaterial({color:0x9a6a36,emissive:0x2a1808}),gr=new THREE.MeshLambertMaterial({color:0x5a5d63}),st=new THREE.Group();
+     const B=(w,h,d,x,y,z,m)=>{const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.position.set(x,y,z);q.castShadow=true;st.add(q);return q};
+     B(2.4,1.2,2.4,0,.6,0,gr);B(.38,1.5,.42,-.27,1.95,0,br);B(.38,1.5,.42,.27,1.95,0,br);B(1.02,1.3,.52,0,3.35,0,br);B(.26,1.15,.3,-.66,3.4,0,br);B(.26,1.15,.3,.66,3.4,0,br);
+     const hd=new THREE.Mesh(new THREE.SphereGeometry(.34,12,10),br);hd.position.set(0,4.36,0);st.add(hd);st.position.set(sx,sy,sz);st.rotation.y=Math.PI;
+     st.userData.info=['John Cook statue','A bronze statue of John Cook by Nebraska-born sculptor George Lundeen stands on the north side of John Cook Arena. It was unveiled in September 2025. On this map the figure is drawn larger than life so it can be seen, and its exact spot is a guess.'];scene.add(st);pickables.push(st);LM.cookStatue={x:sx,y:sy,z:sz}}
+    LM.devLabelY=D.top+1.2+hgt+34;
+    g.userData.info=['Devaney Sports Center',VBREC];g.userData.dev=true;scene.add(g);pickables.push(g)}
   s.userData.info=['Memorial Stadium',`World record holder: on Volleyball Day in Nebraska (Aug 30, 2023), ${RECORD.toLocaleString('en-US')} fans watched Nebraska sweep Omaha here, the largest announced crowd ever for a women's sporting event. Hand-modeled bowl on the real footprint, with the field drawn to scale (120 yd by 53⅓ yd).`];
   scene.add(s);pickables.push(s);
 }
 
 // ---------- labels
 const TAG='Center of the Volleyball Universe',RECORD=92003;
+// Nebraska volleyball crowd records, each with the date it was true
+const VBMSG=[['CENTER OF THE','VOLLEYBALL UNIVERSE'],['DEVANEY CENTER · ALSO KNOWN AS','DBK UNIVERSE ★'],['OPENED 1976 · NAMED FOR BOB DEVANEY IN 1978','BOB DEVANEY SPORTS CENTER'],['THE ARENA · NAMED APRIL 11, 2025','JOHN COOK ARENA'],['THE COURT · DEDICATED SEPT 6, 2013','TERRY PETTIT COURT'],['COACH DANI BUSBOOM KELLY · SINCE 2025','THE DBK UNIVERSE'],['EVERY HOME MATCH SINCE 2001','350+ STRAIGHT SELLOUTS'],['WORLD RECORD CROWD · AUG 30, 2023','92,003'],['NCAA ATTENDANCE LEADER · AS OF 2025','11 YEARS RUNNING'],['2021 NCAA FINAL · A RECORD THEN','18,755'],['2022 AT CREIGHTON · A RECORD THEN','15,797'],['2025 AT UCLA · PAULEY PAVILION RECORD','10,498'],['OF THE 9 BIGGEST NCAA CROWDS · AS OF 2023','NEBRASKA PLAYED IN 8']];
+const VBREC=TAG+". Crowd records: more than 350 straight sellouts, every home match since 2001, the longest streak in NCAA women's sports (the 350th was Nov 20, 2025). Led the NCAA in attendance 11 years running as of 2025. 92,003 at Memorial Stadium on Aug 30, 2023, the world record for a women's sporting event. 18,755 at the 2021 NCAA final and 15,797 at Creighton in 2022, both records at the time. 10,498 at UCLA in 2025, the most ever for volleyball at Pauley Pavilion. Played in 8 of the 9 biggest crowds in NCAA volleyball history as of 2023. The rooftop sign and the giant volleyball are this map's own additions.";
+const VBNAMES="The building is the Bob Devaney Sports Center. It opened in 1976 as the NU Sports Complex and was named in 1978 for Bob Devaney, the football coach and athletic director who pushed to get it built. The arena inside is John Cook Arena, named by the Board of Regents on April 11, 2025, for the coach who led Nebraska volleyball for 25 seasons. A bronze statue of Cook by Nebraska-born sculptor George Lundeen went up on the north side in September 2025. The court is Terry Pettit Court, dedicated Sept 6, 2013, for the coach of the program's first national championship team. The coach now is Dani Busboom Kelly, DBK, a Nebraska native and former Husker, named the program's fourth head coach on Jan 29, 2025. Her first team went unbeaten in the Big Ten. Welcome to the DBK universe.";
+function devCard(i){const names=i===1;showCard(names?'Devaney Center · the names':'Devaney Sports Center',names?VBNAMES:VBREC,undefined,{label:names?'Crowd records ▸':'The names ▸',fn:()=>devCard(names?0:1)})}
+function vbTexture(){if(LM.vbTex)return LM.vbTex;const bc=document.createElement('canvas');bc.width=512;bc.height=256;const q=bc.getContext('2d');q.fillStyle='#fbfaf6';q.fillRect(0,0,512,256);q.strokeStyle='#c8102e';q.lineWidth=7;
+  for(let k=0;k<3;k++)for(let j=-1;j<=1;j++){q.beginPath();for(let x=0;x<=512;x+=8){const y=128+70*Math.sin(x/512*Math.PI*2+k*2.094)+j*26;if(x)q.lineTo(x,y);else q.moveTo(x,y)}q.stroke()}
+  const bt=new THREE.CanvasTexture(bc);bt.colorSpace=THREE.SRGBColorSpace;return LM.vbTex=bt}
 const labels=[];let labelsOn=true;const pool=[];const busLabels=[];
 function setupLabels(){
   const L=(t,x,y,z,k,pri,near,far)=>labels.push({t,x,y:y+hAt(x,z),z,k,pri,near,far});
@@ -573,22 +621,26 @@ function setupLabels(){
   L('Memorial Stadium',LM.stadium[0],62,LM.stadium[1],0,990,0,14000);labels[labels.length-1].sub=`World record crowd: ${RECORD.toLocaleString('en-US')} · Volleyball Day 2023`;
   const top=new Set(['Devaney Sports Center','Pinnacle Bank Arena','Haymarket Park']);
   for(const [n,x,nn,a,h] of H.blabels){if(n==='Memorial Stadium'||n==='Nebraska State Capitol')continue;
-    if(top.has(n)){L(n,x,h+10,-nn,0,980,0,12000);if(n==='Devaney Sports Center'){const l=labels[labels.length-1];l.sub=TAG;l.subFar=1500;if(LM.devLabelY)l.y=LM.devLabelY}}else L(n,x,h+6,-nn,3,300+Math.min(200,a/100),0,a>7000?2600:(a>3000?1300:800))}
+    if(top.has(n)){L(n,x,h+10,-nn,0,980,0,12000);if(n==='Devaney Sports Center'){const l=labels[labels.length-1];l.sub='aka DBK Universe ⭐🚀🌽🏐';if(LM.devLabelY)l.y=LM.devLabelY}}else L(n,x,h+6,-nn,3,300+Math.min(200,a/100),0,a>7000?2600:(a>3000?1300:800))}
+  if(LM.dev){const D=LM.dev;labels.push({t:'John Cook Arena',sub:'Terry Pettit Court',x:D.x,y:hAt(D.x,D.z)+5,z:D.z,k:3,pri:640,near:0,far:1500});
+    if(LM.cookStatue)labels.push({t:'John Cook statue',x:LM.cookStatue.x,y:LM.cookStatue.y+8,z:LM.cookStatue.z,k:3,pri:610,near:0,far:900})}
   for(const [n,x,nn,kind] of H.places){if(kind==='city')continue;const big=kind!=='neighbourhood';L(n,x,30,-nn,1,big?700:280,big?1500:700,big?15000:4200)}
   for(const [n,x,nn,a,c] of H.plabels){L(n,x,12,-nn,c==='water'?5:2,600+Math.min(250,a/8000),0,a>300000?11000:(a>60000?5000:2500))}
   for(const [ti,x,nn] of H.tlabels||[])L(H.tnames[ti],x,7,-nn,6,660,0,5600);
   for(const [n,x,nn,c] of H.slabels){L(n,x,4,-nn,4,c<=2?260:(c===3?240:(c===4?200:120)),0,c<=3?2600:(c===4?1500:520))}
   const host=$('labels');for(let i=0;i<(mobile?46:80);i++){const d=document.createElement('div');d.className='lb';host.appendChild(d);pool.push({d,t:'',k:-1,on:false})}
 }
-const v3=new THREE.Vector3();let lblTick=0;
+const v3=new THREE.Vector3();let lblTick=0,lblScale=1;
 function updateLabels(){
   if(!labels.length)return;
   const w=innerWidth,h=innerHeight;const cam=camera.position;const cand=[];
-  if(labelsOn){for(const l of (busLabels.length?labels.concat(busLabels):labels)){const dx=l.x-cam.x,dy=l.y-cam.y,dz=l.z-cam.z;const d=Math.sqrt(dx*dx+dy*dy+dz*dz);if(d>l.far||d<l.near)continue;if(l.k===6&&!trailsOn)continue;if(walk.on&&l.k!==0&&d>450)continue;
+  {const dc=walk.on?300:cam.distanceTo(controls.target),ls=dc<380?(mobile?1.36:1.45):dc<900?1.34:dc<2200?1.22:dc<5000?1.1:1;if(ls!==lblScale){lblScale=ls;$('labels').style.setProperty('--ls',ls)}}
+  if(labelsOn){for(const l of ((busLabels.length||wxLabels.length||lifeLabels.length)?labels.concat(busLabels,wxLabels,lifeLabels):labels)){const dx=l.x-cam.x,dy=l.y-cam.y,dz=l.z-cam.z;const d=Math.sqrt(dx*dx+dy*dy+dz*dz);if(d>l.far||d<l.near)continue;if(l.k===6&&!trailsOn)continue;if(walk.on&&l.k!==0&&d>450)continue;
     v3.set(l.x,l.y,l.z).project(camera);if(v3.z>1||v3.z<-1||Math.abs(v3.x)>1.05||Math.abs(v3.y)>1.05)continue;
     cand.push({l,sx:(v3.x*.5+.5)*w,sy:(-v3.y*.5+.5)*h,s:l.pri-d/l.far*150,sub:l.sub&&!(l.subFar&&d<l.subFar)?l.sub:''})}}
   cand.sort((a,b)=>b.s-a.s);const placed=[];let pi=0;
-  for(const c of cand){if(pi>=pool.length)break;const fs=c.l.k===0?13:(c.l.k===1?12.5:11);const bw=Math.max(c.l.t.length,c.sub?c.sub.length*.9:0)*fs*.6+10,bh=fs+8+(c.sub?14:0);const x0=c.sx-bw/2,y0=c.sy-bh/2;
+  if(LM.devSign&&!walk.on){const g=LM.devSign,dS=cam.distanceTo(g.position);if(dS<1300){v3.copy(g.position).project(camera);if(v3.z<1&&v3.z>-1){const ppm=h/(2*Math.tan(camera.fov*Math.PI/360)*dS),bw=LM.devDim[0]*ppm,bh=LM.devDim[1]*ppm;placed.push([(v3.x*.5+.5)*w-bw/2,(-v3.y*.5+.5)*h-bh/2,bw,bh])}}}
+  for(const c of cand){if(pi>=pool.length)break;const lk=c.l.k,pill=lk===3||lk===7,fs=(lk===0?13:lk===1?12:lk===3?11.5:11)*lblScale;const bw=Math.max(c.l.t.length*(lk===1?.78:lk===0?.7:.58),c.sub?c.sub.length*.56:0)*fs+(pill?22:10),bh=fs+8+(c.sub?fs+3:0)+(pill?6:0);const x0=c.sx-bw/2,y0=c.sy-bh/2;
     if(y0<54||y0>h-bottomH-12)continue;let ok=true;for(const p of placed){if(x0<p[0]+p[2]&&x0+bw>p[0]&&y0<p[1]+p[3]&&y0+bh>p[1]){ok=false;break}}
     if(!ok)continue;placed.push([x0,y0,bw,bh]);const e=pool[pi++];const key=c.sub?c.l.t+'|'+c.sub:c.l.t;if(e.t!==key){e.d.textContent=c.l.t;if(c.sub){const sp=document.createElement('span');sp.className='sub';sp.textContent=c.sub;e.d.appendChild(sp)}e.t=key}if(e.k!==c.l.k){e.d.className='lb k'+c.l.k;e.k=c.l.k}
     e.d.style.transform=`translate(${Math.round(c.sx)}px,${Math.round(c.sy)}px) translate(-50%,-50%)`;e.on=true}
@@ -611,20 +663,21 @@ function setTime(t){curHour=t;
   hemi.intensity=.25+.85*day;hemi.color.setRGB(.55+.26*day,.62+.27*day,.85+.15*day);hemi.groundColor.setRGB(.2+.34*day,.2+.32*day,.22+.19*day);
   cTmp.copy(cNight).lerp(cDay,day);if(day>0.02&&day<1)cTmp.lerp(cDusk,gold*day*(1-day)*2.2);
   if(cloud>0){const g=.42+.3*day;cTmp.lerp(cGrey.setRGB(g,g*1.02,g*1.06),cloud*.85);sun.intensity*=1-.7*cloud;hemi.intensity*=1-.15*cloud}
-  scene.background.copy(cTmp);scene.fog.color.copy(cTmp);
+  scene.background.copy(cTmp);scene.fog.color.copy(cTmp);LM.hemi0=hemi.intensity;if(!LM.bg0)LM.bg0=new THREE.Color();LM.bg0.copy(cTmp);
   
   if(LM.lampMat){const n=U.uNight.value;LM.lampMat.opacity=.95*n;LM.lampPts.visible=n>.02;LM.starMat.opacity=Math.max(0,n*1.3-.3);LM.starPts.visible=n>.3}
   if(LM.glow){const n=U.uNight.value;LM.glow[0].emissiveIntensity=.3*n;LM.glow[1].emissiveIntensity=.22*n;LM.glow[2].emissiveIntensity=.12+.75*n}
   shadowDirty=true;dirty=true;
 }
-let shadowDirty=true;const lastShadowT=new THREE.Vector3(1e9,0,0);let lastShadowD=0;
+let shadowDirty=true;const lastShadowT=new THREE.Vector3(1e9,0,0);let lastShadowD=0,lastShadowUp=0;
 function updateShadow(){
   const d=camera.position.distanceTo(controls.target);
   if(!shadowsOn){if(sun.castShadow){sun.castShadow=false;renderer.shadowMap.needsUpdate=true}sun.position.copy(controls.target).addScaledVector(sunDir,3000);sun.target.position.copy(controls.target);return}
   sun.castShadow=true;
   const S=THREE.MathUtils.clamp(d*.75,220,2600);
-  if(shadowDirty||lastShadowT.distanceTo(controls.target)>S*.3||Math.abs(S-lastShadowD)>S*.25){
-    lastShadowT.copy(controls.target);lastShadowD=S;shadowDirty=false;
+  const nowS=performance.now();
+  if(shadowDirty||((!(pan||panV)||nowS-lastShadowUp>200)&&(lastShadowT.distanceTo(controls.target)>S*.3||Math.abs(S-lastShadowD)>S*.25))){
+    lastShadowT.copy(controls.target);lastShadowD=S;shadowDirty=false;lastShadowUp=nowS;
     sun.target.position.copy(controls.target);sun.position.copy(controls.target).addScaledVector(sunDir,4000);
     const c=sun.shadow.camera;c.left=-S;c.right=S;c.top=S;c.bottom=-S;c.near=100;c.far=8000;c.updateProjectionMatrix();
     renderer.shadowMap.needsUpdate=true;
@@ -656,7 +709,7 @@ const ray=new THREE.Raycaster();const ndc=new THREE.Vector2();
 let bottomH=120,rideWay=-1,ride=null,trailsOn=true;
 function layoutCard(){bottomH=$('bottom').offsetHeight||120;$('card').style.bottom=(bottomH+8)+'px'}
 let cardAct=null;
-function showCard(title,body,way,act){$('ch').textContent=title;$('cp').textContent=body;rideWay=(way===undefined?-1:way);cardAct=act||null;$('cride').style.display=(rideWay>=0||cardAct)?'inline-block':'none';$('cride').textContent=cardAct?cardAct.label:'▶ Ride this trail';$('cspd').style.display='none';$('card').style.display='block'}
+function showCard(title,body,way,act,link){$('ch').textContent=title;$('cp').textContent=body;$('cp').scrollTop=0;$('crange').style.display='none';{const h=$('clinks');h.textContent='';for(const l of (link?(Array.isArray(link)?link:[link]):[])){const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=l.href;a.textContent=l.label;h.appendChild(a)}}rideWay=(way===undefined?-1:way);cardAct=act||null;$('cride').style.display=(rideWay>=0||cardAct)?'inline-block':'none';$('cride').textContent=cardAct?cardAct.label:'▶ Ride this trail';$('cspd').style.display='none';$('card').style.display='block'}
 function hideCard(){$('card').style.display='none';rideWay=-1;cardAct=null}
 const TL=['Paved trail','Crushed rock trail','Dirt trail','On-street bike lane','Signed on-street bike route'];
 function groundPoint(){const o=ray.ray.origin,d=ray.ray.direction;if(d.y>-1e-4)return null;let t=(hAt(controls.target.x,controls.target.z)-o.y)/d.y;for(let k=0;k<6;k++){t=(hAt(o.x+d.x*t,o.z+d.z*t)-o.y)/d.y}if(!(t>0))return null;return {x:o.x+d.x*t,z:o.z+d.z*t,t}}
@@ -699,144 +752,163 @@ function startRide(w){stopTour();let pts=trailPath(w);let n=pts.length/2;if(n<2)
   const cum=new Float32Array(n);for(let k=1;k<n;k++)cum[k]=cum[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);const L=cum[n-1];if(L<80){$('cp').textContent='This piece is too short to ride.';return}
   const v0=Math.min(150,Math.max(22,L/70));beginRide({pts,cum,L,s:0,v0,mul:1,v:v0,t:0,w,ui:0,kind:'trail'})}
 function wayName(w){const T=LM.trails[w];return T.tn!==65535?H.tnames[T.tn]:(T.tc<3?'an unnamed trail':(T.tc===3?'a bike lane':'a signed bike route'))}
+function roadName(i){const w=LM.trailOf[i];if(w>=0)return wayName(w);const RD=LM.road,sn=RD.rsn?RD.rsn[i]:65535;if(sn!==65535&&H.snl)return H.snl[sn];const c=RD.rc[i];return (c===7||c===8||c===11)?'a path':(c===6?'a service road':'a side street')}
 function rideAt(R){const s=Math.min(R.s,R.L);let lo=0,hi=R.cum.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(R.cum[m]<=s)lo=m;else hi=m}return hi}
 function rideText(R){if(R.kind==='trail')return `${miles(Math.min(R.s,R.L))} of ${miles(R.L)} mi · tap the map to stop`;
-  const i=rideAt(R),w=R.wy[i],on=w<0?'bridging a gap':'on '+wayName(w);
-  if(R.kind==='all')return `Covered ${miles(R.cv[i])} of ${miles(BG.total)} mi · ${on} · tap the map to stop`;
-  return `${miles(Math.min(R.s,R.L))} of ${miles(R.L)} mi · ${on} · tap the map to stop`}
+  const i=rideAt(R),md=R.md[i],nm=md===3?'':roadName(R.wy[i]);
+  if(R.kind==='all'){const to=R.tg[i]>=0?' to the next closest, '+roadName(R.tg[i]):'';let what;
+    if(md===0)what='riding new ground on '+nm;else if(md===1)what='retracing '+nm+to;else if(md===2)what='linking on '+nm+' (no bike lane)'+to;else what='no street link here, bridging'+to;
+    if(R.ut[i]||R.ut[i-1])what='turned around, '+what;
+    return `Covered ${miles(R.cv[i])} of ${miles(BG.total)} mi (${Math.floor(100*R.cv[i]/BG.total)}%) · ${what} · tap the map to stop`}
+  return `${miles(Math.min(R.s,R.L))} of ${miles(R.L)} mi · ${md===3?'bridging a gap':'on '+nm+(md===2?' (no bike lane)':'')} · tap the map to stop`}
 function stepRide(now){const R=ride;const dt=Math.min(.1,(now-R.t)/1000);R.t=now;R.s+=R.v*dt;if(R.more&&R.L-R.s<2200)R.more();
+  if(R.ev){const g=BG;let did=false;while(R.ei<R.ev.length&&R.ev[R.ei]<=R.s){const j=R.ea[R.ei],m=R.em[R.ei];R.ei++;if(m===0){paintEdge(LM.covPaint,g.aE[j]);did=true}else if(m===2)did=paintLink(j)||did}if(did){LM.covPaint.flush();LM.linkPaint.flush()}}
   const p=ridePose(R,R.s);const k=1-Math.exp(-dt*3.2);const c=camera.position,t=controls.target;
   c.x+=(p.cx-c.x)*k;c.y+=(p.cy-c.y)*k;c.z+=(p.cz-c.z)*k;t.x+=(p.tx-t.x)*k;t.y+=(p.ty-t.y)*k;t.z+=(p.tz-t.z)*k;dirty=true;
   if(now-R.ui>400){R.ui=now;$('cp').textContent=rideText(R)}
   if(R.s>=R.L+p.look*.4)stopRide(true)}
 function stopRide(done){if(!ride)return;const R=ride;ride=null;rideStopT=performance.now();controls.enabled=!walk.on;$('cspd').style.display='none';
   if(R.kind==='trail')showTrail(R.w);
-  else if(R.kind==='all')rideIntro(done?`You rode all of it: ${miles(BG.total)} mi.`:`Stopped after covering ${miles(R.cv[rideAt(R)])} of ${miles(BG.total)} mi.`);
+  else if(R.kind==='all'){const c=R.cv[rideAt(R)];rideIntro(done?`Every inch covered: all ${miles(BG.total)} mi. That took ${miles(R.L)} mi of riding and ${R.turns} turnarounds.`:`Stopped at ${Math.floor(100*c/BG.total)}%: ${miles(c)} of ${miles(BG.total)} mi covered, shown in white.`)}
   else rideIntro((done?'Arrived. ':'Stopped. ')+'That route was '+R.sum+'.');
   dirty=true}
 
-// ---------- bike network: every trail and bike street joined into one graph, with the gaps bridged
+// ---------- the ride graph: every trail and bike street, plus the regular streets and paths that link them
+class Paint{constructor(color,width){this.cap=4000;this.chunks=[];this.ci=0;this.on=true;this.mat=new LineMaterial({color,linewidth:width,worldUnits:false,fog:false});this.mat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(this.mat)}
+  add(x0,y0,z0,x1,y1,z1){let c=this.chunks[this.ci];if(c&&c.n>=this.cap)c=this.chunks[++this.ci];
+    if(!c){const geo=new LineSegmentsGeometry();geo.setPositions(new Float32Array(this.cap*6));geo.instanceCount=0;const l=new LineSegments2(geo,this.mat);l.frustumCulled=false;l.visible=this.on;scene.add(l);c={l,geo,arr:geo.attributes.instanceStart.data.array,n:0,dirty:false};this.chunks.push(c)}
+    const o=c.n*6,a=c.arr;a[o]=x0;a[o+1]=y0;a[o+2]=z0;a[o+3]=x1;a[o+4]=y1;a[o+5]=z1;c.n++;c.dirty=true}
+  flush(){for(const c of this.chunks)if(c.dirty){c.geo.instanceCount=c.n;c.geo.attributes.instanceStart.data.needsUpdate=true;c.dirty=false}dirty=true}
+  clear(){for(const c of this.chunks){c.n=0;c.geo.instanceCount=0;c.dirty=false}this.ci=0;dirty=true}
+  show(v){this.on=v;for(const c of this.chunks)c.l.visible=v;dirty=true}}
 let BG=null;
-function bikeGraph(){if(BG)return BG;const t0=performance.now();const TR=LM.trails,NW=TR.length;
-  const base=new Int32Array(NW+1);let N=0;for(let w=0;w<NW;w++){base[w]=N;N+=TR[w].d.length>>1}base[NW]=N;
-  const X=[],Z=[],WY=[];for(let w=0;w<NW;w++){const d=TR[w].d;for(let k=0;k<d.length;k+=2){X.push(d[k]);Z.push(d[k+1]);WY.push(w)}}
-  const ea=[],eb=[],ew=[],ef=[];const E=(a,b,len,f,k)=>{ea.push(a);eb.push(b);ew.push(len*k+(f?.5:0));ef.push(f)};
-  const D=(a,b)=>Math.hypot(X[a]-X[b],Z[a]-Z[b]);
-  // 1. the trails and bike streets themselves (bike lanes and signed routes cost a little more than trails)
-  const sl=new Float32Array(N);let total=0;
-  for(let w=0;w<NW;w++){const k=TR[w].tc<3?1:(TR[w].tc===3?1.12:1.3);for(let v=base[w];v<base[w+1]-1;v++){const L=D(v,v+1);sl[v]=L;total+=L;E(v,v+1,L,0,k)}}
-  // 2. points that sit on exactly the same spot are one junction
-  const linked=new Uint8Array(N);
-  {const first=new Map();for(let v=0;v<N;v++){const key=(Math.round(X[v]*4)+40000)*80001+Math.round(Z[v]*4)+40000;const u=first.get(key);if(u===undefined)first.set(key,v);else if(WY[u]!==WY[v]){E(u,v,0,1,1);linked[u]=1;linked[v]=1}else if(v-u>1)E(u,v,0,1,1)}}
-  // 3. a grid of the pieces of every way
-  const CS=40,G=new Map();
-  for(let w=0;w<NW;w++)for(let v=base[w];v<base[w+1]-1;v++){const gx0=Math.floor(Math.min(X[v],X[v+1])/CS),gx1=Math.floor(Math.max(X[v],X[v+1])/CS),gz0=Math.floor(Math.min(Z[v],Z[v+1])/CS),gz1=Math.floor(Math.max(Z[v],Z[v+1])/CS);
-    for(let gx=gx0;gx<=gx1;gx++)for(let gz=gz0;gz<=gz1;gz++){const c=(gx+300)*1000+gz+300;let a=G.get(c);if(!a){a=[];G.set(c,a)}a.push(v)}}
-  // 3a. a way that ends on the middle of another way joins it there
-  const ends=[];for(let w=0;w<NW;w++){if(base[w+1]-base[w]<2)continue;ends.push(base[w],base[w+1]-1)}
-  for(const p of ends){if(linked[p])continue;const px=X[p],pz=Z[p];let best=-1,bd=64;const gx=Math.floor(px/CS),gz=Math.floor(pz/CS);
-    for(let ax=gx-1;ax<=gx+1;ax++)for(let az=gz-1;az<=gz+1;az++){const a=G.get((ax+300)*1000+az+300);if(!a)continue;
-      for(const v of a){if(WY[v]===WY[p]||TR[WY[v]].gs)continue;const vx=X[v+1]-X[v],vz=Z[v+1]-Z[v];const L2=vx*vx+vz*vz||1e-9;let u=((px-X[v])*vx+(pz-Z[v])*vz)/L2;u=u<0?0:u>1?1:u;const dx=X[v]+vx*u-px,dz=Z[v]+vz*u-pz;const dd=dx*dx+dz*dz;if(dd<bd){bd=dd;best=v}}}
-    if(best>=0){E(p,best,D(p,best),1,1);E(p,best+1,D(p,best+1),1,1);linked[p]=1}}
-  // 3b. two ways that cross at street level join at the crossing (bridges and tunnels pass over or under)
-  {const seen=new Set();const same=(a,b)=>Math.abs(X[a]-X[b])<.13&&Math.abs(Z[a]-Z[b])<.13;
-   for(const a of G.values()){for(let i=0;i<a.length;i++){const p=a[i],wp=WY[p];if(TR[wp].gs)continue;for(let j=i+1;j<a.length;j++){const q=a[j],wq=WY[q];if(wq===wp||TR[wq].gs)continue;
-     const key=p<q?p*N+q:q*N+p;if(seen.has(key))continue;if(same(p,q)||same(p,q+1)||same(p+1,q)||same(p+1,q+1))continue;
-     const ax=X[p],az=Z[p],r1=X[p+1]-ax,r2=Z[p+1]-az,cx=X[q],cz=Z[q],s1=X[q+1]-cx,s2=Z[q+1]-cz;const den=r1*s2-r2*s1;if(Math.abs(den)<1e-6)continue;
-     const t=((cx-ax)*s2-(cz-az)*s1)/den,u=((cx-ax)*r2-(cz-az)*r1)/den;if(t<-.001||t>1.001||u<-.001||u>1.001)continue;
-     seen.add(key);const J=X.length;X.push(ax+r1*t);Z.push(az+r2*t);WY.push(-1);E(J,p,D(J,p),1,1);E(J,p+1,D(J,p+1),1,1);E(J,q,D(J,q),1,1);E(J,q+1,D(J,q+1),1,1)}}}}
-  // grid of way points for nearest-neighbor searches
-  const VC=60,VG=new Map();for(let v=0;v<N;v++){const c=(Math.floor(X[v]/VC)+300)*1000+Math.floor(Z[v]/VC)+300;let a=VG.get(c);if(!a){a=[];VG.set(c,a)}a.push(v)}
-  // 4. a dead end reaches across a short gap (a street crossing, a missing link) to whatever is nearest
-  const gaps=[];
-  for(const p of ends){if(linked[p])continue;const gx=Math.floor(X[p]/VC),gz=Math.floor(Z[p]/VC);const near=new Map();
-    for(let ax=gx-1;ax<=gx+1;ax++)for(let az=gz-1;az<=gz+1;az++){const a=VG.get((ax+300)*1000+az+300);if(!a)continue;
-      for(const u of a){const w=WY[u];if(w===WY[p])continue;const dd=(X[u]-X[p])**2+(Z[u]-Z[p])**2;if(dd>3600)continue;const o=near.get(w);if(!o||dd<o[1])near.set(w,[u,dd])}}
-    const c=[...near.values()].sort((a,b)=>a[1]-b[1]).slice(0,2);for(const [u,dd] of c){const L=Math.sqrt(dd);E(p,u,L,2,1.6);if(L>=35)gaps.push([p,u,L])}}
-  // 5. whatever is still a separate piece gets a bridge to its nearest neighbor, until the network is one piece
-  const NV=X.length;const uf=new Int32Array(NV);for(let i=0;i<NV;i++)uf[i]=i;const find=i=>{while(uf[i]!==i){uf[i]=uf[uf[i]];i=uf[i]}return i};
-  for(let e=0;e<ea.length;e++){const a=find(ea[e]),b=find(eb[e]);if(a!==b)uf[a]=b}
-  {const c0=new Set();for(let v=0;v<N;v++)c0.add(find(v));var pieces=c0.size}
-  const nearOther=(v,root,maxR)=>{const gx=Math.floor(X[v]/VC),gz=Math.floor(Z[v]/VC);let best=-1,bd=1e18;
-    const look=(ax,az)=>{const a=VG.get((ax+300)*1000+az+300);if(!a)return;for(const u of a){if(find(u)===root)continue;const dd=(X[u]-X[v])**2+(Z[u]-Z[v])**2;if(dd<bd){bd=dd;best=u}}};
+function bikeGraph(){if(BG)return BG;const t0=performance.now();const RD=LM.road,rn=RD.rn,rc=RD.rc,rf=RD.rf,xy=RD.xy,rtc=RD.rtc,off=RD.off,NR=rn.length;
+  // which ways can carry a bike: every mapped bike facility, and ordinary streets and paths (never freeways, private drives, tunnels or sidewalks)
+  const use=new Uint8Array(NR);let npt=0,nseg=0;
+  for(let i=0;i<NR;i++){const c=rc[i],f=rf[i],bike=rtc[i]!==255;if(bike||!(c===9||c===0||(f&24)||(c===7&&(f&4)))){use[i]=bike?2:1;npt+=rn[i];nseg+=rn[i]-1}}
+  // points that share a spot are one node: the data keeps every junction, so this is the real network
+  const key=new Map(),xa=[],za=[],pn=new Int32Array(npt),pOff=new Int32Array(NR).fill(-1);let pi=0;
+  for(let i=0;i<NR;i++){if(!use[i])continue;pOff[i]=pi;let o=off[i];for(let k=0;k<rn[i];k++,o+=2){const kk=(xy[o]+32768)*65536+(xy[o+1]+32768);let v=key.get(kk);if(v===undefined){v=xa.length;key.set(kk,v);xa.push(xy[o]*Qm);za.push(-xy[o+1]*Qm)}pn[pi++]=v}}
+  const NV=xa.length,NX=Float32Array.from(xa),NZ=Float32Array.from(za);
+  const CAP=2*nseg+1200,aFrom=new Int32Array(CAP),aTo=new Int32Array(CAP),aW=new Float32Array(CAP),aL=new Float32Array(CAP),aRoad=new Int32Array(CAP),aE=new Int32Array(CAP),aF=new Uint8Array(CAP);
+  const eA=new Int32Array(nseg),eB=new Int32Array(nseg),eLen=new Float32Array(nseg),eRoad=new Int32Array(nseg),eK=new Int32Array(nseg);let na=0,nE=0,total=0;
+  const arc=(a,b,w,L,road,e,fl)=>{aFrom[na]=a;aTo[na]=b;aW[na]=w;aL[na]=L;aRoad[na]=road;aE[na]=e;aF[na]=fl;na++};
+  //            mwy trunk prim sec  tert res  svc  foot cyc rail link track    cost of a regular street or path, per meter
+  const COST=[0,  0,   3.4, 2.6, 2.0, 1.6, 2.2, 1.9, 1.5, 0,  2.4, 2.0];
+  for(let i=0;i<NR;i++){if(!use[i])continue;const c=rc[i],f=rf[i],tc=rtc[i],bike=use[i]===2;const mult=bike?(tc<3?1:(tc===3?1.12:1.3)):COST[c],kind=bike?(tc<3?0:1):2,one=(f&2)&&c<7;
+    const p=pOff[i];for(let k=1;k<rn[i];k++){const a=pn[p+k-1],b=pn[p+k];if(a===b)continue;const L=Math.hypot(NX[a]-NX[b],NZ[a]-NZ[b]);let e=-1;if(bike){e=nE;eA[nE]=a;eB[nE]=b;eLen[nE]=L;eRoad[nE]=i;eK[nE]=k-1;nE++;total+=L}
+      arc(a,b,L*mult+.01,L,i,e,kind);arc(b,a,one?L*mult*6+40:L*mult+.01,L,i,e,kind|(one?4:0))}}
+  // anything the streets cannot reach gets a straight bridge to the nearest bike route
+  const isBike=new Uint8Array(NV);for(let e=0;e<nE;e++){isBike[eA[e]]=1;isBike[eB[e]]=1}
+  const uf=new Int32Array(NV);for(let i=0;i<NV;i++)uf[i]=i;const find=i=>{while(uf[i]!==i){uf[i]=uf[uf[i]];i=uf[i]}return i};
+  for(let j=0;j<na;j++){const a=find(aFrom[j]),b=find(aTo[j]);if(a!==b)uf[a]=b}
+  const VC=80,VG=new Map();for(let v=0;v<NV;v++){if(!isBike[v])continue;const c=(Math.floor(NX[v]/VC)+300)*1000+Math.floor(NZ[v]/VC)+300;let a=VG.get(c);if(!a){a=[];VG.set(c,a)}a.push(v)}
+  const nearOther=(v,root,maxR)=>{const gx=Math.floor(NX[v]/VC),gz=Math.floor(NZ[v]/VC);let best=-1,bd=1e18;
+    const look=(ax,az)=>{const a=VG.get((ax+300)*1000+az+300);if(!a)return;for(const u of a){if(find(u)===root)continue;const dd=(NX[u]-NX[v])**2+(NZ[u]-NZ[v])**2;if(dd<bd){bd=dd;best=u}}};
     for(let r=0;r<=maxR;r++){if(best>=0&&bd<=((r-1)*VC)**2)break;if(r===0){look(gx,gz);continue}
       for(let ax=gx-r;ax<=gx+r;ax++){look(ax,gz-r);look(ax,gz+r)}for(let az=gz-r+1;az<=gz+r-1;az++){look(gx-r,az);look(gx+r,az)}}
     return best<0?null:[best,Math.sqrt(bd)]};
   const bridges=[];
-  for(let round=0;round<16;round++){const mem=new Map();for(let v=0;v<N;v++){const r=find(v);let a=mem.get(r);if(!a){a=[];mem.set(r,a)}a.push(v)}
+  for(let round=0;round<16;round++){const mem=new Map();for(let v=0;v<NV;v++){if(!isBike[v])continue;const r=find(v);let a=mem.get(r);if(!a){a=[];mem.set(r,a)}a.push(v)}
     if(mem.size<=1)break;let big=-1,bn=0;for(const [r,a] of mem)if(a.length>bn){bn=a.length;big=r}let added=0;
     for(const [r,a] of mem){if(r===big||find(a[0])!==r)continue;const step=Math.max(1,Math.ceil(a.length/80));let best=null,bi=0;
-      for(let i=0;i<a.length;i+=step){const q=nearOther(a[i],r,70);if(q&&(!best||q[1]<best[2])){best=[a[i],q[0],q[1]];bi=i}}
-      if(best&&step>1)for(let i=Math.max(0,bi-step);i<Math.min(a.length,bi+step);i++){const q=nearOther(a[i],r,70);if(q&&q[1]<best[2])best=[a[i],q[0],q[1]]}
-      if(best){E(best[0],best[1],best[2],3,2.5);bridges.push(best);uf[find(best[0])]=find(best[1]);added++}}
+      for(let i=0;i<a.length;i+=step){const q=nearOther(a[i],r,60);if(q&&(!best||q[1]<best[2])){best=[a[i],q[0],q[1]];bi=i}}
+      if(best&&step>1)for(let i=Math.max(0,bi-step);i<Math.min(a.length,bi+step);i++){const q=nearOther(a[i],r,60);if(q&&q[1]<best[2])best=[a[i],q[0],q[1]]}
+      if(best&&na+2<=CAP){arc(best[0],best[1],best[2]*3+20,best[2],-1,-1,3);arc(best[1],best[0],best[2]*3+20,best[2],-1,-1,3);bridges.push(best);uf[find(best[0])]=find(best[1]);added++}}
     if(!added)break}
   // adjacency lists
-  const M=ea.length;const head=new Int32Array(NV+1);for(let e=0;e<M;e++){head[ea[e]+1]++;head[eb[e]+1]++}for(let i=0;i<NV;i++)head[i+1]+=head[i];
-  const to=new Int32Array(2*M),wt=new Float32Array(2*M),eid=new Int32Array(2*M),fill=head.slice(0,NV);
-  for(let e=0;e<M;e++){let i=fill[ea[e]]++;to[i]=eb[e];wt[i]=ew[e];eid[i]=e;i=fill[eb[e]]++;to[i]=ea[e];wt[i]=ew[e];eid[i]=e}
-  BG={X:Float32Array.from(X),Z:Float32Array.from(Z),WY:Int32Array.from(WY),base,N,NV,M,sl,total,head,to,wt,eid,ef:Uint8Array.from(ef),pieces,nb:bridges.length,ng:gaps.length,
-    dist:new Float64Array(NV),prev:new Int32Array(NV),pe:new Int32Array(NV),st:new Int32Array(NV),cur:0,hv:new Int32Array(2*M+8),hd:new Float64Array(2*M+8),pd:0};
-  // the bridges, drawn as dashed arcs
-  {const P=[];for(const [a,b,L] of bridges.concat(gaps)){const n=Math.max(6,Math.min(24,Math.ceil(L/25))),lift=Math.min(70,7+L*.14);let px=0,py=0,pz=0;
-     for(let j=0;j<=n;j++){const t=j/n,x=X[a]+(X[b]-X[a])*t,z=Z[a]+(Z[b]-Z[a])*t,y=hAt(x,z)+2.5+lift*Math.sin(Math.PI*t);if(j>0)P.push(px,py,pz,x,y,z);px=x;py=y;pz=z}}
+  const head=new Int32Array(NV+1);for(let j=0;j<na;j++)head[aFrom[j]+1]++;for(let i=0;i<NV;i++)head[i+1]+=head[i];
+  const adj=new Int32Array(na),fill=head.slice(0,NV);for(let j=0;j<na;j++)adj[fill[aFrom[j]]++]=j;
+  bgTmp=BG={NV,NX,NZ,na,nE,total,aFrom,aTo,aW,aL,aRoad,aE,aF,eA,eB,eLen,eRoad,eK,head,adj,isBike,nb:bridges.length,
+    dist:new Float64Array(NV),prev:new Int32Array(NV),pa:new Int32Array(NV),st:new Int32Array(NV),cur:0,hv:new Int32Array(na+NV+16),hd:new Float64Array(na+NV+16),pd:0};
+  // dead ends: a bike route stops and the only way on is back
+  const dead=[];for(let v=0;v<NV;v++){if(!isBike[v])continue;let n0=-1,many=false;for(let i=head[v];i<head[v+1];i++){const u=aTo[adj[i]];if(n0<0)n0=u;else if(u!==n0){many=true;break}}if(!many)dead.push(v)}
+  BG.dead=dead.length;{const main=find(eA[0]);const ok=new Uint8Array(NV);for(let v=0;v<NV;v++)ok[v]=find(v)===main?1:0;BG.ok=ok}
+  {const cv=document.createElement('canvas');cv.width=cv.height=48;const c=cv.getContext('2d');c.beginPath();c.arc(24,24,19,0,6.3);c.fillStyle='#ff8a1f';c.fill();c.lineWidth=5;c.strokeStyle='#fff';c.stroke();
+   const P=new Float32Array(dead.length*3);for(let i=0;i<dead.length;i++){const v=dead[i];P[3*i]=NX[v];P[3*i+1]=hAt(NX[v],NZ[v])+2;P[3*i+2]=NZ[v]}
+   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(P,3));const m=new THREE.Points(geo,new THREE.PointsMaterial({map:new THREE.CanvasTexture(cv),size:mobile?11:12,sizeAttenuation:false,transparent:true,alphaTest:.3,fog:false}));
+   m.frustumCulled=false;m.visible=false;scene.add(m);LM.deadDots=m}
+  // islands of bike route (joined by bike facilities alone) and, for each, the shortest street link to the next closest one
+  const u2=new Int32Array(NV);for(let i=0;i<NV;i++)u2[i]=i;const f2=i=>{while(u2[i]!==i){u2[i]=u2[u2[i]];i=u2[i]}return i};
+  for(let e=0;e<nE;e++){const a=f2(eA[e]),b=f2(eB[e]);if(a!==b)u2[a]=b}
+  const isl=new Map();for(let v=0;v<NV;v++){if(!isBike[v])continue;const r=f2(v);let a=isl.get(r);if(!a){a=[];isl.set(r,a)}a.push(v)}
+  BG.islands=isl.size;LM.covPaint=new Paint(0xffffff,mobile?3.4:3.8);LM.linkPaint=new Paint(0x3aa0ff,mobile?2.6:3);BG.linked=new Set();BG.links=[];let linkLen=0;
+  if(isl.size>1)for(const [r,a] of isl){const t=bgRoute(a,v=>isBike[v]===1&&f2(v)!==r);if(t<0)continue;const P=bgPath(t);for(const j of P.a){if((aF[j]&3)===2){BG.links.push(j);linkLen+=aL[j]}}}
+  for(const j of BG.links)paintLink(j);LM.linkPaint.flush();BG.linkLen=linkLen;LM.linkPaint.show(false);LM.covPaint.show(false);
+  // straight bridges, drawn as dashed arcs
+  {const P=[];for(const [a,b,L] of bridges){const n=Math.max(6,Math.min(24,Math.ceil(L/25))),lift=Math.min(70,7+L*.14);let px=0,py=0,pz=0;
+     for(let j=0;j<=n;j++){const t=j/n,x=NX[a]+(NX[b]-NX[a])*t,z=NZ[a]+(NZ[b]-NZ[a])*t,y=hAt(x,z)+2.5+lift*Math.sin(Math.PI*t);if(j>0)P.push(px,py,pz,x,y,z);px=x;py=y;pz=z}}
    if(P.length){const geo=new LineSegmentsGeometry();geo.setPositions(P);const m=new LineMaterial({color:0xffffff,linewidth:mobile?1.9:2.3,worldUnits:false,dashed:true,dashSize:10,gapSize:8,fog:false,transparent:true,opacity:.95});m.resolution.set(innerWidth,innerHeight);
      const l=new LineSegments2(geo,m);l.computeLineDistances();l.frustumCulled=false;l.visible=false;scene.add(l);LM.bridgeLines=l;LM.lineMats.push(m)}}
   BG.ms=Math.round(performance.now()-t0);return BG}
-function bgNearest(x,z,thr){const g=BG,X=g.X,Z=g.Z;let best=-1,bd=thr*thr;for(let v=0;v<g.N;v++){const dx=X[v]-x,dz=Z[v]-z,dd=dx*dx+dz*dz;if(dd<bd){bd=dd;best=v}}return best}
-// shortest way over the network from one point to the first point that satisfies isT
-function bgRoute(src,isT){const g=BG,head=g.head,to=g.to,wt=g.wt,eid=g.eid,dist=g.dist,prev=g.prev,pe=g.pe,st=g.st,hv=g.hv,hd=g.hd;const cur=++g.cur;let hn=0;
+function paintEdge(P,e){const g=BG,T=LM.trails[LM.trailOf[g.eRoad[e]]];const i0=T.ix[g.eK[e]],i1=T.ix[g.eK[e]+1],d=T.d,ys=T.ys;for(let k=i0;k<i1;k++)P.add(d[2*k],ys[k]+.45,d[2*k+1],d[2*k+2],ys[k+1]+.45,d[2*k+3])}
+function paintLink(j){const g=BG,a=g.aFrom[j],b=g.aTo[j],k=a<b?a*g.NV+b:b*g.NV+a;if(g.linked.has(k))return false;g.linked.add(k);const n=Math.max(1,Math.ceil(g.aL[j]/40));let px=g.NX[a],pz=g.NZ[a],py=hAt(px,pz)+1.1;
+  for(let i=1;i<=n;i++){const x=g.NX[a]+(g.NX[b]-g.NX[a])*i/n,z=g.NZ[a]+(g.NZ[b]-g.NZ[a])*i/n,y=hAt(x,z)+1.1;LM.linkPaint.add(px,py,pz,x,y,z);px=x;py=y;pz=z}return true}
+function bgNearest(x,z,thr,bikeOnly){const g=BG,X=g.NX,Z=g.NZ;let best=-1,bd=thr*thr;for(let v=0;v<g.NV;v++){if(!g.ok[v]||(bikeOnly&&!g.isBike[v]))continue;const dx=X[v]-x,dz=Z[v]-z,dd=dx*dx+dz*dz;if(dd<bd){bd=dd;best=v}}return best}
+// shortest way over the network from the sources to the first node that satisfies isT
+function bgRoute(srcs,isT){const g=BG||bgTmp,head=g.head,adj=g.adj,aTo=g.aTo,aW=g.aW,dist=g.dist,prev=g.prev,pa=g.pa,st=g.st,hv=g.hv,hd=g.hd;const cur=++g.cur;let hn=0;
   const push=(v,d)=>{let i=hn++;while(i>0){const p=(i-1)>>1;if(hd[p]<=d)break;hd[i]=hd[p];hv[i]=hv[p];i=p}hd[i]=d;hv[i]=v};
   const pop=()=>{const v=hv[0];g.pd=hd[0];hn--;if(hn>0){const lv=hv[hn],ld=hd[hn];let i=0;for(;;){let c=2*i+1;if(c>=hn)break;if(c+1<hn&&hd[c+1]<hd[c])c++;if(hd[c]>=ld)break;hd[i]=hd[c];hv[i]=hv[c];i=c}hd[i]=ld;hv[i]=lv}return v};
-  dist[src]=0;st[src]=cur;prev[src]=-1;pe[src]=-1;push(src,0);
+  for(const s0 of srcs){dist[s0]=0;st[s0]=cur;prev[s0]=-1;pa[s0]=-1;push(s0,0)}
   while(hn){const v=pop(),d=g.pd;if(d>dist[v])continue;if(isT(v))return v;
-    for(let i=head[v];i<head[v+1];i++){const u=to[i],nd=d+wt[i];if(st[u]!==cur||nd<dist[u]){st[u]=cur;dist[u]=nd;prev[u]=v;pe[u]=eid[i];push(u,nd)}}}
+    for(let i=head[v];i<head[v+1];i++){const j=adj[i],u=aTo[j],nd=d+aW[j];if(st[u]!==cur||nd<dist[u]){st[u]=cur;dist[u]=nd;prev[u]=v;pa[u]=j;push(u,nd)}}}
   return -1}
-function bgPath(t){const g=BG,v=[],f=[];let x=t;while(x>=0){v.push(x);if(g.pe[x]>=0)f.push(g.ef[g.pe[x]]);x=g.prev[x]}v.reverse();f.reverse();return {v,f,n:null}}
-function newRide(kind){return {pts:[],cum:[],wy:[],cv:[],st:[0,0,0],L:0,s:0,v0:120,mul:1,v:120,t:0,ui:0,kind}}
-function appendLeg(R,P){const g=BG,X=g.X,Z=g.Z,WY=g.WY;let cov=R.cv.length?R.cv[R.cv.length-1]:0;
-  const add=(x,z,w)=>{const n=R.pts.length;let d=0;if(n){d=Math.hypot(x-R.pts[n-2],z-R.pts[n-1]);if(d<.05){R.cv[R.cv.length-1]=cov;return}}R.pts.push(x,z);R.cum.push((R.cum.length?R.cum[R.cum.length-1]:0)+d);R.wy.push(w);R.cv.push(cov)};
-  if(!R.pts.length)add(X[P.v[0]],Z[P.v[0]],WY[P.v[0]]);
-  for(let i=0;i<P.f.length;i++){const a=P.v[i],b=P.v[i+1],f=P.f[i],L=Math.hypot(X[b]-X[a],Z[b]-Z[a]);let w;
-    if(f===0){w=WY[a];if(LM.trails[w].tc<3)R.st[0]+=L;else R.st[1]+=L;if(P.n&&P.n[i])cov+=L}
-    else if(f>=2){w=-1;R.st[2]+=L}
-    else w=WY[b]>=0?WY[b]:WY[a];
-    const k=f>=2?Math.max(1,Math.ceil(L/30)):1;for(let j=1;j<=k;j++)add(X[a]+(X[b]-X[a])*j/k,Z[a]+(Z[b]-Z[a])*j/k,w)}
+function bgPath(t){const g=BG||bgTmp,a=[];let x=t;while(g.pa[x]>=0){a.push(g.pa[x]);x=g.prev[x]}a.reverse();return {start:x,a,nc:a.length}}
+let bgTmp=null;
+function newRide(kind){return {pts:[],cum:[],wy:[],md:[],tg:[],cv:[],ut:[],ev:[],ea:[],em:[],ei:0,sk:[0,0,0,0],sm:[0,0,0,0],turns:0,lastArc:-1,L:0,s:0,v0:120,mul:1,v:120,t:0,ui:0,kind}}
+// add a planned stretch to a ride. P.a = arcs in order; the first P.nc of them only get you there, the rest are new ground
+function appendLeg(R,P){const g=BG,NX=g.NX,NZ=g.NZ;let cov=R.cv.length?R.cv[R.cv.length-1]:0;const tgt=P.nc<P.a.length?g.aRoad[P.a[P.nc]]:-1;
+  const add=(x,z,road,md)=>{const n=R.pts.length;const d=n?Math.hypot(x-R.pts[n-2],z-R.pts[n-1]):0;R.pts.push(x,z);R.cum.push((R.cum.length?R.cum[R.cum.length-1]:0)+d);R.wy.push(road);R.md.push(md);R.tg.push(tgt);R.cv.push(cov);R.ut.push(0)};
+  if(!R.pts.length)add(NX[P.start],NZ[P.start],P.a.length?g.aRoad[P.a[0]]:-1,0);
+  for(let n=0;n<P.a.length;n++){const j=P.a[n],a=g.aFrom[j],b=g.aTo[j],L=g.aL[j],kind=g.aF[j]&3,bikeE=g.aE[j]>=0;let md;
+    if(kind===3)md=3;else if(R.kind==='all')md=n>=P.nc?0:(bikeE?1:2);else md=bikeE?0:2;
+    if(md===0&&R.kind==='all')cov+=L;R.sk[kind]+=L;R.sm[md]+=L;
+    if(R.lastArc>=0&&g.aFrom[R.lastArc]===b&&g.aTo[R.lastArc]===a){R.ut[R.ut.length-1]=1;R.turns++}
+    const k=kind===3?Math.max(1,Math.ceil(L/30)):1;for(let q=1;q<=k;q++)add(NX[a]+(NX[b]-NX[a])*q/k,NZ[a]+(NZ[b]-NZ[a])*q/k,g.aRoad[j],md);
+    if(R.kind==='all'&&(md===0||md===2)){R.ev.push(R.cum[R.cum.length-1]);R.ea.push(j);R.em.push(md)}
+    R.lastArc=j}
   R.L=R.cum.length?R.cum[R.cum.length-1]:0}
-// ride everything: go to the nearest stretch not ridden yet, ride it to its end, repeat
-function allNext(R){const g=BG,ev=R.ev,base=g.base,WY=g.WY,N=g.N;
-  const open=v=>{if(v>=N)return false;const w=WY[v];return (v+1<base[w+1]&&!ev[v])||(v>base[w]&&!ev[v-1])};
-  const t=bgRoute(R.u,open);if(t<0)return null;const P=bgPath(t);P.n=new Array(P.f.length).fill(0);
-  let v=t;const w=WY[v],hi=base[w+1]-1,lo=base[w];const fw=v<hi&&!ev[v],bk=v>lo&&!ev[v-1];let dir=fw?1:-1;
-  if(fw&&bk){let lf=0,lb=0;for(let k=v;k<hi&&!ev[k];k++)lf+=g.sl[k];for(let k=v-1;k>=lo&&!ev[k];k--)lb+=g.sl[k];dir=lf<=lb?1:-1}
-  for(;;){const e=dir>0?v:v-1;if(e<lo||e>=hi||ev[e])break;ev[e]=1;v+=dir;P.v.push(v);P.f.push(0);P.n.push(1)}
+// ride everything: head for the nearest stretch not ridden yet (retracing or linking on regular streets to get
+// there), ride new ground for as long as it lasts, turn around at the dead end, repeat until nothing is left
+function allNext(R){const g=BG,cov=R.cov,head=g.head,adj=g.adj,aTo=g.aTo,aFrom=g.aFrom,aE=g.aE,aF=g.aF,aRoad=g.aRoad,NX=g.NX,NZ=g.NZ;
+  const open=v=>{for(let i=head[v];i<head[v+1];i++){const j=adj[i];if(aE[j]>=0&&!cov[aE[j]]&&!(aF[j]&4))return true}return false};
+  const t=bgRoute([R.u],open);if(t<0)return null;const P=bgPath(t);let v=t,pj=P.a.length?P.a[P.a.length-1]:R.lastArc;
+  for(;;){let hx=0,hz=0;if(pj>=0){hx=NX[aTo[pj]]-NX[aFrom[pj]];hz=NZ[aTo[pj]]-NZ[aFrom[pj]];const hl=Math.hypot(hx,hz)||1;hx/=hl;hz/=hl}
+    let best=-1,bs=1e9;for(let i=head[v];i<head[v+1];i++){const j=adj[i],e=aE[j];if(e<0||cov[e]||(aF[j]&4))continue;const u=aTo[j],dx=NX[u]-NX[v],dz=NZ[u]-NZ[v],dl=Math.hypot(dx,dz)||1;
+      let sc=pj>=0?1-(dx*hx+dz*hz)/dl:0;if(pj>=0&&aRoad[j]===aRoad[pj])sc-=.6;if(sc<bs){bs=sc;best=j}}
+    if(best<0)break;cov[aE[best]]=1;P.a.push(best);v=aTo[best];pj=best}
   R.u=v;return P}
-function rideAll(){const g=bikeGraph();stopTour();clearRoute();clearPins();rideA=-1;const t=controls.target;const R=newRide('all');R.u=bgNearest(t.x,t.z,1e9);R.ev=new Uint8Array(g.N);
-  R.more=()=>{for(let k=0;k<80&&R.L-R.s<4000;k++){const P=allNext(R);if(!P){R.more=null;break}appendLeg(R,P)}};
+function rideAll(){const g=bikeGraph();stopTour();clearRoute();clearPins();rideA=-1;LM.covPaint.clear();LM.covPaint.show(true);const t=controls.target;const R=newRide('all');R.u=bgNearest(t.x,t.z,1e9,true);R.cov=new Uint8Array(g.nE);
+  R.more=()=>{for(let k=0;k<120&&R.L-R.s<4000;k++){const P=allNext(R);if(!P){R.more=null;break}appendLeg(R,P)}};
   R.more();if(R.pts.length<4){rideIntro('There is nothing to ride near here.');return}
   showCard('Bike ride','Riding everything…',-1);beginRide(R)}
-function rideRoute(a,b){const g=bikeGraph();const t=bgRoute(a,v=>v===b);if(t<0){rideIntro('Those two spots are too far apart to bridge.');return}
+function rideRoute(a,b){const g=bikeGraph();const t=bgRoute([a],v=>v===b);if(t<0){rideIntro('There is no way between those two spots.');return}
   const R=newRide('route');appendLeg(R,bgPath(t));if(R.L<60){rideIntro('Those two spots are right next to each other.');return}
-  R.v0=Math.min(150,Math.max(22,R.L/70));R.v=R.v0;const parts=[];if(R.st[0]>20)parts.push(miles(R.st[0])+' on trails');if(R.st[1]>20)parts.push(miles(R.st[1])+' on bike streets');if(R.st[2]>80)parts.push(miles(R.st[2])+' bridged');
+  R.v0=Math.min(150,Math.max(22,R.L/70));R.v=R.v0;const parts=[];if(R.sk[0]>40)parts.push(miles(R.sk[0])+' on trails');if(R.sk[1]>40)parts.push(miles(R.sk[1])+' on bike streets');if(R.sk[2]>40)parts.push(miles(R.sk[2])+' on regular streets');if(R.sk[3]>40)parts.push(miles(R.sk[3])+' bridged');
   R.sum=`${miles(R.L)} mi (${parts.join(', ')})`;showRoute(R.pts);showCard('Bike ride',R.sum,-1);beginRide(R)}
-function showRoute(pts){clearRoute();const P=[];for(let k=2;k<pts.length;k+=2)P.push(pts[k-2],hAt(pts[k-2],pts[k-1])+1.9,pts[k-1],pts[k],hAt(pts[k],pts[k+1])+1.9,pts[k+1]);if(!P.length)return;
+function showRoute(pts){clearRoute();const P=[];for(let k=2;k<pts.length;k+=2){const ax=pts[k-2],az=pts[k-1],bx=pts[k],bz=pts[k+1],n=Math.max(1,Math.ceil(Math.hypot(bx-ax,bz-az)/40));let px=ax,pz=az,py=hAt(ax,az)+1.9;
+    for(let i=1;i<=n;i++){const x=ax+(bx-ax)*i/n,z=az+(bz-az)*i/n,y=hAt(x,z)+1.9;P.push(px,py,pz,x,y,z);px=x;py=y;pz=z}}if(!P.length)return;
   if(!LM.routeMat){LM.routeMat=new LineMaterial({color:0xfff27a,linewidth:mobile?5:5.5,worldUnits:false,fog:false});LM.routeMat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(LM.routeMat)}
   const geo=new LineSegmentsGeometry();geo.setPositions(P);const l=new LineSegments2(geo,LM.routeMat);l.frustumCulled=false;scene.add(l);LM.routeLine=l;dirty=true}
 function clearRoute(){if(LM.routeLine){scene.remove(LM.routeLine);LM.routeLine.geometry.dispose();LM.routeLine=null;dirty=true}}
 function setPin(i,v){if(!LM.pins)LM.pins=[0x2bd46a,0xff4d4d].map(c=>{const g=new THREE.Group(),m=new THREE.MeshBasicMaterial({color:c,fog:false});const p=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,34,8),m);p.position.y=17;const b=new THREE.Mesh(new THREE.SphereGeometry(5.5,14,10),m);b.position.y=37;g.add(p,b);g.visible=false;scene.add(g);return g});
-  const g=LM.pins[i];g.position.set(BG.X[v],hAt(BG.X[v],BG.Z[v]),BG.Z[v]);g.visible=true;dirty=true}
+  const g=LM.pins[i];g.position.set(BG.NX[v],hAt(BG.NX[v],BG.NZ[v]),BG.NZ[v]);g.visible=true;dirty=true}
 function clearPins(){for(const g of LM.pins||[])g.visible=false;dirty=true}
 let rideMode=false,rideA=-1;
-function rideIntro(msg){const g=BG;showCard('Bike ride',(msg?msg+' ':'')+`Tap any trail or bike street to set a start, then tap where to finish. Or ride everything: all ${Math.round(g.total/1609.344)} mi in one trip. White dashed arcs mark the ${g.nb+g.ng} gaps the ride bridges.`,-1,{label:'▶ Ride everything',fn:rideAll})}
+function rideIntro(msg){const g=BG;showCard('Bike ride',(msg?msg+' ':'')+`Tap two spots to ride between them. Or ride everything: every inch of all ${miles(g.total)} mi, turning around at dead ends and retracing to the next closest route. Orange dots: the ${g.dead} dead ends. Blue: regular streets that link one bike route to the next.`,-1,{label:'▶ Ride everything',fn:rideAll})}
 function setRideMode(on){if(on===rideMode)return;rideMode=on;$('bRide').classList.toggle('on',on);
-  if(on){if(walk.on)setWalk(false);if(!trailsOn)setTrails(true);bikeGraph();if(LM.bridgeLines)LM.bridgeLines.visible=true;rideA=-1;rideIntro()}
-  else{if(ride)stopRide();rideA=-1;clearPins();clearRoute();if(LM.bridgeLines)LM.bridgeLines.visible=false;hideCard()}dirty=true}
-function ridePick(){const gp=groundPoint();if(!gp)return;const v=bgNearest(gp.x,gp.z,Math.min(260,Math.max(28,gp.t*.035)));if(v<0){if(rideA>=0)showCard('Bike ride',`Start is set on ${wayName(BG.WY[rideA])}. Nothing to ride where you tapped; tap closer to a trail or bike street to finish.`,-1,{label:'▶ Ride everything',fn:rideAll});else rideIntro('No trail or bike street there.');return}
-  if(rideA<0){rideA=v;clearRoute();clearPins();setPin(0,v);showCard('Bike ride',`Start set on ${wayName(BG.WY[v])}. Now tap where to finish.`,-1,{label:'▶ Ride everything',fn:rideAll})}
+  if(on){if(walk.on)setWalk(false);if(!trailsOn)setTrails(true);bikeGraph();for(const o of [LM.bridgeLines,LM.deadDots])if(o)o.visible=true;LM.linkPaint.show(true);LM.covPaint.show(true);rideA=-1;rideIntro()}
+  else{if(ride)stopRide();rideA=-1;clearPins();clearRoute();for(const o of [LM.bridgeLines,LM.deadDots])if(o)o.visible=false;LM.linkPaint.show(false);LM.covPaint.show(false);hideCard()}dirty=true}
+function nodeRoad(v){const g=BG;let r=-1;for(let i=g.head[v];i<g.head[v+1];i++){const j=g.adj[i];if(g.aRoad[j]<0)continue;if(g.aE[j]>=0)return g.aRoad[j];if(r<0)r=g.aRoad[j]}return r}
+function ridePick(){const gp=groundPoint();if(!gp)return;const v=bgNearest(gp.x,gp.z,Math.min(260,Math.max(28,gp.t*.035)),false);const act={label:'▶ Ride everything',fn:rideAll};
+  if(v<0){if(rideA>=0)showCard('Bike ride',`Start is set on ${roadName(nodeRoad(rideA))}. Nothing to ride where you tapped; tap closer to a street or trail to finish.`,-1,act);else rideIntro('No street or trail there.');return}
+  if(rideA<0){rideA=v;clearRoute();clearPins();setPin(0,v);showCard('Bike ride',`Start set on ${roadName(nodeRoad(v))}. Now tap where to finish.`,-1,act)}
   else{const a=rideA;rideA=-1;setPin(1,v);rideRoute(a,v)}}
 function pick(x,y){if(performance.now()-rideStopT<500)return;ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(rideMode){ridePick();return}const hit=ray.intersectObjects(pickables,true)[0];if(!hit){if(!pickTrail())hideCard();return}
   let o=hit.object;while(o&&!o.userData.info&&!o.userData.ids&&!o.userData.bus)o=o.parent;if(!o)return;
   let title,body;
   if(o.userData.bus){const st=busState[hit.instanceId];if(!st)return;title='StarTran route '+st.short+(st.long?' · '+st.long:'');body='Scheduled position from the published timetable, not a live GPS reading.'}
+  else if(o.userData.dev){devCard(0);return}
   else if(o.userData.info){[title,body]=o.userData.info}
   else{const st=o.userData.start;const idx=hit.faceIndex*3;let lo=0,hi=st.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(st[m]<=idx)lo=m;else hi=m-1}
     showB(o.userData.ids[lo]);return}
@@ -844,7 +916,7 @@ function pick(x,y){if(performance.now()-rideStopT<500)return;ndc.set(x/innerWidt
 function showB(b){const info=H.infos[S.b_info[b]];const tag=H.tags[S.b_tag[b]];const h=S.b_h[b]/10;const src=S.b_src[b];const rf=S.b_roof[b],tc=S.b_tc[b];
   const kinds={Residential:'Residential',Other:'Outbuilding',Commercial:'Commercial',Agricultural:'Agricultural',Industrial:'Industrial',yes:'Building',house:'House',detached:'Detached house',semidetached_house:'Duplex',garage:'Garage',garages:'Garages',shed:'Shed',apartments:'Apartments',roof:'Canopy',static_caravan:'Mobile home',retail:'Retail',commercial:'Commercial',industrial:'Industrial',university:'University building',office:'Office',church:'Church',school:'School',hotel:'Hotel',dormitory:'Residence hall',warehouse:'Warehouse',hospital:'Hospital',public:'Public building',stadium:'Stadium',residential:'Residential'};
   const kind=kinds[tag]||(tag.charAt(0).toUpperCase()+tag.slice(1).replace(/_/g,' '));
-  const parts=[];if(info==='Devaney Sports Center')parts.push(TAG);if(info)parts.push(kind);
+  const parts=[];if(info==='Devaney Sports Center'){devCard(0);return}if(info)parts.push(kind);
   const st=S.b_st&&H.stypes?H.stypes[S.b_st[b]]:'';if(st)parts.push(st);
   const yr=S.b_yr?S.b_yr[b]:0;if(yr)parts.push('built '+yr);
   if(S.b_fl&&(S.b_fl[b]&1))parts.push("new in the city's 2026 footprint update");
@@ -856,8 +928,44 @@ function showB(b){const info=H.infos[S.b_info[b]];const tag=H.tags[S.b_tag[b]];c
   else parts.push(`height about ${ft(h)}, guessed from type and size`);
   parts.push('outline: '+(['OpenStreetMap','City of Lincoln/Lancaster County, 2026','Microsoft'][S.b_org?S.b_org[b]:0]));
   let body=parts.join(' · ');body=body.charAt(0).toUpperCase()+body.slice(1);
-  showCard(info||kind,body)}
-let pd=null;
+  // the county's public record for the parcel this building stands on (the map itself stores only the parcel number)
+  const links=[],p1=S.b_p1?S.b_p1[b]:0,sqft=Math.round(bArea(b)*10.7639/10)*10;body+=` · footprint about ${sqft.toLocaleString()} sq ft`;
+  if(p1){const pid=String(p1).padStart(7,'0')+String(S.b_p2[b]).padStart(3,'0')+String(S.b_p3[b]).padStart(3,'0');body+=` · county parcel ${pid.slice(0,2)}-${pid.slice(2,4)}-${pid.slice(4,7)}-${pid.slice(7,10)}-${pid.slice(10)}`;
+    links.push({href:CTY+pid,label:(S.b_fl[b]&2)?'County record for this site ↗':'County property record ↗'})}
+  // owner, value, sales, zoning and legal description live on the county page; the map stores none of them
+  links.push({href:`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${(H.lat0-LM.bc[2*b+1]/KYm).toFixed(6)},${(H.lon0+LM.bc[2*b]/KXm).toFixed(6)}`,label:'Street View ↗'});
+  showCard(info||kind,body,undefined,undefined,links)}
+// footprint area of a building in square meters, from its outline (holes taken out)
+let bOff=null;
+function bArea(b){if(!bOff){const nr=S.b_rings,rs=S.b_rs,N=nr.length,ro=new Uint32Array(N),xo=new Uint32Array(N);let r=0,x=0;for(let i=0;i<N;i++){ro[i]=r;xo[i]=x;for(let k=0;k<nr[i];k++)x+=rs[r++]*2}bOff={ro,xo}}
+  const xy=S.b_xy;let a=0,x=bOff.xo[b];for(let k=0;k<S.b_rings[b];k++){const n=S.b_rs[bOff.ro[b]+k];let q=0;for(let j=0;j<n;j++){const j2=(j+1)%n;q+=xy[x+2*j]*xy[x+2*j2+1]-xy[x+2*j2]*xy[x+2*j+1]}a+=(k?-1:1)*Math.abs(q)/2;x+=2*n}return a*Qm*Qm}
+const CTY='https://orion.lancaster.ne.gov/Property-Detail/PropertyNumber/';
+let pd=null,lastTap=null;
+// ---------- panning: the spot you grab stays under your finger or pointer, and a flick keeps the map gliding
+const ptrs=new Map();let pan=null,panV=null;const pRay=new THREE.Raycaster(),pN=new THREE.Vector2();
+function planeHit(cx,cy,y0){pN.set(cx/innerWidth*2-1,-(cy/innerHeight)*2+1);pRay.setFromCamera(pN,camera);const o=pRay.ray.origin,d=pRay.ray.direction;if(d.y>-.012)return null;const t=(y0-o.y)/d.y;if(!(t>0))return null;return {x:o.x+d.x*t,z:o.z+d.z*t,t}}
+function groundAt(cx,cy){const t=controls.target;let y0=hAt(t.x,t.z),h=planeHit(cx,cy,y0);if(h)for(let k=0;k<4;k++){y0=hAt(h.x,h.z);const h2=planeHit(cx,cy,y0);if(!h2)break;h=h2}if(h)h.y0=y0;return h}
+// move the view sideways, never off the edge of the map
+function shiftView(dx,dz){const t=controls.target,nx=Math.max(-8700,Math.min(8700,t.x+dx)),nz=Math.max(-8700,Math.min(8700,t.z+dz));dx=nx-t.x;dz=nz-t.z;t.x=nx;t.z=nz;camera.position.x+=dx;camera.position.z+=dz;dirty=true;return [dx,dz]}
+function panStart(id,cx,cy){panV=null;const d=camera.position.distanceTo(controls.target),h=groundAt(cx,cy);
+  // grabbing near the horizon would fling the map, so there the drag is measured on the screen instead
+  pan=(h&&h.t<d*4.5)?{id,ax:h.x,az:h.z,y0:h.y0,lt:performance.now(),vx:0,vz:0}:{id,rel:1,px:cx,py:cy,lt:performance.now(),vx:0,vz:0}}
+canvas.addEventListener('pointerdown',e=>{if(walk.on)return;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});if(ptrs.size===1&&(e.pointerType!=='mouse'||e.button===0))panStart(e.pointerId,e.clientX,e.clientY);else pan=null});
+canvas.addEventListener('pointermove',e=>{const q=ptrs.get(e.pointerId);if(q){q.x=e.clientX;q.y=e.clientY}if(!pan||e.pointerId!==pan.id||walk.on||fly||ride)return;let dx,dz;const d=camera.position.distanceTo(controls.target);
+  if(pan.rel){const k=2*d*Math.tan(camera.fov*Math.PI/360)/innerHeight,az=Math.atan2(camera.position.x-controls.target.x,camera.position.z-controls.target.z),fx=-Math.sin(az),fz=-Math.cos(az),sx=e.clientX-pan.px,sy=e.clientY-pan.py;pan.px=e.clientX;pan.py=e.clientY;dx=(fz*sx+fx*sy)*k;dz=(-fx*sx+fz*sy)*k}
+  else{const h=planeHit(e.clientX,e.clientY,pan.y0);if(!h)return;dx=pan.ax-h.x;dz=pan.az-h.z;const lim=d*.6,m=Math.hypot(dx,dz);if(m>lim){dx*=lim/m;dz*=lim/m}}
+  const now=performance.now(),dt=Math.max(4,now-pan.lt);[dx,dz]=shiftView(dx,dz);pan.vx=pan.vx*.55+dx/dt*.45;pan.vz=pan.vz*.55+dz/dt*.45;pan.lt=now});
+const panEnd=e=>{ptrs.delete(e.pointerId);if(pan&&e.pointerId===pan.id){const idle=performance.now()-pan.lt,sp=Math.hypot(pan.vx,pan.vz)*1000;if(idle<80&&sp>camera.position.distanceTo(controls.target)*.22)panV={x:pan.vx,z:pan.vz};pan=null}
+  // one finger left over after a pinch picks the map back up
+  else if(!walk.on&&ptrs.size===1){const [id,q]=[...ptrs][0];panStart(id,q.x,q.y)}};
+canvas.addEventListener('pointerup',panEnd);canvas.addEventListener('pointercancel',panEnd);
+function viewAngles(){const t=controls.target,p=camera.position,d=p.distanceTo(t);return {d,az:Math.atan2(p.x-t.x,p.z-t.z)*180/Math.PI,el:Math.asin(Math.min(1,Math.max(-1,(p.y-t.y)/d)))*180/Math.PI}}
+function zoomBy(f,cx,cy,dur){const v=viewAngles(),h=cx!==undefined?groundAt(cx,cy):null,t=controls.target,nd=Math.min(24000,Math.max(45,v.d*f));stopTour();panV=null;
+  // zooming in on a point brings that point toward the middle
+  const tx=h&&f<1?t.x+(h.x-t.x)*.75:t.x,tz=h&&f<1?t.z+(h.z-t.z)*.75:t.z;flyTo(camTo(Math.max(-8700,Math.min(8700,tx)),Math.max(-8700,Math.min(8700,tz)),nd,v.az,Math.max(4,v.el)),dur||420)}
+let flat=null;
+function set2D(on){if(walk.on)setWalk(false);const v=viewAngles(),t=controls.target;stopTour();panV=null;if(on){flat={az:v.az,el:v.el};flyTo(camTo(t.x,t.z,v.d,0,88.6),900)}else{const f=flat||{az:200,el:36};flat=null;flyTo(camTo(t.x,t.z,v.d,f.az,Math.min(60,Math.max(24,f.el))),900)}
+  $('b2D').classList.toggle('on',on);$('b2D').textContent=on?'3D view':'2D view'}
 const walk={on:false,yaw:0,pitch:0,mx:0,mz:0,keys:{},look:null,joy:null,t:0};
 function setWalk(on){if(on===walk.on)return;if(on&&rideMode)setRideMode(false);stopTour();fly=null;if(ride)stopRide();walk.on=on;$('bWalk').classList.toggle('on',on);controls.enabled=!on;$('walkHint').style.display=on?'block':'none';if(on)setTimeout(()=>$('walkHint').style.display='none',4000);
   if(on){const t=controls.target;const dx=t.x-camera.position.x,dz=t.z-camera.position.z;walk.yaw=Math.atan2(-dx,-dz);walk.pitch=.04;const dh=Math.hypot(dx,dz)||1,back=Math.min(140,dh*.4),sx=t.x-dx/dh*back,sz=t.z-dz/dh*back;camera.position.set(sx,hAt(sx,sz)+1.7,sz);camera.near=.4;camera.fov=62;camera.updateProjectionMatrix()}
@@ -878,9 +986,15 @@ canvas.addEventListener('pointermove',e=>{if(!walk.on)return;
   else if(walk.look&&e.pointerId===walk.look.id){walk.yaw-=(e.clientX-walk.look.x)*.0045;walk.pitch=Math.max(-1.2,Math.min(1.2,walk.pitch-(e.clientY-walk.look.y)*.0045));walk.look.x=e.clientX;walk.look.y=e.clientY;dirty=true}});
 const endPtr=e=>{if(walk.joy&&e.pointerId===walk.joy.id){walk.joy=null;walk.mx=walk.mz=0;$('joy').style.display='none'}if(walk.look&&e.pointerId===walk.look.id)walk.look=null};
 canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);
-canvas.addEventListener('pointerup',e=>{if(pd&&Math.hypot(e.clientX-pd.x,e.clientY-pd.y)<7&&performance.now()-pd.t<450)pick(e.clientX,e.clientY);pd=null});
-canvas.addEventListener('wheel',()=>{if(tour)stopTour();fly=null;if(ride)stopRide()},{passive:true});
-$('cx').onclick=()=>{if(ride)stopRide();hideCard()};
+canvas.addEventListener('pointerup',e=>{if(pd&&Math.hypot(e.clientX-pd.x,e.clientY-pd.y)<7&&performance.now()-pd.t<450){const now=performance.now();
+    if(lastTap&&now-lastTap.t<340&&Math.hypot(e.clientX-lastTap.x,e.clientY-lastTap.y)<36&&!walk.on&&!rideMode){lastTap=null;zoomBy(.45,e.clientX,e.clientY,650)}else{lastTap={t:now,x:e.clientX,y:e.clientY};pick(e.clientX,e.clientY)}}pd=null});
+canvas.addEventListener('wheel',()=>{if(tour)stopTour();fly=null;panV=null;if(ride)stopRide()},{passive:true});
+// keyboard: arrows move, + and - zoom, Q and E turn
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||walk.on||e.metaKey||e.ctrlKey||e.altKey)return;if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','+','=','-','_','q','Q','e','E'].includes(e.key))return;e.preventDefault();stopTour();panV=null;
+  const v=viewAngles(),a=v.az*Math.PI/180,fx=-Math.sin(a),fz=-Math.cos(a),st=v.d*.16,t=controls.target;
+  switch(e.key){case 'ArrowUp':shiftView(fx*st,fz*st);break;case 'ArrowDown':shiftView(-fx*st,-fz*st);break;case 'ArrowLeft':shiftView(fz*st,-fx*st);break;case 'ArrowRight':shiftView(-fz*st,fx*st);break;
+    case '+':case '=':zoomBy(.7);break;case '-':case '_':zoomBy(1.42);break;case 'q':case 'Q':flyTo(camTo(t.x,t.z,v.d,v.az+20,v.el),300);break;case 'e':case 'E':flyTo(camTo(t.x,t.z,v.d,v.az-20,v.el),300);break}});
+$('cx').onclick=()=>{if(ride)stopRide();if(wxDemo)setDemo(-1);hideCard()};
 $('cride').onclick=()=>{if(ride){stopRide();return}if(cardAct){cardAct.fn();return}if(rideWay>=0)startRide(rideWay)};
 $('cspd').onclick=()=>{if(!ride)return;const R=ride;R.mul=R.mul>=8?1:R.mul*2;R.v=R.v0*R.mul;$('cspd').textContent='Speed '+R.mul+'×'};
 $('bRide').onclick=()=>setRideMode(!rideMode);
@@ -910,23 +1024,140 @@ function updateBuses(){if(!busMesh)return;const B=H.bus;if(!busOn){busMesh.count
   busMesh.count=n;busMesh.instanceMatrix.needsUpdate=true;if(busMesh.instanceColor)busMesh.instanceColor.needsUpdate=true;shadowDirty=true;dirty=true;
   $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${n} bus${n===1?'':'es'} on route`}
 // ---------- live layers (only load when the page is hosted on the web)
-let liveOn=false,wx=null,cloud=0,precip=null,gaugesLoaded=false;
+let liveOn=false,wxOn=false,wx=null,wxDemo=null,wxFail=false,alerts=[],cloud=0,precip=null,gaugesLoaded=false,thunder=false;const wxLabels=[];
 const KXm=111320*Math.cos(40.77*Math.PI/180),KYm=111000;
-async function loadWeather(){try{const r=await fetch('https://api.weather.gov/stations/KLNK/observations/latest',{headers:{Accept:'application/geo+json'}});if(!r.ok)throw 0;const p=(await r.json()).properties;
-    const c={CLR:0,SKC:0,FEW:.15,SCT:.4,BKN:.75,OVC:1,VV:1};let cl=0;for(const l of p.cloudLayers||[])cl=Math.max(cl,c[l.amount]??0);
-    const d=(p.textDescription||'')+' '+(p.presentWeather||[]).map(w=>w.weather||'').join(' ');
-    wx={tC:p.temperature&&p.temperature.value,desc:p.textDescription||'',kmh:p.windSpeed&&p.windSpeed.value,dir:p.windDirection&&p.windDirection.value,cloud:cl,precip:/snow|flurr|sleet|ice pellets/i.test(d)?'snow':(/rain|drizzle|shower|thunder/i.test(d)?'rain':null),time:p.timestamp};
-    showWx();if(liveOn)applyWx()}catch(e){if(!wx)$('wx').textContent=''}}
-function showWx(){if(!wx||wx.tC==null){return}const dirs=['N','NE','E','SE','S','SW','W','NW'];const f=Math.round(wx.tC*9/5+32);const mph=wx.kmh!=null?Math.round(wx.kmh*.621):null;
-  $('wx').textContent=`Now at Lincoln Airport: ${f}°F ${wx.desc}`+(mph!=null?` · wind ${wx.dir!=null?dirs[Math.round(wx.dir/45)%8]+' ':''}${mph} mph`:'')}
-function applyWx(){cloud=liveOn&&wx?wx.cloud:0;setPrecip(liveOn&&wx?wx.precip:null);setTime(curHour)}
-let pPts=null;
-function setPrecip(kind){precip=kind;if(!kind){if(pPts)pPts.visible=false;return}
-  if(!pPts){const N=mobile?2500:6000,P=new Float32Array(N*3);for(let i=0;i<N;i++){P[3*i]=(rnd(i*3)-.5)*500;P[3*i+1]=rnd(i*3+1)*260;P[3*i+2]=(rnd(i*3+2)-.5)*500}
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));pPts=new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:1.2,transparent:true,opacity:.75,depthWrite:false,fog:false}));pPts.frustumCulled=false;scene.add(pPts)}
-  pPts.material.size=kind==='snow'?1.6:.9;pPts.material.color.set(kind==='snow'?0xffffff:0xa9c4e6);pPts.visible=true}
-function stepPrecip(dt){if(!pPts||!pPts.visible)return;const a=pPts.geometry.attributes.position,P=a.array,v=(precip==='snow'?9:70)*dt;for(let i=1;i<P.length;i+=3){P[i]-=v*(.7+.6*((i*7)%13)/13);if(P[i]<0)P[i]+=260}a.needsUpdate=true;
-  const t=controls.target;pPts.position.set(t.x,hAt(t.x,t.z),t.z);dirty=true}
+const wxNow=()=>wxDemo||wx,wxAlerts=()=>wxDemo?wxDemo.alerts:alerts;
+const clock=t=>new Date(t).toLocaleTimeString('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'2-digit'});
+function parseObs(p){const c={CLR:0,SKC:0,FEW:.15,SCT:.4,BKN:.75,OVC:1,VV:1};let cl=0;for(const l of p.cloudLayers||[])cl=Math.max(cl,c[l.amount]??0);
+  const d=(p.textDescription||'')+' '+(p.presentWeather||[]).map(w=>(w.intensity||'')+' '+(w.weather||'')).join(' ');const val=o=>o&&o.value!=null?o.value:null;
+  return {tC:val(p.temperature),desc:p.textDescription||'',kmh:val(p.windSpeed),gust:val(p.windGust),dir:val(p.windDirection),cloud:cl,
+    precip:/snow|flurr|sleet|ice pellets|freezing/i.test(d)?'snow':(/rain|drizzle|shower|thunder/i.test(d)?'rain':null),heavy:/heavy/i.test(d)?1.6:(/light/i.test(d)?.55:1),thunder:/thunder/i.test(d),time:p.timestamp}}
+async function loadWeather(){try{const r=await fetch('https://api.weather.gov/stations/KLNK/observations/latest',{headers:{Accept:'application/geo+json'}});if(!r.ok)throw 0;wx=parseObs((await r.json()).properties);wxFail=false;showWx();applyWx();if(wxOn&&!wxDemo)wxCard()}
+  catch(e){wxFail=true;if(!wx)$('wx').textContent='';if(wxOn&&!wxDemo)wxCard()}}
+// National Weather Service alerts for Lincoln: warnings come with the warned area and, for storms, where the storm was and how it is moving
+const ARANK={'Tornado Warning':100,'Severe Thunderstorm Warning':90,'Flash Flood Warning':85,'Tornado Watch':80,'Blizzard Warning':78,'Ice Storm Warning':77,'Winter Storm Warning':75,'Severe Thunderstorm Watch':70,'Flood Warning':65,'High Wind Warning':60,'Winter Weather Advisory':50,'Wind Advisory':45};
+const ACOL={'Tornado Warning':'#ff2030','Severe Thunderstorm Warning':'#ffa000','Flash Flood Warning':'#2ecc40','Flood Warning':'#2ecc40','Tornado Watch':'#ffe14a'};
+function parseAlert(f){const p=f.properties||{},g=f.geometry,polys=[];if(g&&g.type==='Polygon')polys.push(g.coordinates[0]);else if(g&&g.type==='MultiPolygon')for(const c of g.coordinates)polys.push(c[0]);
+  let storm=null;const m=((p.parameters||{}).eventMotionDescription||[])[0];if(m){const q=/^(\S+?)\.\.\.(\w+)\.\.\.(\d+)DEG\.\.\.(\d+)KT\.\.\.(-?[\d.]+),(-?[\d.]+)/.exec(m);if(q)storm={t:Date.parse(q[1]),from:+q[3],kt:+q[4],lat:+q[5],lon:+q[6]}}
+  return {event:p.event||'Weather alert',ends:p.ends||p.expires,rank:ARANK[p.event]||30,polys,storm}}
+async function loadAlerts(){try{const r=await fetch('https://api.weather.gov/alerts/active?point=40.8136,-96.7026',{headers:{Accept:'application/geo+json'}});if(!r.ok)throw 0;alerts=((await r.json()).features||[]).map(parseAlert).sort((a,b)=>b.rank-a.rank);
+    showWx();if(!wxDemo){drawOverlay();placeStorms();if(wxOn)wxCard()}}catch(e){}}
+function showWx(){const w=wxNow(),A=wxAlerts(),el=$('wx');let t='';if(A.length)t+=`⚠ ${A[0].event}${A[0].ends?' until '+clock(A[0].ends):''} · `;
+  if(w&&w.tC!=null){const dirs=['N','NE','E','SE','S','SW','W','NW'],mph=w.kmh!=null?Math.round(w.kmh*.621):null;
+    t+=`${wxDemo?'PREVIEW, not real weather: ':'Now at Lincoln Airport: '}${Math.round(w.tC*9/5+32)}°F ${w.desc}`+(mph!=null?` · wind ${w.dir!=null?dirs[Math.round(w.dir/45)%8]+' ':''}${mph} mph`+(w.gust?`, gusts ${Math.round(w.gust*.621)}`:''):'')}
+  el.textContent=t;el.style.color=wxDemo?'#9fd0ff':(A.length?'#ff9a8a':'')}
+function applyWx(){const w=wxNow(),on=(wxOn||liveOn)&&w;cloud=on?w.cloud:0;thunder=!!(wxOn&&w&&w.thunder);setWind(wxOn&&w?w:null);wetCheck(true);setTime(curHour)}
+let pPts=null,wetT=0;
+// where the radar shows something falling, it falls there; without radar, the airport report decides
+function wetCheck(force){const now=performance.now();if(!force&&now-wetT<600)return;wetT=now;const w=wxNow(),on=(wxOn||liveOn)&&w;let kind=on?w.precip:null,heavy=on?w.heavy:1;
+  if(wxOn&&w&&ovl&&ovl.rd){kind=ovl.wet>.002?((w.tC!=null&&w.tC<=1.5)||w.precip==='snow'?'snow':'rain'):null;heavy=Math.max(heavy||1,1.3)}
+  if(kind!==precip||force)setPrecip(kind,heavy)}
+let pU=null;
+function flakeTex(){const c=document.createElement('canvas');c.width=c.height=32;const q=c.getContext('2d'),g=q.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.5,'rgba(255,255,255,.92)');g.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=g;q.fillRect(0,0,32,32);return new THREE.CanvasTexture(c)}
+function setPrecip(kind,heavy){precip=kind;if(!kind){if(pPts)pPts.visible=false;if(LM.rainL)LM.rainL.visible=false;dirty=true;return}
+  if(!pPts){const N=mobile?2600:6000;pU=new Float32Array(N*3);for(let i=0;i<N;i++){pU[3*i]=rnd(i*3)-.5;pU[3*i+1]=rnd(i*3+1);pU[3*i+2]=rnd(i*3+2)-.5}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*3),3));
+    pPts=new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:4,sizeAttenuation:false,map:flakeTex(),transparent:true,opacity:.96,depthWrite:false,fog:false}));pPts.frustumCulled=false;pPts.renderOrder=4;scene.add(pPts);
+    const lg=new LineSegmentsGeometry();lg.setPositions(new Float32Array(N*6));LM.rainMat=new LineMaterial({color:0x9ccaff,linewidth:2,transparent:true,opacity:.85,depthWrite:false,worldUnits:false,fog:false});LM.rainMat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(LM.rainMat);
+    LM.rainL=new LineSegments2(lg,LM.rainMat);LM.rainL.frustumCulled=false;LM.rainL.renderOrder=4;scene.add(LM.rainL)}
+  const h=heavy||1,N=pU.length/3,cnt=Math.floor(N*Math.min(1,.45+.4*h));pPts.userData.cnt=cnt;
+  pPts.material.size=(mobile?6:7.5)*(h>1.4?1.3:1)*renderer.getPixelRatio();pPts.geometry.setDrawRange(0,cnt);
+  LM.rainMat.linewidth=(mobile?1.8:2.3)*(h>1.4?1.3:1);LM.rainMat.opacity=Math.min(.95,.62+.22*h);LM.rainL.geometry.instanceCount=cnt;
+  pPts.visible=kind==='snow';LM.rainL.visible=kind==='rain';dirty=true}
+function stepPrecip(dt){if(!pPts||!precip)return;const snow=precip==='snow',U=pU,cnt=pPts.userData.cnt,t=controls.target,d=camera.position.distanceTo(t);
+  // the falling volume grows with the view, so rain and snow read at any zoom
+  const R=Math.min(7000,Math.max(260,d*.8)),Ht=Math.min(2400,Math.max(260,d*.6)),g0=hAt(t.x,t.z),fall=(snow?.035:.27)*dt,wk=snow?1.4:.8,dx=windV?windV.x*dt*wk/500:0,dz=windV?windV.z*dt*wk/500:0;
+  const rd=(wxOn&&ovl&&ovl.rd)?ovl.rd:null,W=rd?ovl.cv.width:0,k=W/16800,P=pPts.geometry.attributes.position.array,Q=LM.rainL.geometry.attributes.instanceStart.data.array;
+  const sl=Ht*.08,sx=windV?windV.x*.012*sl:0,sz=windV?windV.z*.012*sl:0;
+  for(let i=0;i<cnt;i++){const o=3*i;let x=U[o]+dx,z=U[o+2]+dz,y=U[o+1]-fall*(.7+.6*((i*7)%13)/13);if(x>.5)x-=1;else if(x<-.5)x+=1;if(z>.5)z-=1;else if(z<-.5)z+=1;if(y<0)y+=1;U[o]=x;U[o+1]=y;U[o+2]=z;
+    const wx_=t.x+x*2*R,wz_=t.z+z*2*R;let wy=g0+y*Ht;
+    if(rd){const ix=Math.floor((wx_+8400)*k),iy=Math.floor((wz_+8400)*k);if(ix<0||iy<0||ix>=W||iy>=W||rd[(iy*W+ix)*4+3]<=40)wy=-99999}
+    if(snow){P[o]=wx_;P[o+1]=wy;P[o+2]=wz_}else{const p=6*i;Q[p]=wx_;Q[p+1]=wy;Q[p+2]=wz_;Q[p+3]=wx_-sx;Q[p+4]=wy+sl;Q[p+5]=wz_-sz}}
+  if(snow)pPts.geometry.attributes.position.needsUpdate=true;else LM.rainL.geometry.attributes.instanceStart.data.needsUpdate=true;
+  dirty=true}
+// wind: streaks that blow the way the wind is blowing, faster when it blows harder
+let windL=null,windV=null;
+function setWind(w){const ms=w&&w.kmh!=null?w.kmh/3.6:0;if(ms<1.6||w.dir==null){windV=null;if(windL)windL.visible=false;dirty=true;return}
+  const a=w.dir*Math.PI/180;windV={x:-Math.sin(a)*ms,z:Math.cos(a)*ms,ms,gust:w.gust?w.gust/3.6:ms};
+  if(!windL){const N=mobile?400:820,g=new LineSegmentsGeometry();g.setPositions(new Float32Array(N*6));
+    LM.windMat=new LineMaterial({color:0xffffff,linewidth:2,transparent:true,opacity:.88,depthWrite:false,worldUnits:false,fog:false});LM.windMat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(LM.windMat);
+    windL=new LineSegments2(g,LM.windMat);windL.frustumCulled=false;windL.renderOrder=3;scene.add(windL);
+    const q=new Float32Array(N*4);for(let i=0;i<N;i++){q[4*i]=rnd(i*4+11);q[4*i+1]=rnd(i*4+12);q[4*i+2]=rnd(i*4+13);q[4*i+3]=.6+.8*rnd(i*4+14)}windL.userData.q=q}
+  LM.windMat.linewidth=(mobile?1.4:1.6)+Math.min(1.2,ms*.06);windL.visible=true;dirty=true}
+function stepWind(dt,now){if(!windL||!windL.visible||!windV)return;const P=windL.geometry.attributes.instanceStart.data.array,q=windL.userData.q,N=q.length/4,t=controls.target;
+  const d=camera.position.distanceTo(t),R=Math.min(7000,Math.max(260,d*.9)),top=Math.min(600,Math.max(70,d*.3)),ux=windV.x/windV.ms,uz=windV.z/windV.ms;
+  const g=1+.4*Math.sin(now*.0013)*Math.min(1,(windV.gust-windV.ms)/windV.ms+.25),adv=windV.ms*dt*g*.0125,len=Math.min(.16,.035+windV.ms*.006)*R;LM.windMat.opacity=precip?.4:.74;
+  for(let i=0;i<N;i++){const sp=q[4*i+3];let a=q[4*i]+ux*adv*sp,b=q[4*i+1]+uz*adv*sp;a-=Math.floor(a);b-=Math.floor(b);q[4*i]=a;q[4*i+1]=b;
+    const x=t.x+(a-.5)*2*R,z=t.z+(b-.5)*2*R,y=hAt(x,z)+12+q[4*i+2]*top,o=6*i;P[o]=x;P[o+1]=y;P[o+2]=z;P[o+3]=x-ux*len*sp;P[o+4]=y;P[o+5]=z-uz*len*sp}
+  windL.geometry.attributes.instanceStart.data.needsUpdate=true;dirty=true}
+// lightning and the storm marker. Flashes mean a thunderstorm is reported; they do not mark real strikes.
+let flashT=-1e9,nextFlash=0,bolt=null,funnels=[];const cWhite=new THREE.Color(0xffffff);
+function makeBolt(){const t=controls.target,dC=camera.position.distanceTo(t),a=Math.atan2(t.z-camera.position.z,t.x-camera.position.x)+(Math.random()-.5)*1.9,r=Math.max(250,dC*(.2+.9*Math.random()));let x=t.x+Math.cos(a)*r,z=t.z+Math.sin(a)*r;const g0=hAt(x,z),P=[];let px=x+(Math.random()-.5)*500,py=g0+1150,pz=z+(Math.random()-.5)*500;
+  for(let i=1;i<=13;i++){const f=i/13,nx=x+(px-x)*(1-f)*.85+(Math.random()-.5)*90*(1-f),ny=g0+1150*(1-f),nz=z+(pz-z)*(1-f)*.85+(Math.random()-.5)*90*(1-f);P.push(px,py,pz,nx,ny,nz);
+    if(i===6||i===9){P.push(nx,ny,nz,nx+(Math.random()-.5)*340,ny-190,nz+(Math.random()-.5)*340)}px=nx;py=ny;pz=nz}
+  if(!LM.boltMat){LM.boltMat=new LineMaterial({color:0xfbf9ff,linewidth:mobile?4.4:5.6,worldUnits:false,fog:false});LM.boltMat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(LM.boltMat);
+    LM.glowMat=new LineMaterial({color:0xa9b6ff,linewidth:mobile?15:20,transparent:true,opacity:.3,depthWrite:false,worldUnits:false,fog:false});LM.glowMat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(LM.glowMat)}
+  if(bolt){scene.remove(bolt);bolt.geometry.dispose()}const geo=new LineSegmentsGeometry();geo.setPositions(P);bolt=new LineSegments2(geo,LM.boltMat);bolt.frustumCulled=false;bolt.renderOrder=5;scene.add(bolt);
+  if(LM.boltGlow)scene.remove(LM.boltGlow);LM.boltGlow=new LineSegments2(geo,LM.glowMat);LM.boltGlow.frustumCulled=false;LM.boltGlow.renderOrder=4;scene.add(LM.boltGlow)}
+function stepStorm(dt,now){
+  if(thunder&&now>nextFlash){nextFlash=now+1400+4300*Math.random();flashT=now;makeBolt()}
+  const age=now-flashT,f=age<0?0:(age<110?1:(age<190?.25:(age<320?.85:(age<520?.3:0))));
+  if(f>0||LM.flashing){LM.flashing=f>0;hemi.intensity=LM.hemi0+2.9*f;scene.background.copy(LM.bg0).lerp(cWhite,.46*f);scene.fog.color.copy(scene.background);if(bolt){bolt.visible=f>.15;if(LM.boltGlow)LM.boltGlow.visible=f>.15}dirty=true}
+  for(const fn of funnels){fn.rotation.y+=dt*5;if(fn.userData.rg)fn.userData.rg.scale.setScalar(1+.22*Math.sin(now*.006));fn.position.x+=fn.userData.vx*dt;fn.position.z+=fn.userData.vz*dt;fn.position.y=hAt(fn.position.x,fn.position.z);if(fn.userData.lb){fn.userData.lb.x=fn.position.x;fn.userData.lb.z=fn.position.z;fn.userData.lb.y=fn.position.y+1000}dirty=true}}
+function placeStorms(){for(const f of funnels)scene.remove(f);funnels=[];wxLabels.length=0;if(!wxOn)return;
+  for(const a of wxAlerts()){if(a.event!=='Tornado Warning'||!a.storm)continue;const st=a.storm,el=Math.min(2700,Math.max(0,(Date.now()-st.t)/1000)),sp=st.kt*.5144,dr=(st.from+180)*Math.PI/180,vx=Math.sin(dr)*sp,vz=-Math.cos(dr)*sp;
+    const x=(st.lon-H.lon0)*KXm+vx*el,z=-(st.lat-H.lat0)*KYm+vz*el;if(Math.abs(x)>26000||Math.abs(z)>26000)continue;
+    const pts=[];for(let i=0;i<=14;i++){const f=i/14;pts.push(new THREE.Vector2(16+250*Math.pow(f,2.3)+18*Math.sin(f*9),f*950))}
+    const g=new THREE.Group(),m1=new THREE.Mesh(new THREE.LatheGeometry(pts,20),new THREE.MeshLambertMaterial({color:0x50545c,transparent:true,opacity:.86,side:THREE.DoubleSide,flatShading:true}));
+    const m2=new THREE.Mesh(new THREE.CylinderGeometry(120,55,46,18,1,true),new THREE.MeshLambertMaterial({color:0x9a8f7c,transparent:true,opacity:.5,side:THREE.DoubleSide}));m2.position.y=23;g.add(m1,m2);
+    const rg=new THREE.Mesh(new THREE.RingGeometry(700,860,64),new THREE.MeshBasicMaterial({color:0xff2030,transparent:true,opacity:.8,side:THREE.DoubleSide,depthWrite:false,fog:false}));rg.rotation.x=-Math.PI/2;rg.position.y=45;g.add(rg);
+    g.position.set(x,hAt(x,z),z);const lb={t:(wxDemo?'Simulated tornado':'Tornado Warning storm')+' · last reported position',x,y:hAt(x,z)+1000,z,k:0,pri:1200,near:0,far:60000};g.userData={vx,vz,lb,rg};wxLabels.push(lb);scene.add(g);funnels.push(g)}
+  dirty=true}
+// one sheet draped over the ground carries the radar picture and the outlines of warned areas
+let ovl=null;
+function overlay(){if(ovl)return ovl;const cv=document.createElement('canvas');cv.width=cv.height=mobile?512:768;const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;
+  const geo=new THREE.PlaneGeometry(16800,16800,48,48);geo.rotateX(-Math.PI/2);const p=geo.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,hAt(p.getX(i),p.getZ(i))+3);
+  const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,fog:false}));m.renderOrder=2;m.visible=false;scene.add(m);ovl={cv,tex,m,radar:null,rd:null,wet:null,rt:0};return ovl}
+function drawOverlay(){const o=overlay(),c=o.cv.getContext('2d'),W=o.cv.width,A=wxAlerts(),px=v=>(v+8400)/16800*W;c.clearRect(0,0,W,W);let any=false;
+  if(wxOn&&o.radar){c.globalAlpha=.74;c.drawImage(o.radar,0,0,W,W);c.globalAlpha=1;any=true}
+  if(wxOn)for(const a of A){const col=ACOL[a.event]||'#c070ff';for(const ring of a.polys){c.beginPath();ring.forEach((q,i)=>{const x=px((q[0]-H.lon0)*KXm),y=px(-(q[1]-H.lat0)*KYm);if(i)c.lineTo(x,y);else c.moveTo(x,y)});c.closePath();
+      c.fillStyle=col;c.globalAlpha=.27;c.fill();c.globalAlpha=1;c.lineWidth=Math.max(4,W/105);c.strokeStyle=col;c.stroke();any=true}}
+  o.tex.needsUpdate=true;o.m.visible=any;dirty=true}
+function setRadar(cv){const o=overlay();o.radar=cv;o.rd=null;o.wet=null;if(cv){try{const d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;let n=0;for(let i=3;i<d.length;i+=16)if(d[i]>40)n++;o.rd=d;o.wet=n/(d.length/16)}catch(e){}}o.rt=Date.now();drawOverlay();wetCheck(true)}
+// radar mosaic from the Iowa Environmental Mesonet's tile service (two tiles cover the whole map)
+async function loadRadar(){const o=overlay(),zm=10,n=1<<zm,W=o.cv.width,px=v=>(v+8400)/16800*W;
+  const lonA=H.lon0-8400/KXm,lonB=H.lon0+8400/KXm,latA=H.lat0-8400/KYm,latB=H.lat0+8400/KYm;
+  const tx=lon=>Math.floor((lon+180)/360*n),ty=lat=>{const r=lat*Math.PI/180;return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n)},lonOf=x=>x/n*360-180,latOf=y=>Math.atan(Math.sinh(Math.PI*(1-2*y/n)))*180/Math.PI;
+  const rc=document.createElement('canvas');rc.width=rc.height=W;const c=rc.getContext('2d');let ok=0;const jobs=[];
+  for(let x=tx(lonA);x<=tx(lonB);x++)for(let y=ty(latB);y<=ty(latA);y++)jobs.push(new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';
+    im.onload=()=>{const x0=px((lonOf(x)-H.lon0)*KXm),x1=px((lonOf(x+1)-H.lon0)*KXm),y0=px(-(latOf(y)-H.lat0)*KYm),y1=px(-(latOf(y+1)-H.lat0)*KYm);c.drawImage(im,x0,y0,x1-x0,y1-y0);ok++;res()};im.onerror=()=>res();
+    im.src=`https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/${zm}/${x}/${y}.png?t=${Math.floor(Date.now()/300000)}`}));
+  await Promise.all(jobs);if(wxDemo)return;setRadar(ok?rc:null);if(wxOn)wxCard()}
+// preview: what each kind of weather looks like, clearly marked as not real
+function demoPoly(cx,cz,ang,len,w0,w1){const u=[Math.sin(ang),-Math.cos(ang)],v=[-u[1],u[0]],P=(a,b)=>[H.lon0+(cx+u[0]*a+v[0]*b)/KXm,H.lat0-(cz+u[1]*a+v[1]*b)/KYm];return [P(0,-w0),P(len,-w1),P(len+1500,0),P(len,w1),P(0,w0),P(0,-w0)]}
+function demoRadar(kind){const o=overlay(),W=o.cv.width,rc=document.createElement('canvas');rc.width=rc.height=W;const c=rc.getContext('2d');
+  const blob=(x,y,r,cols)=>{const g=c.createRadialGradient(x,y,0,x,y,r);for(const q of cols)g.addColorStop(q[0],q[1]);c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,6.3);c.fill()};
+  if(kind==='storm'){const cx=(LM.capitol[0]+8400)/16800,cy=(LM.capitol[1]+8400)/16800;for(let i=0;i<9;i++){const x=W*(cx+.1*(i-4)+.03*Math.sin(i*1.7)),y=W*(cy-.1*(i-4)+.05*Math.sin(i*2.3));blob(x,y,W*(.1+.03*rnd(i+90)),[[0,'rgba(0,170,0,.8)'],[.7,'rgba(0,150,0,.55)'],[1,'rgba(0,150,0,0)']]);blob(x,y,W*.05,[[0,'rgba(255,235,0,.95)'],[1,'rgba(255,235,0,0)']]);if(i%2===0)blob(x,y,W*.022,[[0,'rgba(235,30,30,1)'],[1,'rgba(235,30,30,0)']])}}
+  else{const snow=kind==='snow';for(let i=0;i<(snow?46:34);i++){const x=W*rnd(i*3+70),y=W*rnd(i*3+71),r=W*((snow?.09:.07)+.1*rnd(i*3+72));blob(x,y,r,snow?[[0,'rgba(70,130,255,.75)'],[.6,'rgba(130,185,255,.5)'],[1,'rgba(150,200,255,0)']]:[[0,'rgba(0,185,0,.8)'],[.65,'rgba(0,150,0,.5)'],[1,'rgba(0,150,0,0)']]);if(!snow&&i%4===0)blob(x,y,r*.35,[[0,'rgba(255,235,0,.9)'],[1,'rgba(255,235,0,0)']])}}
+  return rc}
+function setDemo(i){const C=LM.capitol,soon=new Date(Date.now()+35*60000).toISOString(),here=(dx,dz)=>({lat:H.lat0-(C[1]+dz)/KYm,lon:H.lon0+(C[0]+dx)/KXm});
+  const D=[{name:'A windy day',say:'White streaks blow the way the wind blows, faster in gusts.',tC:14,desc:'Windy',kmh:45,gust:72,dir:310,cloud:.3,precip:null,heavy:1,thunder:false,alerts:[]},
+    {name:'Steady rain',say:'Rain falls only where the radar picture shows it. Move around and it starts and stops.',tC:11,desc:'Rain',kmh:19,gust:null,dir:170,cloud:1,precip:'rain',heavy:1,thunder:false,alerts:[],radar:'rain'},
+    {name:'Heavy snow',say:'Below freezing, the same radar picture brings snow, blown sideways by the wind.',tC:-3,desc:'Heavy Snow',kmh:29,gust:48,dir:350,cloud:1,precip:'snow',heavy:1.6,thunder:false,alerts:[{event:'Winter Storm Warning',ends:soon,rank:75,polys:[],storm:null}],radar:'snow'},
+    {name:'A thunderstorm',say:'Lightning flashes when the airport reports a thunderstorm. The orange outline is the warned area.',tC:23,desc:'Thunderstorm and Heavy Rain',kmh:32,gust:80,dir:240,cloud:1,precip:'rain',heavy:1.6,thunder:true,alerts:[{event:'Severe Thunderstorm Warning',ends:soon,rank:90,polys:[demoPoly(C[0]-6500,C[1]+5200,.82,9000,2300,4200)],storm:null}],radar:'storm'},
+    {name:'A tornado warning',say:'The red outline is the warned area. The funnel marks where the Weather Service last placed the storm and moves the way it reported.',tC:24,desc:'Thunderstorm',kmh:40,gust:88,dir:200,cloud:1,precip:'rain',heavy:1,thunder:true,alerts:[{event:'Tornado Warning',ends:soon,rank:100,polys:[demoPoly(C[0]-4300,C[1]+3600,.87,7200,1100,2900)],storm:Object.assign({t:Date.now(),from:230,kt:26},here(-2600,2300))}],radar:'storm'}];
+  if(i<0||i>=D.length){wxDemo=null;setRadar(null);showWx();applyWx();placeStorms();drawOverlay();if(wxOn){loadRadar();wxCard()}return}
+  wxDemo=D[i];wxDemo.i=i;setRadar(wxDemo.radar?demoRadar(wxDemo.radar):null);showWx();applyWx();placeStorms();drawOverlay();nextFlash=0;
+  if(i===4&&!walk.on){stopTour();flyTo(camTo(C[0]-1500,C[1]+1200,6200,35,27),2200)}
+  showCard(`Weather preview ${i+1} of ${D.length}: ${wxDemo.name}`,'Simulated, not real weather. '+wxDemo.say,-1,{label:i+1<D.length?'Next ▸':'End preview',fn:()=>setDemo(i+1<D.length?i+1:-1)})}
+function wxCard(){const w=wx,A=alerts,pv={label:'▶ Preview storm effects',fn:()=>setDemo(0)};
+  if(!w){showCard('Weather',wxFail?'Live weather only loads when this map is on a website, such as GitHub Pages. It cannot load inside the Claude app or from a file on your computer. You can still preview wind, rain, snow, lightning and a tornado warning.':'Checking the National Weather Service…',-1,pv);return}
+  const dirs=['N','NE','E','SE','S','SW','W','NW'],mph=w.kmh!=null?Math.round(w.kmh*.621):null,o=ovl;
+  const rad=o&&o.radar?(o.wet>.004?`Radar: rain or snow over about ${Math.max(1,Math.round(o.wet*100))}% of the map`:'Radar: nothing falling over Lincoln'):'Radar picture not available';
+  showCard('Weather right now',`${Math.round(w.tC*9/5+32)}°F ${w.desc} at Lincoln Airport (${clock(w.time)})`+(mph!=null?` · wind ${w.dir!=null?dirs[Math.round(w.dir/45)%8]+' ':''}${mph} mph`+(w.gust?`, gusts ${Math.round(w.gust*.621)}`:''):'')+' · '+(A.length?A.map(a=>a.event+(a.ends?' until '+clock(a.ends):'')).join(', '):'No weather alerts for Lincoln')+' · '+rad,-1,pv)}
+function setWx(on){if(on===wxOn)return;wxOn=on;$('bWx').classList.toggle('on',on);$('wx').classList.toggle('big',on);
+  if(on){if(rideMode)setRideMode(false);wxCard();loadWeather();loadAlerts();loadRadar()}else{if(wxDemo)setDemo(-1);hideCard()}
+  applyWx();drawOverlay();placeStorms()}
 async function loadWater(){if(gaugesLoaded)return;try{const r=await fetch('https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-continuous/items?f=json&bbox=-96.80,40.65,-96.50,40.90&parameter_code=00060&limit=50');if(!r.ok)throw 0;const j=await r.json();
     const tidy=n=>n.toLowerCase().replace(/,?\s*nebr?\.?$/,'').replace(/\bc\b\.?/g,'creek').replace(/\bnr\b/g,'near').replace(/\b[a-z]/g,m=>m.toUpperCase()).replace(/\b(At|Near|Of|To)\b/g,m=>m.toLowerCase());
     const grp=new THREE.Group();const mat=new THREE.MeshLambertMaterial({color:0x2f8fe0,emissive:0x0a2a50});
@@ -938,20 +1169,316 @@ async function loadWater(){if(gaugesLoaded)return;try{const r=await fetch('https
       labels.push({t:`${name} · ${v<10?v.toFixed(1):Math.round(v).toLocaleString()} cfs`,x,y:y+hgt+8,z,k:5,pri:760,near:0,far:9000})}
     if(grp.children.length){scene.add(grp);pickables.push(grp);gaugesLoaded=true;dirty=true}}catch(e){}}
 function setLive(on){liveOn=on;$('bNow').classList.toggle('on',on);if(on){const n=lincolnNow();const h=Math.max(5,Math.min(22.5,n.sec/3600));$('sunR').value=h;curHour=h;loadWeather();loadWater()}applyWx();updateBuses()}
+$('bWx').onclick=()=>setWx(!wxOn);
 setInterval(()=>{if(liveOn){const n=lincolnNow();const h=Math.max(5,Math.min(22.5,n.sec/3600));if(Math.abs(h-curHour)>.02){$('sunR').value=h;curHour=h;setTime(h)}updateBuses()}},1000);
-setInterval(()=>{if(liveOn)loadWeather()},600000);
+setInterval(()=>{if(liveOn||wxOn)loadWeather()},600000);setInterval(()=>{if(wxOn&&!wxDemo)loadAlerts()},60000);setInterval(()=>{if(wxOn&&!wxDemo)loadRadar()},300000);
+// ---------- city life: birds overhead, giraffes at the zoo, dogs at the dog parks, a Pride option for the Capitol
+// These move on their own, so they only run while someone is using the map and only near where they are.
+let ambient=false,lastAmb=0,lastInput=performance.now(),birdsOn=true,prideOn=false;const lifeLabels=[];
+// Things that move on their own are drawn at a gentle rate, and slower still on a device that is struggling:
+// frCost is how long the last drawn frames took, and the next one waits at least 2.6 times that.
+let ambOK=true,frCost=17,prevT=0,prevR=false,lastUser=false,simOff=0;const ambMin=mobile?66:42;
+for(const ev of ['pointerdown','pointermove','wheel','keydown','touchstart'])addEventListener(ev,()=>{lastInput=performance.now()},{passive:true});
+const lM=new THREE.Matrix4(),lQ=new THREE.Quaternion(),lP=new THREE.Vector3(),lS=new THREE.Vector3(),lUp=new THREE.Vector3(0,1,0),lE=new THREE.Euler();
+function boxes(list){const P=[],N=[],C=[],c=new THREE.Color();let tint=false;for(const [w,h,d,x,y,z,col] of list){const g=new THREE.BoxGeometry(w,h,d).toNonIndexed();g.translate(x,y,z);for(const v of g.attributes.position.array)P.push(v);for(const v of g.attributes.normal.array)N.push(v);
+    if(col!==undefined)tint=true;c.set(col===undefined?0xffffff:col);for(let i=0;i<g.attributes.position.count;i++)C.push(c.r,c.g,c.b)}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));if(tint)g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));return g}
+// Birds: common name, scientific name, months they are typically here, how they fly, flock size, drawn wingspan (m), height (m), color.
+// The months are the usual pattern for eastern Nebraska. They are not live sightings.
+const BIRDS=[['Canada Goose','Branta canadensis',[[1,12]],'V',[7,19],9,[90,260],0x4a4640],['Snow Goose','Anser caerulescens',[[2,4],[10,12]],'V',[15,40],8,[200,420],0xf2f2ee],
+ ['Greater White-fronted Goose','Anser albifrons',[[2,4],[10,11]],'V',[9,25],8,[200,400],0x6e6558],['Sandhill Crane','Antigone canadensis',[[3,4],[10,11]],'V',[9,30],11,[250,480],0x9a9692],
+ ['American White Pelican','Pelecanus erythrorhynchos',[[4,5],[9,10]],'V',[8,22],13,[200,400],0xf7f7f2],['Double-crested Cormorant','Nannopterum auritum',[[4,10]],'V',[5,15],8,[80,220],0x1d1d1f],
+ ["Franklin's Gull",'Leucophaeus pipixcan',[[4,5],[9,10]],'loose',[20,55],6,[80,260],0xe9ebee],['Ring-billed Gull','Larus delawarensis',[[10,4]],'loose',[6,20],7,[60,200],0xe6e8ea],
+ ['Bald Eagle','Haliaeetus leucocephalus',[[11,3]],'solo',[1,1],14,[150,350],0x2e2620],['Red-tailed Hawk','Buteo jamaicensis',[[1,12]],'solo',[1,1],10,[90,260],0x7a5236],
+ ['Turkey Vulture','Cathartes aura',[[4,10]],'solo',[1,1],13,[120,320],0x2a2523],["Swainson's Hawk",'Buteo swainsoni',[[4,9]],'solo',[1,1],10,[100,280],0x6b4a34],
+ ['American Kestrel','Falco sparverius',[[1,12]],'solo',[1,1],6,[40,110],0xb5673a],['Peregrine Falcon','Falco peregrinus',[[1,12]],'solo',[1,1],8,[150,150],0x4d5560],
+ ['Great Blue Heron','Ardea herodias',[[3,10]],'solo',[1,1],12,[60,160],0x7f8c99],['Chimney Swift','Chaetura pelagica',[[5,9]],'swarm',[8,22],4,[40,140],0x3a3532],
+ ['Purple Martin','Progne subis',[[4,8]],'swarm',[6,18],5,[40,130],0x2b2440],['Barn Swallow','Hirundo rustica',[[5,9]],'swarm',[5,14],4,[20,80],0x26324f],
+ ['Common Nighthawk','Chordeiles minor',[[5,9]],'loose',[3,9],7,[60,180],0x5a5148],['American Crow','Corvus brachyrhynchos',[[1,12]],'loose',[5,28],8,[50,170],0x141414],
+ ['European Starling','Sturnus vulgaris',[[1,12]],'swarm',[30,80],4,[40,150],0x1f1f24],['Red-winged Blackbird','Agelaius phoeniceus',[[3,11]],'swarm',[20,60],4,[30,120],0x18181a],
+ ['Common Grackle','Quiscalus quiscula',[[3,11]],'loose',[10,35],5,[30,120],0x1b1b26],['Mallard','Anas platyrhynchos',[[1,12]],'V',[4,9],7,[50,160],0x5c5346],
+ ['Cedar Waxwing','Bombycilla cedrorum',[[1,12]],'swarm',[8,20],4,[30,90],0xa58a62],['Rock Pigeon','Columba livia',[[1,12]],'swarm',[10,24],5,[40,110],0x80858d]];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const birdMonth=()=>Math.floor(lincolnNow().ymd/100)%100;
+const inSeason=(b,m)=>b[2].some(q=>q[0]<=q[1]?(m>=q[0]&&m<=q[1]):(m>=q[0]||m<=q[1]));
+let birdMesh=null,flocks=[],nextFlock=0;
+function setupBirds(){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute([0,0,-.34,.5,0,.05,0,0,.12, 0,0,-.34,0,0,.12,-.5,0,.05, 0,0,-.42,.07,0,.3,-.07,0,.3],3));
+  birdMesh=new THREE.InstancedMesh(g,new THREE.MeshBasicMaterial({side:THREE.DoubleSide,fog:false}),420);birdMesh.count=0;birdMesh.frustumCulled=false;scene.add(birdMesh)}
+// Recent bird reports near Lincoln. iNaturalist's public feed needs no key; birds.json, when the site carries one, holds
+// eBird reports for Lancaster County gathered by tools/update_birds.py. Both only load when the map is on a website.
+let sightings=[],sightT=0,sightFail=false,birdShare=[],shareSrc='';
+const pct=p=>p<.01?'under 1%':Math.round(p*100)+'%';const MON3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const seenOn=d=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(d||'');return m?`${MON3[+m[2]-1]} ${+m[3]}`:''};
+async function loadSightings(){if(!location.protocol.startsWith('http')||Date.now()-sightT<1800000)return;sightT=Date.now();const out=[],seen=new Set();
+  const add=(c,sci,lon,lat,d,src)=>{if(!sci||lon==null||lat==null)return;const x=(lon-H.lon0)*KXm,z=-(lat-H.lat0)*KYm;if(Math.abs(x)>8300||Math.abs(z)>8300)return;sci=sci.split(' ').slice(0,2).join(' ');const key=sci+'|'+Math.round(x/300)+'|'+Math.round(z/300);if(seen.has(key))return;seen.add(key);out.push({c:c||sci,s:sci,x,z,d:d||'',src})};
+  let share=[];
+  try{const r=await fetch('birds.json',{cache:'no-cache'});if(r.ok){const j=await r.json();for(const o of j.obs||[])add(o.c,o.s,o.lng,o.lat,o.d,j.source||'eBird');
+      if(j.freq&&j.freq.length){share=j.freq.filter(q=>q.s&&q.p>0).map(q=>({c:q.c||q.s,s:q.s,p:+q.p}));shareSrc=`of recent ${j.source||'eBird'} checklists in Lancaster County`}}}catch(e){}
+  // Without eBird numbers, the share of each species among all bird reports near Lincoln on iNaturalist for this month of the year
+  if(!share.length)try{const m=birdMonth(),r=await fetch(`https://api.inaturalist.org/v1/observations/species_counts?iconic_taxa=Aves&lat=40.775&lng=-96.66&radius=25&month=${m}&captive=false&verifiable=true&per_page=500`);if(r.ok){let tot=0;const L=[];
+      for(const q of (await r.json()).results||[]){const t=q.taxon;if(!t||t.rank!=='species'||!q.count)continue;tot+=q.count;L.push({c:t.preferred_common_name||t.name,s:t.name,n:q.count})}
+      if(tot>0){share=L.map(q=>({c:q.c,s:q.s,p:q.n/tot}));shareSrc=`of ${MONTHS[m-1]} bird reports near Lincoln on iNaturalist, all years`}}}catch(e){}
+  if(share.length){const t=share.reduce((a,q)=>a+q.p,0);birdShare=share.sort((a,b)=>b.p-a.p);birdShare.tot=t}
+  try{const d1=new Date(Date.now()-21*864e5).toISOString().slice(0,10);
+    const r=await fetch(`https://api.inaturalist.org/v1/observations?iconic_taxa=Aves&lat=40.775&lng=-96.66&radius=14&d1=${d1}&captive=false&geoprivacy=open&order_by=observed_on&order=desc&per_page=200`);if(!r.ok)throw 0;
+    for(const o of (await r.json()).results||[]){const t=o.taxon,g=o.geojson;if(!t||!g||!g.coordinates||(t.rank!=='species'&&t.rank!=='subspecies'))continue;add(t.preferred_common_name,t.name,g.coordinates[0],g.coordinates[1],o.observed_on,'iNaturalist')}
+    sightFail=false}catch(e){sightFail=!out.length}
+  sightings=out;nextFlock=0}
+function sightFlock(sg){const b=BIRDS.find(q=>q[1]===sg.s)||[sg.c,sg.s,[[1,12]],'solo',[1,1],6,[25,70],0x34363a],n=b[3]==='solo'?1:Math.min(6,2+((Math.random()*5)|0));
+  const f={b,n,style:'solo',sg,alt:Math.min(80,b[6][0])+Math.random()*30,ws:b[5],col:new THREE.Color(b[7]),t:0,ph:Math.random()*6,cx:sg.x,cz:sg.z,r:45+Math.random()*60,ang:Math.random()*6.283,life:55+Math.random()*30,v:13,
+    lb:{t:sg.c,sub:sg.s+(sg.d?' · seen '+seenOn(sg.d):'')+' · '+sg.src,x:0,y:0,z:0,k:7,pri:575,near:0,far:20000}};
+  if(n>1){f.off=new Float32Array(n*3);const sp=f.ws*1.3;for(let i=1;i<n;i++){f.off[3*i]=(Math.random()-.5)*sp*n*.6;f.off[3*i+1]=(Math.random()-.5)*sp;f.off[3*i+2]=Math.random()*sp*n*.5}}
+  flocks.push(f)}
+function spawnFlock(){const t0=controls.target,R0=Math.min(4500,Math.max(420,camera.position.distanceTo(t0)*.8));
+  // a real report near the view comes first, when there is one
+  if(sightings.length&&Math.random()<.7){const near=sightings.filter(q=>Math.hypot(q.x-t0.x,q.z-t0.z)<R0*1.25&&!flocks.some(f=>f.sg&&f.sg.s===q.s&&Math.abs(f.sg.x-q.x)<1&&Math.abs(f.sg.z-q.z)<1));if(near.length){sightFlock(near[(Math.random()*near.length)|0]);return}}
+  const m=birdMonth();let b,share=0;
+  // when the share of reports is known, each species turns up about as often as people report it
+  if(birdShare.length){let r=Math.random()*birdShare.tot,q=birdShare[0];for(const w of birdShare){if((r-=w.p)<=0){q=w;break}}b=BIRDS.find(x=>x[1]===q.s)||[q.c,q.s,[[1,12]],'loose',[1,6],5,[30,110],0x3a3a3e];share=q.p}
+  else{const ok=BIRDS.filter(x=>inSeason(x,m));if(!ok.length)return;b=ok[(Math.random()*ok.length)|0]}
+  if(flocks.some(f=>!f.sg&&f.b[1]===b[1]))return;
+  const t=controls.target,d=camera.position.distanceTo(t),R=Math.min(4500,Math.max(420,d*.8)),a=Math.random()*6.283,n=b[3]==='solo'?1:(b[4][0]+Math.random()*(b[4][1]-b[4][0]))|0;
+  const f={b,n,style:b[3],alt:b[6][0]+Math.random()*(b[6][1]-b[6][0]),ws:b[5],col:new THREE.Color(b[7]),t:0,ph:Math.random()*6,lb:{t:b[0],sub:b[1]+(share?` · ${pct(share)} of reports`:''),x:0,y:0,z:0,k:7,pri:560,near:0,far:20000}};
+  if(f.style==='solo'){f.cx=t.x+(Math.random()-.5)*R;f.cz=t.z+(Math.random()-.5)*R;f.r=70+Math.random()*120;f.ang=a;f.life=45+Math.random()*30;f.v=15;if(b[0]==='Peregrine Falcon'){f.cx=LM.capitol[0];f.cz=LM.capitol[1];f.r=75;f.life=80}}
+  else{f.x=t.x+Math.cos(a)*R*1.1;f.z=t.z+Math.sin(a)*R*1.1;const aim=a+Math.PI+(Math.random()-.5)*.8;f.hx=Math.cos(aim);f.hz=Math.sin(aim);f.v=Math.max(f.style==='swarm'?15:20,R/13);f.life=2.3*R/f.v;
+    f.off=new Float32Array(n*3);const sp=f.ws*1.15;for(let i=0;i<n;i++){let r,u=0,bk;if(f.style==='V'){const k=Math.ceil(i/2);r=(i%2?1:-1)*k*sp;bk=k*sp*.9}
+      else if(f.style==='loose'){r=(Math.random()-.5)*sp*n*.5;bk=Math.random()*sp*n*.35;u=(Math.random()-.5)*sp*2}else{const q=sp*Math.sqrt(n)*1.5;r=(Math.random()-.5)*q;bk=(Math.random()-.5)*q;u=(Math.random()-.5)*q*.5}
+      f.off[3*i]=r;f.off[3*i+1]=u;f.off[3*i+2]=bk}}
+  flocks.push(f)}
+function stepBirds(dt,now){if(!birdMesh)return;if(!birdsOn){if(birdMesh.count||flocks.length){birdMesh.count=0;flocks=[];dirty=true}return}
+  if(now>nextFlock&&flocks.length<5){spawnFlock();nextFlock=now+3500+7000*Math.random()}
+  const d=camera.position.distanceTo(controls.target),sc=Math.min(24,Math.max(1.3,d/520)),as=Math.min(8,Math.max(1,d/900));let k=0;
+  for(let fi=flocks.length-1;fi>=0;fi--){const f=flocks[fi];f.t+=dt;if(f.t>f.life){flocks.splice(fi,1);continue}let lx,lz,hx,hz;
+    if(f.style==='solo'){const rr=f.r*Math.max(1,sc*.45);f.ang+=dt*f.v/f.r*.8;lx=f.cx+Math.cos(f.ang)*rr;lz=f.cz+Math.sin(f.ang)*rr;hx=-Math.sin(f.ang);hz=Math.cos(f.ang)}else{f.x+=f.hx*f.v*dt;f.z+=f.hz*f.v*dt;lx=f.x;lz=f.z;hx=f.hx;hz=f.hz}
+    const gy=hAt(lx,lz)+f.alt*as,w=f.ws*sc;lQ.setFromAxisAngle(lUp,Math.atan2(-hx,-hz));
+    for(let i=0;i<f.n&&k<420;i++){let x=lx,y=gy,z=lz;if(f.off){const r=f.off[3*i]*sc,b=f.off[3*i+2]*sc;x+=-hz*r-hx*b;z+=hx*r-hz*b;y+=f.off[3*i+1]*sc;if(f.style==='swarm'){x+=Math.sin(now*.002+i*1.7)*w;y+=Math.sin(now*.0027+i)*w*.5;z+=Math.cos(now*.0023+i*2.3)*w}}
+      const flap=f.style==='solo'?1:(.5+.5*Math.abs(Math.sin(now*.011*(9/f.ws)+i*1.3+f.ph)));lS.set(w*flap,w,w);lP.set(x,y,z);lM.compose(lP,lQ,lS);birdMesh.setMatrixAt(k,lM);birdMesh.setColorAt(k,f.col);k++}
+    f.lb.x=lx;f.lb.z=lz;f.lb.y=gy+w*1.3;lifeLabels.push(f.lb)}
+  birdMesh.count=k;birdMesh.instanceMatrix.needsUpdate=true;if(birdMesh.instanceColor)birdMesh.instanceColor.needsUpdate=true;if(k)ambient=true}
+function birdCard(){const m=birdMonth(),ok=BIRDS.filter(b=>inSeason(b,m)),web=location.protocol.startsWith('http');let body='';
+  if(birdShare.length)body+=`Who is around, by share ${shareSrc}: `+birdShare.slice(0,14).map(q=>`${q.c} ${pct(q.p/birdShare.tot)}`).join(', ')+`, and ${Math.max(0,birdShare.length-14)} more species. Flocks turn up about that often. A share of reports is not a count of birds: common and easy to spot birds are over-represented. `;
+  if(sightings.length){const sp=[...new Set(sightings.map(q=>q.c))],src=[...new Set(sightings.map(q=>q.src))].join(' and ');body+=`${sightings.length} recent reports inside the map from ${src} (${sp.slice(0,10).join(', ')}${sp.length>10?' and more':''}). A flock with a date under its name is circling the spot where that bird was reported.`}
+  if(!body)body=ok.map(b=>`${b[0]} (${b[1]})`).join(', ')+`. Flocks drift through with their names. This list is the usual ${MONTHS[m-1]} pattern for eastern Nebraska, not live sightings. `+(web&&!sightFail?'Local reports from iNaturalist are loading.':'On the website copy of the map, local reports from iNaturalist join in: who is around by share of reports, and recent sightings at the spot where each was seen.');
+  showCard(`Birds over Lincoln in ${MONTHS[m-1]}`,body,undefined,undefined,[{href:'https://dashboard.birdcast.info',label:'Migration tonight: BirdCast ↗'},{href:'https://ebird.org/region/US-NE-109',label:'eBird: Lancaster County ↗'}])}
+// Giraffes at the zoo, chasing lettuce that falls from the sky
+let zoo=null;
+function setupZoo(){const Z=H.zoo;if(!Z)return;const cx=Z[0],cz=-Z[1],R=Z[2],cv=document.createElement('canvas');cv.width=cv.height=128;const c=cv.getContext('2d');c.fillStyle='#e0b061';c.fillRect(0,0,128,128);c.fillStyle='#8a5627';
+  for(let i=0;i<34;i++){const x=rnd(i*3+200)*128,y=rnd(i*3+201)*128,r=7+7*rnd(i*3+202);c.beginPath();for(let k=0;k<6;k++){const a=k*1.047+rnd(i*7+k)*.6,q=r*(.7+.5*rnd(i*11+k));if(k)c.lineTo(x+Math.cos(a)*q,y+Math.sin(a)*q);else c.moveTo(x+Math.cos(a)*q,y+Math.sin(a)*q)}c.closePath();c.fill()}
+  const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const mat=new THREE.MeshLambertMaterial({map:tex}),dk=new THREE.MeshLambertMaterial({color:0x5a3a1c});
+  zoo={cx,cz,R,gir:[],let:[],eaten:0,next:0};const info=()=>['Giraffes at the Lincoln Children\'s Zoo',`Running after lettuce that falls from the sky and eating it. Lettuce eaten so far: ${zoo.eaten}. This is a bit of fun added by this map, and the spot inside the zoo is approximate.`];
+  for(let i=0;i<4;i++){const g=new THREE.Group(),B=(w,h,d,x,y,z,par,m)=>{const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m||mat);q.position.set(x,y,z);(par||g).add(q);return q};
+    B(.95,1.05,2.1,0,2.5,0);B(.08,.95,.08,0,2.35,1.1,g,dk);const neck=new THREE.Group();neck.position.set(0,2.85,-.8);g.add(neck);B(.4,2.5,.44,0,1.15,0,neck);B(.42,.38,.85,0,2.45,-.3,neck);B(.07,.26,.07,-.12,2.76,-.1,neck,dk);B(.07,.26,.07,.12,2.76,-.1,neck,dk);
+    const legs=[];for(const [lx,lz] of [[-.33,-.8],[.33,-.8],[-.33,.8],[.33,.8]]){const L=new THREE.Group();L.position.set(lx,2.05,lz);g.add(L);B(.22,2.05,.22,0,-1.02,0,L);legs.push(L)}
+    g.scale.setScalar(1.25);const a=i*1.571,q={g,neck,legs,x:cx+Math.cos(a)*R*.5,z:cz+Math.sin(a)*R*.5,h:a,eat:0,ph:i,tgt:null};g.position.set(q.x,hAt(q.x,q.z),q.z);Object.defineProperty(g.userData,'info',{get:info});scene.add(g);pickables.push(g);zoo.gir.push(q)}
+  zoo.lm=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.8,1),new THREE.MeshLambertMaterial({color:0x8fd94f,flatShading:true}),12);zoo.lm.count=0;zoo.lm.frustumCulled=false;scene.add(zoo.lm);
+  labels.push({t:'Zoo giraffes',sub:'catching lettuce from the sky',x:cx,y:hAt(cx,cz)+15,z:cz,k:3,pri:540,near:0,far:1300});
+  {// the nearest clear patch beside the giraffes
+   let px=cx+R+12,pz=cz;const clear=(x,z)=>{if(LM.occ(x,z))return false;for(let k=0;k<8;k++)if(LM.occ(x+7*Math.cos(k*.785),z+7*Math.sin(k*.785)))return false;return true};
+   find:for(const dd of [R+11,R+16,R+22,R+30])for(let k=0;k<12;k++){const a=k*.5236,x=cx+dd*Math.cos(a),zz=cz+dd*Math.sin(a);if(clear(x,zz)){px=x;pz=zz;break find}}
+   const BK=0x17181c,WT=0xf4f3ee,OR=0xf08a1c,g=boxes([[.34,.56,.3,0,.36,0,BK],[.26,.44,.07,0,.34,-.15,WT],[.24,.22,.24,0,.76,0,BK],[.14,.1,.06,0,.74,-.12,WT],[.08,.06,.14,0,.74,-.18,OR],[.12,.05,.16,-.09,.03,-.04,OR],[.12,.05,.16,.09,.03,-.04,OR],[.06,.36,.14,-.2,.38,0,BK],[.06,.36,.14,.2,.38,0,BK]]);
+   const N=9,m=new THREE.InstancedMesh(g,new THREE.MeshLambertMaterial({vertexColors:true}),N);m.frustumCulled=false;m.userData.info=['Penguins at the Lincoln Children\'s Zoo','A little colony waddling around its pool and taking a swim. A bit of fun added by this map, and the spot inside the zoo is approximate.'];scene.add(m);pickables.push(m);
+   const pool=new THREE.Mesh(new THREE.CircleGeometry(3.4,28),new THREE.MeshLambertMaterial({color:0x5fb9ea}));pool.rotation.x=-Math.PI/2;pool.position.set(px+2.6,hAt(px+2.6,pz)+.09,pz);scene.add(pool);
+   const rim=new THREE.Mesh(new THREE.RingGeometry(3.4,3.9,28),new THREE.MeshLambertMaterial({color:0xe9eef2}));rim.rotation.x=-Math.PI/2;rim.position.copy(pool.position);rim.position.y+=.02;scene.add(rim);
+   const pen=[];for(let i=0;i<N;i++){const a=i*.7,r=1.5+3.5*rnd(i+900);pen.push({x:px+Math.cos(a)*r,z:pz+Math.sin(a)*r,h:a,tx:px,tz:pz,wait:rnd(i+910)*3,ph:i})}
+   zoo.pen={m,list:pen,px,pz,poolX:px+2.6,poolZ:pz};labels.push({t:'Zoo penguins',x:px,y:hAt(px,pz)+5,z:pz,k:3,pri:530,near:0,far:700})}}
+function stepZoo(dt,now){const z=zoo;if(!z)return;const t=controls.target;if((t.x-z.cx)**2+(t.z-z.cz)**2>650*650||camera.position.distanceTo(t)>1500)return;
+  if(now>z.next&&z.let.length<9){z.next=now+800+900*Math.random();const a=Math.random()*6.283,r=Math.sqrt(Math.random())*z.R*.9;z.let.push({x:z.cx+Math.cos(a)*r,z:z.cz+Math.sin(a)*r,h:50+Math.random()*25,rest:0})}
+  for(let i=z.let.length-1;i>=0;i--){const L=z.let[i];if(L.h>.7)L.h=Math.max(.7,L.h-5.5*dt);else if((L.rest+=dt)>9)z.let.splice(i,1)}
+  for(const q of z.gir){let best=null,bd=1e9;for(const L of z.let){if(L.by&&L.by!==q)continue;const d=Math.hypot(L.x-q.x,L.z-q.z)+L.h*.4;if(d<bd){bd=d;best=L}}
+    if(q.tgt&&q.tgt!==best&&q.tgt.by===q)q.tgt.by=null;q.tgt=best;if(best)best.by=q;let moving=false;
+    if(q.eat>0){q.eat-=dt;q.neck.rotation.x=-.35+.25*Math.sin(now*.03)}
+    else if(best){const dx=best.x-q.x,dz=best.z-q.z,dd=Math.hypot(dx,dz);
+      if(dd>1.3){const st=Math.min(dd-1.2,6.8*dt);q.x+=dx/dd*st;q.z+=dz/dd*st;const want=Math.atan2(-dx,-dz);let dh=want-q.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));q.h+=dh*Math.min(1,dt*7);q.ph+=st*1.1;moving=true}
+      const reach=best.h<1.2?-1.75:-.35;q.neck.rotation.x+=(reach-q.neck.rotation.x)*Math.min(1,dt*5);
+      if(dd<=1.6&&(best.h<7.2)&&(best.h>1.2||q.neck.rotation.x<-1.5)){z.let.splice(z.let.indexOf(best),1);q.tgt=null;z.eaten++;q.eat=.7}}
+    else q.neck.rotation.x+=(-.35-q.neck.rotation.x)*Math.min(1,dt*3);
+    const sw=moving?Math.sin(q.ph)*.55:0;q.legs[0].rotation.x=sw;q.legs[3].rotation.x=sw;q.legs[1].rotation.x=-sw;q.legs[2].rotation.x=-sw;
+    q.g.position.set(q.x,hAt(q.x,q.z)+(moving?Math.abs(Math.sin(q.ph))*.12:0),q.z);q.g.rotation.y=q.h}
+  let k=0;for(const L of z.let){lP.set(L.x,hAt(L.x,L.z)+L.h,L.z);lQ.setFromAxisAngle(lUp,now*.002+k);lS.set(1,.8,1);lM.compose(lP,lQ,lS);z.lm.setMatrixAt(k++,lM)}z.lm.count=k;z.lm.instanceMatrix.needsUpdate=true;
+  if(z.pen){const Pn=z.pen;for(let i=0;i<Pn.list.length;i++){const q=Pn.list[i],dx=q.tx-q.x,dz=q.tz-q.z,dd=Math.hypot(dx,dz);let sway=0;
+      if(q.wait>0){q.wait-=dt}else if(dd>.25){const st=Math.min(dd,1.25*dt);q.x+=dx/dd*st;q.z+=dz/dd*st;const want=Math.atan2(-dx,-dz);let dh=want-q.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));q.h+=dh*Math.min(1,dt*6);q.ph+=st*9;sway=Math.sin(q.ph)*.2}
+      else{const a=Math.random()*6.283,r=Math.sqrt(Math.random())*6;q.tx=Pn.px+Math.cos(a)*r;q.tz=Pn.pz+Math.sin(a)*r;q.wait=Math.random()<.4?0:.5+2.5*Math.random()}
+      const swim=Math.hypot(q.x-Pn.poolX,q.z-Pn.poolZ)<3.2;lP.set(q.x,hAt(q.x,q.z)+(swim?-.2:0),q.z);lE.set(swim?-1.2:0,q.h,swim?0:sway,'YXZ');lQ.setFromEuler(lE);lS.setScalar(1.7);lM.compose(lP,lQ,lS);Pn.m.setMatrixAt(i,lM)}
+    Pn.m.instanceMatrix.needsUpdate=true}
+  ambient=true}
+// Dogs at the dog parks and the dog bar: they chase a ball, carry it around, and do laps
+let dogs=null;
+function setupDogs(){const src=H.dogparks||[],sites=[];for(const [x,n,r,name] of src){if(sites.some(q=>Math.hypot(q.x-x,q.z+n)<25))continue;sites.push({x,z:-n,r,name,ball:{x,z:-n,h:0,st:'rest',t:0,by:null},next:0})}if(!sites.length)return;
+  const TAN=0xb9783a,BLK=0x1b1917,LT=0xd19a5c,EAR=0x8f5d2c,LIV=0x4b2e1c,ROAN=0xa89a8c,WH=0xece7dd,BTAN=0xb5743a,BEAR=0x7a4a25,FAWN=0xd8b888;
+  const GEO=[ // Airedale Terrier: tan, black saddle, beard, folded ears, tail held high
+    boxes([[.34,.3,.92,0,.5,0,TAN],[.37,.22,.6,0,.66,.08,BLK],[.2,.3,.2,0,.74,-.42,TAN],[.2,.2,.4,0,.94,-.62,TAN],[.17,.15,.2,0,.84,-.79,LT],[.08,.07,.06,0,.93,-.84,BLK],[.07,.1,.11,-.1,1.03,-.5,EAR],[.07,.1,.11,.1,1.03,-.5,EAR],
+      [.09,.4,.09,-.12,.2,-.33,TAN],[.09,.4,.09,.12,.2,-.33,TAN],[.09,.4,.09,-.12,.2,.33,TAN],[.09,.4,.09,.12,.2,.33,TAN],[.07,.3,.07,0,.9,.44,BLK]]),
+    // German Shorthaired Pointer: liver head and patch, ticked body, hanging ears, long legs, docked tail
+    boxes([[.3,.3,.96,0,.58,0,ROAN],[.32,.16,.36,0,.7,.2,LIV],[.17,.3,.2,0,.82,-.44,LIV],[.19,.2,.34,0,1.02,-.6,LIV],[.14,.13,.24,0,.97,-.84,LIV],[.05,.22,.14,-.12,.96,-.52,LIV],[.05,.22,.14,.12,.96,-.52,LIV],
+      [.08,.46,.08,-.11,.23,-.36,ROAN],[.08,.46,.08,.11,.23,-.36,ROAN],[.08,.46,.08,-.11,.23,.36,ROAN],[.08,.46,.08,.11,.23,.36,ROAN],[.06,.06,.2,0,.7,.56,LIV]]),
+    // Beagle: tricolor, long ears, white legs and muzzle, white-tipped tail held up
+    boxes([[.32,.28,.78,0,.42,0,BTAN],[.34,.18,.5,0,.54,.08,BLK],[.3,.1,.6,0,.3,-.04,WH],[.18,.22,.18,0,.6,-.36,BTAN],[.22,.2,.3,0,.76,-.5,BTAN],[.14,.12,.18,0,.7,-.7,WH],[.06,.05,.05,0,.74,-.8,BLK],[.06,.24,.16,-.14,.7,-.44,BEAR],[.06,.24,.16,.14,.7,-.44,BEAR],
+      [.08,.3,.08,-.11,.15,-.28,WH],[.08,.3,.08,.11,.15,-.28,WH],[.08,.3,.08,-.11,.15,.28,WH],[.08,.3,.08,.11,.15,.28,WH],[.06,.26,.06,0,.72,.4,BTAN],[.06,.08,.06,0,.89,.4,WH]]),
+    // Pug: fawn, black mask and ears, short legs, curled tail
+    boxes([[.36,.3,.58,0,.36,0,FAWN],[.3,.28,.26,0,.6,-.38,FAWN],[.22,.18,.08,0,.56,-.54,BLK],[.08,.08,.1,-.13,.74,-.34,BLK],[.08,.08,.1,.13,.74,-.34,BLK],
+      [.09,.22,.09,-.13,.11,-.2,FAWN],[.09,.22,.09,.13,.11,-.2,FAWN],[.09,.22,.09,-.13,.11,.2,FAWN],[.09,.22,.09,.13,.11,.2,FAWN],[.1,.1,.1,0,.56,.3,FAWN]])],BRS=[1,1.06,.8,.62];
+  const list=[];
+  for(const q of sites){const k=Math.min(10,Math.max(5,Math.round(q.r/3)));for(let i=0;i<k&&list.length<96;i++){const a=Math.random()*6.283,r=Math.random()*q.r;const br=(list.length+((Math.random()*4)|0))%4;list.push({s:q,br,x:q.x+Math.cos(a)*r,z:q.z+Math.sin(a)*r,h:a,tx:q.x,tz:q.z,wait:Math.random()*2,sp:(5+3.5*Math.random())*(br===3?.7:1),sz:(1.5+.9*Math.random())*BRS[br],ph:Math.random()*6})}
+    labels.push({t:q.name||'Dog park',x:q.x,y:hAt(q.x,q.z)+8,z:q.z,k:3,pri:330,near:0,far:700})}
+  const mat=new THREE.MeshLambertMaterial({vertexColors:true}),col=new THREE.Color(),cnt=[0,0,0,0];for(const d of list)d.bi=cnt[d.br]++;
+  const info=['Dogs at play','The sim dogs are Airedale Terriers, German Shorthaired Pointers, Beagles and Pugs. They chase a ball, carry it around and do laps at the dog parks and dog bars on the map. A bit of fun added by this map.'];
+  const ms=GEO.map((g,k)=>{const m=new THREE.InstancedMesh(g,mat,Math.max(1,cnt[k]));m.count=cnt[k];m.frustumCulled=false;m.userData.info=info;scene.add(m);pickables.push(m);return m});
+  for(const d of list){lP.set(d.x,hAt(d.x,d.z),d.z);lQ.setFromAxisAngle(lUp,d.h);lS.setScalar(d.sz);lM.compose(lP,lQ,lS);ms[d.br].setMatrixAt(d.bi,lM);ms[d.br].setColorAt(d.bi,col.setScalar(.84+.32*Math.random()))}
+  const bm=new THREE.InstancedMesh(new THREE.SphereGeometry(.24,8,6),new THREE.MeshLambertMaterial({color:0xd8ff3d,emissive:0x445500}),sites.length);bm.frustumCulled=false;scene.add(bm);dogs={sites,list,ms,bm}}
+function stepDogs(dt,now){const D=dogs;if(!D)return;const t=controls.target;if(camera.position.distanceTo(t)>1200)return;let any=false;
+  for(let si=0;si<D.sites.length;si++){const q=D.sites[si],b=q.ball;q.on=(t.x-q.x)**2+(t.z-q.z)**2<(420+q.r)**2;if(!q.on)continue;any=true;
+    if(now>q.next){q.next=now+3800+3000*Math.random();const a=Math.random()*6.283,r=Math.sqrt(Math.random())*q.r*.9;b.fx=b.x;b.fz=b.z;b.tx=q.x+Math.cos(a)*r;b.tz=q.z+Math.sin(a)*r;b.st='fly';b.t=0;b.by=null}
+    if(b.st==='fly'){b.t+=dt/1.1;const u=Math.min(1,b.t);b.x=b.fx+(b.tx-b.fx)*u;b.z=b.fz+(b.tz-b.fz)*u;b.h=Math.sin(Math.PI*u)*5;if(u>=1){b.st='rest';b.h=0}}
+    else if(b.by){b.x=b.by.x-Math.sin(b.by.h)*.9*b.by.sz;b.z=b.by.z-Math.cos(b.by.h)*.9*b.by.sz;b.h=.7*b.by.sz}
+    lP.set(b.x,hAt(b.x,b.z)+.25+b.h,b.z);lQ.identity();lS.setScalar(1.6);lM.compose(lP,lQ,lS);D.bm.setMatrixAt(si,lM)}
+  if(!any)return;
+  for(let i=0;i<D.list.length;i++){const d=D.list[i],q=d.s;if(!q.on)continue;const b=q.ball;let tx=d.tx,tz=d.tz,run=1;
+    const chase=!b.by&&Math.hypot(b.tx-d.x,b.tz-d.z)<q.r*1.2+6&&(i%3!==2);
+    if(chase){tx=b.st==='fly'?b.tx:b.x;tz=b.st==='fly'?b.tz:b.z;run=1.35;d.wait=0;if(b.st==='rest'&&Math.hypot(b.x-d.x,b.z-d.z)<.9){b.by=d;d.tx=q.x+(Math.random()-.5)*q.r;d.tz=q.z+(Math.random()-.5)*q.r}}
+    const dx=tx-d.x,dz=tz-d.z,dd=Math.hypot(dx,dz);let bob=0;
+    if(d.wait>0&&!chase){d.wait-=dt;d.h+=Math.sin(now*.02+i)*.02}
+    else if(dd>.5){const st=Math.min(dd,d.sp*run*dt);d.x+=dx/dd*st;d.z+=dz/dd*st;const want=Math.atan2(-dx,-dz);let dh=want-d.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));d.h+=dh*Math.min(1,dt*10);d.ph+=st*3;bob=Math.abs(Math.sin(d.ph))*.16}
+    else{const a=Math.random()*6.283,r=Math.sqrt(Math.random())*q.r*.95;d.tx=q.x+Math.cos(a)*r;d.tz=q.z+Math.sin(a)*r;d.wait=Math.random()<.5?0:.4+1.8*Math.random()}
+    lP.set(d.x,hAt(d.x,d.z)+bob*d.sz,d.z);lE.set(bob*.5,d.h,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(d.sz);lM.compose(lP,lQ,lS);D.ms[d.br].setMatrixAt(d.bi,lM)}
+  for(const m of D.ms)m.instanceMatrix.needsUpdate=true;D.bm.instanceMatrix.needsUpdate=true;ambient=true}
+// Pride option: the Capitol tower in rainbow colors, the Sower as a rainbow sprinkler, hearts rising
+function setupPride(){const g=LM.capG;if(!g)return;const grp=new THREE.Group(),RB=[0x7a2fd6,0x2f6fff,0x16a34a,0xffd21f,0xff8a1f,0xe5252a],TR=[0x5bcefa,0xf5a9b8,0xffffff,0xf5a9b8,0x5bcefa];
+  for(let i=0;i<6;i++){const m=new THREE.Mesh(new THREE.BoxGeometry(25.4,62/6,25.4),new THREE.MeshLambertMaterial({color:RB[i],emissive:RB[i],emissiveIntensity:.4}));m.position.set(0,30+(i+.5)*62/6,0);grp.add(m)}
+  for(let i=0;i<5;i++){const m=new THREE.Mesh(new THREE.CylinderGeometry(10.9,10.9,2.2,8),new THREE.MeshLambertMaterial({color:TR[i],emissive:TR[i],emissiveIntensity:.35}));m.position.set(0,99+1.1+i*2.2,0);m.rotation.y=Math.PI/8;grp.add(m)}
+  for(let i=0;i<6;i++)for(const sgn of [-1,1]){const m=new THREE.Mesh(new THREE.BoxGeometry(133.6,15.5/6,.5),new THREE.MeshLambertMaterial({color:RB[i],emissive:RB[i],emissiveIntensity:.3}));m.position.set(0,(i+.5)*15.5/6,sgn*66.8);grp.add(m);const m2=m.clone();m2.rotation.y=Math.PI/2;m2.position.set(sgn*66.8,(i+.5)*15.5/6,0);grp.add(m2)}
+  grp.visible=false;g.add(grp);LM.prideG=grp;
+  {// The sheet is drawn right after the ground and before everything else, without a depth test, so it colors the
+   // ground (grass, streets, lots) and never the buildings standing on it.
+   const geo=new THREE.PlaneGeometry(17600,17600,96,96);geo.rotateX(-Math.PI/2);const p=geo.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,hAt(p.getX(i),p.getZ(i))+1);
+   const m=new THREE.ShaderMaterial({transparent:false,blending:THREE.CustomBlending,blendSrc:THREE.SrcAlphaFactor,blendDst:THREE.OneMinusSrcAlphaFactor,depthTest:false,depthWrite:false,
+     uniforms:{uC:{value:new THREE.Vector2(LM.capitol[0],LM.capitol[1])},uR:{value:0},uT:{value:0},uI:{value:.6}},
+     vertexShader:'varying vec2 vP;void main(){vP=position.xz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+     fragmentShader:'uniform vec2 uC;uniform float uR,uT,uI;varying vec2 vP;vec3 hue(float h){return clamp(abs(fract(h+vec3(0.,.6667,.3333))*6.-3.)-1.,0.,1.);}void main(){vec2 q=vP-uC;float d=length(q);if(d>uR)discard;float h=fract(d/300.-uT*(.03+.05*uI)+atan(q.y,q.x)*.15915);float pulse=.5+.5*sin(d*.011-uT*(1.6+2.4*uI));vec3 c=hue(h)*(1.+.4*uI*pulse);float edge=smoothstep(uR,uR-180.,d);float glow=smoothstep(uR-70.,uR,d);float al=((.26+.34*uI)+.24*smoothstep(900.,0.,d))*edge*mix(1.,.45+.85*pulse,.3+.7*uI)+.55*glow;gl_FragColor=vec4(mix(c,vec3(1.),glow*.55),min(al,.95));}'});
+   const mesh=new THREE.Mesh(geo,m);mesh.renderOrder=-9;mesh.frustumCulled=false;mesh.visible=false;scene.add(mesh);LM.prideGround=mesh}
+  if(LM.treeMesh&&LM.treeMesh.instanceColor){const pts=LM.treePts,n=pts.length,dist=new Float32Array(n),ord=new Uint32Array(n);for(let i=0;i<n;i++){dist[i]=Math.hypot(pts[i][0]-LM.capitol[0],pts[i][1]-LM.capitol[1]);ord[i]=i}ord.sort((a,b)=>dist[a]-dist[b]);
+    LM.prideTrees={m:LM.treeMesh,pts,dist,ord,p:0,c0:LM.treeMesh.instanceColor.array.slice()}}
+  const N=mobile?1500:2600,P=new Float32Array(N*3).fill(-5000),C=new Float32Array(N*3),geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(P,3));geo.setAttribute('color',new THREE.BufferAttribute(C,3));
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:3.6,vertexColors:true,transparent:true,opacity:.95,depthWrite:false,fog:false}));pts.frustumCulled=false;pts.visible=false;scene.add(pts);
+  LM.spr={pts,P,C,V:new Float32Array(N*3),N,k:0,RB:[0xe5252a,0xff8a1f,0xffd21f,0x16a34a,0x2f6fff,0x7a2fd6].map(h=>new THREE.Color(h))};
+  const hc=document.createElement('canvas');hc.width=hc.height=64;const q=hc.getContext('2d');q.fillStyle='#fff';q.beginPath();q.moveTo(32,56);q.bezierCurveTo(2,34,8,8,32,22);q.bezierCurveTo(56,8,62,34,32,56);q.fill();
+  const HN=90,HP=new Float32Array(HN*3),HC=new Float32Array(HN*3),hg=new THREE.BufferGeometry();hg.setAttribute('position',new THREE.BufferAttribute(HP,3));hg.setAttribute('color',new THREE.BufferAttribute(HC,3));
+  const col=new THREE.Color();for(let i=0;i<HN;i++){const a=rnd(i+400)*6.283,r=40+rnd(i+500)*170;HP[3*i]=LM.capTop.x+Math.cos(a)*r;HP[3*i+1]=LM.capTop.y-120+rnd(i+600)*230;HP[3*i+2]=LM.capTop.z+Math.sin(a)*r;col.set([0xff4d6d,0xff8fa3,0xffd21f,0x7a2fd6,0x2f6fff,0x16a34a,0xff8a1f,0x5bcefa,0xf5a9b8][i%9]);HC[3*i]=col.r;HC[3*i+1]=col.g;HC[3*i+2]=col.b}
+  const hp=new THREE.Points(hg,new THREE.PointsMaterial({map:new THREE.CanvasTexture(hc),size:13,vertexColors:true,transparent:true,alphaTest:.2,depthWrite:false,fog:false}));hp.frustumCulled=false;hp.visible=false;scene.add(hp);LM.hearts=hp}
+function setPride(on){prideOn=on;$('bPride').classList.toggle('on',on);if(!LM.prideG)return;LM.prideG.visible=on;LM.spr.pts.visible=on;LM.hearts.visible=on;
+  LM.prideR=0;if(LM.prideGround){LM.prideGround.visible=on;LM.prideGround.material.uniforms.uR.value=0}{const T=LM.prideTrees;if(T){T.p=0;T.m.instanceColor.array.set(T.c0);T.m.instanceColor.needsUpdate=true}}const lb=labels.find(l=>l.t==='Nebraska State Capitol');if(lb)lb.sub=on?'Happy Pride · everyone belongs here':'';
+  if(on){lastInput=performance.now();stopTour();flyTo(camTo(LM.capitol[0],LM.capitol[1],560,205,18,70),2200);showCard('Pride at the Capitol','The tower in rainbow colors, the Sower turned into a rainbow sprinkler, hearts rising, and a rainbow that starts in the Capitol lawn and spreads as a pulsing wave, street by street and tree by tree, across the whole city. Slide the intensity bar up to make it brighter, faster and more of everything. Zoom out and give it a few minutes to reach the edges. Everyone belongs in Lincoln. This is an option on this map, not something on the real building.');$('crange').style.display='flex';$('cR').value=Math.round((LM.prideI===undefined?.6:LM.prideI)*100)}else hideCard();
+  shadowDirty=true;dirty=true}
+function stepPride(dt,now){if(!prideOn||!LM.spr)return;ambient=true;
+  // the rainbow front moves out from the Capitol at about 100 mph and recolors the trees it passes
+  const PI_=LM.prideI===undefined?.6:LM.prideI;LM.prideR=Math.min(21000,(LM.prideR||0)+dt*46*(.4+1.8*PI_));if(LM.prideGround){const u=LM.prideGround.material.uniforms;u.uR.value=LM.prideR;u.uT.value=(now%1e6)/1000;u.uI.value=PI_}
+  {const T=LM.prideTrees;if(T&&T.p<T.ord.length&&T.dist[T.ord[T.p]]<LM.prideR){const A=T.m.instanceColor.array,cx=LM.capitol[0],cz=LM.capitol[1];let n=0;
+      while(T.p<T.ord.length&&T.dist[T.ord[T.p]]<LM.prideR&&n++<4000){const i=T.ord[T.p++],h=(((T.dist[i]/300+Math.atan2(T.pts[i][1]-cz,T.pts[i][0]-cx)*.15915)%1)+1)%1,o=3*i;
+        const f=k=>Math.min(1,Math.max(0,Math.abs(((h+k)%1)*6-3)-1));A[o]=Math.min(14,f(0)/.085);A[o+1]=Math.min(14,f(.6667)/.2);A[o+2]=Math.min(14,f(.3333)/.05)}
+      T.m.instanceColor.needsUpdate=true}}
+  const C0=LM.capTop,t=controls.target;if((t.x-C0.x)**2+(t.z-C0.z)**2>6000*6000)return;const S=LM.spr,P=S.P,V=S.V,C=S.C,N=S.N,emit=Math.min(110,Math.ceil(N*dt/7.6*(.5+1.1*(LM.prideI===undefined?.6:LM.prideI))));
+  for(let e=0;e<emit;e++){const i=S.k=(S.k+1)%N,ci=i%6,arm=((i/6)|0)%3,th=now*.0011+arm*2.0944+(Math.random()-.5)*.06,el=(47-ci*2.7)*.01745,v=33+(5-ci)*.5,o=3*i,c=S.RB[ci];
+    V[o]=Math.cos(th)*Math.cos(el)*v;V[o+1]=Math.sin(el)*v;V[o+2]=Math.sin(th)*Math.cos(el)*v;P[o]=C0.x;P[o+1]=C0.y;P[o+2]=C0.z;C[o]=c.r;C[o+1]=c.g;C[o+2]=c.b}
+  for(let i=0;i<N;i++){const o=3*i;if(P[o+1]<-4000)continue;V[o+1]-=9.8*dt;P[o]+=V[o]*dt;P[o+1]+=V[o+1]*dt;P[o+2]+=V[o+2]*dt;if(P[o+1]<hAt(P[o],P[o+2]))P[o+1]=-5000}
+  S.pts.geometry.attributes.position.needsUpdate=true;S.pts.geometry.attributes.color.needsUpdate=true;
+  const H2=LM.hearts.geometry.attributes.position,A=H2.array;for(let i=1;i<A.length;i+=3){A[i]+=dt*(7+((i*7)%5));if(A[i]>C0.y+110)A[i]=C0.y-125}H2.needsUpdate=true;ambient=true}
+let devT=0,devI=0;
+function stepDev(dt,now){if(!LM.devSign||!LM.devDraw)return;const t=controls.target,g=LM.devSign,d2=(t.x-g.position.x)**2+(t.z-g.position.z)**2;if(d2>2600*2600)return;
+  if(now-devT>3400){devT=now;devI++;LM.devDraw(devI)}if(LM.devBall&&d2<1600*1600){LM.devBall.rotation.y+=dt*.5;ambient=true}}
+let bikers=null;
+function setupBikers(){const TR=LM.trails||[],best=new Map();for(let w=0;w<TR.length;w++){const T=TR[w];if(T.tc>=3||T.tn===65535||T.d.length<4)continue;const q=best.get(T.tn);if(q===undefined||TR[q].len<T.len)best.set(T.tn,w)}
+  // each named trail becomes one continuous path, so riders travel its whole length and turn around at the ends
+  const paths=[];for(const w of best.values()){let pts;try{pts=trailPath(w)}catch(e){continue}const n=pts.length/2;if(n<2)continue;const c=new Float32Array(n);for(let k=1;k<n;k++)c[k]=c[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);if(c[n-1]>=300)paths.push({d:pts,cum:c,L:c[n-1]})}
+  if(!paths.length){bikers={none:true};return}const N=mobile?260:600,tot=paths.reduce((a,q)=>a+q.L,0),list=[];
+  for(let i=0;i<N;i++){let r=Math.random()*tot,T=paths[0];for(const q of paths){if((r-=q.L)<=0){T=q;break}}list.push({T,L:T.L,s:Math.random()*T.L,dir:Math.random()<.5?1:-1,v:4.5+3.5*Math.random(),k:0})}
+  // bike and rider: wheels, frame, bars, legs, jersey and helmet (the jersey and helmet take the rider's color)
+  const geo=boxes([[.06,.62,.62,0,.34,-.52,0x18181a],[.06,.62,.62,0,.34,.52,0x18181a],[.07,.09,1.0,0,.62,0,0xffffff],[.07,.5,.07,0,.85,.2,0xffffff],[.44,.06,.07,0,.98,-.46,0x222222],[.12,.5,.14,-.1,.8,.12,0x232b36],[.12,.5,.14,.1,.8,.12,0x232b36],[.3,.56,.26,0,1.3,.06,0xffffff],[.2,.2,.22,0,1.7,-.08,0x3b2f27],[.25,.11,.28,0,1.83,-.08,0xffffff]]);
+  const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({vertexColors:true}),N),col=new THREE.Color(),JER=[0xff3b30,0xffcc00,0x34c759,0x0a84ff,0xff9500,0xbf5af2,0xff2d92,0x30d5c8,0xffffff];m.frustumCulled=false;m.visible=false;
+  for(let i=0;i<N;i++){lM.identity();m.setMatrixAt(i,lM);m.setColorAt(i,col.set(JER[i%JER.length]))}
+  m.userData.info=['Cyclists','Riders going up and down the trails while the Bike ride layer is on. They are part of the map, not real riders.'];scene.add(m);pickables.push(m);bikers={m,list}}
+function stepBikers(dt,now){if(!bikers){if(!rideMode)return;setupBikers()}const B=bikers;if(!B||B.none)return;if(!rideMode){if(B.m.visible){B.m.visible=false;dirty=true}return}if(!B.m.visible)B.m.visible=true;
+  const d=camera.position.distanceTo(controls.target),sc=Math.min(40,Math.max(1.6,d/90)),sp=Math.max(1,sc*.3);
+  for(let i=0;i<B.list.length;i++){const q=B.list[i],T=q.T,c=T.cum,n=c.length;q.s+=q.dir*q.v*sp*dt;if(q.s>=q.L){q.s=q.L;q.dir=-1}else if(q.s<=0){q.s=0;q.dir=1}
+    let k=q.k;while(k<n-2&&c[k+1]<q.s)k++;while(k>0&&c[k]>q.s)k--;q.k=k;const u=(q.s-c[k])/Math.max(.01,c[k+1]-c[k]),D=T.d,x0=D[2*k],z0=D[2*k+1],x1=D[2*k+2],z1=D[2*k+3],x=x0+(x1-x0)*u,z=z0+(z1-z0)*u,y=hAt(x,z)+.7;
+    lP.set(x,y,z);lQ.setFromAxisAngle(lUp,Math.atan2(-(x1-x0)*q.dir,-(z1-z0)*q.dir));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM)}
+  B.m.instanceMatrix.needsUpdate=true;ambient=true}
+// Volleyball storm: an option that rains and snows volleyballs around wherever you are looking
+let vbOn=false,vbs=null;
+function setupVB(){const N=mobile?170:300,m=new THREE.InstancedMesh(new THREE.SphereGeometry(1,12,8),new THREE.MeshLambertMaterial({map:vbTexture(),emissive:0x2c2c2c}),N);m.count=0;m.frustumCulled=false;m.visible=false;scene.add(m);
+  vbs={m,N,p:new Float32Array(N*3),v:new Float32Array(N),k:new Uint8Array(N),b:new Uint8Array(N),w:new Float32Array(N)}}
+function vbSpawn(i,R,top){const V=vbs,t=controls.target,a=Math.random()*6.283,r=Math.sqrt(Math.random())*R;V.p[3*i]=t.x+Math.cos(a)*r;V.p[3*i+2]=t.z+Math.sin(a)*r;V.p[3*i+1]=top?R*(.8+.5*Math.random()):R*1.3*Math.random();V.v[i]=0;V.b[i]=0;V.w[i]=0;V.k[i]=i%5<2?1:0}
+function stepVB(dt,now){const V=vbs;if(!V||!vbOn)return;const t=controls.target,d=camera.position.distanceTo(t),R=Math.min(3600,Math.max(70,d*.62)),r=Math.min(80,Math.max(.32,d*.0105)),g=R*.45;
+  if(!V.m.count){for(let i=0;i<V.N;i++)vbSpawn(i,R,false);V.m.count=V.N}
+  for(let i=0;i<V.N;i++){const o=3*i;let x=V.p[o],y=V.p[o+1],z=V.p[o+2];
+    if((x-t.x)**2+(z-t.z)**2>R*R*1.7||y>R*2.4){vbSpawn(i,R,false);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}
+    if(V.k[i]){ // snow: drifts down, sits a moment, goes again
+      if(y>r){y=Math.max(r,y-R*.085*dt);x+=Math.sin(now*.0011+i)*r*.9*dt;z+=Math.cos(now*.0013+i*1.7)*r*.9*dt}else{y=r;if((V.w[i]+=dt)>2.2){vbSpawn(i,R,true);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}}}
+    else{ // rain: falls fast and bounces twice
+      V.v[i]-=g*dt;y+=V.v[i]*dt;if(y<r){if(V.b[i]<2){y=r;V.v[i]=Math.abs(V.v[i])*.42;V.b[i]++}else{vbSpawn(i,R,true);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}}}
+    V.p[o]=x;V.p[o+1]=y;V.p[o+2]=z;lP.set(x,hAt(x,z)+y,z);lE.set(now*.0021+i,now*.0017+i*2.3,0);lQ.setFromEuler(lE);lS.setScalar(r);lM.compose(lP,lQ,lS);V.m.setMatrixAt(i,lM)}
+  V.m.instanceMatrix.needsUpdate=true;ambient=true}
+function setVB(on){vbOn=on;$('bVB').classList.toggle('on',on);if(!vbs)return;vbs.m.visible=on;vbs.m.count=0;
+  if(on){lastInput=performance.now();showCard('Volleyball storm','It is raining and snowing volleyballs. The fast ones come down like rain and bounce. The slow ones drift down like snow and sit for a moment. The storm follows wherever you look. An optional extra, in honor of the Center of the Volleyball Universe.')}else hideCard();dirty=true}
+function stepLife(dt,now){lifeLabels.length=0;if(!(performance.now()-lastInput<120000||ride||tour||fly)){for(const f of flocks)lifeLabels.push(f.lb);return}stepBirds(dt,now);stepZoo(dt,now);stepDogs(dt,now);stepPride(dt,now);stepDev(dt,now);stepVB(dt,now);stepTraffic(dt,now);stepBikers(dt,now)}
+$('bVB').onclick=()=>setVB(!vbOn);
+// Traffic heat wave. This is an estimate, not a live feed: how busy a road is comes from its type, and how busy the hour is
+// comes from a typical weekday curve. Measured counts and live closures are meant to replace it.
+let trafOn=false,traf=null;
+const TPROF=[[5,.22],[6,.5],[7,.86],[7.75,.95],[8.5,.8],[9.5,.6],[11,.64],[12,.74],[13,.72],[14.5,.76],[15.5,.86],[16.5,.97],[17.25,1],[18,.84],[19,.6],[20,.46],[21,.38],[22.5,.28]];
+const WPROF=[[5,.1],[8,.25],[10,.5],[12,.68],[14,.72],[16,.68],[18,.58],[20,.42],[22.5,.26]];
+const fmtTime=t=>{const hh=Math.floor(t),mm=Math.round((t-hh)*60),h12=((hh+11)%12)+1;return h12+':'+String(mm===60?0:mm).padStart(2,'0')+(hh<12?' AM':' PM')};
+function trafLevel(h){const wk=liveOn&&/Sat|Sun/.test(new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'short'}).format(new Date())),T=wk?WPROF:TPROF;if(h<=T[0][0])return T[0][1];
+  for(let i=1;i<T.length;i++)if(h<=T[i][0]){const a=T[i-1],b=T[i];return a[1]+(b[1]-a[1])*(h-a[0])/(b[0]-a[0])}return T[T.length-1][1]}
+function buildTraffic(){const rn=S.r_n,rc=S.r_c,rf=S.r_f,xy=S.r_xy,VOL=[1,.8,.62,.42,.22],P=[],A=[],I=[],C=LM.capitol;let o=0,nv=0,miles=0;
+  for(let i=0;i<rn.length;i++){const n=rn[i],c=rc[i];if(c<=4&&!(rf[i]&8)&&n>1){let vol=VOL[c];if(c>=2&&(rf[i]&2))vol*=.8;let sl=0,px=0,pz=0;
+      for(let k=0;k<n;k++){const x=xy[o+2*k]*Qm,z=-xy[o+2*k+1]*Qm;if(k)sl+=Math.hypot(x-px,z-pz);px=x;pz=z;const y=hAt(x,z)+1.2+((rf[i]&1)?6:0),dc=Math.hypot(x-C[0],z-C[1]);
+        P.push(x,y,z,x,y,z);A.push(0,vol,dc,sl,1,vol,dc,sl);if(k){const b=nv+2*k;I.push(b-2,b-1,b,b,b-1,b+1)}}
+      nv+=2*n;miles+=sl}o+=2*n}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('a',new THREE.Float32BufferAttribute(A,4));g.setIndex(I);
+  const m=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{uT:{value:0},uLevel:{value:1},uH:{value:60},uDir:{value:1}},
+    vertexShader:'attribute vec4 a;uniform float uT,uLevel,uH,uDir;varying float vTop,vHeat,vW;void main(){float w=.5+.5*sin(a.z*.0045-uDir*uT*1.7+a.w*.002);float heat=a.y*uLevel;vec3 p=position;p.y+=a.x*uH*heat*(.5+.5*w);vTop=a.x;vHeat=heat;vW=w;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
+    fragmentShader:'varying float vTop,vHeat,vW;void main(){vec3 c1=vec3(.16,.82,.36),c2=vec3(1.,.86,.1),c3=vec3(1.,.42,.05),c4=vec3(.93,.05,.2);float t=clamp(vHeat,0.,1.);vec3 col=t<.33?mix(c1,c2,t/.33):(t<.66?mix(c2,c3,(t-.33)/.33):mix(c3,c4,(t-.66)/.34));gl_FragColor=vec4(col,mix(.85,.1,vTop)*(.62+.38*vW));}'});
+  const mesh=new THREE.Mesh(g,m);mesh.frustumCulled=false;mesh.renderOrder=3;scene.add(mesh);traf={mesh,m,miles:miles/1609.344}}
+function stepTraffic(dt,now){if(!trafOn||!traf)return;const u=traf.m.uniforms,d=camera.position.distanceTo(controls.target);u.uT.value=(now%1e6)/1000;u.uLevel.value=trafLevel(curHour);u.uH.value=Math.min(650,Math.max(16,d*.036));u.uDir.value=curHour<12.5?-1:1;ambient=true}
+function trafCard(){const lv=trafLevel(curHour),word=lv>.9?'rush hour':lv>.7?'busy':lv>.5?'moderate':'light';
+  showCard('Traffic heat wave (estimate)',`Taller, redder walls mean more traffic. At ${fmtTime(curHour)} the pattern is ${word}. This is an estimate, not live traffic: each road's height comes from its type, from interstate down to collector street, and from a typical weekday hour by hour. Drag the time slider to watch the morning and evening rush rise and fall. The ripple runs toward downtown before noon and away from it after. ${Math.round(traf.miles)} miles of road are drawn. Measured city counts and live closures are the next step.`)}
+function setTraffic(on){trafOn=on;$('bTraf').classList.toggle('on',on);if(on&&!traf)buildTraffic();if(traf)traf.mesh.visible=on;if(on){lastInput=performance.now();trafCard()}else hideCard();dirty=true}
+$('bTraf').onclick=()=>setTraffic(!trafOn);
+$('bZin').onclick=()=>zoomBy(.6);$('bZout').onclick=()=>zoomBy(1.65);$('b2D').onclick=()=>set2D(!flat);
+// Find me: a blue dot where your device says you are. The position never leaves the device.
+function placeMe(x,z,acc){if(!LM.me){const g=new THREE.Group(),dot=new THREE.Mesh(new THREE.SphereGeometry(5,20,14),new THREE.MeshBasicMaterial({color:0x2f7bff,fog:false})),halo=new THREE.Mesh(new THREE.SphereGeometry(7.2,20,14),new THREE.MeshBasicMaterial({color:0xffffff,fog:false,side:THREE.BackSide}));
+    const ring=new THREE.Mesh(new THREE.CircleGeometry(1,48),new THREE.MeshBasicMaterial({color:0x2f7bff,transparent:true,opacity:.22,depthWrite:false,fog:false}));ring.rotation.x=-Math.PI/2;ring.position.y=1.5;g.add(ring,halo,dot);g.userData={dot,halo,ring};g.userData.info=['You are here','Your device reported this spot. It stays on your device and is not sent anywhere.'];scene.add(g);pickables.push(g);LM.me=g}
+  const g=LM.me;g.position.set(x,hAt(x,z),z);g.userData.ring.scale.setScalar(Math.max(8,acc));g.userData.dot.position.y=g.userData.halo.position.y=9;g.visible=true;dirty=true}
+$('bMe').onclick=()=>{const off='Your location is not available here. It works when the map is opened as a website, such as the GitHub Pages link, with location allowed for the page.';
+  if(!navigator.geolocation){showCard('Find me',off);return}showCard('Find me','Asking your device where you are…');
+  try{navigator.geolocation.getCurrentPosition(p=>{const x=(p.coords.longitude-H.lon0)*KXm,z=-(p.coords.latitude-H.lat0)*KYm,acc=p.coords.accuracy||30;
+      if(Math.abs(x)>8400||Math.abs(z)>8400){showCard('Find me','You are outside the area this map covers, which is the city of Lincoln, Nebraska.');return}
+      placeMe(x,z,acc);$('bMe').classList.add('on');stopTour();flyTo(camTo(x,z,Math.max(280,Math.min(2500,acc*7)),200,42),2200);showCard('You are here',`The blue dot is within about ${Math.round(acc*3.281).toLocaleString()} ft of you. Your location stays on this device and is not sent anywhere.`)},
+    err=>{showCard('Find me',err&&err.code===1?'Location permission was not given. Allow location for this page in your browser settings, then tap Find me again.':off)},{enableHighAccuracy:true,timeout:12000,maximumAge:30000})}catch(e){showCard('Find me',off)}};
+// Share view: a link that opens the map at exactly this view
+function viewHash(){const v=viewAngles(),t=controls.target;return '#v='+[Math.round(t.x),Math.round(t.z),Math.round(v.d),Math.round(v.az),Math.round(v.el)].join(',')}
+$('bShare').onclick=async()=>{const h=viewHash();try{history.replaceState(null,'',h)}catch(e){}const url=location.href.split('#')[0]+h,hosted=/^https?:/.test(location.protocol)&&!/claude/.test(location.hostname);
+  if(!hosted){showCard('Share view','Sharing works from the public website copy of the map (the GitHub Pages link). This copy inside the Claude app has no public address.');return}
+  try{if(navigator.share){await navigator.share({title:'STARCITY: Lincoln, Nebraska in 3D',url});return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(url);showCard('Share view','Link copied. Anyone who opens it lands on this exact view.')}catch(e){showCard('Share view','Copy this link: '+url)}};
+$('bMore').onclick=()=>{const m=$('tools').classList.toggle('min');$('bMore').textContent=m?'More ▾':'Less ▴';$('bMore').classList.toggle('on',!m)};
+$('bBirds').onclick=()=>{birdsOn=!birdsOn;$('bBirds').classList.toggle('on',birdsOn);lastInput=performance.now();nextFlock=0;if(birdsOn){loadSightings().then(()=>{if(birdsOn&&$('ch').textContent.startsWith('Birds over'))birdCard()});birdCard()}else hideCard();dirty=true};
+$('bPride').onclick=()=>setPride(!prideOn);
+$('cR').oninput=e=>{LM.prideI=+e.target.value/100;lastInput=performance.now();dirty=true};
 // ---------- UI
 $('bNow').onclick=()=>setLive(!liveOn);
 $('bBus').onclick=e=>{busOn=!busOn;e.target.classList.toggle('on',busOn);updateBuses()};
 function chips(){const dv=H.blabels.find(b=>b[0]==='Devaney Sports Center'),pb=H.blabels.find(b=>b[0]==='Pinnacle Bank Arena'),ll=H.blabels.find(b=>b[0]==='Don Love Memorial Library');
   const hl=H.plabels.find(p=>p[0]==='Holmes Lake'),sp=H.plabels.find(p=>p[0]==='SouthPointe Pavilions');
   const list=[['Overview',camTo(-1300,-900,17500,-10,50)],['Capitol',camTo(LM.capitol[0],LM.capitol[1],430,205,22,45)],['Memorial Stadium',camTo(LM.stadium[0],LM.stadium[1]+10,440,14,27,16)]];
-  if(dv)list.push(['Devaney Center',camTo(dv[1],-dv[2],480,150,28,8)]);
+  if(dv)list.push(['Devaney Center aka DBK Universe ⭐🚀🌽🏐',camTo(dv[1],-dv[2],480,150,28,8)]);
   if(pb)list.push(['Haymarket',camTo(pb[1]+120,-pb[2]+250,900,250,30,8)]);
   if(ll)list.push(['UNL City Campus',camTo(ll[1],-ll[2]-150,1000,180,36)]);
+  {const ec=H.blabels.find(b=>/East Union|Dinsdale|Thompson Library|Hardin Hall|Animal Science/i.test(b[0]));list.push(['UNL East Campus',ec?camTo(ec[1],-ec[2],1000,180,36):camTo(-2075,-6690,1100,180,36)])}
   list.push(['Downtown',camTo(-5400,-4750,1100,215,30,10)]);
   if(hl)list.push(['Holmes Lake',camTo(hl[1],-hl[2],1700,200,34)]);
   list.push(['Southeast Lincoln',camTo(3300,3300,2600,160,36)]);
+  if(H.zoo)list.push(['Zoo giraffes and penguins',camTo(H.zoo[0]+(zoo&&zoo.pen?(zoo.pen.px-H.zoo[0])*.5:0),-H.zoo[1]+(zoo&&zoo.pen?(zoo.pen.pz+H.zoo[1])*.5:0),86,200,26,3)]);
+  {const dp=(H.dogparks||[]).find(q=>/bar/i.test(q[3]))||(H.dogparks||[])[0];if(dp)list.push([/bar/i.test(dp[3])?'Dog bar':'Dog park',camTo(dp[0],-dp[1],46,200,30,1)])}
   const host=$('chips');for(const [n,dst] of list){const b=document.createElement('button');b.className='btn';b.textContent=n;const slug=n.toLowerCase().replace(/[^a-z0-9]+/g,'-');b.onclick=()=>{stopTour();flyTo(dst,2400);try{history.replaceState(null,'','#'+slug)}catch(e){}};host.appendChild(b);dst.slug=slug}
   return list}
 let gameOn=false;
@@ -984,25 +1511,29 @@ $('bLabels').onclick=e=>{labelsOn=!labelsOn;e.target.classList.toggle('on',label
 $('bShadow').onclick=e=>{shadowsOn=!shadowsOn;e.target.classList.toggle('on',shadowsOn);shadowDirty=true;dirty=true};
 $('bTrails').onclick=e=>setTrails(!trailsOn);
 function setTrails(on){if(!on&&rideMode)setRideMode(false);trailsOn=on;$('bTrails').classList.toggle('on',on);for(const l of LM.trailLines||[])l.visible=on;$('legend').style.display=on?'flex':'none';if(!on&&rideWay>=0){if(ride)stopRide();hideCard()}layoutCard();dirty=true}
-$('sunR').oninput=e=>{if(liveOn){liveOn=false;$('bNow').classList.remove('on');cloud=0;setPrecip(null)}curHour=+e.target.value;setTime(curHour);updateBuses()};
+$('sunR').oninput=e=>{if(liveOn){liveOn=false;$('bNow').classList.remove('on')}curHour=+e.target.value;applyWx();updateBuses();if(trafOn&&$('card').style.display==='block'&&$('ch').textContent.startsWith('Traffic'))trafCard()};
 
 // ---------- loop
 let dirty=true,lastF=0,fAvg=20,fN=0,perfStep=0;
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();for(const l of LM.trailLines||[])l.material.resolution.set(w,h);for(const m of LM.lineMats)m.resolution.set(w,h);layoutCard();dirty=true}
 addEventListener('resize',resize);controls.addEventListener('change',()=>dirty=true);
-function frame(now){requestAnimationFrame(frame);stepFly(now);if(ride)stepRide(now);if(walk.on){stepWalk(now);if(walk.mx||walk.mz||Object.values(walk.keys).some(v=>v))dirty=true}else if(controls.update())dirty=true;
-  if(precip){stepPrecip(Math.min(.1,(now-(frame.t||now))/1000))}frame.t=now;
+function frame(now){requestAnimationFrame(frame);
+  {const dtp=Math.min(60,now-(frame.pt||now));frame.pt=now;if(panV){if(pan||fly||walk.on||ride)panV=null;else{shiftView(panV.x*dtp,panV.z*dtp);const k=Math.exp(-dtp/290);panV.x*=k;panV.z*=k;if(Math.hypot(panV.x,panV.z)*1000<camera.position.distanceTo(controls.target)*.03)panV=null}}
+   else if(!fly&&!walk.on&&!ride){const t=controls.target;if(Math.abs(t.x)>8700||Math.abs(t.z)>8700)shiftView(0,0)}}
+  if(prevR){const c=now-prevT;if(c<5000)frCost=frCost*.75+c*.25}prevT=now;prevR=false;stepFly(now);if(ride)stepRide(now);if(walk.on){stepWalk(now);if(walk.mx||walk.mz||Object.values(walk.keys).some(v=>v))dirty=true}else if(controls.update())dirty=true;
+  {const dtw=Math.min(.1,(now-(frame.t||now))/1000);frame.t=now;if(wxOn||liveOn){wetCheck(false);if(precip)stepPrecip(dtw)}if(wxOn){stepWind(dtw,now);stepStorm(dtw,now)}stepLife(dtw,now+simOff)}
   if(!fly&&!walk.on){const t=controls.target,gy=hAt(t.x,t.z);if(t.y<gy-.5||t.y>gy+160){const d=(gy-t.y)*.25;t.y+=d;camera.position.y+=d;dirty=true}}
   if(!walk.on){const cy=hAt(camera.position.x,camera.position.z)+6;if(camera.position.y<cy){camera.position.y=cy;dirty=true}}
-  if(!dirty)return;dirty=false;
+  const user=dirty;if(!dirty){if(!ambient||!ambOK||now-lastAmb<Math.max(ambMin,frCost*2.6))return}lastAmb=now;dirty=false;ambient=false;prevR=true;
   camera.near=walk.on?.4:Math.max(2,(camera.position.y-hAt(camera.position.x,camera.position.z))*.02);camera.far=60000;camera.updateProjectionMatrix();
-  {const dtf=now-lastF;lastF=now;if(dtf<250){fAvg=fAvg*.9+dtf*.1;if(++fN>45&&fAvg>48&&perfStep<3){perfStep++;fN=0;fAvg=30;if(perfStep===1)renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.25));else if(perfStep===2){shadowsOn=false;$('bShadow').classList.remove('on');shadowDirty=true}else renderer.setPixelRatio(1);resize()}}}
+  {const dtf=now-lastF;lastF=now;const both=user&&lastUser;lastUser=user;if(dtf<250&&both){fAvg=fAvg*.9+dtf*.1;if(++fN>45&&fAvg>48&&perfStep<3){perfStep++;fN=0;fAvg=30;if(perfStep===1)renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.25));else if(perfStep===2){shadowsOn=false;$('bShadow').classList.remove('on');shadowDirty=true}else renderer.setPixelRatio(1);resize()}}}
   if(LM.devSign){const g=LM.devSign;g.rotation.y=Math.atan2(camera.position.x-g.position.x,camera.position.z-g.position.z)}
   if(LM.pins)for(const g of LM.pins)if(g.visible)g.scale.setScalar(Math.max(1,camera.position.distanceTo(g.position)/650));
-  updateShadow();renderer.render(scene,camera);if((lblTick++&1)===0||fly)updateLabels();else dirty=true;}
+  if(LM.me&&LM.me.visible){const k=Math.max(1,camera.position.distanceTo(LM.me.position)/520);LM.me.userData.dot.scale.setScalar(k);LM.me.userData.halo.scale.setScalar(k);LM.me.userData.dot.position.y=LM.me.userData.halo.position.y=9*k}
+  updateShadow();renderer.render(scene,camera);if(!user||(lblTick++&1)===0||fly)updateLabels();else dirty=true;}
 (async()=>{
   resize();await build();
-  setupBus();const list=chips();
+  setupBus();setupBirds();setupZoo();setupDogs();setupPride();setupVB();const list=chips();
   if(H.tmeters){const mi=m=>Math.round(m/1609.344),tm=H.tmeters;
     $('legend').innerHTML=`<b>${mi(tm[0]+tm[1]+tm[2])} mi of bike trails</b><span><i style="background:#ff2a8a"></i>paved ${mi(tm[0])}</span><span><i style="background:#ff8a00"></i>crushed rock ${mi(tm[1])}</span><span><i style="background:#8a4dff"></i>dirt ${mi(tm[2])}</span><span><i style="background:#00b3a4"></i>on-street ${mi(tm[3]+tm[4])}</span>`;
     setTrails(true)}
@@ -1010,11 +1541,12 @@ function frame(now){requestAnimationFrame(frame);stepFly(now);if(ride)stepRide(n
   $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees`;
   const start=camTo(-1300,-900,17500,-10,50);camera.position.copy(start.p);controls.target.copy(start.t);controls.update();
   setTime(+$('sunR').value);updateBuses();
-  if(location.protocol.startsWith('http')){loadWeather();loadWater()}
+  if(location.protocol.startsWith('http')){loadWeather();loadWater();loadSightings()}
   requestAnimationFrame(frame);
-  window.__ready=true;window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__bg=()=>{const g=bikeGraph();return {N:g.N,NV:g.NV,M:g.M,pieces:g.pieces,bridges:g.nb,gaps:g.ng,ms:g.ms,mi:+(g.total/1609.344).toFixed(1)}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9),b=bgNearest(x1,z1,1e9);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9);R.ev=new Uint8Array(g.N);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0;for(let w=0;w<LM.trails.length;w++)for(let v=g.base[w];v<g.base[w+1]-1;v++)if(!R.ev[v])un++;return {legs,routeMi:+(R.L/1609.344).toFixed(1),coveredMi:+(R.cv[R.cv.length-1]/1609.344).toFixed(1),bridgedMi:+(R.st[2]/1609.344).toFixed(1),unvisitedEdges:un,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;
+  window.__ready=true;window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__wake=()=>{lastInput=performance.now()};window.__amb=v=>{ambOK=v;return v};window.__sim=(sec,step)=>{step=step||.05;let t=(frame.t||performance.now())+simOff;for(let q=0;q<sec;q+=step){t+=step*1000;simOff+=step*1000;lastInput=performance.now();stepLife(step,t)}dirty=true;return 1};window.__vb=setVB;window.__pen=()=>zoo&&zoo.pen?[Math.round(zoo.pen.px),Math.round(zoo.pen.pz)]:null;window.__tl=name=>{const ti=H.tnames.indexOf(name),q=(H.tlabels||[]).find(l=>l[0]===ti);return q?[q[1],-q[2]]:null};window.__share=()=>({n:birdShare.length,src:shareSrc,top:birdShare.slice(0,3).map(q=>q.c+' '+pct(q.p/birdShare.tot))});window.__chips=()=>list.map(l=>l[0]);window.__prideR=v=>{if(v!==undefined)LM.prideR=v;return Math.round(LM.prideR||0)};window.__bikers=()=>bikers&&!bikers.none?{n:bikers.list.length,vis:bikers.m.visible,paths:new Set(bikers.list.map(q=>q.T)).size}:null;window.__traf=setTraffic;window.__sight=()=>({n:sightings.length,fail:sightFail,flocks:flocks.filter(f=>f.sg).map(f=>f.lb.t+' | '+f.lb.sub)});window.__loadSight=()=>{sightT=0;return loadSightings().then(()=>sightings.length)};window.__view=()=>{const v=viewAngles(),t=controls.target;return {x:Math.round(t.x),z:Math.round(t.z),d:Math.round(v.d),az:Math.round(v.az),el:Math.round(v.el),pan:!!pan,panV:!!panV}};window.__zoom=zoomBy;window.__g=(x,y)=>{const h=groundAt(x,y);return h?[Math.round(h.x),Math.round(h.z)]:null};window.__2d=set2D;window.__roofed=()=>LM.roofed;window.__lm=()=>({dev:LM.dev,statue:LM.cookStatue,zoo:H.zoo,dogs:(H.dogparks||[]).map(q=>q[3]),pid:S.b_p1?S.b_p1.length:0});window.__link=()=>[...$('clinks').children].map(a=>a.textContent+' -> '+a.href).join(' | ')||null;window.__perf=()=>({frCost:+frCost.toFixed(1),lblScale,perfStep});window.__pride=setPride;window.__life=()=>({flocks:flocks.map(f=>f.b[0]),birds:birdMesh?birdMesh.count:0,eaten:zoo?zoo.eaten:-1,lettuce:zoo?zoo.let.length:-1,dogs:dogs?dogs.list.length:0,sites:dogs?dogs.sites.length:0,month:birdMonth(),dev:devI});window.__wx=setWx;window.__demo=setDemo;window.__wxs=()=>({wx,alerts:alerts.length,wet:ovl?ovl.wet:null,radar:!!(ovl&&ovl.radar),precip,thunder,wind:windV?+windV.ms.toFixed(1):0,funnels:funnels.length,fail:wxFail,bolt:!!bolt,rain:!!(LM.rainL&&LM.rainL.visible),snow:!!(pPts&&pPts.visible)});window.__bg=()=>{const g=bikeGraph();return {nodes:g.NV,arcs:g.na,bikeEdges:g.nE,mi:+(g.total/1609.344).toFixed(1),islands:g.islands,linkMi:+(g.linkLen/1609.344).toFixed(1),links:g.links.length,bridges:g.nb,dead:g.dead,ms:g.ms}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9,false),b=bgNearest(x1,z1,1e9,false);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9,true);R.cov=new Uint8Array(g.nE);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0,unL=0;for(let e=0;e<g.nE;e++)if(!R.cov[e]){un++;unL+=g.eLen[e]}const mi=m=>+(m/1609.344).toFixed(1);return {legs,routeMi:mi(R.L),coveredMi:mi(R.cv[R.cv.length-1]),totalMi:mi(g.total),uncoveredEdges:un,uncoveredFt:Math.round(unL*3.281),newMi:mi(R.sm[0]),retraceMi:mi(R.sm[1]),linkMi:mi(R.sm[2]),bridgeMi:mi(R.sm[3]),turns:R.turns,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;
   const ld=$('load');if(ld){ld.style.opacity=0;setTimeout(()=>ld.remove(),700)}
-  const want=list.find(l=>'#'+l[1].slug===location.hash);setTimeout(()=>flyTo((want||list[1])[1],4200),900);
+  const want=list.find(l=>'#'+l[1].slug===location.hash);let shared=null;{const m=/^#v=(-?\d+),(-?\d+),(\d+),(-?\d+),(-?\d+)$/.exec(location.hash||'');if(m){const q=m.slice(1).map(Number);if(Math.abs(q[0])<=8700&&Math.abs(q[1])<=8700)shared=camTo(q[0],q[1],Math.min(24000,Math.max(45,q[2])),q[3],Math.min(89,Math.max(4,q[4])))}}
+  setTimeout(()=>flyTo(shared||(want||list[1])[1],shared?2600:4200),900);
 })();
 </script>
 </body>

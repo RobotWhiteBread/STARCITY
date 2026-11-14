@@ -1,7 +1,7 @@
-# Turn the StarTran GTFS schedule into a compact structure for scheduled bus positions.
 import os
+# Turn the StarTran GTFS schedule into a compact structure for scheduled bus positions.
 import zipfile,csv,io,json,math,sys,collections
-D=os.environ.get('STARCITY_DATA','../')   # folder that holds the downloads
+D=os.environ.get('STARCITY_DATA','../')
 LAT0,LON0=40.77,-96.64;KX=111320*math.cos(math.radians(LAT0));KY=111000.0
 z=zipfile.ZipFile(D+'gtfs.zip')
 def rd(n):

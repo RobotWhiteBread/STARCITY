@@ -304,7 +304,10 @@ if cfiles:
         if f_['st']!='demolished' and a>=600:
             ins=[i for i in near(og,o) if OS[i]['a']>=60 and pin(OS[i]['c'],o)]
             if len(ins)>=2 and sum(OS[i]['a'] for i in ins)>=0.8*a:
-                forced.update(ins);nsub+=1;nsubb+=len(ins);continue
+                forced.update(ins);nsub+=1;nsubb+=len(ins)
+                if f_['pid']:
+                    for i in ins: OS[i].setdefault('pid',f_['pid']);OS[i]['pidi']=1
+                continue
         best=None;mt=[]
         for i in near(og,o):
             ob=OS[i]
@@ -316,7 +319,9 @@ if cfiles:
         if f_['st']=='demolished': ndemo+=1;continue
         # a tall tagged tower standing on a much larger city outline stays as its own building on top of it
         for i in mt:
-            if OS[i]['src'] in (1,2) and OS[i]['h']>=20 and 150<=OS[i]['a']<0.5*a: forced.add(i);ntower+=1
+            if OS[i]['src'] in (1,2) and OS[i]['h']>=20 and 150<=OS[i]['a']<0.5*a:
+                forced.add(i);ntower+=1
+                if f_['pid']: OS[i].setdefault('pid',f_['pid']);OS[i]['pidi']=1
         yr,stt,use=PA.get(f_['pid'],(None,None,None))
         ismain=main.get(f_['pid'])==k
         seed=((k*2654435761+777)&0xffff)/65535.0
@@ -392,7 +397,7 @@ if cfiles:
         try:
             if yr and ismain and tc in (1,3) and 1850<=int(yr)<=2026: y=int(yr);nyear+=1
         except Exception: y=0
-        B.append(dict(o=o,hs=hs,h=max(2.2,min(h,130)),minh=minh,tc=tc,roof=roof,src=src,info=info,tag=tag,a=a,org=1,c=c,yr=y,st=sti,new=1 if f_['st']=='new' else 0))
+        B.append(dict(o=o,hs=hs,h=max(2.2,min(h,130)),minh=minh,tc=tc,roof=roof,src=src,info=info,tag=tag,a=a,org=1,c=c,yr=y,st=sti,new=1 if f_['st']=='new' else 0,pid=f_['pid']))
     ncity=len(B)
     cg=mkgrid(B);kept=0;ddemo=0;dover=[];keptA=collections.Counter();big_osm=[]
     for i,ob in enumerate(OS):
@@ -545,6 +550,31 @@ def split_inb(pts):
             if len(cur)>1: yield cur
             cur=[]
     if len(cur)>1: yield cur
+# Points shared by two or more ways are junctions. They are kept through simplification so that
+# the page can rebuild the true street and trail network (who connects to whom) from the geometry.
+cntn=collections.Counter()
+for e in rd:
+    g=e.get('geometry')
+    if not g or len(g)<2: continue
+    for k_ in {(p_['lat'],p_['lon']) for p_ in g}: cntn[k_]+=1
+def simp_keep(seg,kf,tol):
+    if seg[0]==seg[-1] and len(seg)>3 and not any(kf[1:-1]): return (lambda r:r+[r[0]])(dpr(seg[:-1],tol))
+    out=[seg[0]];a=0
+    for i in range(1,len(seg)):
+        if kf[i] or i==len(seg)-1: out+=dp(seg[a:i+1],tol)[1:];a=i
+    o=[out[0]]
+    for p_ in out[1:]:
+        if (q(p_[0]),q(p_[1]))!=(q(o[-1][0]),q(o[-1][1])): o.append(p_)
+    return o
+def split_inb2(pts,kf):
+    cur=[];ck=[]
+    for p_,k_ in zip(pts,kf):
+        if abs(q(p_[0]))<LIM and abs(q(p_[1]))<LIM: cur.append(p_);ck.append(k_)
+        else:
+            if len(cur)>1: yield cur,ck
+            cur=[];ck=[]
+    if len(cur)>1: yield cur,ck
+snl=[];snidx={}
 XC=[]
 for e in rd:
     t=e.get('tags',{});g=e.get('geometry')
@@ -563,14 +593,23 @@ for e in rd:
         if nm not in tnidx: tnidx[nm]=len(tnames);tnames.append(nm)
         tn=tnidx[nm]
     pts=[proj(p) for p in g]
+    kfl=[cntn[(p['lat'],p['lon'])]>1 for p in g]
     tol=0.35 if c<7 else 0.6
     promo=c in (7,8,11) and tcls is None and t.get('access') not in ('private','no') and t.get('highway')!='steps'
-    for seg in split_inb(pts):
-        seg=clean(dp(seg,tol)) if seg[0]!=seg[-1] else (lambda r:r+[r[0]])(dpr(seg[:-1],tol))
+    # not a way to send a bike down, unless it is itself a mapped bike facility
+    nobike=(t.get('access') in ('private','no') or t.get('bicycle')=='no' or t.get('service')=='driveway' or t.get('motorroad')=='yes'
+            or t.get('highway') in ('motorway','trunk','motorway_link','trunk_link','steps','construction'))
+    sn=None
+    if c!=9 and t.get('name'):
+        nm_=t['name'].split(';')[0].strip()
+        if nm_ not in snidx and len(snl)<65000: snidx[nm_]=len(snl);snl.append(nm_)
+        sn=snidx.get(nm_)
+    for seg,ck in split_inb2(pts,kfl):
+        seg=simp_keep(seg,ck,tol)
         if len(seg)<2: continue
-        fl=(1 if t.get('bridge') and t.get('bridge')!='no' else 0)|(2 if t.get('oneway')=='yes' else 0)|(4 if c==7 and t.get('footway')=='sidewalk' else 0)|(8 if istun else 0)
-        #      class flags points trail-class trail-name trail-source has-surface-tag promotable
-        ent=[c,fl,seg,tcls,tn,0,bool(t.get('surface')),promo]
+        fl=(1 if t.get('bridge') and t.get('bridge')!='no' else 0)|(2 if t.get('oneway')=='yes' else 0)|(4 if c==7 and t.get('footway')=='sidewalk' else 0)|(8 if istun else 0)|(16 if nobike else 0)
+        #      class flags points trail-class trail-name trail-source has-surface-tag promotable street-name
+        ent=[c,fl,seg,tcls,tn,0,bool(t.get('surface')),promo,sn]
         if isx: XC.append(ent);continue
         R.append(ent)
         if c<=5 and t.get('name'):
@@ -688,6 +727,42 @@ if CT:
                 for (px,py) in tgrid.get((ax,ay),()):
                     if (px-x)**2+(py-y)**2<t2: return True
         return False
+    # A city-only piece shares no points with the OpenStreetMap ways around it, so each end is tied to the
+    # nearest way: to an existing point if one is close, otherwise to a new point added on the nearest stretch.
+    AC=40.0;avg=collections.defaultdict(list);asg=collections.defaultdict(list)
+    def usable(r): return r[3] is not None or (r[0] not in (0,1,9) and not (r[1]&24) and not (r[0]==7 and r[1]&4))
+    def index_way(ri):
+        sg=R[ri][2]
+        for k_ in range(len(sg)):
+            avg[(int(sg[k_][0]//AC),int(sg[k_][1]//AC))].append(sg[k_])
+            if k_+1<len(sg):
+                a_,b_=sg[k_],sg[k_+1]
+                for gx in range(int(min(a_[0],b_[0])//AC),int(max(a_[0],b_[0])//AC)+1):
+                    for gy in range(int(min(a_[1],b_[1])//AC),int(max(a_[1],b_[1])//AC)+1): asg[(gx,gy)].append((ri,a_,b_))
+    for ri in range(len(R)):
+        if usable(R[ri]): index_way(ri)
+    ntie=[0,0,0]
+    def tie(P):
+        gx,gy=int(P[0]//AC),int(P[1]//AC);bv=None;bvd=35.0**2;bs=None;bsd=35.0**2
+        for ax in (gx-1,gx,gx+1):
+            for ay in (gy-1,gy,gy+1):
+                for v_ in avg.get((ax,ay),()):
+                    d2=(v_[0]-P[0])**2+(v_[1]-P[1])**2
+                    if d2<bvd: bvd=d2;bv=v_
+                for (ri,a_,b_) in asg.get((ax,ay),()):
+                    vx,vy=b_[0]-a_[0],b_[1]-a_[1];L2=vx*vx+vy*vy or 1e-9
+                    u_=max(0.0,min(1.0,((P[0]-a_[0])*vx+(P[1]-a_[1])*vy)/L2));J=(a_[0]+vx*u_,a_[1]+vy*u_)
+                    d2=(J[0]-P[0])**2+(J[1]-P[1])**2
+                    if d2<bsd: bsd=d2;bs=(ri,a_,b_,J)
+        if bv is not None and (bs is None or math.sqrt(bvd)<=math.sqrt(bsd)+3.0): ntie[0]+=1;return bv
+        if bs is not None:
+            ri,a_,b_,J=bs
+            if (q(J[0]),q(J[1])) in ((q(a_[0]),q(a_[1])),(q(b_[0]),q(b_[1]))): ntie[0]+=1;return a_ if (q(J[0]),q(J[1]))==(q(a_[0]),q(a_[1])) else b_
+            sg=R[ri][2]
+            for k_ in range(len(sg)-1):
+                if sg[k_] is a_ and sg[k_+1] is b_:
+                    sg.insert(k_+1,J);asg[(gx,gy)].append((ri,a_,J));asg[(gx,gy)].append((ri,J,b_));avg[(int(J[0]//AC),int(J[1]//AC))].append(J);ntie[1]+=1;return J
+        ntie[2]+=1;return None
     nadd=0;addL=collections.Counter()
     for ct in CT:
         run=[]
@@ -696,8 +771,13 @@ if CT:
             if len(run)>1 and seglen(run)>=50:
                 seg=clean(dp(run,0.6))
                 if len(seg)>1:
-                    R.append([8 if ct['cls']<2 else 7,0,seg,ct['cls'],tni(cname(ct['name'])),1,True,False]);nadd+=1;addL[ct['cls']]+=seglen(seg)
+                    a_=tie(seg[0]);b_=tie(seg[-1])
+                    if a_ is not None and (q(a_[0]),q(a_[1]))!=(q(seg[0][0]),q(seg[0][1])): seg=[a_]+seg
+                    if b_ is not None and (q(b_[0]),q(b_[1]))!=(q(seg[-1][0]),q(seg[-1][1])): seg=seg+[b_]
+                    R.append([8 if ct['cls']<2 else 7,0,seg,ct['cls'],tni(cname(ct['name'])),1,True,False,None]);nadd+=1;addL[ct['cls']]+=seglen(seg)
+                    index_way(len(R)-1)
             run=[]
+    print('city-only piece ends tied: to an existing point',ntie[0],'| to a new point on a way',ntie[1],'| nothing within reach',ntie[2],file=sys.stderr)
     print('city trail lines',len(CT),'| osm trails named from city',nnamed,'| surface from city',nsurf,'| osm paths promoted to trail',nprom,'(%.1f mi)'%(promL/1609.344),'| city-only pieces added',nadd,{k:round(v/1609.344,1) for k,v in addL.items()},file=sys.stderr)
 for r in R:
     tcls,tn,seg=r[3],r[4],r[2]
@@ -803,6 +883,54 @@ for e in ld:
 Lp.sort(key=lambda r:(r[0],-abs(area(r[1]))))
 print('land',len(Lp),'waterways',len(W),file=sys.stderr)
 
+# ---------------- dog parks (for the map's animated dogs) and the zoo paddock (for its giraffes)
+DOGS=[]
+for e in ld+bl:
+    t=e.get('tags',{})
+    if t.get('leisure')!='dog_park': continue
+    for o,hs in rings_of(e):
+        if len(o)<3: continue
+        xs=[p_[0] for p_ in o];ys=[p_[1] for p_ in o];c_=centroid(o)
+        if abs(c_[0])>7900 or abs(c_[1])>7900: continue
+        DOGS.append([round(c_[0],1),round(c_[1],1),round(max(6.0,min(60.0,0.42*min(max(xs)-min(xs),max(ys)-min(ys)))),1),t.get('name','')])
+# A dog park drawn as a building (an indoor dog bar) would hide its dogs inside the walls,
+# so the play area moves to the nearest open spot beside the building.
+_dg=mkgrid(B)
+def _clear(x,y,rad):
+    box=[(x-rad-1,y-rad-1),(x+rad+1,y+rad+1)]
+    pts=[(x,y)]+[(x+rad*math.cos(k*math.pi/4),y+rad*math.sin(k*math.pi/4)) for k in range(8)]
+    for i in near(_dg,box):
+        o=B[i]['o']
+        if any(pin(q_,o) for q_ in pts): return False
+        if any((q_[0]-x)**2+(q_[1]-y)**2<rad*rad for q_ in o): return False
+    return True
+def _segd(px,py,a_,b_):
+    dx=b_[0]-a_[0];dy=b_[1]-a_[1];L=dx*dx+dy*dy
+    t_=0 if L==0 else max(0,min(1,((px-a_[0])*dx+(py-a_[1])*dy)/L))
+    return math.hypot(px-a_[0]-t_*dx,py-a_[1]-t_*dy)
+def _roads_near(x,y,rad):
+    out=[]
+    for r in R:
+        if r[0] in (7,8,11): continue
+        sg=r[2]
+        for i in range(len(sg)-1):
+            a_=sg[i];b_=sg[i+1]
+            if min(a_[0],b_[0])>x+rad or max(a_[0],b_[0])<x-rad or min(a_[1],b_[1])>y+rad or max(a_[1],b_[1])<y-rad: continue
+            out.append((a_,b_,7.0 if r[0]==6 else 12.0))
+    return out
+nmoved=0
+for d_ in DOGS:
+    if _clear(d_[0],d_[1],min(d_[2],7.0)): continue
+    best=None;segs=_roads_near(d_[0],d_[1],130)
+    for rr in range(8,96,4):
+        for k in range(24):
+            x=d_[0]+rr*math.cos(k*math.pi/12);y=d_[1]+rr*math.sin(k*math.pi/12)
+            if _clear(x,y,7.0) and all(_segd(x,y,a_,b_)>=m_ for a_,b_,m_ in segs): best=(x,y);break
+        if best: break
+    if best: d_[0]=round(best[0],1);d_[1]=round(best[1],1);d_[2]=7.0;d_.append(1);nmoved+=1
+print('dog parks',len(DOGS),[d[3] for d in DOGS if d[3]],'moved beside a building',nmoved,file=sys.stderr)
+# open lawn inside the Lincoln Children's Zoo grounds, picked by hand from the map; the real giraffe yard is not in the data
+ZOO=[-3428.0,3395.0,15.0]
 # ---------------- points
 pt=load('points.json')
 T=[];places=[];SG=[]
@@ -833,9 +961,15 @@ add('b_rs','H',rs);add('b_xy','h',xy)
 add('b_h','H',[int(round(b['h']*10)) for b in B]);add('b_minh','H',[int(round(b['minh']*10)) for b in B])
 add('b_tc','B',[b['tc'] for b in B]);add('b_roof','B',[b['roof'] for b in B]);add('b_src','B',[b['src'] for b in B])
 add('b_info','H',[b['info'] for b in B]);add('b_tag','B',[b['tag'] for b in B]);add('b_org','B',[b.get('org',0) for b in B])
-add('b_yr','H',[b.get('yr',0) for b in B]);add('b_st','B',[b.get('st',0) for b in B]);add('b_fl','B',[b.get('new',0) for b in B])
+add('b_yr','H',[b.get('yr',0) for b in B]);add('b_st','B',[b.get('st',0) for b in B]);add('b_fl','B',[b.get('new',0)|(2 if b.get('pidi') else 0) for b in B])
+def pidparts(b):
+    p_=b.get('pid') or ''
+    return (int(p_[:7]),int(p_[7:10]),int(p_[10:13])) if re.fullmatch(r'\d{13}',p_) and int(p_[:7])>0 else (0,0,0)
+PP=[pidparts(b) for b in B]
+add('b_p1','I',[p_[0] for p_ in PP]);add('b_p2','H',[p_[1] for p_ in PP]);add('b_p3','H',[p_[2] for p_ in PP])
+print('buildings with a county parcel number',sum(1 for p_ in PP if p_[0]),'of',len(B),'inherited',sum(1 for b in B if b.get('pidi') and b.get('pid')),file=sys.stderr)
 add('r_n','H',[len(r[2]) for r in R]);add('r_c','B',[r[0] for r in R]);add('r_f','B',[r[1] for r in R])
-add('r_tc','B',[255 if r[3] is None else r[3] for r in R]);add('r_tn','H',[65535 if r[4] is None else r[4] for r in R]);add('r_ts','B',[r[5] for r in R])
+add('r_tc','B',[255 if r[3] is None else r[3] for r in R]);add('r_tn','H',[65535 if r[4] is None else r[4] for r in R]);add('r_ts','B',[r[5] for r in R]);add('r_sn','H',[65535 if r[8] is None else r[8] for r in R])
 xy=[]
 for r in R:
     for p in r[2]: xy+=[clampq(p[0]),clampq(p[1])]
@@ -872,7 +1006,7 @@ def tidy_st(t):
     t=t.replace('Multi-Level','Multi level').replace(' ,',',').strip().lower()
     t=re.sub(r',\s*$','',t).replace('townhouse, with','townhouse with')
     return t
-head=dict(secs=secs,q=Q,lat0=LAT0,lon0=LON0,infos=infos,tags=tagvals,stypes=[tidy_st(t) for t in stypes],landc=LC,special=special,
+head=dict(secs=secs,q=Q,lat0=LAT0,lon0=LON0,infos=infos,tags=tagvals,snl=snl,dogparks=DOGS,zoo=ZOO,stypes=[tidy_st(t) for t in stypes],landc=LC,special=special,
   blabels=[[n,R1(x),R1(y),round(a),R1(h)] for n,x,y,a,h in sorted(blabels,key=lambda b:-b[3])],
   slabels=[[n,R1(x),R1(y),c] for n,x,y,c in slabels],
   tnames=tnames,tlen=[round(tlen[i]) for i in range(len(tnames))],tlabels=[[i,R1(x),R1(y)] for i,x,y in tlabels],tmeters=[round(tclen[k]) for k in range(5)],

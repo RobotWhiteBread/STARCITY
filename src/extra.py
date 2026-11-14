@@ -1,8 +1,8 @@
-# Extract Lincoln-area Microsoft footprints + terrain grid. Outputs ms.json and terrain.json
 import os
+# Extract Lincoln-area Microsoft footprints + terrain grid. Outputs ms.json and terrain.json
 import zipfile,re,json,math,glob,sys
 from PIL import Image
-D=os.environ.get('STARCITY_DATA','../')   # folder that holds the downloads
+D=os.environ.get('STARCITY_DATA','../')
 S,N,W,E=40.70,40.84,-96.73,-96.55
 pat=re.compile(rb'\[(-?\d+\.\d+),(-?\d+\.\d+)\]')
 out=[]

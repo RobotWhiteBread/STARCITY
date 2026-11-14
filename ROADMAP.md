@@ -12,14 +12,23 @@ The goal: the most detailed open 3D map of Lincoln, Nebraska that runs in a brow
 | 0.4 | Walk mode, raised bridges and overpasses, automatic quality fallback on slow devices |
 | 0.5 | City of Lincoln footprints as the base layer, Microsoft height estimates, scheduled StarTran buses, live weather, Now button, USGS stream gauges |
 | 0.5.1 | Found that the city layer used in 0.5 is the 2007 survey. Removed 832 outlines that recent sources contradict |
+| 0.7 | Bike layer rebuilt on the real street network: routes follow regular streets between bike routes, dead ends and street links are shown, and ride everything covers every inch (tested: zero feet missed). Weather layer: wind, rain, snow, lightning, warnings, radar, with a simulated preview |
 | 0.6 | Rebuilt on the city's 2026 footprints (91,313 buildings). Story counts and year built from assessor records. Hip and gable roofs, chimneys, parapets, penthouses. All bike trails and bike streets (184 miles) from OpenStreetMap and the city trail layers. Bike ride mode with routing between any two spots, a ride-everything trip and bridged gaps. Volleyball Day record on Memorial Stadium |
+| 0.8 | Phone-friendly controls (grab and flick panning, zoom to the point you are on, double tap, 2D view, Find me, Share view). Labels that pop. Bolder weather effects that follow the radar at any zoom. Traffic heat wave (estimate). County property record and Street View links on every building. Birds with local iNaturalist reports and share-of-reports percentages. City life: zoo giraffes and penguins, four dog breeds, cyclists. Devaney names and crowd records. Pride wave with an intensity bar. Volleyball storm. |
 
 ## Next
 
-1. The city's public tree inventory in place of the scattered stand-in trees: real positions, species and trunk diameter. `get_trees.ps1` downloads it. The first attempt at this download failed, so the script now retries and reports what the server answers.
-2. A growth timeline. Year built is already in the data for 58,862 houses. Color or reveal buildings by year and watch the city spread out from the Capitol.
-3. A smarter ride-everything trip. The current one covers all 184 miles but rides about 380 to do it, because it always heads for the nearest stretch it has not ridden. A proper route inspection solution would cut the repeats.
-4. Bridge gaps in the bike network along real streets instead of straight lines.
+1. Run `get_live2.ps1`. It saves the city and state service catalogs, the traffic camera lists, road closures, the police crash list and bike share status, and records which of them a web page is allowed to read. Cameras, closures and the city GIS lookups below depend on what it finds.
+2. Traffic cameras: markers on the map and a side panel that shows the picture. The city says its camera feeds are public, and the state publishes highway cameras, but neither list has been read yet.
+3. Real numbers for the traffic heat wave: the city's and the state's traffic counts in place of the road-type estimate, then closures and crashes as they are posted. There is no free live feed of traffic speeds.
+4. Run `get_places.ps1`. It downloads every business and place to eat that OpenStreetMap has for Lincoln. With it: a tall see-through column that lists local businesses, and a second one for restaurants by type of food, each entry flying to its spot on the map.
+5. City GIS on a tap: zoning, floodplain, historic district and council district for the spot you tapped. Flood and historic layers are already downloaded. Live lookups need the service catalog from step 1.
+6. Birds from the Cornell Lab: run `tools/update_birds.py` with a free eBird key for Lancaster County sightings and checklist frequencies (the same data Merlin's likely-birds lists are built on). Then a scheduled job to refresh it. BirdCast's nightly migration numbers have no documented public feed, so that stays a link until one is found.
+7. Memorial Stadium, below the volleyball record: a tracker of Nebraska football's one-score losses, with the odds of a run like that happening by chance. Needs a sourced game-by-game list first.
+8. A Capitol tracker: words spoken on the floor by each senator in a session, from the Legislature's public transcripts, shown by legislative district across the state. Needs a check of how the transcripts are published, and a statewide base map.
+9. A statewide Nebraska edition. One file cannot hold a state, so it needs map tiles that load as you move, a detail level for each zoom, and a place to host them.
+10. A test on real phones, and a lighter drawing mode if it runs hot.
+11. On-street bike routes from the city's own bike map, the city's public tree inventory (`get_trees.ps1`), a growth timeline from year built, and a shorter ride-everything trip.
 
 ## Then: what would make it stand out
 
@@ -34,6 +43,7 @@ The goal: the most detailed open 3D map of Lincoln, Nebraska that runs in a brow
 2. Live bus positions. StarTran's GPS feed sends no cross-origin header, so a web page cannot read it. A small relay (for example a scheduled GitHub Action that copies the feed into the repo every few minutes) would make near-live positions possible.
 3. Check the live layers on the hosted site. They were tested against saved samples of the real feeds, not against the feeds themselves from a browser.
 4. Test on more phones. The map has been tested in desktop Chrome at phone and desktop window sizes with a software renderer.
+5. Check the radar tiles on the hosted site. The radar code has only been run against a stand-in picture.
 
 ## Later: measured heights from lidar
 

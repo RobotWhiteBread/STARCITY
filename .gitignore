@@ -20,6 +20,7 @@ trails_*/
 historic_*/
 signals_*/
 live/
+live2/
 # build leftovers
 src/ms.json
 src/terrain.json
@@ -31,3 +32,4 @@ src/index.html
 src/test.html
 src/node_modules/
 __pycache__/
+places.json
