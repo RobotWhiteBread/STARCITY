@@ -198,8 +198,8 @@ function tri(outer,holes){ // arrays of [x,z]
 const canvas=$('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
 const mobile=matchMedia('(pointer:coarse)').matches||innerWidth<700;
-if(mobile){document.getElementById('tools').classList.add('mob','min');document.getElementById('nav').classList.add('mob')}
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.75:2));
+if(mobile){document.getElementById('tools').classList.add('mob','min');document.getElementById('nav').classList.add('mob');document.getElementById('bShadow').classList.remove('on')}
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.5:2));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
 renderer.toneMapping=THREE.NoToneMapping;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x9fc4e8);scene.fog=new THREE.Fog(0x9fc4e8,11000,46000);
@@ -674,7 +674,7 @@ function updateLabels(){
 
 // ---------- sun & sky
 const cDay=new THREE.Color(0x9fc4e8),cDusk=new THREE.Color(0xf0a070),cNight=new THREE.Color(0x0b1220),cTmp=new THREE.Color(),cGrey=new THREE.Color();
-let sunDir=new THREE.Vector3(.4,.8,.4);let shadowsOn=true;
+let sunDir=new THREE.Vector3(.4,.8,.4);let shadowsOn=!mobile; // phones start without shadows: they double the drawing work
 function setTime(t){curHour=t;
   const hh=Math.floor(t),mm=Math.round((t-hh)*60);const h12=((hh+11)%12)+1;$('sunL').textContent=h12+':'+String(mm===60?0:mm).padStart(2,'0')+(hh<12?' AM':' PM');
   // simple solar model for Lincoln (lat 40.8), near an equinox
@@ -1469,7 +1469,7 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
 function guideHTML(i){const c=H.counts||{},n=v=>(v||0).toLocaleString(),org=c.org||[0,0,0];
   if(i===0)return `<h4>What this is</h4><p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account.</p>
 <h4>Getting around</h4><ul><li><b>Phone:</b> drag to move, pinch to zoom, two fingers to turn and tilt, double tap to zoom in.</li><li><b>Computer:</b> drag to move, scroll to zoom, right-drag to turn. Arrow keys, + and - work too.</li><li><b>Tap anything</b> for a card that says what it is and how sure the map is about it.</li><li>The <b>slider</b> at the bottom sets the time of day. The <b>ribbon</b> under it jumps to places.</li></ul>
-<h4>The buttons</h4><ul><li><b>Search</b> streets, addresses, buildings, parks and trails. <b>Tour</b> flies a short loop.</li><li><b>Find me</b> puts a blue dot where you are. It stays on your device.</li><li><b>Bike ride</b> rides trails and bike streets. <b>Trails</b> shows or hides them.</li><li><b>Weather</b> shows wind, rain, snow, lightning and warnings.</li><li><b>Bird's eye reset</b>, under the title, brings you back to the whole city from above whenever you get lost.</li><li><b>Menu</b> folds the buttons away for a clear view, and the small button at the bottom left does the same for the key, the time slider and the places ribbon. Tap again to bring them back.</li><li><b>More</b> holds Now (the real time of day), Walk, 2D view, North up, Share view, Buses, Game day, Labels, Shadows, Birds, Pride, Volleyballs and Traffic.</li></ul>
+<h4>The buttons</h4><ul><li><b>Search</b> streets, addresses, buildings, parks and trails. <b>Tour</b> flies a short loop.</li><li><b>Find me</b> puts a blue dot where you are. It stays on your device.</li><li><b>Bike ride</b> rides trails and bike streets. <b>Trails</b> shows or hides them.</li><li><b>Weather</b> shows wind, rain, snow, lightning and warnings.</li><li><b>Bird's eye reset</b>, under the title, brings you back to the whole city from above, at the current time of day, whenever you get lost.</li><li><b>Menu</b> folds the buttons away for a clear view, and the small button at the bottom left does the same for the key, the time slider and the places ribbon. Tap again to bring them back.</li><li><b>More</b> holds Now (the real time of day), Walk, 2D view, North up, Share view, Buses, Game day, Labels, Shadows, Birds, Pride, Volleyballs and Traffic.</li></ul>
 <h4>Real, estimated, or just for fun</h4><p>Buildings, streets, trails, terrain and weather are real data. Some heights, all roof shapes and the traffic layer are estimates. The giraffes, penguins, dogs, cyclists, rainbows and volleyballs are just for fun. Each card says which is which.</p>`;
   if(i===1)return '<h4>Fifteen things to try</h4>'+TRY.map((t,k)=>`<button class="btn go" data-go="${k}">${t[0]}<small>${t[1]}</small></button>`).join('');
   return `<h4>Buildings</h4><ul><li>${n(org[1])} outlines from the City of Lincoln and Lancaster County's 2026 footprint layer, ${n(org[0])} from OpenStreetMap, ${n(org[2])} from Microsoft's machine-traced footprints.</li><li>House style and year built for ${n(c.years)} homes from Lancaster County Assessor records. No owner names, addresses of owners or property values are stored. Those stay on the county's own site, which each building links to.</li><li>Heights come from assessor story counts, OpenStreetMap tags, Microsoft estimates or a guess from type and size. Tap a building to see which.</li></ul>
@@ -1507,8 +1507,8 @@ function trafCard(){const lv=trafLevel(curHour),word=lv>.9?'rush hour':lv>.7?'bu
   showCard('Traffic heat wave (estimate)',`Taller, redder walls mean more traffic. At ${fmtTime(curHour)} the pattern is ${word}. This is an estimate, not live traffic: each road's height comes from its type, from interstate down to collector street, and from a typical weekday hour by hour. Drag the time slider to watch the morning and evening rush rise and fall. The ripple runs toward downtown before noon and away from it after. ${Math.round(traf.miles)} miles of road are drawn. Measured city counts and live closures are the next step.`)}
 function setTraffic(on){trafOn=on;$('bTraf').classList.toggle('on',on);if(on&&!traf)buildTraffic();if(traf)traf.mesh.visible=on;if(on){lastInput=performance.now();trafCard()}else hideCard();dirty=true}
 $('bTraf').onclick=()=>setTraffic(!trafOn);
-// Bird's eye reset: back to the whole city from above, out of any mode that moves the camera
-function birdsEye(){if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}flyTo(camTo(-1300,-900,17500,-10,50),1800)}
+// Bird's eye reset: back to the whole city from above, at the current time of day, out of any mode that moves the camera
+function birdsEye(){if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}setLive(true);flyTo(camTo(-1300,-900,17500,-10,50),1800)}
 $('bHome').onclick=birdsEye;addEventListener('keydown',e=>{if(e.target.tagName!=='INPUT'&&(e.key==='Home'||e.key==='0'))birdsEye()});
 $('bZin').onclick=()=>zoomBy(.6);$('bZout').onclick=()=>zoomBy(1.65);$('b2D').onclick=()=>set2D(!flat);
 // Find me: a blue dot where your device says you are. The position never leaves the device.
