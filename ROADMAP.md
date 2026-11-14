@@ -26,9 +26,11 @@ The goal: the most detailed open 3D map of Lincoln, Nebraska that runs in a brow
 6. Birds from the Cornell Lab: run `tools/update_birds.py` with a free eBird key for Lancaster County sightings and checklist frequencies (the same data Merlin's likely-birds lists are built on). Then a scheduled job to refresh it. BirdCast's nightly migration numbers have no documented public feed, so that stays a link until one is found.
 7. Memorial Stadium, below the volleyball record: a tracker of Nebraska football's one-score losses, with the odds of a run like that happening by chance. Needs a sourced game-by-game list first.
 8. A Capitol tracker: words spoken on the floor by each senator in a session, from the Legislature's public transcripts, shown by legislative district across the state. Needs a check of how the transcripts are published, and a statewide base map.
-9. A statewide Nebraska edition. One file cannot hold a state, so it needs map tiles that load as you move, a detail level for each zoom, and a place to host them.
-10. A test on real phones, and a lighter drawing mode if it runs hot.
-11. On-street bike routes from the city's own bike map, the city's public tree inventory (`get_trees.ps1`), a growth timeline from year built, and a shorter ride-everything trip.
+9. Property values in 3D: run `get_values.ps1` for the county's assessed values (no owner names). With it: every parcel raised by its value, tiers you can tap to tour, your own spot marked, and how the neighbors compare. Listing prices are not open data, so this uses assessed values.
+10. Voting: registration, turnout and results by precinct inside Lincoln, from the county election office's public files, shown without commentary. Needs the precinct boundary layer and the results files.
+11. A statewide Nebraska edition. One file cannot hold a state, so it needs map tiles that load as you move, a detail level for each zoom, and a place to host them.
+12. A test on real phones, and a lighter drawing mode if it runs hot.
+13. On-street bike routes from the city's own bike map, the city's public tree inventory (`get_trees.ps1`), a growth timeline from year built, and a shorter ride-everything trip.
 
 ## Then: what would make it stand out
 

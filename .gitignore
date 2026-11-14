@@ -33,3 +33,4 @@ src/test.html
 src/node_modules/
 __pycache__/
 places.json
+values/
