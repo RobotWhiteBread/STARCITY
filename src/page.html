@@ -1610,6 +1610,8 @@ function frame(now){requestAnimationFrame(frame);
   const ld=$('load');if(ld){ld.style.opacity=0;setTimeout(()=>ld.remove(),700)}
   const want=list.find(l=>'#'+l[1].slug===location.hash);let shared=null;{const m=/^#v=(-?\d+),(-?\d+),(\d+),(-?\d+),(-?\d+)$/.exec(location.hash||'');if(m){const q=m.slice(1).map(Number);if(Math.abs(q[0])<=8700&&Math.abs(q[1])<=8700)shared=camTo(q[0],q[1],Math.min(24000,Math.max(45,q[2])),q[3],Math.min(89,Math.max(4,q[4])))}}
   setTimeout(()=>flyTo(shared||(want||list[1])[1],shared?2600:4200),900);
+  // a link ending in #bike opens straight into the bike layer, ready to ride everything
+  if(location.hash==='#bike')setTimeout(()=>{if(!rideMode)setRideMode(true)},5600);
 })();
 </script>
 </body>
