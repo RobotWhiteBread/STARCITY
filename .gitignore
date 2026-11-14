@@ -1,0 +1,33 @@
+# raw downloads (large, rebuildable with the get_*.ps1 scripts)
+buildings_*.json
+roads.json
+land.json
+points.json
+lincoln.json
+*.zip
+*.csv.gz
+dataset-links.csv
+*.service.json
+terrain/
+city/
+city24/
+city26/
+parcels/
+trees/
+flood_*/
+levees_*/
+trails_*/
+historic_*/
+signals_*/
+live/
+# build leftovers
+src/ms.json
+src/terrain.json
+src/bus.json
+src/data.z
+src/data.b64
+src/dbg.json
+src/index.html
+src/test.html
+src/node_modules/
+__pycache__/
