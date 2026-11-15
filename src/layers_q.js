@@ -113,7 +113,10 @@ function councilOpen(tab){openSheet(COUNCILS,tab||0)}
 const FORKU='https://robotwhitebread.github.io/STARCITY/anycity/';
 // a plain count of how many times the map has been opened, from hits.sh, which keeps no account and asks for nothing
 const COUNTSVG='https://hits.sh/robotwhitebread.github.io/STARCITY.svg?style=flat-square&label=times%20opened&color=e9b949&labelColor=1b1f26';
-const COUNTH='<p><img src="'+COUNTSVG+'" alt="How many times this map has been opened" height="20" style="vertical-align:-4px"> &nbsp;<a href="'+FORKU+'" target="_blank" rel="noopener noreferrer">See your own city \u2197</a></p>';
+const COUNTH='<p><img src="'+COUNTSVG+'" alt="How many times this map has been opened" height="20" style="vertical-align:-4px"> &nbsp;<a href="'+FORKU+'" target="_blank" rel="noopener noreferrer">See your own city \u2197</a></p>'
+  +'<p class="psub">That count is the one thing this map asks of anyone else: a single image from hits.sh each time the page opens, with no cookie and no account. Nothing else about you is collected, sent or stored.</p>';
+// counted once when the page opens, so the number means what it says
+function countOpen(){if(!hosted())return;const i=new Image();i.referrerPolicy='no-referrer';i.src=COUNTSVG+'&t='+Date.now()}
 const FORKCODE=`# STARCITY for any city. Free to copy (MIT license).
 
 # 1. Just look. Put a place, a ZIP code or a GPS point in the link.

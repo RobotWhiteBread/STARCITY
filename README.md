@@ -4,14 +4,17 @@
 [![Cities built](https://hits.sh/robotwhitebread.github.io/STARCITY-anycity.svg?style=flat-square&label=cities%20built&color=4c9a6a&labelColor=1b1f26)](https://robotwhitebread.github.io/STARCITY/anycity/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-**Open the map:** [robotwhitebread.github.io/STARCITY](https://robotwhitebread.github.io/STARCITY/)
+An interactive 3D map of Lincoln, Nebraska that runs in a web browser. One HTML file, no server, no API keys, no account. It is built only from public data, and every estimate and every decoration is labeled as one.
 
-**See your own city in 3D:** [robotwhitebread.github.io/STARCITY/anycity](https://robotwhitebread.github.io/STARCITY/anycity/) — type any place, ZIP code or GPS point and it is built in your browser from OpenStreetMap. Free to copy.
-An interactive 3D map of Lincoln, Nebraska that runs in a web browser. One HTML file, no server, no API keys, no account, no tracking. It is built only from public data, and every estimate and every decoration is labeled as one.
+### **[Open the map](https://robotwhitebread.github.io/STARCITY/)**
 
-**Open the live map: https://robotwhitebread.github.io/STARCITY/**
+Works on a phone or a computer. Nothing to install, nothing to sign up for.
 
-That link works on a phone or a computer. Nothing to install. You can also download `index.html` and open it in any modern browser, though the live feeds only load from the website copy.
+### **[See your own city](https://robotwhitebread.github.io/STARCITY/anycity/)**
+
+Type any place, ZIP code or GPS point and it is built in your browser from OpenStreetMap. The code is free to copy.
+
+You can also download `index.html` and open it in any browser, though the live feeds load only from the website copy.
 
 This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
 
@@ -27,7 +30,9 @@ This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DA
 - **Minor streets at night.** Residential streets carry a lamp every 62 m and service streets and alleys one every 130 m, so the whole block grid reads in the dark.
 - **This map for your city.** `anycity/` builds a 3D view of any place, ZIP code or GPS point in the browser from OpenStreetMap, and the guide hands you the code to copy.
 
-## New in 0.9.1
+<details>
+<summary><b>New in 0.9.1</b></summary>
+
 
 - **Now and Reset at the top of the screen**, with a row of reasons you may be here under them. What is live or timely comes first: a game in progress, a weather warning, the next bus, tonight's sky. Then nine ways in: my home and block, getting around, happening now, City Hall and votes, values and taxes, birds, trees and sky, history and culture, safety, and all city data. The ones you use most move to the front, on your own device only.
 - **Bus stops and times.** Every StarTran stop is on the map. Tap one for its next departures, tap a bus for where it is headed and the nearest place to catch that route, or ask for the nearest stop with a bus still to come. A table lists every route with its first and last run and how often it comes. StarTran's own live arrival board is one tap from every stop.
@@ -49,6 +54,8 @@ This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DA
 - **An olive branch.** `CONTRIBUTING.md` invites the city, the county, the university, StarTran, the airport, Realtors, businesses and neighbors to add to the map, and `community/` is where their layers go.
 - The credits roll now reads the set scores of every volleyball match, and a suspended match is no longer counted as a loss. Volleyballs no longer fly at the camera.
 
+</details>
+
 ### The city
 
 - 91,313 buildings on real terrain. 88,942 of the outlines come from the City of Lincoln and Lancaster County's 2026 footprint layer. Houses get hip and gable roofs and chimneys, larger buildings get parapets, rooftop equipment and windows that light up at night.
@@ -69,12 +76,16 @@ This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DA
 
 - Vote history: five elections from 2012 to 2020 and today's voter registration, as a stack of votes on every precinct. Press play to run the years. Tap a precinct for its own numbers.
 - Every district at one spot: tap anywhere and a wall rises around each district that spot votes in, from the precinct up to the Board of Regents, with who holds the seat where the city lists it.
-- City Council: who the members are, when and where it meets, how to speak, and links to agendas and the live broadcast.
-- Decisions in the works: zoning cases, plats and permits headed for the Planning Commission or the council, read live from the Planning Department and drawn on the ground where they would happen.
+- The City Council, in five tabs:
+  - **Who.** The four district seats and the three at-large seats, with the member the city's own district map names, the chair and vice chair, terms, pay, the mayor's veto and the five votes it takes to override it, and what voters changed on November 3, 2026.
+  - **Meetings.** The next seven meeting dates from the city's own calendar, which Monday starts at 5:30 instead of 3, the room, the parking, and the recordings of past meetings read live from LNKTV.
+  - **How a law is made.** First reading, the public hearing at second reading, the vote at third reading, the mayor. How a resolution differs. Where a bill comes from and how a zone change travels. What the council decides.
+  - **Speak up.** Where to sign up, what to say first, the five minutes and the light that ends them, the open microphone on the second and last Mondays, how to write in, and how to ask for an accommodation.
+  - **In the works.** Every open planning request, counted once, grouped by how far it has come, read live from the Planning Department. Tap a stage to draw those requests on the map. Tap a request to fly to the ground where it would happen.
 
-### 57 layers
+### 62 layers
 
-Property and taxes, people, getting around, places, environment and City Hall: values, sales, zoning, tax increment districts, 1930s redlining maps, census tracts, precincts and polling places, every elected district, measured traffic counts, crashes, traffic cameras, street projects, the city bike network, schools, fire and police stations, libraries, public art, playgrounds, restrooms and drinking fountains, floodplains, saline wetlands, road closures, snow plowing, street sweeping, bike share, city trees and more. Three more options color every building by assessed value, property class or year built. Numeric layers rise about a quarter mile into the sky and fade out at the top, and they follow your zoom so the picture holds as you move in and out.
+Property and taxes, people, getting around, places, environment and City Hall: values, sales, zoning, tax increment districts, 1930s redlining maps, census tracts, precincts and polling places, every elected district, measured traffic counts, crashes, traffic cameras, street projects, the city bike network, schools, fire and police stations, libraries, public art, playgrounds, restrooms and drinking fountains, floodplains, saline wetlands, road closures, snow plowing, street sweeping, bike share, city trees and more. Fifteen of them are read live from the city's own servers when you switch them on. Three more options color every building by assessed value, property class or year built. Numeric layers rise about a quarter mile into the sky and fade out at the top, and they follow your zoom so the picture holds as you move in and out.
 
 ### Live, on the website copy
 
@@ -88,6 +99,10 @@ Property and taxes, people, getting around, places, environment and City Hall: v
 - Walk mode: a joystick, tap a spot to walk there, tap a building for its card, walls you cannot pass through, and the name of the street you are on.
 - Search any street, address, building, park, neighborhood or trail. Find me puts a blue dot where you are, and the position never leaves your device.
 - Reset, at the top of the screen, puts every switch, filter and panel back and returns to the whole city. Now sets the map to this moment and says what is going on.
+
+### Any city, not just this one
+
+`anycity/` is the open version: type a place, a ZIP code or a GPS point and it builds that square in 3D in your browser from OpenStreetMap. Buildings, streets, water, parks and mapped trees, with a sun you can move. Where a building has no height mapped, it is estimated from what kind of building it is and the card says so. Lincoln's own layers are not in it, because those come from Lincoln's records; `DATA_PLAN.md` lists the kinds of public source every city tends to have, so you can add your own.
 
 ### Native Lincoln
 
@@ -118,11 +133,15 @@ What the map cannot show yet:
 
 - Live aircraft. Every free aircraft feed refuses to answer a web page. A small relay would fix that, and one is written and waiting in `relay/`.
 - Taxes actually billed or paid, and precinct results after 2020, for the reasons above.
-- Anything live inside the Claude app or from a file on your computer. Live feeds load only from the website copy.
+- Asking rents. There is no open live feed. The Census Bureau's data service now needs a free key, and Zillow's rent index is monthly by ZIP code. Neither is on the map yet; the Rents card says so.
+- Value and tax history for one property. The assessor publishes the current year, so the charts show the spread across the city rather than one address over time.
+- Live arrivals and departures at Lincoln Airport. The planes are examples until an airport feed or a relay exists.
+- Anything live inside a file on your computer. Live feeds load only from the website copy.
 
 ## Privacy
 
-- The map collects nothing about the people who use it. There are no accounts, cookies, analytics or trackers. Find me draws your position on your own screen and sends it nowhere.
+- No accounts, no cookies, no analytics, no advertising and no profile of anyone. Find me draws your position on your own screen and sends it nowhere.
+- **The one count.** A plain visit counter from [hits.sh](https://hits.sh) is shown in the guide and on this page. It is a single image request per page open, with no cookie, no account and nothing about who you are beyond what any web request carries. It exists so the project can tell whether it is reaching anyone. To remove it, delete the `COUNTSVG` line in `src/layers_q.js` and the badges at the top of this file.
 - Owner names and owners' mailing addresses are never stored in the map or in this repository. The Show owner button reads the county's own public record for the one parcel you tapped, at the moment you tap it.
 - The city data browser never requests a field that could name or reach a person, and it does not list layers about people. The map does not plot anyone on any registry.
 - The download scripts name the fields they want. They never request owner names, mailing addresses, buyer or seller names, staff names or notes.
@@ -134,8 +153,10 @@ The download scripts are PowerShell and run on Windows. The build scripts are Py
 1. `get_data.ps1`, `get_more.ps1`, `get_city.ps1`, `get_city2.ps1`: OpenStreetMap, Microsoft footprints, terrain tiles, the bus schedule, the city's 2026 footprints, assessor structure records and the city trail layers.
 2. `get_places.ps1`, `get_values.ps1`, `get_votes.ps1`, `get_gis.ps1`, `get_trees.ps1`: local businesses, assessed values, election layers, the city, county and state map layers, and the city tree inventory.
 3. `git clone https://github.com/openelections/openelections-data-ne` for precinct results from 2012 to 2020.
-4. From inside `src/`: `extra.py`, `gtfs.py` (the timetable, and the bus stops it writes beside it), `process.py` (the base map), `process2.py` (values, taxes, layers, elections, trees, bus stops, and the bird table in `birds_inat.txt`), then `build.py`, which combines `page.html`, the two data packs and the `layers_*.js` files into `index.html`.
+4. From inside `src/`: `extra.py`, `gtfs.py` (the timetable, and the bus stops it writes beside it), `process.py` (the base map), `process2.py` (values, taxes, layers, elections, trees, bus stops, and the bird table in `birds_inat.txt`), then `build.py`, which combines `page.html`, the two data packs and the `layers_a.js` through `layers_q.js` files into `index.html`.
 5. Copy that `index.html` to the top of the repository.
+
+`anycity/index.html` is standalone and needs none of this: it is one file that reads OpenStreetMap live.
 
 `DATA_PLAN.md` has the full list of sources, fields and refresh steps.
 
@@ -154,6 +175,8 @@ The download scripts are PowerShell and run on Windows. The build scripts are Py
 - Star positions from the Hipparcos and HYG catalogs as packaged by the d3-celestial project.
 - Satellite orbits from CelesTrak, worked forward with the satellite.js library (SGP4). Planet and Moon positions use Paul Schlyter's published low-precision formulas.
 - Links out, with nothing copied: county property records, Google Street View, the University of Nebraska building pages, city and state election pages.
+- The any-city build reads OpenStreetMap through the Overpass API and looks up place names through Nominatim, both run by volunteers. Please be gentle with them.
+- The visit count comes from hits.sh.
 - Rendering uses three.js (MIT license).
 
 The code in this repository is released under the MIT license. The map data embedded in `index.html` remains under the licenses of its sources, including the ODbL for OpenStreetMap data.

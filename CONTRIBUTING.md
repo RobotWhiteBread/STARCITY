@@ -23,6 +23,8 @@ It is written for the City of Lincoln and Lancaster County, the University of Ne
 2. **Point to it.** If the data already sits on a public server, give its address. Most city layers can be wired in the same day.
 3. **Add it yourself.** Put a GeoJSON file in `community/`, list it in `community/index.json`, and open a pull request against the `olive-branch` branch. `community/README.md` shows the format in five lines. Your layer appears in the map under From the community, with your name on it.
 
+**Not in Lincoln?** Open [anycity](https://robotwhitebread.github.io/STARCITY/anycity/), type your town, and you have the same map of it from OpenStreetMap. Fork the repository and it is yours to build on, under the MIT license.
+
 For a business listing, the best fix is at the source: the map reads businesses from OpenStreetMap, so a correction there fixes this map and every other map that uses it.
 
 ## What happens next
@@ -51,5 +53,6 @@ Issues and pull requests on GitHub are public. Do not put a phone number, a home
 ## For developers
 
 - The map is one HTML file. The source is in `src/`: `page.html`, the `layers_*.js` files, and the Python scripts that build the two data packs. `README.md` has the rebuild steps.
+- `anycity/index.html` is a second, standalone page: it builds any place in the world from OpenStreetMap, live in the browser. If you want this map for your own city, start there. It needs no data packs and no build step.
 - Keep changes small and say in the pull request what you tested and on what device.
 - New data needs a line in `DATA_PLAN.md`: source, fields kept, date, and how to refresh it.

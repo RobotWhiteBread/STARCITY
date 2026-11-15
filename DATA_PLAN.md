@@ -62,7 +62,7 @@ These are downloaded by a script, processed, and packed into `index.html`. They 
 | Star catalog | Hipparcos and HYG catalogs as packaged by d3-celestial | position, brightness, names, constellation lines | copied from the d3-celestial repository | epoch 2000 | never |
 | Volleyball and football results for the current season | ESPN's public scoreboard | date, opponent, score | typed into the layer files as a fallback | 2026-11-14 | the website copy reads them live |
 
-Counts in release 0.9: 91,313 buildings, 86,989 parcels with a value ($38.03 billion), 2,750 sales, 172 precincts, 88,382 city trees on the map out of 121,289 the city lists as living, 1,710 businesses, 11,789 street segments with a traffic count, 6,788 crashes.
+Counts as of release 0.9.2: 91,313 buildings, 86,989 parcels with a value ($38.03 billion), 2,750 sales, 172 precincts, 88,382 city trees on the map out of 121,289 the city lists as living, 1,710 businesses, 11,789 street segments with a traffic count, 6,788 crashes.
 
 Not kept from the tree inventory: the address the city files each tree under, staff names, notes and edit history. The address is read from the city only when a visitor asks for one tree's record.
 
