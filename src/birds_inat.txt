@@ -1,0 +1,324 @@
+# Bird species reported within 25 km of Lincoln, Nebraska on iNaturalist, by month of the year (all years).
+# Read 2026-11-14 from api.inaturalist.org/v2/observations/species_counts (iconic_taxa=Aves, verifiable, not captive).
+# common name|scientific name|reports in Jan..Dec
+American Robin|Turdus migratorius|3,21,68,238,189,81,26,16,15,20,4,5
+Blue Jay|Cyanocitta cristata|19,8,26,89,101,35,34,35,28,37,28,28
+Northern Cardinal|Cardinalis cardinalis|19,25,22,97,104,27,14,20,6,6,10,16
+Mourning Dove|Zenaida macroura|6,7,21,90,73,37,25,29,28,15,4,7
+Mallard|Anas platyrhynchos|3,28,31,66,88,25,30,20,25,15,4,1
+Common Grackle|Quiscalus quiscula|0,0,28,102,104,38,21,8,5,3,0,0
+Canada Goose|Branta canadensis|11,23,28,95,71,14,15,16,9,6,4,8
+Red-winged Blackbird|Agelaius phoeniceus|2,5,25,92,80,43,25,8,1,11,2,1
+House Sparrow|Passer domesticus|8,6,21,60,51,36,20,19,8,15,23,17
+House Finch|Haemorhous mexicanus|14,8,21,48,54,45,22,13,6,6,11,8
+American Goldfinch|Spinus tristis|12,10,18,49,62,20,16,26,3,11,11,10
+Downy Woodpecker|Dryobates pubescens|23,20,17,39,29,6,4,10,11,18,18,33
+Northern Flicker|Colaptes auratus|13,3,28,38,23,20,18,16,14,27,12,6
+Red-tailed Hawk|Buteo jamaicensis|24,25,21,18,20,13,13,9,12,19,14,24
+Red-bellied Woodpecker|Melanerpes carolinus|18,13,16,34,33,7,9,5,7,12,16,31
+Baltimore Oriole|Icterus galbula|0,0,0,12,116,20,10,5,1,0,0,0
+White-breasted Nuthatch|Sitta carolinensis|11,13,14,28,21,4,6,12,6,10,11,24
+European Starling|Sturnus vulgaris|9,7,11,31,35,15,2,15,7,3,11,12
+Great Blue Heron|Ardea herodias|1,0,1,23,29,8,19,14,31,17,2,0
+Eastern Kingbird|Tyrannus tyrannus|0,0,0,9,64,25,33,9,4,0,0,1
+Wild Turkey|Meleagris gallopavo|4,1,4,27,20,8,7,24,24,17,4,2
+Dickcissel|Spiza americana|0,0,0,0,42,47,41,7,1,2,0,0
+Black-capped Chickadee|Poecile atricapillus|14,9,11,19,26,9,12,3,4,7,9,16
+Dark-eyed Junco|Junco hyemalis|26,11,17,5,0,0,0,0,1,19,30,26
+Northern House Wren|Troglodytes aedon|0,0,0,42,38,20,15,5,9,6,0,0
+Barn Swallow|Hirundo rustica|0,0,0,19,40,22,23,25,1,0,0,0
+Bald Eagle|Haliaeetus leucocephalus|15,24,15,13,16,6,5,6,3,7,8,9
+Cooper's Hawk|Astur cooperii|15,5,11,19,5,6,6,12,14,13,12,5
+Brown-headed Cowbird|Molothrus ater|0,0,1,41,44,19,13,5,0,0,0,0
+Brown Thrasher|Toxostoma rufum|0,0,0,37,50,11,8,1,7,1,0,0
+Lincoln's Sparrow|Melospiza lincolnii|0,1,1,27,17,0,0,0,8,57,2,0
+Western Kingbird|Tyrannus verticalis|0,0,0,9,37,34,27,6,0,0,0,0
+Gray Catbird|Dumetella carolinensis|0,0,0,10,64,14,7,7,7,4,0,0
+Killdeer|Charadrius vociferus|0,2,10,23,34,18,5,4,6,7,1,0
+Eastern Meadowlark|Sturnella magna|0,0,8,39,29,8,14,2,1,1,1,0
+Song Sparrow|Melospiza melodia|3,3,14,25,10,2,0,0,1,21,17,6
+Rock Pigeon|Columba livia|2,3,3,19,17,21,14,7,7,5,1,1
+Eurasian Collared-Dove|Streptopelia decaocto|1,8,4,35,13,11,7,5,6,2,4,3
+Blue-winged Teal|Spatula discors|0,0,8,51,23,0,0,3,5,7,1,0
+Harris's Sparrow|Zonotrichia querula|4,10,10,26,18,0,0,0,0,16,7,3
+Yellow-rumped Warbler|Setophaga coronata|2,1,2,32,17,0,0,0,8,26,2,4
+Turkey Vulture|Cathartes aura|0,1,0,36,23,9,5,7,8,4,0,0
+American Crow|Corvus brachyrhynchos|13,3,7,10,10,2,6,6,3,11,14,7
+Ring-billed Gull|Larus delawarensis|0,15,42,11,2,0,0,0,3,5,8,3
+Wood Duck|Aix sponsa|3,1,2,20,23,12,6,6,10,5,0,0
+American Coot|Fulica americana|1,1,16,30,10,1,0,0,2,19,5,2
+Northern Yellow Warbler|Setophaga aestiva|0,0,0,8,44,10,2,2,4,0,0,0
+Rose-breasted Grosbeak|Pheucticus ludovicianus|0,0,0,10,45,4,6,2,2,0,0,0
+Eastern Bluebird|Sialia sialis|4,5,4,10,14,7,1,7,4,7,2,3
+Red-breasted Nuthatch|Sitta canadensis|9,6,9,7,1,0,0,1,2,11,15,5
+Tree Swallow|Tachycineta bicolor|0,0,2,27,23,8,3,0,0,0,0,0
+Green Heron|Butorides virescens|0,0,0,7,11,3,15,14,11,2,0,0
+Chipping Sparrow|Spizella passerina|0,0,0,26,23,3,2,3,1,3,1,0
+Northern Shoveler|Spatula clypeata|0,0,11,23,15,0,0,2,2,3,4,1
+Orchard Oriole|Icterus spurius|0,0,0,2,29,15,11,3,1,0,0,0
+Swainson's Thrush|Catharus ustulatus|0,0,0,12,43,0,0,1,4,0,0,0
+Cedar Waxwing|Bombycilla cedrorum|6,4,7,11,17,4,1,0,1,5,2,0
+Purple Martin|Progne subis|0,0,3,14,15,9,9,8,0,0,0,0
+Great-tailed Grackle|Quiscalus mexicanus|0,0,0,9,9,17,4,2,3,10,2,1
+Lesser Yellowlegs|Tringa flavipes|0,0,2,23,22,0,1,2,1,6,0,0
+White-throated Sparrow|Zonotrichia albicollis|1,2,0,20,5,0,0,0,0,14,10,4
+Orange-crowned Warbler|Leiothlypis celata|0,0,0,22,5,0,0,0,4,24,1,0
+Spotted Sandpiper|Actitis macularius|0,0,0,7,31,1,3,5,4,4,0,0
+Ruby-throated Hummingbird|Archilochus colubris|0,0,0,0,10,0,1,10,34,0,0,0
+Eastern Towhee|Pipilo erythrophthalmus|0,1,0,29,12,4,4,2,2,0,0,0
+Least Sandpiper|Calidris minutilla|0,0,0,5,15,0,7,8,8,9,1,0
+Red-headed Woodpecker|Melanerpes erythrocephalus|1,1,1,4,19,8,14,4,0,1,0,0
+American White Pelican|Pelecanus erythrorhynchos|0,0,12,20,7,2,7,0,2,3,0,0
+Common Yellowthroat|Geothlypis trichas|0,0,0,2,25,6,4,1,7,8,0,0
+Eastern Warbling Vireo|Vireo gilvus|0,0,0,13,31,3,2,2,1,0,0,0
+White-crowned Sparrow|Zonotrichia leucophrys|0,0,2,12,13,0,0,0,2,19,0,2
+American Kestrel|Falco sparverius|7,6,7,7,3,0,1,2,4,5,3,4
+Osprey|Pandion haliaetus|0,0,1,27,6,0,0,0,5,9,1,0
+Great Horned Owl|Bubo virginianus|3,1,1,5,7,2,5,7,4,6,1,5
+American Tree Sparrow|Spizelloides arborea|9,7,6,2,0,0,0,0,0,0,14,8
+Savannah Sparrow|Passerculus sandwichensis|0,0,0,14,6,0,0,0,3,21,1,0
+Clay-colored Sparrow|Spizella pallida|0,0,0,12,9,0,0,0,8,15,0,0
+Barred Owl|Strix varia|0,5,2,12,13,1,3,1,1,3,1,0
+Eastern Phoebe|Sayornis phoebe|0,0,3,13,14,3,5,0,2,1,0,1
+Franklin's Gull|Leucophaeus pipixcan|0,1,1,22,12,0,0,0,2,3,0,0
+Pied-billed Grebe|Podilymbus podiceps|3,0,3,15,4,0,0,0,3,9,3,0
+Grasshopper Sparrow|Ammodramus savannarum|0,0,0,3,13,5,7,3,4,5,0,0
+Field Sparrow|Spizella pusilla|0,0,0,20,12,0,2,0,1,5,0,0
+Belted Kingfisher|Megaceryle alcyon|0,2,3,6,2,6,6,1,4,4,3,2
+Double-crested Cormorant|Nannopterum auritum|0,0,1,17,9,1,1,1,2,6,1,0
+American Avocet|Recurvirostra americana|0,0,1,21,9,1,0,1,3,0,2,0
+Eastern Screech-Owl|Megascops asio|2,3,1,2,8,4,3,1,5,2,3,3
+Snow Goose|Anser caerulescens|0,7,14,3,5,1,1,0,1,1,0,4
+Nashville Warbler|Leiothlypis ruficapilla|0,0,0,2,4,0,0,2,13,16,0,0
+Bufflehead|Bucephala albeola|2,2,25,4,0,0,0,0,0,1,1,0
+Swamp Sparrow|Melospiza georgiana|0,0,0,2,0,0,0,0,1,26,4,1
+Pectoral Sandpiper|Calidris melanotos|0,0,0,8,7,0,9,3,2,5,0,0
+Ruby-crowned Kinglet|Corthylio calendula|0,0,1,12,3,0,0,0,2,13,1,1
+Northern Bobwhite|Colinus virginianus|0,0,0,4,11,6,7,1,2,2,0,0
+Lark Sparrow|Chondestes grammacus|0,0,0,12,10,3,3,3,1,0,0,0
+Wilson's Phalarope|Phalaropus tricolor|0,0,0,12,16,1,0,1,2,0,0,0
+Ruddy Duck|Oxyura jamaicensis|0,0,6,9,6,0,0,0,0,3,6,1
+Hairy Woodpecker|Leuconotopicus villosus|5,4,2,6,7,1,0,1,1,1,0,2
+Western Meadowlark|Sturnella neglecta|3,3,3,5,4,3,3,0,0,6,0,0
+Hooded Merganser|Lophodytes cucullatus|0,2,11,1,6,1,1,0,0,1,3,3
+Great Egret|Ardea alba|0,0,0,12,10,0,1,1,2,2,1,0
+Sharp-shinned Hawk|Accipiter striatus|6,0,3,2,0,0,0,0,0,10,2,5
+LeConte's Sparrow|Ammospiza leconteii|0,0,0,0,0,0,0,0,3,24,1,0
+Palm Warbler|Setophaga palmarum|0,0,0,10,10,0,0,0,2,6,0,0
+Indigo Bunting|Passerina cyanea|0,0,0,2,12,2,4,2,4,1,0,0
+Sedge Wren|Cistothorus stellaris|0,0,0,1,4,2,5,4,3,8,0,0
+Brown Creeper|Certhia americana|3,7,1,3,0,0,0,0,0,4,4,4
+Semipalmated Sandpiper|Calidris pusilla|0,0,0,5,10,2,4,3,1,1,0,0
+Greater Yellowlegs|Tringa melanoleuca|0,0,3,8,4,0,1,1,1,6,1,0
+Red-shouldered Hawk|Buteo lineatus|6,3,1,0,1,1,1,2,3,2,1,4
+Bobolink|Dolichonyx oryzivorus|0,0,0,0,15,4,4,2,0,0,0,0
+Great Crested Flycatcher|Myiarchus crinitus|0,0,0,2,12,3,5,1,2,0,0,0
+Red-eyed Vireo|Vireo olivaceus|0,0,0,3,12,3,2,0,5,0,0,0
+Green-winged Teal|Anas crecca|0,2,6,7,3,0,0,0,2,1,1,2
+Common Goldeneye|Bucephala clangula|1,10,9,0,0,0,0,0,0,0,1,3
+Carolina Wren|Thryothorus ludovicianus|1,2,0,7,7,0,2,1,1,1,0,2
+Spotted Towhee|Pipilo maculatus|1,1,0,11,1,0,0,0,0,8,0,2
+Baird's Sandpiper|Calidris bairdii|0,0,5,13,0,0,2,2,0,2,0,0
+Red-breasted Merganser|Mergus serrator|0,0,7,5,4,0,0,0,0,0,6,1
+Merlin|Falco columbarius|1,0,2,0,0,0,0,1,5,7,2,5
+Gadwall|Mareca strepera|1,1,12,4,1,0,0,0,0,0,2,2
+Least Flycatcher|Empidonax minimus|0,0,0,0,20,0,0,1,2,0,0,0
+Lesser Scaup|Aythya affinis|1,2,11,1,4,1,0,0,0,1,1,0
+Ring-necked Pheasant|Phasianus colchicus|0,0,6,6,3,2,0,2,2,1,0,0
+White-rumped Sandpiper|Calidris fuscicollis|0,0,0,3,15,4,0,0,0,0,0,0
+Forster's Tern|Sterna forsteri|0,0,0,8,10,0,0,2,2,0,0,0
+Northern Harrier|Circus hudsonius|1,3,3,4,0,0,0,0,0,4,4,2
+Eastern Marsh Wren|Cistothorus palustris|0,0,0,5,4,0,0,0,8,3,1,0
+Stilt Sandpiper|Calidris himantopus|0,0,0,2,7,0,1,5,5,1,0,0
+Peregrine Falcon|Falco peregrinus|3,2,1,4,1,0,2,0,3,2,0,2
+Northern Rough-winged Swallow|Stelgidopteryx serripennis|0,0,0,5,11,3,1,0,0,0,0,0
+Canvasback|Aythya valisineria|0,3,6,0,3,0,0,0,0,1,3,3
+Common Loon|Gavia immer|0,0,4,7,2,0,3,0,0,2,1,0
+American Pipit|Anthus rubescens|0,0,9,3,0,0,0,0,2,5,0,0
+White-faced Ibis|Plegadis chihi|0,0,0,11,7,0,0,0,0,1,0,0
+Blue-gray Gnatcatcher|Polioptila caerulea|0,0,0,9,9,0,0,1,0,0,0,0
+Semipalmated Plover|Charadrius semipalmatus|0,0,0,8,5,0,1,2,2,1,0,0
+Solitary Sandpiper|Tringa solitaria|0,0,0,6,3,0,5,2,2,1,0,0
+Wilson's Snipe|Gallinago delicata|0,0,1,1,0,0,0,1,2,11,2,0
+Cliff Swallow|Petrochelidon pyrrhonota|0,1,1,4,5,4,2,1,0,0,0,0
+Common Nighthawk|Chordeiles minor|0,0,0,0,6,3,1,2,6,0,0,0
+Hudsonian Godwit|Limosa haemastica|0,0,0,8,10,0,0,0,0,0,0,0
+Fox Sparrow|Passerella iliaca|0,0,6,1,0,0,0,0,0,5,3,2
+American Wigeon|Mareca americana|2,2,4,2,0,0,0,0,1,1,2,3
+Eastern Wood-Pewee|Contopus virens|0,0,0,0,5,3,3,1,5,0,0,0
+Mississippi Kite|Ictinia mississippiensis|0,0,0,0,0,1,1,11,4,0,0,0
+Broad-winged Hawk|Buteo platypterus|0,0,0,5,6,0,0,1,3,2,0,0
+Blackpoll Warbler|Setophaga striata|0,0,0,0,17,0,0,0,0,0,0,0
+Tennessee Warbler|Leiothlypis peregrina|0,0,0,0,16,0,0,0,0,1,0,0
+Ring-necked Duck|Aythya collaris|1,1,8,1,1,0,0,0,0,1,3,0
+Long-billed Dowitcher|Limnodromus scolopaceus|0,0,0,5,2,0,0,1,0,6,2,0
+Eared Grebe|Podiceps nigricollis|0,0,0,11,2,0,0,0,0,1,2,0
+Red Crossbill|Loxia curvirostra|3,4,0,0,0,0,2,4,0,1,1,1
+Vesper Sparrow|Pooecetes gramineus|0,0,1,11,0,0,0,0,0,4,0,0
+Sora|Porzana carolina|0,0,0,4,4,0,0,0,5,2,0,1
+Redhead|Aythya americana|1,4,1,3,2,0,0,0,0,1,2,1
+Dunlin|Calidris alpina|0,0,0,4,9,0,0,0,0,1,1,0
+Cackling Goose|Branta hutchinsii|3,3,0,1,0,0,0,0,0,0,1,7
+Summer Tanager|Piranga rubra|0,0,0,3,8,1,2,0,1,0,0,0
+Ovenbird|Seiurus aurocapilla|0,0,0,0,8,0,0,0,6,1,0,0
+Northern Shrike|Lanius borealis|4,1,0,0,0,0,0,0,0,0,3,6
+Ross's Goose|Anser rossii|2,4,2,0,0,0,0,0,0,0,2,4
+American Herring Gull|Larus smithsonianus|1,5,5,0,0,0,0,0,0,0,2,1
+Yellow-bellied Sapsucker|Sphyrapicus varius|0,4,3,0,0,0,0,0,0,4,1,2
+Greater White-fronted Goose|Anser albifrons|2,7,5,0,0,0,0,0,0,0,0,0
+Chimney Swift|Chaetura pelagica|0,0,0,3,3,0,0,2,4,2,0,0
+Black-and-white Warbler|Mniotilta varia|0,0,0,1,6,0,0,2,5,0,0,0
+Pine Siskin|Spinus pinus|1,0,2,1,0,1,0,0,2,2,2,2
+Common Merganser|Mergus merganser|1,8,4,0,0,0,0,0,0,0,0,0
+Willow Flycatcher|Empidonax traillii|0,0,0,0,6,5,2,0,0,0,0,0
+Swainson's Hawk|Buteo swainsoni|0,0,0,9,1,0,0,0,0,3,0,0
+Black Scoter|Melanitta americana|0,0,1,3,0,0,0,0,0,1,7,0
+Bonaparte's Gull|Chroicocephalus philadelphia|0,0,0,5,1,0,0,0,0,3,3,0
+Horned Grebe|Podiceps auritus|0,0,4,4,0,0,0,0,0,2,2,0
+Greater Scaup|Aythya marila|0,0,5,3,1,0,0,0,0,1,2,0
+Yellow-headed Blackbird|Xanthocephalus xanthocephalus|0,0,1,8,2,0,0,1,0,0,0,0
+Black Tern|Chlidonias niger|0,0,0,1,10,1,0,0,0,0,0,0
+Nelson's Sparrow|Ammospiza nelsoni|0,0,0,0,0,0,0,0,0,12,0,0
+Rusty Blackbird|Euphagus carolinus|0,2,2,0,0,0,0,0,0,1,4,2
+Golden-crowned Kinglet|Regulus satrapa|0,1,1,0,0,0,0,0,0,4,2,3
+Lesser Black-backed Gull|Larus fuscus|3,2,4,0,0,0,0,0,0,0,0,2
+Northern Pintail|Anas acuta|1,5,4,0,0,0,0,0,0,1,0,0
+Yellow-billed Cuckoo|Coccyzus americanus|0,0,0,0,0,4,2,1,2,2,0,0
+Louisiana Waterthrush|Parkesia motacilla|0,0,0,9,2,0,0,0,0,0,0,0
+Blue-headed Vireo|Vireo solitarius|0,0,0,1,4,0,0,1,2,3,0,0
+Northern Waterthrush|Parkesia noveboracensis|0,0,0,1,9,0,0,0,1,0,0,0
+Olive-sided Flycatcher|Contopus cooperi|0,0,0,0,5,0,0,2,4,0,0,0
+Wilson's Warbler|Cardellina pusilla|0,0,0,0,3,0,0,2,6,0,0,0
+American Woodcock|Scolopax minor|0,0,6,1,3,0,0,0,0,0,0,0
+Scissor-tailed Flycatcher|Tyrannus forficatus|0,0,0,0,7,1,2,0,0,0,0,0
+Pine Warbler|Setophaga pinus|0,0,0,1,0,0,0,0,6,3,0,0
+Bay-breasted Warbler|Setophaga castanea|0,0,0,0,6,0,0,1,3,0,0,0
+Surf Scoter|Melanitta perspicillata|0,0,0,1,0,0,0,0,0,4,4,0
+Western Grebe|Aechmophorus occidentalis|0,0,0,0,1,0,0,3,1,2,2,0
+Henslow's Sparrow|Centronyx henslowii|0,0,0,0,5,2,1,1,0,0,0,0
+Yellow-throated Vireo|Vireo flavifrons|0,0,0,2,5,0,1,1,0,0,0,0
+American Redstart|Setophaga ruticilla|0,0,0,0,8,0,0,0,1,0,0,0
+Mourning Warbler|Geothlypis philadelphia|0,0,0,0,7,0,0,0,1,1,0,0
+American Golden-Plover|Pluvialis dominica|0,0,0,0,0,0,1,1,4,3,0,0
+Swallow-tailed Kite|Elanoides forficatus|0,0,0,0,0,0,0,8,1,0,0,0
+Sprague's Pipit|Anthus spragueii|0,0,0,0,0,0,0,0,3,6,0,0
+Tufted Titmouse|Baeolophus bicolor|0,3,0,4,1,0,0,0,0,0,0,0
+Iceland Gull|Larus glaucoides|0,1,6,0,0,0,0,0,0,0,0,1
+Loggerhead Shrike|Lanius ludovicianus|0,0,1,3,0,2,0,2,0,0,0,0
+Bell's Vireo|Vireo bellii|0,0,0,0,3,2,2,1,0,0,0,0
+Piping Plover|Charadrius melodus|0,0,0,5,3,0,0,0,0,0,0,0
+Western Cattle-Egret|Ardea ibis|0,0,0,4,3,0,0,0,0,1,0,0
+Willet|Tringa semipalmata|0,0,0,2,5,0,0,1,0,0,0,0
+Ruddy Turnstone|Arenaria interpres|0,0,0,0,8,0,0,0,0,0,0,0
+Costa's Hummingbird|Calypte costae|0,0,0,0,0,0,0,0,0,4,3,0
+Glaucous Gull|Larus hyperboreus|3,0,4,0,0,0,0,0,0,0,0,0
+American Bittern|Botaurus lentiginosus|0,0,0,4,1,0,0,0,0,2,0,0
+Virginia Rail|Rallus limicola|0,0,0,1,0,0,3,0,0,3,0,0
+Golden-winged Warbler|Vermivora chrysoptera|0,0,0,0,7,0,0,0,0,0,0,0
+Short-billed Dowitcher|Limnodromus griseus|0,0,0,0,5,0,1,1,0,0,0,0
+Yellow-crowned Night Heron|Nyctanassa violacea|0,0,0,0,1,0,0,3,1,2,0,0
+Red-necked Grebe|Podiceps grisegena|0,0,1,4,0,0,0,0,0,0,1,0
+Hermit Thrush|Catharus guttatus|0,0,1,1,0,0,0,0,0,3,0,1
+Worm-eating Warbler|Helmitheros vermivorum|0,0,0,3,3,0,0,0,0,0,0,0
+Snowy Egret|Egretta thula|0,0,0,2,2,0,0,0,2,0,0,0
+Lazuli Bunting|Passerina amoena|0,0,0,0,6,0,0,0,0,0,0,0
+Gray-cheeked Thrush|Catharus minimus|0,0,0,0,6,0,0,0,0,0,0,0
+Alder Flycatcher|Empidonax alnorum|0,0,0,0,6,0,0,0,0,0,0,0
+Blackburnian Warbler|Setophaga fusca|0,0,0,0,4,0,0,0,2,0,0,0
+Black-throated Green Warbler|Setophaga virens|0,0,0,0,1,0,0,2,3,0,0,0
+Trumpeter Swan|Cygnus buccinator|0,3,1,0,0,0,0,0,0,0,1,0
+Long-tailed Duck|Clangula hyemalis|0,0,3,1,0,0,0,0,0,0,1,0
+Horned Lark|Eremophila alpestris|4,1,0,0,0,0,0,0,0,0,0,0
+Purple Finch|Haemorhous purpureus|0,0,4,0,0,0,0,0,0,0,0,1
+Marbled Godwit|Limosa fedoa|0,0,1,3,1,0,0,0,0,0,0,0
+Western Sandpiper|Calidris mauri|0,0,0,3,0,0,0,1,1,0,0,0
+Black-necked Stilt|Himantopus mexicanus|0,0,0,3,2,0,0,0,0,0,0,0
+Northern Parula|Setophaga americana|0,0,0,2,2,0,0,0,1,0,0,0
+Winter Wren|Nannus hiemalis|0,0,0,2,0,0,0,0,0,1,0,2
+Black-bellied Plover|Pluvialis squatarola|0,0,0,1,3,0,0,0,0,1,0,0
+Caspian Tern|Hydroprogne caspia|0,0,0,1,2,0,0,1,1,0,0,0
+Chestnut-sided Warbler|Setophaga pensylvanica|0,0,0,0,5,0,0,0,0,0,0,0
+Sanderling|Calidris alba|0,0,0,0,4,0,0,0,1,0,0,0
+Magnolia Warbler|Setophaga magnolia|0,0,0,0,4,0,0,0,1,0,0,0
+Red-necked Phalarope|Phalaropus lobatus|0,0,0,0,3,0,0,0,2,0,0,0
+American Barn Owl|Tyto furcata|0,0,0,0,1,0,0,1,3,0,0,0
+Wood Thrush|Hylocichla mustelina|0,0,0,0,2,0,1,0,0,0,1,0
+Pine Grosbeak|Pinicola enucleator|2,2,0,0,0,0,0,0,0,0,0,0
+California Gull|Larus californicus|0,0,4,0,0,0,0,0,0,0,0,0
+Cinnamon Teal|Spatula cyanoptera|0,0,1,2,0,0,0,0,0,1,0,0
+Pacific Loon|Gavia pacifica|0,0,0,4,0,0,0,0,0,0,0,0
+Black-crowned Night Heron|Nycticorax nycticorax|0,0,0,2,1,0,0,1,0,0,0,0
+Northern Mockingbird|Mimus polyglottos|0,0,0,2,1,0,0,0,1,0,0,0
+Brewer's Blackbird|Euphagus cyanocephalus|0,0,0,1,0,0,0,0,0,3,0,0
+King Rail|Rallus elegans|0,0,0,0,0,0,4,0,0,0,0,0
+Rock Wren|Salpinctes obsoletus|0,0,0,0,0,0,0,0,1,3,0,0
+Chukar|Alectoris chukar|0,0,0,1,0,0,0,1,0,0,1,0
+Sandhill Crane|Antigone canadensis|2,1,0,0,0,0,0,0,0,0,0,0
+Lapland Longspur|Calcarius lapponicus|1,2,0,0,0,0,0,0,0,0,0,0
+White-eyed Vireo|Vireo griseus|0,0,0,2,1,0,0,0,0,0,0,0
+White-winged Dove|Zenaida asiatica|0,0,0,1,0,0,2,0,0,0,0,0
+Upland Sandpiper|Bartramia longicauda|0,0,0,1,1,0,1,0,0,0,0,0
+Little Blue Heron|Egretta caerulea|0,0,0,1,2,0,0,0,0,0,0,0
+Hooded Warbler|Setophaga citrina|0,0,0,1,2,0,0,0,0,0,0,0
+Snowy Plover|Anarhynchus nivosus|0,0,0,1,2,0,0,0,0,0,0,0
+Black-billed Cuckoo|Coccyzus erythropthalmus|0,0,0,0,3,0,0,0,0,0,0,0
+Connecticut Warbler|Oporornis agilis|0,0,0,0,3,0,0,0,0,0,0,0
+Blue-winged Warbler|Vermivora cyanoptera|0,0,0,0,3,0,0,0,0,0,0,0
+Cerulean Warbler|Setophaga cerulea|0,0,0,0,3,0,0,0,0,0,0,0
+Common Tern|Sterna hirundo|0,0,0,0,2,0,0,0,1,0,0,0
+Bank Swallow|Riparia riparia|0,0,0,0,2,0,1,0,0,0,0,0
+Yellow-bellied Flycatcher|Empidonax flaviventris|0,0,0,0,2,0,0,0,1,0,0,0
+Philadelphia Vireo|Vireo philadelphicus|0,0,0,0,1,0,0,0,2,0,0,0
+Laughing Gull|Leucophaeus atricilla|0,0,0,0,1,0,0,2,0,0,0,0
+Canada Warbler|Cardellina canadensis|0,0,0,0,1,0,0,0,2,0,0,0
+Broad-tailed Hummingbird|Selasphorus platycercus|0,0,0,0,0,0,0,3,0,0,0,0
+Buff-breasted Sandpiper|Calidris subruficollis|0,0,0,0,0,0,0,2,1,0,0,0
+Sabine's Gull|Xema sabini|0,0,0,0,0,0,0,0,3,0,0,0
+Smith's Longspur|Calcarius pictus|0,0,0,0,0,0,0,0,0,0,2,0
+Red-throated Loon|Gavia stellata|0,0,0,0,0,0,0,0,0,1,1,0
+Tundra Swan|Cygnus columbianus|0,0,0,0,0,0,0,0,0,0,1,1
+Short-eared Owl|Asio flammeus|0,1,0,0,0,0,0,0,0,0,1,0
+White-winged Scoter|Melanitta deglandi|0,0,0,0,0,0,0,0,0,0,1,1
+Common Poorwill|Phalaenoptilus nuttallii|0,1,0,1,0,0,0,0,0,0,0,0
+Fulvous Whistling-Duck|Dendrocygna bicolor|0,0,0,0,0,2,0,0,0,0,0,0
+Scarlet Tanager|Piranga olivacea|0,0,0,0,1,1,0,0,0,0,0,0
+White Ibis|Eudocimus albus|0,0,0,2,0,0,0,0,0,0,0,0
+Long-billed Curlew|Numenius americanus|0,0,0,2,0,0,0,0,0,0,0,0
+Eastern Whip-poor-will|Antrostomus vociferus|0,0,0,2,0,0,0,0,0,0,0,0
+Say's Phoebe|Sayornis saya|0,0,0,1,0,0,0,0,1,0,0,0
+Hudsonian Whimbrel|Numenius hudsonicus|0,0,0,1,1,0,0,0,0,0,0,0
+Black-bellied Whistling-Duck|Dendrocygna autumnalis|0,0,0,0,2,0,0,0,0,0,0,0
+Yellow-breasted Chat|Icteria virens|0,0,0,0,2,0,0,0,0,0,0,0
+Common Gallinule|Gallinula galeata|0,0,0,0,2,0,0,0,0,0,0,0
+Western Tanager|Piranga ludoviciana|0,0,0,0,1,0,0,0,1,0,0,0
+Blue Grosbeak|Passerina caerulea|0,0,0,0,1,0,0,0,1,0,0,0
+Cape May Warbler|Setophaga tigrina|0,0,0,0,1,0,0,0,1,0,0,0
+Least Bittern|Botaurus exilis|0,0,0,0,1,0,0,0,1,0,0,0
+American Goshawk|Astur atricapillus|0,0,0,0,0,0,0,0,0,0,1,0
+Rough-legged Hawk|Buteo lagopus|1,0,0,0,0,0,0,0,0,0,0,0
+Mute Swan|Cygnus olor|1,0,0,0,0,0,0,0,0,0,0,0
+Townsend's Solitaire|Myadestes townsendi|1,0,0,0,0,0,0,0,0,0,0,0
+Long-eared Owl|Asio otus|1,0,0,0,0,0,0,0,0,0,0,0
+Snow Bunting|Plectrophenax nivalis|1,0,0,0,0,0,0,0,0,0,0,0
+Yellow-throated Warbler|Setophaga dominica|1,0,0,0,0,0,0,0,0,0,0,0
+Swan Goose|Anser cygnoides|0,1,0,0,0,0,0,0,0,0,0,0
+Pinyon Jay|Gymnorhinus cyanocephalus|0,1,0,0,0,0,0,0,0,0,0,0
+Great Black-backed Gull|Larus marinus|0,0,1,0,0,0,0,0,0,0,0,0
+Short-billed Gull|Larus brachyrhynchus|0,0,1,0,0,0,0,0,0,0,0,0
+Least Tern|Sternula antillarum|0,0,0,0,0,1,0,0,0,0,0,0
+Broad-billed Hummingbird|Cynanthus latirostris|0,0,0,0,1,0,0,0,0,0,0,0
+Mandarin Duck|Aix galericulata|0,0,0,0,1,0,0,0,0,0,0,0
+Fish Crow|Corvus ossifragus|0,0,0,0,1,0,0,0,0,0,0,0
+Veery|Catharus fuscescens|0,0,0,0,1,0,0,0,0,0,0,0
+Acadian Flycatcher|Empidonax virescens|0,0,0,0,1,0,0,0,0,0,0,0
+Kentucky Warbler|Geothlypis formosa|0,0,0,0,1,0,0,0,0,0,0,0
+Red Junglefowl|Gallus gallus|0,0,0,0,0,0,0,0,0,0,0,1
+Helmeted Guineafowl|Numida meleagris|0,0,0,0,0,0,0,1,0,0,0,0
+Long-tailed Jaeger|Stercorarius longicaudus|0,0,0,0,0,0,0,1,0,0,0,0
+Neotropic Cormorant|Nannopterum brasilianum|0,0,0,0,0,0,0,1,0,0,0,0
+Prairie Falcon|Falco mexicanus|0,0,0,0,0,0,0,0,1,0,0,0
+Brewer's Sparrow|Spizella breweri|0,0,0,0,0,0,0,0,1,0,0,0
+Burrowing Owl|Athene cunicularia|0,0,0,0,0,0,0,0,1,0,0,0
+Vega Gull|Larus vegae|0,0,0,0,0,0,0,0,1,0,0,0
+Yellow Rail|Coturnicops noveboracensis|0,0,0,0,0,0,0,0,0,1,0,0
+Muscovy Duck|Cairina moschata|0,0,0,0,0,0,0,0,0,1,0,0

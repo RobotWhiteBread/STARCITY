@@ -97,15 +97,15 @@ function stepWalk(now){const dt=Math.min(.1,(now-walk.t)/1000||0);walk.t=now;let
     else{let dy=Math.atan2(-dx,-dz)-walk.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));walk.yaw+=dy*Math.min(1,dt*3.2);const st=Math.min(d,sp*dt),x0=x,z0=z;[x,z]=wkMove(x,z,dx/d*st,dz/d*st);moved=true;
       if(!wkProg||now-wkProg.t>1300){if(wkProg&&Math.hypot(x-wkProg.x,z-wkProg.z)<.5){wkGo=null;if(wkMark)wkMark.visible=false}wkProg={x,z,t:now}}}}
   if(moved){walk.ph=(walk.ph||0)+sp*dt*1.9;dirty=true}
-  camera.position.set(x,hAt(x,z)+1.7+(moved?Math.abs(Math.sin(walk.ph||0))*.05:0),z);camera.rotation.set(walk.pitch,walk.yaw,0,'YXZ');controls.target.set(x-Math.sin(walk.yaw)*40,camera.position.y,z-Math.cos(walk.yaw)*40);
+  camera.position.set(x,hAt(x,z)+(walk.sky?95:(walk.eye||1.7))+(moved?Math.abs(Math.sin(walk.ph||0))*.05:0),z);camera.rotation.set(walk.pitch,walk.yaw,0,'YXZ');controls.target.set(x-Math.sin(walk.yaw)*40,camera.position.y,z-Math.cos(walk.yaw)*40);
   if(now-wkHudT>350){wkHudT=now;wkHud()}}
-function wkHud(){const x=camera.position.x,z=camera.position.z,s=streetNear(x,z,42),hd=((-walk.yaw*180/Math.PI)%360+360)%360,dir=['north','northeast','east','southeast','south','southwest','west','northwest'][Math.round(hd/45)%8];
+function wkHud(){if(walk.eye>3&&!walk.sky){const h=$('wkhud'),p=Math.round(walk.pitch*180/Math.PI),t='Looking '+compass(-walk.yaw*180/Math.PI)+', '+(p>=0?p+'° above':-p+'° below')+' the horizon, from '+(Math.round(walk.eye*3.281/10)*10).toLocaleString('en-US')+' ft up';if(h.textContent!==t)h.textContent=t;return}if(walk.sky){const h=$('wkhud'),t='Looking '+compass(-walk.yaw*180/Math.PI)+', '+Math.round(walk.pitch*180/Math.PI)+'° above the horizon';if(h.textContent!==t)h.textContent=t;return}const x=camera.position.x,z=camera.position.z,s=streetNear(x,z,42),hd=((-walk.yaw*180/Math.PI)%360+360)%360,dir=['north','northeast','east','southeast','south','southwest','west','northwest'][Math.round(hd/45)%8];
   let ahead='';const fx=-Math.sin(walk.yaw),fz=-Math.cos(walk.yaw);for(let t=5;t<=160;t+=3){const b=bAt(x+fx*t,z+fz*t);if(b>=0){const nm=H.infos[S.b_info[b]];if(nm)ahead=' · ahead: '+nm+' ('+Math.round(t*3.281/10)*10+' ft)';break}}
   $('wkhud').textContent=(s?'On '+s.name:'Off the street')+' · facing '+dir+ahead;
   const now=performance.now();if(now-wkLblT>900&&H2&&H2.biz){wkLblT=now;if(!bizL)bizSetup();walkLabels.length=0;const c=[];for(let i=0;i<bizL.n;i++){const d=(bizL.X[2*i]-x)**2+(bizL.X[2*i+1]-z)**2;if(d<150*150)c.push([d,i])}
     c.sort((a,b)=>a[0]-b[0]);for(const [d,i] of c.slice(0,9)){const bx=bizL.X[2*i],bz=bizL.X[2*i+1];walkLabels.push({t:H2.biz.n[i],x:bx,y:hAt(bx,bz)+7,z:bz,k:3,pri:420,near:0,far:260})}}}
 // a tap in Walk mode: a building shows its card, open ground is somewhere to walk to
-function walkTap(cx,cy){ndc.set(cx/innerWidth*2-1,-(cy/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(dlOn.length&&dlPick(cx,cy,true))return;const o=ray.ray.origin,d=ray.ray.direction;
+function walkTap(cx,cy){if(walk.sky){skyTap(cx,cy);return}ndc.set(cx/innerWidth*2-1,-(cy/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(dlOn.length&&dlPick(cx,cy,true))return;const o=ray.ray.origin,d=ray.ray.direction;
   for(let t=1.5;t<420;t+=.8+t*.012){const x=o.x+d.x*t,y=o.y+d.y*t,z=o.z+d.z*t;if(Math.abs(x)>8100||Math.abs(z)>8100)return;const g=hAt(x,z),b=bAt(x,z);
     if(b>=0&&y<=g+S.b_h[b]/10+1.5){if(treePick(t))return;showB(b);const bt=Math.max(0,t-3);wkTo(o.x+d.x*bt,o.z+d.z*bt);return}
     if(y<=g+.05){if(treePick(t))return;hideCard();wkTo(x,z);return}}}

@@ -1,0 +1,30 @@
+name: Something is wrong or out of date
+description: A fact, a name, a number, a place or a control that is not right.
+title: "Fix: "
+labels: ["correction"]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you. Please do not include anything private. Issues are public.
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: What the map shows, and what it should show.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where on the map
+      description: A street, a building, a layer name, or a link copied with Share view.
+  - type: input
+    id: source
+    attributes:
+      label: How you know
+      description: A public page or record that shows the right answer, if there is one.
+  - type: input
+    id: device
+    attributes:
+      label: Phone or computer, and browser
+      description: Only if the problem is with how the map works.

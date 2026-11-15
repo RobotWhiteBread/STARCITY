@@ -5,17 +5,20 @@
 // roll that comes out of the Devaney Center and Memorial Stadium.
 // =====================================================================================================
 const skyLabels=[];
-function labelSets(){if(walk.sky)return [skyLabels];const s=[labels,busLabels,wxLabels,lifeLabels,dlLabels,huskLabels,civLabels];if(walk.on)s.push(walkLabels);return s}
+function labelSets(){if(walk.sky)return [skyLabels];const s=[labels,busLabels,wxLabels,lifeLabels,dlLabels,huskLabels,civLabels,festLabels,stopLabels];if(walk.on)s.push(walkLabels);return s}
 function pickMore(x,y){if(CIV.arm){const gp=groundPoint();if(gp&&Math.abs(gp.x)<8300&&Math.abs(gp.z)<8300)civicStack(gp.x,gp.z);return true}if(DM.on&&dmPick())return true;return false}
 let fmT=0,navPT=0,fmRide=null,hintT=0;
 function hintShow(t,ms){const h=$('hint');h.textContent=t;h.style.display='block';clearTimeout(hintT);hintT=setTimeout(()=>{h.style.display='none'},ms||7000)}
 // the round buttons sit above whatever card is open, so a card never covers them on a phone
-function navPlace(now){if(now-navPT<220)return;navPT=now;const c=$('card'),n=$('nav');let b=bottomH+10;if(innerWidth<700&&c.style.display==='block'&&!walk.on)b=Math.max(b,innerHeight-c.getBoundingClientRect().top+8);if(walk.on)b=Math.max(92,b);
-  const tr=$('tools').getBoundingClientRect(),top=innerHeight-b-n.offsetHeight,r=(tr.height>0&&tr.bottom>top-6)?Math.round(innerWidth-tr.left+8):12,s=Math.round(b)+'px',rs=r+'px';if(n.style.bottom!==s)n.style.bottom=s;if(n.style.right!==rs)n.style.right=rs}
+function navPlace(now){if(now-navPT<220)return;navPT=now;const c=$('card'),n=$('nav'),uz=[1,1.18,1.36][ACC.z]||1;let b=(bottomH+10)*uz;if(innerWidth<700&&c.style.display==='block'&&!walk.on)b=Math.max(b,innerHeight-c.getBoundingClientRect().top+8);if(walk.on)b=Math.max(92*uz,b);
+  // worked in screen pixels, then divided by the text-size zoom, because the controls are scaled with the rest of the interface
+  const tr=$('tools').getBoundingClientRect(),top=innerHeight-b-n.getBoundingClientRect().height,hit=tr.height>0&&tr.bottom>top-6,ph=innerWidth<700,r=hit&&!ph?Math.round(innerWidth-tr.left+8):12*uz,s=Math.round(b/uz)+'px',rs=Math.round(r/uz)+'px';if(n.style.bottom!==s)n.style.bottom=s;if(n.style.right!==rs)n.style.right=rs;
+  // on a phone with no room left between the buttons and an open card, the round controls step aside; pinch, twist and drag still work
+  const hid=(ph&&(hit||top<$('title').getBoundingClientRect().bottom))?'hidden':'visible';if(n.style.visibility!==hid)n.style.visibility=hid}
 function frameMore(now){const dt=Math.min(.1,(now-(fmT||now))/1000);fmT=now;
   // a ride just began: say how to move the camera, which no longer stops the ride
   if(ride!==fmRide){fmRide=ride;if(ride)hintShow(mobile?'Pinch to zoom down to street level · drag to look around the rider · twist to swing around a turn · Stop ends the ride':'Scroll to zoom down to street level · drag to look around the rider · Esc or Stop ends the ride',9000)}
-  navFrame(now,dt);huskFrame();dmFrame(now);civFrame();treesFrame();rollFrame(now,dt);regionFrame(now);navPlace(now)}
+  navFrame(now,dt);huskFrame();dmFrame(now);civFrame();treesFrame();rollFrame(now,dt);regionFrame(now);frame2(now,dt);navPlace(now)}
 // ---- the running total for the part of the city in view, shown while a property layer is up, with a gold ring on the ground around what is counted
 const RV={at:0,key:'',ring:null,bins:new Uint32Array(1501)};
 const viewR=()=>Math.min(5000,Math.max(120,camera.position.distanceTo(controls.target)*.42));
@@ -29,9 +32,9 @@ function regionFrame(now){const L=dlTop,el=$('rv');if(!el)return;const on=!!(L&&
   if(!RV.ring){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(144*3),3));RV.ring=new THREE.LineLoop(g,new THREE.LineBasicMaterial({color:0xe9b949,transparent:true,opacity:.95,depthTest:false,fog:false}));RV.ring.frustumCulled=false;RV.ring.renderOrder=6;scene.add(RV.ring)}
   const P=RV.ring.geometry.attributes.position;for(let k=0;k<144;k++){const a=k/144*6.2832,x=t.x+Math.cos(a)*r,z=t.z+Math.sin(a)*r;P.setXYZ(k,x,hAt(Math.max(-8390,Math.min(8390,x)),Math.max(-8390,Math.min(8390,z)))+2.5,z)}P.needsUpdate=true;RV.ring.visible=true;
   if(first)layoutCard();dirty=true}
-function stepMore(dt,now){stepCreatures(dt,now);stepFlights(dt,now)}
+function stepMore(dt,now){stepCreatures(dt,now);stepFlights(dt,now);bedsFlush()}
 // Bird's eye reset: every switch, filter, tour and panel added above goes back to where it started
-function resetAll(){if(DM.on)setVotes(false);civClear();if(FLT.on)setFlights(false);if(reAt>=0)reTour(-1);if(!CR.on)setCreatures(true);rollClose();trafH=1;wkSp=0;$('bNat').classList.remove('on');
+function resetAll(){reset2();if(DM.on)setVotes(false);civClear();if(FLT.on)setFlights(false);if(reAt>=0)reTour(-1);if(!CR.on)setCreatures(true);rollClose();trafH=1;wkSp=0;$('bNat').classList.remove('on');
   if($('q')){$('q').value='';$('res').style.display='none'}NUM.view=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
 // ---- Nader, the tornado. On a real warning he says what the Weather Service says. In the preview he says he is a preview.
 const NDIR=['north','northeast','east','southeast','south','southwest','west','northwest'];
@@ -42,19 +45,26 @@ function naderSay(g,now){const u=g.userData;if(!u.say)return;const L=naderLines(
 const ROLL={on:null,pos:0,hold:0,at:null};
 // the 2026 football season as saved with the map (ESPN's public scoreboard, read Nov 14, 2026); the website copy reads it live
 const FB26=[['2026-09-05T16:00Z','Ohio',49,21,'h'],['2026-09-12T23:00Z','Bowling Green',56,7,'h'],['2026-09-19T23:15Z','North Dakota',34,7,'h'],['2026-09-26T21:00Z','Michigan State',31,13,'a'],['2026-10-03T20:00Z','Maryland',48,23,'h'],['2026-10-10T16:00Z','Indiana',17,20,'h'],['2026-10-18T03:00Z','Oregon',14,17,'a'],['2026-11-01T00:00Z','Washington',10,17,'h'],['2026-11-07T01:00Z','Illinois',13,24,'a'],['2026-11-14T17:30Z','Rutgers',31,0,'a']];
-function vbSeason(){const lv=!!(HK.ev.vb&&HK.ev.vb.some(e=>e.st==='post'));return {live:lv,ev:lv?HK.ev.vb.filter(e=>e.st==='post'&&e.my!=null).map(e=>[e.t,e.opp,+e.my,+e.th,!!e.win,e.ls,e.lo,e.ha,e.ork]):VB26.map(r=>[Date.parse(r[0]),r[1],r[2],r[3],r[2]>r[3]])}}
+// set scores for every finished volleyball match: ESPN's schedule leaves them out, so they are read once per match from its scoreboard and kept on this device
+const VBS={m:{},busy:false};try{VBS.m=JSON.parse(localStorage.getItem('sc_vbsets')||'{}')||{}}catch(e){}
+async function vbSets(){if(!hosted()||VBS.busy)return;const need=(HK.ev.vb||[]).filter(e=>e.st==='post'&&e.done&&!VBS.m[e.id]);if(!need.length)return;VBS.busy=true;let i=0;
+  const run=async()=>{while(i<need.length){const e=need[i++];try{const j=await (await fetch(ESPN+HK.sp[1][2]+'/scoreboard/'+e.id)).json(),u=hkParse(j);if(u&&u.done&&u.ls.length)VBS.m[e.id]=[u.ls.map(Number),u.lo.map(Number)]}catch(err){}ROLL.seen=-1}};
+  await Promise.all([run(),run(),run(),run()]);VBS.busy=false;ROLL.seen=-1;try{localStorage.setItem('sc_vbsets',JSON.stringify(VBS.m))}catch(e){}}
+// a suspended or cancelled match is on ESPN's list with no result: only finished matches count
+function vbSeason(){const lv=!!(HK.ev.vb&&HK.ev.vb.some(e=>e.st==='post'&&e.done)),S=e=>VBS.m[e.id]||[e.ls,e.lo];return {live:lv,off:lv?HK.ev.vb.filter(e=>e.st==='post'&&!e.done).map(e=>[e.t,e.opp,e.det]):[],ev:lv?HK.ev.vb.filter(e=>e.st==='post'&&e.done&&e.my!=null).map(e=>[e.t,e.opp,+e.my,+e.th,!!e.win,S(e)[0],S(e)[1],e.ha,e.ork,e.neutral]):VB26.map(r=>[Date.parse(r[0]),r[1],r[2],r[3],r[2]>r[3]])}}
 function rollData(kind){const out=[],Hd=t=>out.push(['h',t]),P=(a,b)=>out.push(['p',a,b]),T=t=>out.push(['t',t]),day=ms=>new Date(ms).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'});
   if(kind==='vb'){const V=vbSeason(),ev=V.ev,w=ev.filter(e=>e[4]).length,sw=ev.reduce((s,e)=>s+e[2],0),sl=ev.reduce((s,e)=>s+e[3],0);
     Hd('Nebraska volleyball');T(TAG);Hd('This season');P('Record',V.live&&HK.rec.vb?HK.rec.vb:w+'-'+(ev.length-w));P('Sets won, sets lost',sw+' to '+sl);P('Sweeps',String(ev.filter(e=>e[4]&&e[3]===0).length));
     let run=0;for(let i=ev.length-1;i>=0&&ev[i][4];i--)run++;if(run>1)P('Wins in a row',String(run));
-    if(V.live){let pf=0,pa=0,ns=0,big=0,close=null;for(const e of ev)for(let k=0;k<(e[5]||[]).length;k++){const a=+e[5][k],b=+e[6][k];if(!(a>=0&&b>=0))continue;pf+=a;pa+=b;ns++;big=Math.max(big,a-b);if(a>b&&(close===null||a-b<close))close=a-b}
-      if(ns){P('Points scored, points allowed',pf.toLocaleString('en-US')+' to '+pa.toLocaleString('en-US'));P('Average set',(pf/ns).toFixed(1)+' to '+(pa/ns).toFixed(1));if(big)P('Widest set',big+' points')}
-      const hm=ev.filter(e=>e[7]==='home'),rk=ev.filter(e=>e[8]>0);if(hm.length)P('At home',hm.filter(e=>e[4]).length+'-'+hm.filter(e=>!e[4]).length);if(rk.length)P('Against ranked teams',rk.filter(e=>e[4]).length+'-'+rk.filter(e=>!e[4]).length)}
-    Hd('Match by match');for(const e of ev)P(day(e[0])+' · '+e[1],(e[4]?'Won ':'Lost ')+e[2]+'-'+e[3]);
+    if(V.live){let pf=0,pa=0,ns=0,big=0,nm=0;for(const e of ev){if((e[5]||[]).length)nm++;for(let k=0;k<(e[5]||[]).length;k++){const a=+e[5][k],b=+e[6][k];if(!(a>=0&&b>=0))continue;pf+=a;pa+=b;ns++;big=Math.max(big,a-b)}}
+      const part=nm<ev.length?' · '+nm+' of '+ev.length+' matches read so far':'';
+      if(ns){P('Points scored, points allowed'+part,pf.toLocaleString('en-US')+' to '+pa.toLocaleString('en-US'));P('Average set'+part,(pf/ns).toFixed(1)+' to '+(pa/ns).toFixed(1));if(big)P('Widest set'+part,big+' points')}
+      const hm=ev.filter(e=>e[7]==='home'&&!e[9]),rk=ev.filter(e=>e[8]>0);if(hm.length)P('At home',hm.filter(e=>e[4]).length+'-'+hm.filter(e=>!e[4]).length);if(rk.length)P('Against ranked teams',rk.filter(e=>e[4]).length+'-'+rk.filter(e=>!e[4]).length)}
+    Hd('Match by match');for(const e of ev)P(day(e[0])+' · '+e[1],(e[4]?'Won ':'Lost ')+e[2]+'-'+e[3]+((e[5]||[]).length?'  ('+e[5].map((a,k)=>a+'-'+e[6][k]).join(', ')+')':''));for(const o of V.off||[])P(day(o[0])+' · '+o[1],o[2]||'Not played');
     Hd('National champions');T('1995 · 2000 · 2006 · 2015 · 2017');
     Hd('The crowds');for(const m of VBMSG.slice(6))P(m[0],m[1]);Hd('The names');for(const m of VBMSG.slice(2,6))P(m[0],m[1]);
     T(V.live?'Scores read live from ESPN\'s public scoreboard.':'Scores are the map\'s saved list as of '+VB26ASOF+'. The website copy reads them live.');T('Crowd records carry the date they were true, because records fall.')}
-  else{const ev=(HK.ev.fb||[]).filter(e=>e.st==='post'&&e.my!=null);Hd('Nebraska football');T('Memorial Stadium');P('Opened','1923');P('Sold out every home game since','November 3, 1962');P('Straight sellouts going into 2026','410');P('Listed capacity','85,458');
+  else{const ev=(HK.ev.fb||[]).filter(e=>e.st==='post'&&e.done&&e.my!=null);Hd('Nebraska football');T('Memorial Stadium');P('Opened','1923');P('Sold out every home game since','November 3, 1962');P('Straight sellouts going into 2026','410');P('Listed capacity','85,458');
     Hd('Volleyball Day in Nebraska');P('August 30, 2023 · Nebraska 3, Omaha 0',RECORD.toLocaleString('en-US'));T('The largest announced crowd ever for a women\'s sporting event, in a football stadium.');
     Hd('This season');if(ev.length){const w=ev.filter(e=>e.win).length;P('Record',HK.rec.fb||(w+'-'+(ev.length-w)));for(const e of ev)P(day(e.t)+' · '+(e.ha==='home'?'':'at ')+e.opp,(e.win?'Won ':'Lost ')+e.my+'-'+e.th)}
     else{const w=FB26.filter(g=>g[2]>g[3]).length;P('Record through '+VB26ASOF,w+'-'+(FB26.length-w));for(const g of FB26)P(day(Date.parse(g[0]))+' · '+(g[4]==='h'?'':'at ')+g[1],(g[2]>g[3]?'Won ':'Lost ')+g[2]+'-'+g[3])}
@@ -68,7 +78,7 @@ function rollOpen(kind){const el=$('roll'),b=$('rollb');ROLL.on=kind;ROLL.at=hkV
   {const tr=$('tools').getBoundingClientRect();el.style.right=innerWidth<700?'':(tr.width?Math.max(68,Math.round(innerWidth-tr.left+12)):68)+'px'}el.style.display='block';b.scrollTop=0;ROLL.pos=0;ROLL.hold=performance.now()+900;
   // it grows out of the building: the animation starts from the building's spot on the screen
   const p=ROLL.at;if(p){v3.set(p.x,hAt(p.x,p.z)+p.h*.5,p.z).project(camera);const r=el.getBoundingClientRect();el.style.transformOrigin=((v3.x*.5+.5)*innerWidth-r.left)+'px '+((-v3.y*.5+.5)*innerHeight-r.top)+'px'}
-  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');hkLoad();lastInput=performance.now()}
+  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');hkLoad();if(kind==='vb')vbSets();lastInput=performance.now()}
 function rollClose(){if(!ROLL.on)return;ROLL.on=null;$('roll').style.display='none';$('rollL').style.display='none'}
 function rollFrame(now,dt){if(!ROLL.on)return;const b=$('rollb'),ln=$('rollL');if(ROLL.seen!==HK.at){const y=b.scrollTop;rollFill();b.scrollTop=y}if(now>ROLL.hold){ROLL.pos+=dt*34;const max=b.scrollHeight-b.clientHeight;if(ROLL.pos>max){ROLL.pos=0;ROLL.hold=now+700}b.scrollTop=ROLL.pos}
   // a thin line ties the window to the building it came from
@@ -88,4 +98,4 @@ function moreInit(){const run=(n,f)=>{try{f()}catch(e){console.warn('STARCITY: c
     $('bNat').onclick=()=>{const L=DL.get('nativeln'),on=!(L&&L.on);setNative(on);$('bNat').classList.toggle('on',on)};if(!H2)for(const id of ['bCiv','bNum','bNIL','bRE','bNat'])$(id).style.display='none'});
   // in Walk mode the wheel, or a pinch, zooms the view the way a camera lens does
   addEventListener('keydown',e=>{if(e.key==='Escape'&&ride)stopRide()});
-  canvas.addEventListener('wheel',e=>{if(!walk.on)return;e.preventDefault();camera.fov=Math.min(walk.sky?100:80,Math.max(walk.sky?10:22,camera.fov*(e.deltaY>0?1.08:.925)));camera.updateProjectionMatrix();lastInput=performance.now();dirty=true},{passive:false})}
+  canvas.addEventListener('wheel',e=>{if(!walk.on)return;e.preventDefault();camera.fov=Math.min(walk.sky?100:80,Math.max(walk.sky?10:22,camera.fov*(e.deltaY>0?1.08:.925)));camera.updateProjectionMatrix();lastInput=performance.now();dirty=true},{passive:false});init2()}

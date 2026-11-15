@@ -5,7 +5,7 @@
 // ground tints with a glowing fence, and grids become hexagon columns. Each layer has clickable tiers,
 // a height slider, a see-through slider and a card on tap.
 // =====================================================================================================
-let H2=null,S2=null;const DL=new Map(),dlOn=[],dlLabels=[];let dlHS=1,dlAL=1,dlTop=null;
+let H2=null,S2=null;const DL=new Map(),dlOn=[],dlLabels=[];let dlHS=1,dlAL=1,dlTop=null,dlAuto=1;
 const SKY=402.3; // a quarter mile in meters: how tall the tallest value in any metric layer stands at the default setting
 const RAMP={value:[0x2b83ba,0x74c7b8,0xcfe8a6,0xfee08b,0xfdae61,0xf46d43,0xd7191c],heat:[0x2fbf71,0xa8d94a,0xffe14d,0xff9f1c,0xf2541b,0xd90429],civic:[0xe6dcff,0xbba6ff,0x9476f2,0x6d48d8,0x4a22b0],cool:[0xd9f7ff,0x97dcff,0x55adff,0x2f74e6,0x1c3fb0],green:[0xf1f8d8,0xbfe39a,0x7cc66b,0x3d9e50,0x1c6b3a],age:[0x5b3a8c,0x8f5fb8,0xd98fb3,0xf6c58f,0xf9f1a5]};
 const AUTOPAL=[0x4cc9f0,0xf72585,0xffd166,0x06d6a0,0xb388ff,0xff9f1c,0x80ed99,0xef476f,0x48bfe3,0xf4a261,0x90be6d,0xc77dff,0xffadad,0x9bf6ff];

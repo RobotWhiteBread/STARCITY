@@ -1,0 +1,40 @@
+name: Add data or a layer
+description: A public dataset, feed or set of places that belongs on the map.
+title: "Add: "
+labels: ["new data"]
+body:
+  - type: markdown
+    attributes:
+      value: Places, not people. Please do not offer anything that names or locates a private person.
+  - type: textarea
+    id: what
+    attributes:
+      label: What it is
+      description: One or two sentences a neighbor would understand.
+    validations:
+      required: true
+  - type: input
+    id: who
+    attributes:
+      label: Who it comes from
+      description: The office, organization or business to credit.
+    validations:
+      required: true
+  - type: input
+    id: address
+    attributes:
+      label: Where it can be read
+      description: A public web address, or say that you will attach a file or open a pull request.
+  - type: input
+    id: asof
+    attributes:
+      label: As of what date, and how often it changes
+  - type: dropdown
+    id: rights
+    attributes:
+      label: May it be shown and kept in this open repository
+      options:
+        - "Yes, it is public and I have the right to share it"
+        - "I am not sure"
+    validations:
+      required: true

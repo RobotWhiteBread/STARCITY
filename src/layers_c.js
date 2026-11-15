@@ -16,14 +16,14 @@ function dlFromGeo(L,feats){const k=L.def.k,lv=L.def.live,X=[],N=[],RC=[],RN=[],
         if(bad||!rr.length)continue;RC.push(Math.min(255,rr.length));for(const q of rr.slice(0,255)){RN.push(q.length);for(const p of q)X.push(p[0],p[1])}recs.push(a)}}}
   L.X=new Float32Array(X);L.n=recs.length;if(k==='ln')L.N=new Uint16Array(N);if(k==='pg'){L.RC=new Uint8Array(RC);L.RN=new Uint16Array(RN)}dlIndex(L);L.grid=null;
   L.fields=lv.fields.map(([key,label,t,u,fn])=>{const v=recs.map(a=>{let x=a[key];if(fn)x=fn(x,a);return t==='n'?(+x||0):(x===null||x===undefined?'':String(x).trim())});return {k:key,l:label,t:t==='n'?'n':'s',u,v}})}
-async function dlLive(L){if(L.loading)return;const lv=L.def.live;L.loading=true;showCard(L.def.t,'Reading this layer live from '+lv.from+'…');
+async function dlLive(L,quiet){if(L.loading)return;const lv=L.def.live;L.loading=true;if(!quiet)showCard(L.def.t,'Reading this layer live from '+lv.from+'…');
   try{if(!hosted())throw new Error('offline');let feats;
     if(lv.load)feats=await lv.load();
     else{const url=lv.url+'/query?where='+encodeURIComponent(lv.where||'1=1')+(lv.box===false?'':'&'+MAPBOX)+'&outFields='+encodeURIComponent(lv.fields.map(f=>f[0]).filter((v,i,a)=>a.indexOf(v)===i).join(','))+'&returnGeometry=true&outSR=4326&geometryPrecision=6'+(lv.off?'&maxAllowableOffset='+lv.off:'')+'&resultRecordCount='+(lv.max||2000)+'&f=geojson';
       const r=await fetch(url);if(!r.ok)throw new Error('http');const j=await r.json();if(j.error)throw new Error('server');feats=j.features||[]}
     dlFromGeo(L,feats);L.loaded=true;L.loading=false;L.def.asof='live';L.def.n=L.n;L.readAt=Date.now();
-    if(!L.n){showCard(L.def.t,(lv.empty||'Nothing is listed in this layer right now.')+' Read live from '+lv.from+' just now.');return}dlSet(L.id,true);if(sheet===LAYS)openSheet(LAYS)}
-  catch(e){L.loading=false;showCard(L.def.t,'This layer is read live from '+lv.from+' and could not be reached just now. Live layers load on the website copy of the map (the GitHub Pages link), not inside the Claude app.')}}
+    if(!L.n){if(!quiet)showCard(L.def.t,(lv.empty||'Nothing is listed in this layer right now.')+' Read live from '+lv.from+' just now.');return}dlSet(L.id,true,quiet);if(sheet===LAYS)openSheet(LAYS)}
+  catch(e){L.loading=false;if(!quiet)showCard(L.def.t,'This layer is read live from '+lv.from+' and could not be reached just now. Live layers load on the website copy of the map (the GitHub Pages link), not inside the Claude app.')}}
 const LIVEL=[
  {id:'closures',t:'Road closures now',g:'Getting around',k:'ln',st:{h:70,c:'subtype',pal:'auto',a:.8},note:'Streets closed or restricted right now, as the city and county list them.',src:'City of Lincoln and Lancaster County road closures feed',
   live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/CityCounty/RoadClosuresPublic/MapServer/1',box:false,empty:'No road closures are listed right now.',keep:a=>{const n=Date.now();return (!a.starttime||a.starttime<=n+864e5)&&(!a.endtime||a.endtime>=n)},
@@ -53,7 +53,7 @@ const LIVEL=[
 // ---- hexagon layers: one grid, many measures
 const HEXL=[
  ['hx_vpa','Property value per acre','Property and taxes','vpa',5000,'$','value',.55,360,null,'Assessed value of everything in each hexagon, per acre of parcel land. Downtown blocks tower over big-box lots: this is what an acre of city is worth on the tax rolls.'],
- ['hx_med','Typical home value','Property and taxes','med',1000,'$','value',1,330,[100000,200000,300000,400000,500000],'Median assessed value of the homes in each hexagon, where there are three or more.'],
+ ['hx_med','Typical home value','Property and taxes','med',1000,'$','value',1,330,[100000,200000,300000,400000,500000,750000,1000000],'Median assessed value of the homes in each hexagon, where there are three or more.'],
  ['hx_tpa','Property tax per acre (estimate)','Property and taxes','tpa',100,'$','heat',.55,360,null,'Estimated yearly property tax raised per acre. Each parcel\'s assessed value times the 2025 levy of its own tax district, before credits and exemptions. The few parcels with no district on file are left out.'],
  ['hx_psf','Home value per square foot','Property and taxes','psf',1,'$','value',1,300,null,'Median assessed value per square foot of living space for the homes in each hexagon.'],
  ['hx_yr','When homes were built','Property and taxes','yr',1,'','age',1,300,[1920,1950,1970,1990,2010],'Median year built of the homes in each hexagon. Taller means older.'],
@@ -66,7 +66,7 @@ function hexCard(L,i){const g=k=>S2['hx_'+k][i],ac=H2.hex.acres,p=[],n=g('n'),nh
   showCard(L.def.t,`This hexagon covers about ${ac.toFixed(1)} acres: `+p.join(' · ')+'. '+L.def.note+' Source: '+L.def.src+'.')}
 // ---- color every building by a property stratum
 let paintOrig=null,paintMode=null;
-const PAINT={value:{t:'Color buildings by assessed value',note:'Every building takes the color of its parcel\'s assessed value band.',br:[100000,200000,300000,400000,500000,1000000],ramp:'value',get:b=>S2.b_sv[b]||S2.b_val[b],u:'$'},
+const PAINT={value:{t:'Color buildings by assessed value',note:'Every building takes the color of its parcel\'s assessed value band.',br:[100000,200000,300000,400000,500000,1000000,2000000,5000000,10000000],ramp:'value',get:b=>S2.b_sv[b]||S2.b_val[b],u:'$'},
   cls:{t:'Color buildings by property class',note:'Homes, businesses, farms and land without buildings, as the county assessor classes each parcel.',cats:[['Residential',0xf2c14e],['Commercial',0xe4572e],['Agricultural',0x7fb069],['No class on record',0x9aa5b1]],get:b=>{const c=H2.cls[S2.b_cls[b]]||'';return c.startsWith('Res')?0:c.startsWith('Com')?1:c.startsWith('Ag')?2:3}},
   decade:{t:'Color buildings by year built',note:'Homes colored by the year the county assessor says they were built. Buildings without a recorded year keep their own color.',br:[1920,1950,1970,1990,2010],ramp:'age',get:b=>S.b_yr?S.b_yr[b]:0,u:''}};
 function paintLegend(P){if(P.cats)return P.cats.map((c,i)=>({l:c[0],c:c3(c[1]),t:i}));const n=P.br.length+1,o=[];for(let t=0;t<n;t++)o.push({l:t===0?'under '+shortN(P.br[0],P.u):t===n-1?shortN(P.br[t-1],P.u)+' and up':shortN(P.br[t-1],P.u)+' to '+shortN(P.br[t],P.u),c:rampAt(P.ramp,t/(n-1)),t});return o}
@@ -85,7 +85,7 @@ function dlInit(){dlWire();const src='Lancaster County Assessor, U.S. Census Bur
   for(const [id,t,g,m,sc,u,ramp,gm,hmax,tiers,note] of HEXL){const raw=S2['hx_'+m],arr=new Float32Array(raw.length);for(let i=0;i<raw.length;i++)arr[i]=raw[i]*sc;
     const st={h:'v',c:'v',ramp,g:gm,tiers};if(m==='yr')st.hf=v=>v>0?Math.max(4,2030-v):0,st.hcap=130;if(m==='pop')st.haze=1;
     dlAdd({id,t,g,k:'hx',n:raw.length,src,asof:H2.man[1][3],note,f:[{k:'v',l:t,t:'n',u,arr}],st,card:hexCard},{val:raw})}
-  for(const d of H2.layers){if(d.id==='pv'){d.card=pvCard;d.st.hcap=1e6;d.st.hover=6;d.st.g=1;d.st.r=1.4;d.note='One round bar on every parcel, colored by value band. Tap a bar for the property behind it. Owner names are not stored.'}if(d.id==='cams')d.card=camCard;dlAdd(d)}
+  for(const d of H2.layers){if(d.id==='pv'){d.card=pvCard;d.st.hcap=1e6;d.st.hover=6;d.st.g=1;d.st.r=1.4;d.st.tiers=[100000,200000,300000,400000,500000,1000000,2000000,5000000,10000000];d.note='One round bar on every parcel, colored by value band: steps of $100,000 up to $500,000, then $1 million, $2 million, $5 million and $10 million and beyond. Tap a band in the key to single it out, or a bar for the property behind it. Owner names are not stored.'}if(d.id==='sales')d.st.tiers=[150000,250000,350000,500000,750000,1000000,2000000];if(d.id==='cams')d.card=camCard;dlAdd(d)}
   for(const d of LIVEL){d.n=0;d.f=[];d.asof='live';dlAdd(d,{})}
   for(const k in PAINT){const P=PAINT[k];const L=dlAdd({id:'paint_'+k,t:P.t,g:'Property and taxes',k:'fn',n:0,note:P.note,src:'Lancaster County Assessor',st:{},onSet:(on,L)=>{if(on){for(const q in PAINT)if(q!==k&&DL.get('paint_'+q).on)dlSet('paint_'+q,false,true);paintBuildings(k)}else if(paintMode===k)paintBuildings(null)}},{});L.obj=new THREE.Object3D();L.mats=[];L.legend=paintLegend(P)}
   $('bLay').onclick=()=>{if(sheet===LAYS)closeSheet();else openSheet(LAYS)}}

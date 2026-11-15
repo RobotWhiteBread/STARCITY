@@ -1,0 +1,30 @@
+name: Work together
+description: For the city, the county, the university, StarTran, the airport, schools, Realtors, businesses and nonprofits.
+title: "Together: "
+labels: ["partnership"]
+body:
+  - type: markdown
+    attributes:
+      value: This is the olive branch. Say what you would like the map to do for the people you serve, and what you can share. Please keep private contact details out of this public form. A reply will come here.
+  - type: input
+    id: org
+    attributes:
+      label: Organization
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: What you would like the map to do
+    validations:
+      required: true
+  - type: textarea
+    id: share
+    attributes:
+      label: What you can share
+      description: A layer, a feed, a correction, a review by someone who knows the subject, or a place to show the map.
+  - type: textarea
+    id: care
+    attributes:
+      label: Anything the map should be careful about
+      description: Accuracy, timing, wording, or people who could be affected.

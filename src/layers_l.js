@@ -24,6 +24,7 @@ function treesInit(){if(!S2||!S2.tr_c||!H2.trees||!LM.treeMesh)return;const T=H2
   const gB=new THREE.BufferGeometry();gB.setAttribute('position',new THREE.Float32BufferAttribute(P,3));gB.setAttribute('color',new THREE.Float32BufferAttribute(col,3));gB.setIndex(I);
   const cap=mobile?9000:30000,mat=new THREE.MeshLambertMaterial({vertexColors:true,flatShading:true});TR.mA=new THREE.InstancedMesh(LM.treeMesh.geometry,mat,cap);TR.mB=new THREE.InstancedMesh(gB,mat,Math.round(cap*.35));TR.la=new Uint32Array(cap);TR.lb=new Uint32Array(Math.round(cap*.35));
   const cc=new THREE.Color(1,1,1);for(const m of [TR.mA,TR.mB]){m.setColorAt(0,cc);m.count=0;m.frustumCulled=false;m.castShadow=true;scene.add(m)}
+  fallApply();
   // the same list as a layer: every tree a bar as tall as its trunk is wide, colored by kind
   const cnt=new Map();for(let i=0;i<n;i++){const k=TR.kk[i];cnt.set(k,(cnt.get(k)||0)+1)}const top=[...cnt].filter(e=>T.kinds[e[0]]&&T.kinds[e[0]]!=='Not identified').sort((a,b)=>b[1]-a[1]).slice(0,11),gi=new Map(top.map((e,i)=>[e[0],i])),GR=top.map(e=>T.kinds[e[0]]).concat('Other kinds'),tg=new Uint8Array(n);
   for(let i=0;i<n;i++){const g=gi.get(TR.kk[i]);tg[i]=g===undefined?GR.length-1:g}S2.tr_g=tg;TR.top=top.map(e=>[T.kinds[e[0]],e[1]]);
@@ -32,7 +33,25 @@ function treesInit(){if(!S2||!S2.tr_c||!H2.trees||!LM.treeMesh)return;const T=H2
     f:[{k:'grp',l:'Kind',t:'c',d:GR,s:'tr_g'},{k:'dbh',l:'Trunk diameter',t:'n',u:'in',s:'tr_d'}],st:{h:'dbh',hcap:40,c:'grp',pal:'auto',r:.42,bar:1}},{X})}
 const lTC=new THREE.Color();
 function treePut(m,slot,i){const x=TR.X[2*i],z=TR.X[2*i+1],h=treeH(i),w=h*(TR.con[TR.kk[i]]?.52:.8)*(.88+.24*rnd(i*7+3));lP.set(x,hAt(x,z),z);lQ.setFromAxisAngle(lUp,rnd(i)*6.28);lS.set(w,h,w);lM.compose(lP,lQ,lS);m.setMatrixAt(slot,lM);
-  const g=rnd(TR.kk[i]*13+5),v=rnd(i*5+4);lTC.setRGB(.74+.4*g,.84+.22*v,.66+.34*g);m.setColorAt(slot,lTC)}
+  const g=rnd(TR.kk[i]*13+5),v=rnd(i*5+4);lTC.setRGB(.74+.4*g,.84+.22*v,.66+.34*g);fallTint(lTC,TR.fk?TR.fk[TR.kk[i]]:null,i);m.setColorAt(slot,lTC)}
+// ---- a nod to fall. From late September into early December the leafy trees take a touch of the color their kind turns.
+// It follows the calendar and the kind of tree. It is not a report on the real leaves.
+const FALLK=[[/maple/i,.95,[[3.5,.56,.5],[3.2,.86,.46],[2.8,1.2,.5]]],[/oak/i,.7,[[2.4,.62,.55],[2,.76,.6]]],[/ash/i,.9,[[2.8,1.25,.5],[2.3,.6,.9]]],
+ [/pear|sweetgum|dogwood|serviceberry|sumac|burning/i,.85,[[3.4,.55,.6],[2.6,.5,.85]]],[/apple|crab|hawthorn|cherry|plum/i,.8,[[3,.95,.5],[3.2,.7,.5]]],[/larch|baldcypress|bald cypress/i,.85,[[2.6,1,.5]]],
+ [/locust|linden|elm|birch|ginkgo|hackberry|coffeetree|cottonwood|poplar|walnut|catalpa|redbud|mulberry|willow|sycamore|planetree|buckeye|hickory|tuliptree|aspen/i,.88,[[2.9,1.3,.5],[2.5,1.15,.55]]]];
+const FALL0=[.8,[[2.6,1.15,.55],[3,.9,.5],[2.3,.72,.58]]];
+function fallAmt(){if(TR.fallSet!=null)return TR.fallSet;const n=lincolnNow(),m=Math.floor(n.ymd/100)%100,doy=[0,31,59,90,120,151,181,212,243,273,304,334][m-1]+n.ymd%100;
+  return doy<263?0:doy<288?(doy-263)/25:doy<=304?1:doy<=324?1-(doy-304)/20*.6:doy<=340?.4*(1-(doy-324)/16):0}
+// late in the season the bright colors go to russet
+function fallLate(){if(TR.fallSet!=null)return 0;const n=lincolnNow(),m=Math.floor(n.ymd/100)%100,doy=[0,31,59,90,120,151,181,212,243,273,304,334][m-1]+n.ymd%100;return doy>304?Math.min(1,(doy-304)/36)*.6:0}
+function fallTint(c,k,i){const a=TR.fa;if(!a||!k)return;const r=rnd(i*11+7),lim=a*k[0];if(r>=lim)return;const col=k[1][Math.floor(rnd(i*17+3)*k[1].length)],u=Math.min(1,Math.max(.4,(lim-r)/.3))*.82,L=TR.fl||0,R=2.2,G=.74,B=.6;
+  c.r+=((col[0]+(R-col[0])*L)-c.r)*u;c.g+=((col[1]+(G-col[1])*L)-c.g)*u;c.b+=((col[2]+(B-col[2])*L)-c.b)*u}
+function fallApply(){const T=H2&&H2.trees;TR.fa=fallAmt();TR.fl=fallLate();if(T&&!TR.fk)TR.fk=T.kinds.map(k=>{if(CONIFER.test(k)&&!/larch|baldcypress|bald cypress/i.test(k))return null;const f=FALLK.find(q=>q[0].test(k));return f?[f[1],f[2]]:FALL0});
+  // the map's stand-in trees, which have no kind, take the muted tones
+  const m=LM.treeMesh;if(m&&m.instanceColor){const A=m.instanceColor.array,n=Math.min(A.length/3,(LM.treePts||[]).length);for(let i=0;i<n;i++){const g=rnd(i*5+4);lTC.setRGB(.8+.35*g,.85+.25*rnd(i*9),.7+.3*g);fallTint(lTC,FALL0,i);A[3*i]=lTC.r;A[3*i+1]=lTC.g;A[3*i+2]=lTC.b}
+    m.instanceColor.needsUpdate=true;if(LM.prideTrees&&LM.prideTrees.c0&&!prideOn)LM.prideTrees.c0.set(A)}
+  TR.key='';dirty=true}
+function setFall(v){TR.fallSet=v==null?null:Math.max(0,Math.min(1,v));fallApply();return TR.fa}
 function treesFrame(){if(!TR.mA)return;const t=controls.target,d=camera.position.distanceTo(t);
   if(!walk.on&&d>4300||walk.sky){if(TR.key!=='off'){TR.key='off';TR.mA.count=0;TR.mB.count=0;TR.nA=TR.nB=0;shadowDirty=true;dirty=true}return}
   const R=walk.on?460:Math.min(2400,Math.max(280,d*1.15)),cx=walk.on?camera.position.x:t.x,cz=walk.on?camera.position.z:t.z,st=R*.24,key=Math.round(cx/st)+','+Math.round(cz/st)+','+Math.round(Math.log(R)*4);if(key===TR.key)return;TR.key=key;
@@ -55,7 +74,7 @@ function treeCard(i){const T=H2.trees,nm=T.names[S2.tr_n[i]]||['',''],kind=T.kin
   const st=streetNear(x,z,70);if(st&&st.name)p.push('nearest street: '+st.name);if(dist)p.push('Community Forestry district '+dist);if(id)p.push('city tree ID '+id);
   const links=[{href:`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${(H.lat0-z/KYm).toFixed(6)},${(H.lon0+x/KXm).toFixed(6)}`,label:'Street View ↗'}];if(id)links.unshift({label:'Read the city\'s record now',fn:b=>treeLive(i,b)});
   let body=p.join(' · ');body=body.charAt(0).toUpperCase()+body.slice(1);
-  showCard(title,body+`. One of ${T.n.toLocaleString('en-US')} trees on the city's own list that stand on this map, as of ${T.asof}. It is drawn at the size its trunk suggests, not measured for height.`,undefined,{label:'All city trees as a layer',fn:()=>dlSet('trees',true)},links)}
+  showCard(title,body+`. One of ${T.n.toLocaleString('en-US')} trees on the city's own list that stand on this map, as of ${T.asof}. It is drawn at the size its trunk suggests, not measured for height.${TR.fa>0&&TR.fk&&TR.fk[TR.kk[i]]?' Any fall color on it follows the calendar and its kind, not a look at its leaves.':''}`,undefined,{label:'All city trees as a layer',fn:()=>dlSet('trees',true)},links)}
 // the rest of the city's record for one tree, read from the city's server only when asked for
 async function treeLive(i,btn){const id=treeId(i);if(!hosted()){btn.textContent='Loads on the website copy';return}btn.textContent='Asking the city…';btn.disabled=true;
   try{const r=await fetch(CITYSRV+'/Parks/Trees/MapServer/0/query?where='+encodeURIComponent("TreeID='"+id+"'")+'&outFields=TreeID,CommonName,LifeCycle,DBH,SiteLocation,Address,ParkUnit,ProgramType,EditedDate&returnGeometry=false&f=json'),j=await r.json(),a=j.features&&j.features[0]&&j.features[0].attributes;

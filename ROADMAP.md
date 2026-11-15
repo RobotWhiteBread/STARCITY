@@ -16,17 +16,21 @@ The goal: the most accessible and most informative citizen map any city has. Eve
 | 0.8 | Phone-friendly controls, Guide, traffic heat wave, county property links, birds, city life, Find me, Share view |
 | 0.8.x | Layer engine with hexagon and live layers, assessed values and the tax explorer, local businesses, traffic cameras, Pulse, Code view, Capitol and stadium inscriptions |
 | 0.9 | Street names by zoom, new touch gestures and on-screen compass, zoom and tilt, a rebuilt Walk mode, value and tax first on every building card, the 2025 levy for every tax district, every property as a proportional bar with a running total for the area in view, the Numbers panel, 3D vote history for 2012 to 2020, every district at a spot, City Council and live planning cases, live Husker scores, weather and alerts at startup, 88,382 city trees with records, building websites, Native Lincoln, Play in Lincoln, the credits roll, Nader, and a wider cast of labeled creatures |
+| 0.9.1 | Now and Reset at the top with a row of reasons to be here, bird's eye that always shows the weather and the hour's traffic, bus stops with next departures and tall route tags, the whole Lincoln bird list by month, the night sky with planets and satellites, real estate as a switch with value bands past $1 million, new sales, charts and a compare-everything table, the redlining lines as an overlay, look around to the horizon, animals asleep at night, a data console, fall color, a browser for every layer on the city's map server, larger text and high contrast, a place-based safety card, and an open invitation to contribute |
 
 ## Next
 
-1. The night sky from Lincoln: stars by name, constellations, planets, the Moon, the space station and bright satellites, in a view that swings around. The star catalog and the sky arithmetic are already in the repository.
-2. Community safety, place-based and not person-based: one tap from any address to the State Patrol's own registry search, the distances state law lets a city protect around schools and child care, and a card of reporting, advocacy and prevention resources. No names, photos or home addresses.
-3. A city data browser: list every public layer on the city's map server and let a visitor turn any of them on, with people's names filtered out. This is the step toward all of Lincoln's public data in one place.
-4. Accessibility pass: full keyboard control of the map, a text list of what is in view for screen readers, larger text and high contrast settings, reduced motion, and a check against WCAG 2.1 AA.
-5. Precinct results for 2022, 2024 and 2026 as soon as they are published in an open format, and turnout alongside registration.
-6. Live aircraft through the relay in `relay/`, once it is hosted.
-7. A test on real phones, with timings, and a lighter drawing mode if it runs hot.
-8. A Spanish version of the Guide and the cards, then the other languages Lincoln families speak most.
+1. Rents. There is no open live feed of asking rents. Two honest routes: Zillow's Observed Rent Index by ZIP code each month, with credit to Zillow, and the Census Bureau's median rent by tract each year, which now needs a free key that only the map's owner can request.
+2. Each property through the years. The county's open layer carries this year's value only. If the assessor publishes prior years, the charts will draw one property over time.
+3. Planes in and out with each real arrival and departure. This needs the airport's own board in a form a web page can read, or the relay in `relay/`.
+4. Trip planning on the bus: from here to there, with the walk at each end and the transfer, from the same timetable.
+5. Community safety, still by place: confirm from the city code whether Lincoln has adopted a residency ordinance, add licensed child care locations, and only then draw the distances state law allows. Add a card of reporting, advocacy and prevention resources with verified contacts. No names, photos or home addresses, ever.
+6. Accessibility, the rest of it: every control reachable by keyboard with a visible focus, a screen reader pass on the cards and sheets, and a check against WCAG 2.1 AA with the results published.
+7. Precinct results for 2022, 2024 and 2026 as soon as they are published in an open format, and turnout alongside registration.
+8. Live aircraft through the relay in `relay/`, once it is hosted.
+9. A test on real phones, with timings, and a lighter drawing mode if it runs hot.
+10. A Spanish version of the Guide and the cards, then the other languages Lincoln families speak most.
+11. Checked versions of the most useful layers from the city data browser, moved into the map's own list with notes on what each one means.
 
 ## Then: what would make it stand out
 

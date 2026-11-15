@@ -1057,6 +1057,21 @@ try:
 except Exception as e:
     log('tree inventory missing', repr(e))
 
+# ---------------------------------------------------------------- bus stops for nearest-stop and next-bus answers; birds by month
+try:
+    bx = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bus_stops.json')))
+    HEAD['busx'] = dict(stops=[[n, x, z, i] for n, x, z, i in bx['stops']], ps=bx['ps'], hd=bx['hd'], heads=bx['heads'], ver=bx['ver'])
+    log('bus stops', len(bx['stops']), 'patterns', len(bx['ps']), 'feed', bx['ver'])
+except Exception as e:
+    log('bus stops missing', e)
+try:
+    rows = [l.rstrip('\n').split('|') for l in open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'birds_inat.txt'), encoding='utf-8') if l.strip() and not l.startswith('#')]
+    sp = [[r[0], r[1], [int(v) for v in r[2].split(',')]] for r in rows]
+    tot = [sum(q[2][m] for q in sp) for m in range(12)]
+    HEAD['birdyear'] = dict(asof='2026-11-14', tot=tot, sp=sp)
+    log('birds by month', len(sp), 'species', tot)
+except Exception as e:
+    log('birds by month missing', e)
 # ---------------------------------------------------------------- manifest and write
 HEAD['man'] = [
     ['Buildings, streets, trails, land', 'OpenStreetMap and City of Lincoln footprints', 'get_data.ps1, get_more.ps1, get_city2.ps1', TODAY, 'when streets or buildings change'],
@@ -1071,6 +1086,8 @@ HEAD['man'] = [
     ['Precincts, registration, polling places', 'Lancaster County Election Commissioner through city GIS', 'get_votes.ps1, get_gis.ps1', TODAY, 'before and after each election'],
     ['Population and income', 'U.S. Census Bureau through city GIS', 'get_gis.ps1', TODAY, 'when new Census or survey figures come out'],
     ['Zoning, neighborhoods, civic places, bike network', 'City of Lincoln and Lancaster County GIS', 'get_gis.ps1', TODAY, 'twice a year'],
+    ['Bus routes, stops and timetable', 'StarTran, published schedule feed (GTFS)', 'get_data.ps1', TODAY, 'whenever StarTran publishes a new schedule'],
+    ['Birds near Lincoln by month of the year', 'iNaturalist, counts of public reports within 25 km of Lincoln, all years', 'read from the iNaturalist API and saved as birds_inat.txt', '2026-11-14', 'twice a year; this month\'s shares also refresh live on the website'],
     ['Weather, radar, rivers, closures, bike share, air quality, birds', 'National Weather Service, Iowa Mesonet, USGS, city GIS, BikeLNK, Open-Meteo, iNaturalist', 'read live by the page', 'live', 'every visit'],
 ]
 parts = []; off = 0; secs = {}

@@ -1,0 +1,182 @@
+// ---- the front door: Now and Reset at the top of the screen, and a row of what you may be here for
+const SG={at:0,key:''};
+function sgUsed(){try{return JSON.parse(localStorage.getItem('sc_use')||'{}')||{}}catch(e){return {}}}
+function sgUse(k){try{const j=sgUsed();j[k]=(j[k]||0)+1;j._t=Date.now();localStorage.setItem('sc_use',JSON.stringify(j))}catch(e){}}
+const layOn=(id,q)=>{dlSet(id,true,q)};
+// a layer entry in a topic: tapping it again takes the layer off, so a topic's layers can be stacked and unstacked from the row
+const LY=(id,label)=>[label,()=>{const L=DL.get(id);dlSet(id,!(L&&L.on))},id];
+// what each reason for coming opens: a short card of one-tap actions
+const INTENT=[
+ ['home','My home and block','Search your address or tap your house. Its card leads with the assessed value and an estimate of this year\'s property tax. From there: who represents that spot, the trees the city looks after on your street, and the nearest bus.',
+  [['Search an address',()=>{if($('find').style.display!=='block')$('bFind').click()}],['Find me',()=>$('bMe').click()],LY('pv','Every property as a value bar'),['Who represents this spot',()=>civArm()],LY('trees','City trees'),['Nearest bus stop',()=>busNear()],['What is around here',()=>aroundCard()]]],
+ ['move','Getting around','Buses run on StarTran\'s published timetable, with the next departures at every stop. Bike rides take the shortest way along trails and bike streets. Traffic is the usual pattern for the hour, and closures are read live from the city.',
+  [['Next bus near here',()=>busNear()],['Bus routes and times',()=>openSheet(BUSS,0)],['Bike ride',()=>setRideMode(true)],['Traffic by the hour',()=>setTraffic(true)],LY('closures','Road closures now'),['Walk the street',()=>setWalk(true)]]],
+ ['now','Happening now','What is going on in Lincoln at this moment: the weather and any warnings, Husker scores, what City Hall is deciding, and streets that are closed.',
+  [['Lincoln right now',()=>pulseCard()],['Husker scores',()=>huskOpen(0)],['Weather and alerts',()=>wxDetail()],LY('cases','Decisions in the works'),LY('closures','Road closures now'),LY('permits','Building permits this year')]],
+ ['hall','City Hall and votes','Who represents any spot, how the council works, what is on its way to a vote, and how every precinct has voted since 2012.',
+  [['City Council',()=>councilCard()],LY('cases','Decisions in the works'),['Every district at one spot',()=>civArm()],['How Lincoln voted',()=>setVotes(true)],LY('polls','Polling places'),['More',()=>demoCard()]]],
+ ['money','Values and taxes','Every property\'s assessed value as a bar, a tax estimate for every tax district at the 2025 levy, recent sales, and the statistics for whatever part of the city is in view. Tax figures are estimates from value and levy, not bills.',
+  [LY('pv','Every property as a value bar'),['Taxes by district',()=>openSheet(TAXS,0)],['The numbers for this view',()=>openSheet(NUMS,0)],['Compare everything here',()=>openSheet(CMPS,0)],['New sales and where',()=>openSheet(SALESS,0)],['Rents',()=>rentCard()],LY('redlines','1930s redlining lines'),['Switch real estate on',()=>setRE(true)]]],
+ ['nature','Birds, trees and sky','Which birds are here this month and which are passing through, every tree on the city\'s list, floodplain and salt marsh, and tonight\'s sky over Lincoln with the planets and satellites that are up.',
+  [['Birds here this month',()=>openSheet(BIRDSS,0)],LY('trees','City trees'),['Tonight\'s sky',()=>setSky(true)],LY('flood100','Floodplain'),LY('saline','Saline wetlands'),LY('prairie','Native grasslands')]],
+ ['story','History and culture','The first peoples of this place and the names they left on its streets, the Capitol and what is carved on it, Nebraska volleyball\'s home, public art, and what it is like to play in Lincoln.',
+  [['Native Lincoln',()=>{setNative(true);$('bNat').classList.add('on')}],['The Capitol',()=>{flyTo(camTo(LM.capitol[0],LM.capitol[1],430,205,22,45),2200);capitolMore()}],['Devaney and its names',()=>devFest(true,true)],LY('art','Public art'),['Play in Lincoln',()=>openSheet(NILS,0)],['The short tour',()=>$('bTour').click()]]],
+ ['safe','Safety','Weather warnings as the Weather Service issues them, where water goes in a flood, where help is, where crashes have happened, and how to use the state\'s offender registry the way it is meant to be used.',
+  [['Weather alerts',()=>wxDetail()],LY('flood100','Floodplain'),LY('fire','Fire stations'),LY('medical','Hospitals'),LY('crashes','Crash reports, 2019'),['The registry and the law',()=>safeCard()]]],
+ ['data','All city data','Everything here comes from public sources, and each card says which. Browse the city\'s own map server for any layer it publishes, see where every number on this map came from, or read the code.',
+  [['Compare everything here',()=>openSheet(CMPS,0)],['Data feeds, live',()=>setFeeds(true)],['Browse all city data',()=>cityData()],['Layers on this map',()=>openSheet(LAYS,0)],['Where every number comes from',()=>openSheet(GUIDE,2)],['Describe this view in words',()=>describeView()]]]];
+function intentCard(k){const I=INTENT.find(q=>q[0]===k);if(!I)return;sgUse(k);SG.topic=k;sgDraw(true);showCard(I[1],I[2],undefined,undefined,I[3].map(([label,fn])=>({label,fn:()=>{lastInput=performance.now();fn()}})))}
+// the chips: what is live or timely first, then the reasons people come, most used first on this device
+function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date.now(),wd=n.dow<5;
+  for(const s of HK.sp.slice(1)){const e=(HK.ev[s[0]]||[]).find(q=>q.st==='in');if(e)out.push({t:'LIVE · '+hkLine(e,s),c:'hot',fn:()=>huskOpen(0)})}
+  const al=wxAlerts();if(al.length)out.push({t:'⚠ '+al[0].event,c:'hot',fn:()=>wxDetail()});
+  if(!U._t)out.push({t:'New here? Take the short tour',c:'ctx',fn:()=>{sgUse('tour');$('bTour').click()}});
+  {const soon=[];for(const s of HK.sp.slice(1))for(const e of HK.ev[s[0]]||[])if(e.st==='pre'&&e.t>nowMs-9e5&&e.t-nowMs<20*36e5)soon.push([e,s]);soon.sort((a,b)=>a[0].t-b[0].t);
+    if(soon[0]){const [e,s]=soon[0];out.push({t:s[1]+(e.ha==='home'?' vs ':' at ')+e.opp+' · '+clock(e.t),c:'ctx',fn:()=>huskOpen(0)})}}
+  {const w=wxNow();if(w&&w.precip)out.push({t:(w.precip==='snow'?'Snow':'Rain')+' now · weather',c:'ctx',fn:()=>wxDetail()})}
+  if(wd&&((h>=6.75&&h<9)||(h>=15.75&&h<18.25)))out.push({t:'Rush hour traffic',c:'ctx',fn:()=>setTraffic(true)});
+  if(BX.ok&&n.dow<6&&h>=5.5&&h<21.5)out.push({t:'Next bus near here',c:'ctx',fn:()=>busNear()});
+  {const s=skyBody('Sun',skyDay(nowMs));if(skyAltAz(s.ra,s.dec,nowMs).alt<-6&&S2&&S2.sky_ra)out.push({t:'Tonight\'s sky',c:'ctx',fn:()=>setSky(true)})}
+  if(n.dow===0&&h<18.5)out.push({t:'City Council meets Mondays',c:'ctx',fn:()=>councilCard()});
+  {const m=Math.floor(n.ymd/100)%100;if(H2&&H2.birdyear)out.push({t:[3,4,5,9,10].includes(m)?'Migration: who is passing through':'Birds here in '+MONTHS[m-1],c:'ctx',fn:()=>openSheet(BIRDSS,0)})}
+  const rest=INTENT.map((I,i)=>({t:I[1],k:I[0],u:U[I[0]]||0,i,fn:()=>intentCard(I[0])})).sort((a,b)=>b.u-a.u||a.i-b.i);return out.slice(0,6).concat(rest)}
+// once a topic is chosen the row becomes that topic: every one of its views stays one tap away and its layers stack, with any other layer and the compare table at the end
+function sgTopic(){const I=INTENT.find(q=>q[0]===SG.topic);if(!I)return null;const out=[{t:'‹ All',c:'ctx',fn:()=>{SG.topic=null;sgDraw(true)}}];for(const [label,fn,id] of I[3]){const L=id?DL.get(id):null;out.push({t:label,c:L&&L.on?'on':'',fn:()=>{fn();setTimeout(()=>sgDraw(true),80)}})}
+  out.push({t:'+ Any layer',c:'ctx',fn:()=>openSheet(LAYS,0)});if(SG.topic!=='data')out.push({t:'Compare',c:'ctx',fn:()=>openSheet(CMPS,0)});return out}
+function sgDraw(force){const now=performance.now();if(!force&&now-SG.at<(SG.topic?900:30000))return;SG.at=now;const L=(SG.topic&&sgTopic())||sgList(),key=L.map(q=>q.t+(q.c||'')).join('|');if(key===SG.key)return;SG.key=key;const host=$('sugg');host.textContent='';
+  for(const q of L){const b=document.createElement('button');b.className='btn'+(q.c?' '+q.c:'');b.textContent=q.t;b.onclick=()=>{lastInput=performance.now();q.fn()};host.appendChild(b)}}
+function nowTap(){sgUse('now');setLive(true);pulseCard();sgDraw(true)}
+function frontInit(){$('bNow').onclick=nowTap;
+  // on a phone the button grid starts folded, so the map shows: Search and Menu stay, and the row of reasons leads everywhere else
+  if(innerWidth<700){$('tools').classList.add('shut');$('bMenu').textContent='Menu ▾';$('bMenu').setAttribute('aria-expanded','false')}
+  $('bNow').classList.toggle('on',liveOn);sgDraw(true);setInterval(()=>sgDraw(false),15000)}
+// ---- Devaney Center: the names in order, DBK Universe on top, with lights, roses and fireworks around the building
+const FEST={on:false,t0:0,grp:null,beams:[],roses:null,sparks:null,rs:null,ss:null,burst:0};const festLabels=[];
+const DEVT=[['DBK UNIVERSE ★','this map\'s name for the DBK era',12],['John Cook Arena','the arena · named April 11, 2025',13],['Terry Pettit Court','the court · dedicated Sept 6, 2013',13],['Bob Devaney Sports Center','the building · opened 1976, named 1978',13]];
+function festBuild(){const D=LM.dev;if(!D||FEST.grp)return !!FEST.grp;const g=new THREE.Group(),y0=hAt(D.x,D.z);g.position.set(D.x,y0,D.z);
+  // searchlights at the corners, sweeping the sky
+  const cols=[0xff3344,0xfff3d6,0xffffff,0xff3344,0xfff3d6,0xffffff],R=Math.max(D.L,D.W)*.62;
+  for(let i=0;i<6;i++){const a=i/6*6.2832,ge=new THREE.CylinderGeometry(26,1.6,520,14,1,true);ge.translate(0,260,0);const m=new THREE.Mesh(ge,new THREE.MeshBasicMaterial({color:cols[i],transparent:true,opacity:.2,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,fog:false}));
+    m.position.set(Math.cos(a)*R,D.top-y0-2,Math.sin(a)*R);m.userData.a=a;g.add(m);FEST.beams.push(m)}
+  // roses: a red bloom on a green stem, tossed up and falling around the building
+  const bloom=new THREE.IcosahedronGeometry(1.5,0),stem=new THREE.CylinderGeometry(.16,.16,3.6,5).toNonIndexed();bloom.translate(0,2.2,0);
+  const P=[],N=[],C=[],put=(ge,c)=>{const col=new THREE.Color(c);for(const v of ge.attributes.position.array)P.push(v);for(const v of ge.attributes.normal.array)N.push(v);for(let i=0;i<ge.attributes.position.count;i++)C.push(col.r,col.g,col.b)};put(bloom,0xd4112f);put(stem,0x2f7d3a);
+  const rg=new THREE.BufferGeometry();rg.setAttribute('position',new THREE.Float32BufferAttribute(P,3));rg.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));rg.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
+  const NR=mobile?90:170;FEST.roses=new THREE.InstancedMesh(rg,new THREE.MeshLambertMaterial({vertexColors:true,emissive:0x330008}),NR);FEST.roses.frustumCulled=false;FEST.rs=new Float32Array(NR*7);g.add(FEST.roses);
+  // fireworks: bright points thrown from a burst
+  const NS=mobile?360:720,sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(NS*3),3));sg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(NS*3),3));
+  FEST.sparks=new THREE.Points(sg,new THREE.PointsMaterial({size:mobile?6:5,sizeAttenuation:false,vertexColors:true,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,fog:false}));FEST.sparks.frustumCulled=false;FEST.ss=new Float32Array(NS*7);g.add(FEST.sparks);
+  // a thin gold mast that carries the names, so they read as one sign from the top down
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,1,8),new THREE.MeshBasicMaterial({color:0xe9b949,fog:false}));mast.position.y=D.top-y0;FEST.mast=mast;g.add(mast);
+  FEST.grp=g;return true}
+function festRose(i,first){const D=LM.dev,s=FEST.rs,o=7*i,a=Math.random()*6.2832,r=Math.max(D.L,D.W)*(.25+.75*Math.random());s[o]=Math.cos(a)*r;s[o+2]=Math.sin(a)*r;s[o+1]=first?Math.random()*150:0;
+  s[o+3]=(Math.random()-.5)*9;s[o+4]=first?-8:34+Math.random()*26;s[o+5]=(Math.random()-.5)*9;s[o+6]=Math.random()*6.28}
+function festBurst(){const D=LM.dev,s=FEST.ss,n=s.length/7,C=FEST.sparks.geometry.attributes.color,a=Math.random()*6.2832,r=Math.max(D.L,D.W)*(.2+.9*Math.random()),cx=Math.cos(a)*r,cz=Math.sin(a)*r,cy=150+Math.random()*190,
+    col=new THREE.Color([0xff2b3d,0xfff3d6,0xffffff,0xffc94a][(Math.random()*4)|0]),k0=FEST.burst%6*Math.floor(n/6),m=Math.floor(n/6);FEST.burst++;
+  for(let j=0;j<m;j++){const i=k0+j,o=7*i,u=Math.random()*2-1,t=Math.random()*6.2832,q=Math.sqrt(1-u*u),v=38+Math.random()*30;s[o]=cx;s[o+1]=cy;s[o+2]=cz;s[o+3]=q*Math.cos(t)*v;s[o+4]=u*v;s[o+5]=q*Math.sin(t)*v;s[o+6]=1.5+Math.random()*.9;C.setXYZ(i,col.r,col.g,col.b)}C.needsUpdate=true}
+function devNames(){showCard('Devaney Center: the names','From the top: DBK Universe, this map\'s own name for the place in the Dani Busboom Kelly era. Then the official names: John Cook Arena, Terry Pettit Court, and the building, the Bob Devaney Sports Center. The searchlights, roses and fireworks are decoration, not a report of anything happening there.',undefined,{label:FEST.on?'Lights off':'Lights on',fn:()=>devFest(!FEST.on)},
+  [{href:'https://huskers.com/sports/volleyball/roster',label:'This season\'s roster ↗'},{label:'Roll the records',fn:()=>rollOpen('vb')},{label:'Scores',fn:()=>huskOpen(1)},{label:'More on the names',fn:()=>devCard(1)}])}
+function devFest(on,fly){const D=LM.dev;if(!D)return;if(on&&!festBuild())return;if(fly){const dv=H.blabels.find(b=>b[0]==='Devaney Sports Center');if(dv)flyTo(innerWidth<700?camTo(dv[1],-dv[2],760,150,24,-70):camTo(dv[1],-dv[2],560,150,26,40),2200)}
+  if(on!==FEST.on){FEST.on=on;for(const l of labels)if(l.t==='John Cook Arena'||l.t==='Devaney Sports Center'){if(on){if(l.far0===undefined)l.far0=l.far;l.far=0}else if(l.far0!==undefined)l.far=l.far0}
+    if(on){FEST.t0=performance.now();scene.add(FEST.grp);for(let i=0;i<FEST.rs.length/7;i++)festRose(i,true);FEST.ss.fill(0);FEST.nextB=0}else{scene.remove(FEST.grp);festLabels.length=0}}
+  if(on)devNames();else if($('ch').textContent==='Devaney Center: the names')hideCard();lastInput=performance.now();dirty=true}
+function festFrame(now,dt){if(!FEST.on)return;const D=LM.dev,d=camera.position.distanceTo(controls.target),far=Math.hypot(controls.target.x-D.x,controls.target.z-D.z);if(far>3200&&!fly){devFest(false);return}
+  const y0=hAt(D.x,D.z),sc=Math.min(7,Math.max(.75,d/520)),dc=Math.max(60,camera.position.distanceTo(v3.set(D.x,D.top,D.z))),el=Math.asin(Math.min(1,Math.max(0,(camera.position.y-D.top)/dc))),
+    mpp=2*Math.tan(camera.fov*Math.PI/360)*dc/innerHeight/Math.max(.3,Math.cos(el)),px=[0,52,104,166],base=D.top+34*mpp;festLabels.length=0; // meters of height per screen pixel, so the four names never touch
+  DEVT.forEach((t,i)=>festLabels.push({t:t[0],sub:t[1],x:D.x,y:base+px[DEVT.length-1-i]*mpp,z:D.z,k:t[2],pri:2000-i,near:0,far:9000}));
+  FEST.mast.scale.y=base+px[3]*mpp-D.top;FEST.mast.position.y=D.top-y0+FEST.mast.scale.y/2;
+  if(!ambOK){dirty=true;return}const T=(now-FEST.t0)/1000;
+  for(const b of FEST.beams){const a=b.userData.a;b.rotation.set(Math.sin(T*.55+a*2)*.55,0,Math.cos(T*.43+a)*.55)}
+  {const s=FEST.rs,n=s.length/7;for(let i=0;i<n;i++){const o=7*i;s[o+4]-=30*dt;s[o]+=s[o+3]*dt;s[o+1]+=s[o+4]*dt;s[o+2]+=s[o+5]*dt;s[o+6]+=dt*2.2;if(s[o+1]<0){festRose(i,false);continue}
+      lP.set(s[o],s[o+1],s[o+2]);lE.set(s[o+6],s[o+6]*.7,1.1);lQ.setFromEuler(lE);lS.setScalar(Math.max(1.4,sc*1.5));lM.compose(lP,lQ,lS);FEST.roses.setMatrixAt(i,lM)}FEST.roses.instanceMatrix.needsUpdate=true}
+  if(now>FEST.nextB){festBurst();FEST.nextB=now+350+650*Math.random()}
+  {const s=FEST.ss,n=s.length/7,P=FEST.sparks.geometry.attributes.position;for(let i=0;i<n;i++){const o=7*i;if(s[o+6]<=0){P.setXYZ(i,0,-1e5,0);continue}s[o+6]-=dt;s[o+4]-=22*dt;s[o]+=s[o+3]*dt;s[o+1]+=s[o+4]*dt;s[o+2]+=s[o+5]*dt;s[o+3]*=.985;s[o+5]*=.985;P.setXYZ(i,s[o],s[o+1],s[o+2])}P.needsUpdate=true}
+  ambient=true;dirty=true}
+// ---- bus stops and times: every StarTran stop, the next buses at it, and the nearest place to catch a route
+const BX={ok:false,stops:null,by:null,tp:null,mesh:null,idx:[],s:0,line:null,lt:0,route:null};const stopLabels=[];
+const hm=s=>{const h=Math.floor(s/3600)%24,m=Math.floor(s%3600/60);return ((h+11)%12+1)+':'+String(m).padStart(2,'0')+(h<12?' AM':' PM')};
+const distTxt=m=>m<400?(Math.round(m*3.281/10)*10).toLocaleString('en-US')+' ft':(m/1609.34).toFixed(1)+' mi';
+function busxInit(){const B=H.bus,X=H2&&H2.busx;if(!B||!B.pats||!X||X.ps.length!==B.pats.length)return;BX.stops=X.stops;BX.by=X.stops.map(()=>[]);X.ps.forEach((list,pi)=>list.forEach((si,k)=>BX.by[si].push([pi,k])));
+  BX.tp=B.pats.map(()=>[]);for(const t of B.trips)BX.tp[t[0]].push([t[1],t[2]]);for(const a of BX.tp)a.sort((p,q)=>p[0]-q[0]);
+  X.stops.forEach((s,i)=>{if(Math.abs(s[1])<8300&&Math.abs(s[2])<8300)BX.idx.push(i)});
+  const m=new THREE.InstancedMesh(boxes([[.4,3.4,.4,0,1.7,0,0xd8dde3],[1.7,1.2,.25,0,3.7,0,0x1f6fd0]]),new THREE.MeshLambertMaterial({vertexColors:true,emissive:0x0a2a55}),BX.idx.length);
+  m.visible=false;m.frustumCulled=false;m.userData.card=hit=>stopCard(BX.idx[hit.instanceId]);scene.add(m);pickables.push(m);BX.mesh=m;BX.ok=true}
+function busClock(){const n=lincolnNow();return {n,t:liveOn?n.sec:Math.round(curHour*3600)}}
+function busRuns(n){const B=H.bus,ok=B.svc.map(s=>s[1][n.dow]===1&&n.ymd>=s[2]&&n.ymd<=s[3]);for(const e of B.exc)if(e[1]===n.ymd)ok[e[0]]=e[2]===1;return ok}
+// the next departures from one stop, as [seconds after midnight, route, pattern]; the last stop of a run is left out because nobody boards there
+function stopNext(si,max,route){const B=H.bus,{n,t}=busClock(),ok=busRuns(n),out=[];
+  for(const [pi,k] of BX.by[si]){const p=B.pats[pi];if((route!=null&&p[1]!==route)||k>=p[3].length-1)continue;for(const [t0,sv] of BX.tp[pi]){if(!ok[sv])continue;const dep=t0+p[3][k];if(dep>=t-20)out.push([dep,p[1],pi])}}
+  out.sort((a,b)=>a[0]-b[0]);return out.slice(0,max||6)}
+const busIn=(dep,t)=>dep-t<3600?` (in ${Math.max(0,Math.round((dep-t)/60))} min)`:'';
+function busNone(n){return busRuns(n).some(Boolean)?'No more buses are scheduled here today.':'StarTran does not run today. The timetable covers Monday through Saturday, and not the holidays it lists.'}
+function busRef(){const g=LM.me;return g&&g.visible?{x:g.position.x,z:g.position.z,me:true}:{x:controls.target.x,z:controls.target.z,me:false}}
+// the nearest stop where a bus is still to come today (on that route, when one is named); if none is, simply the nearest stop
+function busNearest(ref,route){const B=H.bus,c=[];for(const i of BX.idx){if(route!=null&&!BX.by[i].some(q=>B.pats[q[0]][1]===route&&q[1]<B.pats[q[0]][3].length-1))continue;const s=BX.stops[i];c.push([(s[1]-ref.x)**2+(s[2]-ref.z)**2,i])}
+  if(!c.length)return null;c.sort((a,b)=>a[0]-b[0]);for(const q of c.slice(0,80))if(stopNext(q[1],1,route).length)return {i:q[1],d:Math.sqrt(q[0]),first:q===c[0]};return {i:c[0][1],d:Math.sqrt(c[0][0]),first:true}}
+function busLine(route){if(BX.line){scene.remove(BX.line);BX.line.geometry.dispose();BX.line=null}BX.route=route;if(route==null)return;const B=H.bus,P=[],seen=new Set();
+  for(const p of B.pats){if(p[1]!==route||seen.has(p[0]))continue;seen.add(p[0]);const a=B.shapes[p[0]];for(let i=2;i+1<a.length;i+=2){if(Math.abs(a[i])>8300||Math.abs(a[i+1])>8300||Math.abs(a[i-2])>8300||Math.abs(a[i-1])>8300)continue;const y0=hAt(a[i-2],a[i-1]),y1=hAt(a[i],a[i+1]);for(const dy of [5,8,11])P.push(a[i-2],y0+dy,a[i-1],a[i],y1+dy,a[i+1])}}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));const c=B.routes[route][2];BX.line=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:new THREE.Color('#'+(/^[0-9a-fA-F]{6}$/.test(c)?c:'2f6fb3')),fog:false,depthTest:false,transparent:true,opacity:.95}));BX.line.renderOrder=6;BX.line.frustumCulled=false;scene.add(BX.line);dirty=true}
+function stopCard(si,route,lead){const B=H.bus,X=H2.busx,s=X.stops[si],{n,t}=busClock(),nx=stopNext(si,5,route),rts=[...new Set(BX.by[si].map(q=>B.pats[q[0]][1]))].sort((a,b)=>(+B.routes[a][0])-(+B.routes[b][0])).map(r=>B.routes[r][0]);
+  showCard('Bus stop: '+s[0],(lead||'')+`Routes here: ${rts.join(', ')}. Next buses${route!=null?' on route '+B.routes[route][0]:''}${liveOn?'':' after '+hm(t)+' on the map\'s clock'}: `+(nx.length?nx.map(q=>`${hm(q[0])}${busIn(q[0],t)} route ${B.routes[q[1]][0]} toward ${X.heads[X.hd[q[2]]]||B.routes[q[1]][1].trim()}`).join(' · ')+'.':busNone(n))+` From StarTran's published timetable (version ${X.ver}), not live GPS.`,
+    undefined,{label:'Go to this stop',fn:()=>flyTo(camTo(s[1],s[2],260,200,38),1600)},[{href:'https://startran.connexionz.net/RTT/Public/Transit.aspx?page=text&plt='+encodeURIComponent(s[3]),label:'Live arrivals from StarTran ↗'},{label:'All routes and times',fn:()=>openSheet(BUSS,0)},{label:'Other stops near here',fn:()=>openSheet(BUSS,1)}])}
+function busNear(route){if(!BX.ok){showCard('Buses','The bus timetable did not load with this copy of the map.');return}if(!busOn)$('bBus').click();const ref=busRef(),q=busNearest(ref,route);if(!q)return;const s=BX.stops[q.i];busLine(route==null?null:route);
+  stopCard(q.i,route,`The nearest stop${route!=null?' on route '+H.bus.routes[route][0]:''}${q.first?'':' with a bus still to come'} to ${ref.me?'you':'the middle of your view'} is ${distTxt(q.d)} away in a straight line, about ${Math.max(1,Math.round(q.d/80))} min on foot. `);flyTo(camTo(s[1],s[2],Math.max(300,Math.min(1100,q.d*2.4)),200,40),1600)}
+// a tapped bus: where it is headed, its next stop, and the nearest place and time to catch that route
+function busCard(st){const B=H.bus,X=H2.busx,p=B.pats[st.pi],{t}=busClock(),k=Math.min(st.k,X.ps[st.pi].length-1),ref=busRef(),q=busNearest(ref,st.r),head=X.heads[X.hd[st.pi]]||'';busLine(st.r);
+  let body=(head?`Headed toward ${head}. `:'')+`Next stop: ${X.stops[X.ps[st.pi][k]][0]} at ${hm(st.t0+p[3][k])}. The bus is drawn where the timetable says it should be, not from GPS. `;
+  if(q){const nx=stopNext(q.i,3,st.r);body+=`Nearest place to catch route ${st.short} from ${ref.me?'where you are':'the middle of your view'}: ${X.stops[q.i][0]}, ${distTxt(q.d)} away. `+(nx.length?'Next there: '+nx.map(v=>hm(v[0])+busIn(v[0],t)).join(', ')+'.':'No more today.')}
+  showCard('StarTran route '+st.short+(st.long?' · '+st.long.trim():''),body,undefined,q?{label:'Go to that stop',fn:()=>{const s=X.stops[q.i];stopCard(q.i,st.r);flyTo(camTo(s[1],s[2],300,200,40),1600)}}:undefined,
+    [{label:'All routes and times',fn:()=>openSheet(BUSS,0)},{href:'https://startran.connexionz.net/RTT/Public/Schedule.aspx?RouteNo='+encodeURIComponent(st.short),label:'StarTran\'s schedule ↗'}])}
+function busHTML(tab){if(!BX.ok)return '<p>The bus timetable did not load with this copy of the map.</p>';const B=H.bus,X=H2.busx,{n,t}=busClock(),ok=busRuns(n),ref=busRef();
+  if(tab===1){const near=BX.idx.map(i=>[Math.hypot(BX.stops[i][1]-ref.x,BX.stops[i][2]-ref.z),i]).sort((a,b)=>a[0]-b[0]).slice(0,10);
+    return `<p>The ten stops closest to ${ref.me?'you':'the middle of your view'}, with the next bus at each${liveOn?'':' after '+hm(t)+' on the map\'s clock'}. Distances are straight lines. Tap a stop for all its times.</p><table><tr><th>Stop</th><th>Away</th><th>Next bus</th></tr>`+near.map(([d,i])=>{const nx=stopNext(i,1)[0];return `<tr class="go3" data-stop="${i}"><td>${esc(X.stops[i][0])}</td><td>${distTxt(d)}</td><td>${nx?hm(nx[0])+busIn(nx[0],t)+' · route '+esc(B.routes[nx[1]][0]):'none today'}</td></tr>`}).join('')+'</table>'}
+  const rows=B.routes.map((r,ri)=>{const st=[];B.pats.forEach((p,pi)=>{if(p[1]===ri)for(const [t0,sv] of BX.tp[pi])if(ok[sv])st.push([t0,X.hd[pi]])});if(!st.length)return [r,ri,null];st.sort((a,b)=>a[0]-b[0]);
+    const byH={};for(const q of st)(byH[q[1]]=byH[q[1]]||[]).push(q[0]);const main=Object.values(byH).sort((a,b)=>b.length-a.length)[0],gaps=[];for(let i=1;i<main.length;i++)gaps.push(main[i]-main[i-1]);gaps.sort((a,b)=>a-b);
+    return [r,ri,{first:st[0][0],last:st[st.length-1][0],gap:gaps.length?Math.round(gaps[gaps.length>>1]/60):0,n:st.length}]});
+  return `<p>StarTran's ${B.routes.length} routes ${ok.some(Boolean)?'today':'on a service day'}, from the published timetable (version ${esc(X.ver)}). ${ok.some(Boolean)?'':'<b>StarTran does not run today.</b> '}Tap a route to see its path and the nearest place to catch it. Buses on the map are drawn where the timetable puts them, not from GPS.</p><table><tr><th>Route</th><th>First and last run</th><th>About every</th></tr>`
+    +rows.map(([r,ri,q])=>`<tr class="go3" data-route="${ri}"><td><b style="color:#${/^[0-9a-fA-F]{6}$/.test(r[2])?r[2]:'fff'};background:rgba(255,255,255,.14);padding:1px 6px;border-radius:6px">${esc(r[0])}</b> ${esc(r[1].trim())}</td><td>${q?hm(q.first)+' to '+hm(q.last):'no service today'}</td><td>${q&&q.gap?q.gap+' min':''}</td></tr>`).join('')
+    +'</table><p><a href="https://www.lincoln.ne.gov/City/Departments/LTU/StarTran" target="_blank" rel="noopener noreferrer">StarTran: fares, passes and service changes ↗</a></p>'}
+const BUSS={title:'Buses <i>and times</i>',tabs:['Routes','Stops near here'],html:busHTML,click:e=>{const r=e.target.closest('[data-route]'),s=e.target.closest('[data-stop]');if(r){closeSheet();busNear(+r.dataset.route)}else if(s){closeSheet();const i=+s.dataset.stop,q=BX.stops[i];if(!busOn)$('bBus').click();stopCard(i);flyTo(camTo(q[1],q[2],300,200,40),1600)}}};
+// every route as a line in its own color, three deep so it reads from the side as well as from above
+function busAllBuild(){const B=H.bus,P=[],C=[],seen=new Set(),col=new THREE.Color();for(const p of B.pats){if(seen.has(p[0]))continue;seen.add(p[0]);const a=B.shapes[p[0]],c=B.routes[p[1]][2];col.set('#'+(/^[0-9a-fA-F]{6}$/.test(c)?c:'2f6fb3'));
+    for(let i=2;i+1<a.length;i+=2){if(Math.abs(a[i])>8300||Math.abs(a[i+1])>8300||Math.abs(a[i-2])>8300||Math.abs(a[i-1])>8300)continue;const y0=hAt(a[i-2],a[i-1]),y1=hAt(a[i],a[i+1]);for(const dy of [2.2,3.6,5]){P.push(a[i-2],y0+dy,a[i-1],a[i],y1+dy,a[i+1]);C.push(col.r,col.g,col.b,col.r,col.g,col.b)}}}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));BX.all=new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.85,fog:false}));BX.all.frustumCulled=false;BX.all.visible=false;scene.add(BX.all);
+  BX.poles=new THREE.InstancedMesh(new THREE.CylinderGeometry(.35,.35,1,6),new THREE.MeshBasicMaterial({fog:false}),96);BX.poles.frustumCulled=false;BX.poles.count=0;BX.pc=new THREE.Color();scene.add(BX.poles)}
+// a tall flag over every bus: its number on top, its route under it, on a pole in the route's color
+function busTags(d){const B=H.bus,n=Math.min(busLabels.length,busState.length,96),h=Math.min(520,Math.max(16,d*.045));for(let i=0;i<n;i++){const l=busLabels[i],st=busState[i],g=hAt(l.x,l.z),c=B.routes[st.r]?B.routes[st.r][2]:'2f6fb3';l.t=st.short;l.sub=(st.long||'').trim();l.k=17;l.y=g+h+3;l.pri=640;l.far=14000;
+    lP.set(l.x,g+3+h/2,l.z);lQ.identity();lS.set(Math.max(1,d/900),h,Math.max(1,d/900));lM.compose(lP,lQ,lS);BX.poles.setMatrixAt(i,lM);BX.poles.setColorAt(i,BX.pc.set('#'+(/^[0-9a-fA-F]{6}$/.test(c)?c:'2f6fb3')))}
+  BX.poles.count=n;BX.poles.instanceMatrix.needsUpdate=true;if(BX.poles.instanceColor)BX.poles.instanceColor.needsUpdate=true}
+function busFrame(now){const m=BX.mesh;if(!m)return;if(!BX.all)busAllBuild();{const on=busOn&&!walk.sky;if(BX.all.visible!==on){BX.all.visible=on;BX.poles.visible=on;dirty=true}if(on)busTags(camera.position.distanceTo(controls.target))}const d=camera.position.distanceTo(controls.target),show=busOn&&d<5200&&!walk.sky;if(m.visible!==show){m.visible=show;dirty=true}if(BX.line&&!busOn)busLine(null);if(!show){if(stopLabels.length){stopLabels.length=0;dirty=true}return}
+  const s=walk.on?1:Math.min(10,Math.max(1,d/280));if(Math.abs(s-BX.s)/s>.12){BX.s=s;BX.idx.forEach((si,k)=>{const q=BX.stops[si];lP.set(q[1],hAt(q[1],q[2]),q[2]);lQ.identity();lS.set(s,s,s);lM.compose(lP,lQ,lS);m.setMatrixAt(k,lM)});m.instanceMatrix.needsUpdate=true;m.boundingSphere=null;m.boundingBox=null;dirty=true}
+  if(now-BX.lt>450){BX.lt=now;stopLabels.length=0;if(d<1100||walk.on){const t=walk.on?camera.position:controls.target,r=walk.on?160:d*.7;for(const si of BX.idx){const q=BX.stops[si];if(Math.abs(q[1]-t.x)<r&&Math.abs(q[2]-t.z)<r)stopLabels.push({t:'Bus stop',sub:q[0].split(',')[0],x:q[1],y:hAt(q[1],q[2])+5*s+1,z:q[2],k:4,pri:380,near:0,far:1500})}}}}
+// ---- birds: who is here this month, who is passing through, and the whole list for the Lincoln area
+function birdKind(n,tot){const T=n.reduce((a,b)=>a+b,0);if(T<3)return 'rare';const r=n.map((v,i)=>tot[i]?v/tot[i]:0),mx=Math.max(...r),on=r.map(v=>v>0&&v>=mx*.12),cnt=on.filter(Boolean).length,win=on[11]||on[0]||on[1],sum=on[5]||on[6];
+  return cnt>=10?'res':sum&&!win?'sum':win&&!sum?'win':!win&&!sum?'mig':'res'}
+const BKIND={res:'Around all year',win:'Here for the cold months',sum:'Here for the warm months',mig:'Passing through in spring and fall',rare:'Rare here'};
+function birdYear(){const Y=H2&&H2.birdyear;if(!Y)return null;if(!Y.rows)Y.rows=Y.sp.map(([c,s,n])=>{const r=n.map((v,i)=>Y.tot[i]?v/Y.tot[i]:0);let pk=0;for(let i=1;i<12;i++)if(r[i]>r[pk])pk=i;return {c,s,n,r,pk,T:n.reduce((a,b)=>a+b,0),kind:birdKind(n,Y.tot)}});return Y}
+// the birds a flock may be drawn from this month: live shares on the website, the saved month-by-month table otherwise. A species with under 0.4% of the month's reports is left out, so a stray record never becomes a flock.
+function birdPool(m){const live=birdShare.length>0,key=(live?'L':'S')+m+':'+birdShare.length;if(birdPool.k===key)return birdPool.v;let list=[];
+  if(live)list=birdShare.map(q=>({c:q.c,s:q.s,p:q.p/birdShare.tot}));else{const Y=birdYear();if(Y)list=Y.rows.filter(q=>q.n[m-1]>0).map(q=>({c:q.c,s:q.s,p:q.r[m-1]}));else list=BIRDS.filter(b=>inSeason(b,m)).map(b=>({c:b[0],s:b[1],p:1}))}
+  const all=list.reduce((a,q)=>a+q.p,0)||1,keep=list.filter(q=>q.p/all>=.004||list.length<12);keep.tot=keep.reduce((a,q)=>a+q.p,0);keep.all=all;keep.live=live;birdPool.k=key;birdPool.v=keep;return keep}
+// how a bird not in the hand-made table is drawn, going by what kind of bird its name says it is
+function birdLook(c,s){const n=c.toLowerCase(),is=(...w)=>w.some(q=>n.includes(q));
+  if(is('goose','swan','crane','pelican','cormorant','ibis'))return [c,s,[[1,12]],'V',[6,18],9,[120,320],is('snow','swan','pelican','ross')?0xf2f2ee:0x5a5248];
+  if(is('duck','teal','mallard','wigeon','shoveler','pintail','merganser','scaup','bufflehead','goldeneye','gadwall','canvasback','redhead','scoter','coot','grebe','loon'))return [c,s,[[1,12]],'V',[3,9],6,[40,150],0x5c5346];
+  if(is('hawk','eagle','falcon','kestrel','merlin','vulture','osprey','kite','harrier','owl','heron','egret','bittern','kingfisher','shrike'))return [c,s,[[1,12]],'solo',[1,1],is('eagle','vulture','heron','egret','osprey')?12:8,[60,240],is('egret')?0xf4f4f0:0x4a3b30];
+  if(is('swallow','swift','martin','starling','blackbird','grackle','cowbird','waxwing','pigeon','longspur','siskin','lark','bobolink','pipit'))return [c,s,[[1,12]],'swarm',[8,26],4,[25,110],0x24242a];
+  if(is('gull','tern','sandpiper','plover','yellowlegs','dowitcher','killdeer','phalarope','avocet','godwit','dunlin','sanderling','snipe','stilt','turnstone','willet','curlew','whimbrel'))return [c,s,[[1,12]],'loose',[4,14],6,[40,180],is('gull','tern')?0xe9ebee:0x8a7f70];
+  return [c,s,[[1,12]],'loose',[1,5],4,[12,60],is('cardinal','tanager')?0xc0392b:is('jay','bluebird','bunting')?0x3d6fb5:is('goldfinch','warbler','oriole','meadowlark')?0xd8a520:0x5b5046]}
+function birdStrip(q,m){const mx=Math.max(...q.r)||1;return '<span class="bstrip" aria-hidden="true">'+q.r.map((v,i)=>`<i style="opacity:${v?(.18+.82*v/mx).toFixed(2):.06}"${i===m-1?' class="cur"':''}></i>`).join('')+'</span>'}
+function birdHTML(tab){const Y=birdYear(),m=birdMonth(),M=MONTHS[m-1];if(!Y)return '<p>The month-by-month bird table did not load with this copy of the map.</p>';
+  const src=`Counts are public reports within 25 km of Lincoln on <a href="https://www.inaturalist.org" target="_blank" rel="noopener noreferrer">iNaturalist</a>, every year added together, as saved on ${esc(Y.asof)}.`;
+  if(tab===2)return `<h4>What this is</h4><p>${src} There are ${Y.rows.length} species on the list and ${Y.tot.reduce((a,b)=>a+b,0).toLocaleString('en-US')} reports behind it.</p><h4>How a bird gets its label</h4><p>For each species the map looks at its share of all bird reports in each month. A bird that keeps turning up in ten or more months is called around all year. One that shows in midsummer and not midwinter is here for the warm months; the reverse is here for the cold months. One that shows in spring and fall and in neither midsummer nor midwinter is passing through. Fewer than three reports in all is rare here.</p><h4>What it cannot tell you</h4><p>Reports follow watchers as well as birds. April and May have six times the reports of January, and bright, loud, easy birds get reported more than quiet ones. A label is a pattern in reports, not a field guide. For the real thing, see <a href="https://ebird.org/region/US-NE-109" target="_blank" rel="noopener noreferrer">eBird for Lancaster County ↗</a> and tonight's migration forecast at <a href="https://dashboard.birdcast.info" target="_blank" rel="noopener noreferrer">BirdCast ↗</a>.</p><h4>The flocks on the map</h4><p>A flock is only ever drawn for a species with at least 0.4% of this month's reports, and each turns up about as often as people report it. On the website copy the shares for this month are read live, and flocks with a date under the name circle the spot of a real recent report.</p>`;
+  const row=q=>`<tr><td><b>${esc(q.c)}</b><br><small><i>${esc(q.s)}</i></small></td><td>${birdStrip(q,m)}</td><td>${tab===0?(q.r[m-1]*100<.1?'under 0.1':(q.r[m-1]*100).toFixed(1))+'%':q.n[m-1]?'Here in '+M:(q.kind==='rare'?'Rare':'Not in '+M+' · most in '+MONTHS[q.pk])}</td></tr>`,head='<tr><th>Bird</th><th>Jan to Dec</th><th>'+(tab===0?'Share of '+M+' reports':'In '+M)+'</th></tr>';
+  if(tab===0){const here=Y.rows.filter(q=>q.n[m-1]>0).sort((a,b)=>b.r[m-1]-a.r[m-1]);let s=`<p><b>${here.length} of the ${Y.rows.length} species</b> on the Lincoln list have been reported in ${M}. They are grouped by what they are doing here. The strip shows each bird's year, with ${M} outlined. ${src}</p>`;
+    for(const k of ['res','win','sum','mig','rare']){const g=here.filter(q=>q.kind===k);if(g.length)s+=`<h4>${BKIND[k]} · ${g.length}</h4><table class="btab">${head}${g.map(row).join('')}</table>`}return s}
+  const all=Y.rows.slice().sort((a,b)=>b.T-a.T),hereN=all.filter(q=>q.n[m-1]>0).length;
+  return `<p>Every species reported near Lincoln, most reported first: <b>${all.length} in all, ${hereN} of them reported in ${M}</b>. The strip shows the months each one turns up, with ${M} outlined. ${src}</p><table class="btab">${head}${all.map(row).join('')}</table>`}
+const BIRDSS={title:'Birds <i>of Lincoln</i>',tabs:['Here now','The whole list','How this works'],html:birdHTML,click:()=>{}};
+// ---- one place to start each of the pieces above, and to keep them moving
+function init2(){const run=(n,f)=>{try{f()}catch(e){console.warn('STARCITY: could not start '+n,e)}};run('bus stops',busxInit);run('front door',frontInit);run('sky',()=>{$('bSky').onclick=()=>setSky(!NSKY.on);if(!S2||!S2.sky_ra)$('bSky').style.display='none'});run('access',accessInit);run('tray',trayInit);run('compare',()=>{$('bCompare').onclick=()=>openSheet(CMPS,0)});run('community',()=>{communityInit()});run('real estate and look',init3);run('data console',feedInit)}
+function frame2(now,dt){festFrame(now,dt);busFrame(now);skyFrame(now);coreFrame(now);frame3();feedFrame(now);stackFrame();trayDraw(false);if(SG.topic)sgDraw(false)}
+function reset2(){if(RE.on)setRE(false,true);if(FEED.on)setFeeds(false);if(LOOK.on)setLook(false);if(FEST.on)devFest(false);if(NSKY.on)setSky(false);busLine(null);cityClear();coreReset();SG.topic=null;sgDraw(true)}

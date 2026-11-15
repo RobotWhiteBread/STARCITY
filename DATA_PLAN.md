@@ -57,6 +57,8 @@ These are downloaded by a script, processed, and packed into `index.html`. They 
 | City trees | city: `Parks/Trees/MapServer/0` (Parks and Recreation, Community Forestry) | kind, common and scientific name, trunk diameter, site, forestry district, park, city tree ID, life cycle | `get_trees.ps1` | 2026-11-14 | twice a year |
 | Local businesses | OpenStreetMap through the Overpass API | name, kind, cuisine, hours, website | `get_places.ps1` | 2026-11-14 | monthly |
 | University building pages | University of Nebraska-Lincoln building list at maps.unl.edu | building code and name | `src/unl_buildings.txt` | 2026-11-14 | twice a year |
+| Birds near Lincoln by month of the year | iNaturalist API, species counts within 25 km of Lincoln, every year added together | common and scientific name, reports in each month | read once and saved as `src/birds_inat.txt` | 2026-11-14 | twice a year |
+| Bus stops and which runs call at them | StarTran GTFS feed (the same file as the routes) | stop name, position, stop id, order of stops, headsign | `src/gtfs.py` | feed version 20261102 | each service change |
 | Star catalog | Hipparcos and HYG catalogs as packaged by d3-celestial | position, brightness, names, constellation lines | copied from the d3-celestial repository | epoch 2000 | never |
 | Volleyball and football results for the current season | ESPN's public scoreboard | date, opponent, score | typed into the layer files as a fallback | 2026-11-14 | the website copy reads them live |
 
@@ -84,6 +86,10 @@ Nothing here is stored. Each feed was checked from the public website address to
 | Bike share | BikeLNK GBFS feed | when the layer is turned on |
 | Air quality | Open-Meteo | when Pulse is opened |
 | Bird reports | iNaturalist | when the page opens |
+| Bright satellites and the space stations | CelesTrak (`celestrak.org`, groups `visual` and `stations`), worked forward with satellite.js | when the night sky is opened, then kept for 6 hours on the device |
+| Newest sales | city: `Assessor/PropertySales/MapServer/0`, the last 45 days, price, date and kind of property only | when the layer is turned on |
+| Layers added by contributors | `community/index.json` and the GeoJSON files beside it, on this site | when the page opens |
+| Any layer on the city's map server | city GIS services, through the All city data browser | only when a visitor picks it. Fields that could name or reach a person are never requested. |
 | School districts | Nebraska state GIS | when the layer is turned on |
 
 ESPN does not document or promise its feed. If it stops answering, the scores panel says so and the saved season lists remain.
@@ -98,6 +104,10 @@ ESPN does not document or promise its feed. If it stops answering, the scores pa
 | Value, tax, homes and population per acre | summed into hexagons 160 m across (about 4.1 acres each) |
 | Population density | census block counts spread across the homes in each block |
 | Election results on today's precincts | matched by precinct name; names merged in a source file are split in proportion to the 2020 vote |
+| Next bus at a stop | the timetable for today's kind of day, from the map's clock. Not live positions. |
+| What a bird is doing here | its share of all bird reports in each month: ten or more months is all year, midsummer without midwinter is the warm months, the reverse is the cold months, neither is passing through, under three reports is rare |
+| Fall color on trees | the date and the kind of tree. Not a look at the leaves. |
+| Where stars, the Moon and planets are | catalog positions and standard low-precision formulas for Lincoln at the minute shown, good to a fraction of a degree |
 | Tree size on screen | height from trunk diameter by a fixed rule. The city records no heights. |
 | Traffic through the day | the measured daily count times a typical weekday curve |
 

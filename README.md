@@ -6,9 +6,31 @@ An interactive 3D map of Lincoln, Nebraska that runs in a web browser. One HTML 
 
 That link works on a phone or a computer. Nothing to install. You can also download `index.html` and open it in any modern browser, though the live feeds only load from the website copy.
 
-This is release 0.9. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
+This is release 0.9.1. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
 
 ## What is in it
+
+### New in 0.9.1
+
+- **Now and Reset at the top of the screen**, with a row of reasons you may be here under them. What is live or timely comes first: a game in progress, a weather warning, the next bus, tonight's sky. Then nine ways in: my home and block, getting around, happening now, City Hall and votes, values and taxes, birds, trees and sky, history and culture, safety, and all city data. The ones you use most move to the front, on your own device only.
+- **Bus stops and times.** Every StarTran stop is on the map. Tap one for its next departures, tap a bus for where it is headed and the nearest place to catch that route, or ask for the nearest stop with a bus still to come. A table lists every route with its first and last run and how often it comes. StarTran's own live arrival board is one tap from every stop.
+- **Birds of Lincoln.** All 321 species reported near Lincoln, each with its year drawn as twelve months, and who is here this month grouped by what they are doing: around all year, here for the cold months, here for the warm months, or passing through. A flock is only drawn for a bird with at least 0.4% of this month's reports.
+- **The night sky over Lincoln.** 1,627 catalog stars with names and constellation lines, the Moon and the planets, and on the website the bright satellites and space stations above the horizon, at this minute or any hour you step to.
+- **The names on the Devaney Center**, DBK Universe on top, with searchlights, roses and fireworks, and a link to this season's roster.
+- **Fall color.** From late September into early December the leafy trees take a touch of the color their kind turns.
+- **All city data.** Browse the public map server the city runs and draw any layer it publishes. Fields that could name or reach a person are never requested.
+- **Reading comfort.** Larger text, high contrast, a plain-words description of the view, and less motion on devices that ask for it.
+- **Safety, by place and not by person.** The map plots no one. It points to the State Patrol's registry and says what state law allows.
+- **Bird's eye is always right now.** Zoomed out to the whole city, the map shows the weather as it is and traffic as it usually runs at this hour, with street closures read live on the website. Zoom in and they step aside unless you switched them on yourself.
+- **What you switched on stays in sight.** On a phone the button grid folds away after a choice and leaves a short list of what is on, each with an x, and Menu to add more. Choosing a topic turns the top row into that topic, so its other views stay one tap away and its layers stack. When several things show at once, each turns more see-through so the others show.
+- **Real estate is a switch, off until you choose it.** On, building cards lead with assessed value and a tax estimate, and the rest is one tap away: value bars with bands at $500,000, $1 million, $2 million, $5 million and $10 million and beyond, the newest sales and where they are happening, charts with a spike for every property by value and by tax, and county sale prices by month since 2018.
+- **Compare everything.** One circle, read against every dataset on the map and set beside the whole city. Any two hexagon measures can be drawn at once, one as height and one as color, with how closely they track. The 1930s redlining lines can be laid over any of it as outlines.
+- **Look around.** From wherever the camera is, hold and drag to look up to the horizon and all the way round.
+- **Night.** When the map's clock says dark, the birds roost in the trees, only the night birds fly, and the zoo, the dog bar, the lake and the woods each get their sleepers a warm bed.
+- **A data console.** Every stream the map reads, when it was last read and whether it answered, and what the map holds behind each view, in the code view's own type.
+- **Buses carry tall tags** with their number and route, and every route is drawn in its own color.
+- **An olive branch.** `CONTRIBUTING.md` invites the city, the county, the university, StarTran, the airport, Realtors, businesses and neighbors to add to the map, and `community/` is where their layers go.
+- The credits roll now reads the set scores of every volleyball match, and a suspended match is no longer counted as a loss. Volleyballs no longer fly at the camera.
 
 ### The city
 
@@ -48,7 +70,7 @@ Property and taxes, people, getting around, places, environment and City Hall: v
 - Drag to move, pinch or scroll to zoom to the point you are on, twist two fingers to turn, slide two fingers to tilt. A compass, zoom and tilt buttons are always on screen.
 - Walk mode: a joystick, tap a spot to walk there, tap a building for its card, walls you cannot pass through, and the name of the street you are on.
 - Search any street, address, building, park, neighborhood or trail. Find me puts a blue dot where you are, and the position never leaves your device.
-- Bird's eye reset puts every switch, filter and panel back and returns to the whole city.
+- Reset, at the top of the screen, puts every switch, filter and panel back and returns to the whole city. Now sets the map to this moment and says what is going on.
 
 ### Native Lincoln
 
@@ -56,7 +78,7 @@ The whole map is Otoe-Missouria homeland, marked with a gold line around its edg
 
 ### For fun, and labeled that way
 
-Giraffes and penguins at the zoo, dogs at the dog parks, cyclists on the trails, a volleyball storm that grows with the week's wins and blows with the day's wind, lake monsters and jumping fish, Sasquatch in the woods, cattle and a combine on East Campus, a giant cone on the Dairy Store, falcons and hawks over the Capitol, example planes at the airport, a credits roll of records that scrolls out of the Devaney Center and Memorial Stadium, and Nader, the tornado who talks. On a real warning Nader says what the Weather Service says. In the preview he says he is a preview.
+Giraffes and penguins at the zoo, dogs at the dog parks, cyclists on the trails, a volleyball storm that grows with the week's wins and blows with the day's wind, lake monsters and jumping fish, Sasquatch in the woods, cattle and a combine on East Campus, a giant cone on the Dairy Store, falcons and hawks over the Capitol, example planes at the airport, a credits roll of records that scrolls out of the Devaney Center and Memorial Stadium, searchlights, roses and fireworks over the Devaney Center, a touch of fall color on the trees, and Nader, the tornado who talks. On a real warning Nader says what the Weather Service says. In the preview he says he is a preview.
 
 ## Real, estimated, or for fun
 
@@ -85,6 +107,7 @@ What the map cannot show yet:
 
 - The map collects nothing about the people who use it. There are no accounts, cookies, analytics or trackers. Find me draws your position on your own screen and sends it nowhere.
 - Owner names and owners' mailing addresses are never stored in the map or in this repository. The Show owner button reads the county's own public record for the one parcel you tapped, at the moment you tap it.
+- The city data browser never requests a field that could name or reach a person, and it does not list layers about people. The map does not plot anyone on any registry.
 - The download scripts name the fields they want. They never request owner names, mailing addresses, buyer or seller names, staff names or notes.
 
 ## Rebuilding from source
@@ -94,7 +117,7 @@ The download scripts are PowerShell and run on Windows. The build scripts are Py
 1. `get_data.ps1`, `get_more.ps1`, `get_city.ps1`, `get_city2.ps1`: OpenStreetMap, Microsoft footprints, terrain tiles, the bus schedule, the city's 2026 footprints, assessor structure records and the city trail layers.
 2. `get_places.ps1`, `get_values.ps1`, `get_votes.ps1`, `get_gis.ps1`, `get_trees.ps1`: local businesses, assessed values, election layers, the city, county and state map layers, and the city tree inventory.
 3. `git clone https://github.com/openelections/openelections-data-ne` for precinct results from 2012 to 2020.
-4. From inside `src/`: `extra.py`, `gtfs.py`, `process.py` (the base map), `process2.py` (values, taxes, layers, elections, trees), then `build.py`, which combines `page.html`, the two data packs and the `layers_*.js` files into `index.html`.
+4. From inside `src/`: `extra.py`, `gtfs.py` (the timetable, and the bus stops it writes beside it), `process.py` (the base map), `process2.py` (values, taxes, layers, elections, trees, bus stops, and the bird table in `birds_inat.txt`), then `build.py`, which combines `page.html`, the two data packs and the `layers_*.js` files into `index.html`.
 5. Copy that `index.html` to the top of the repository.
 
 `DATA_PLAN.md` has the full list of sources, fields and refresh steps.
@@ -112,6 +135,7 @@ The download scripts are PowerShell and run on Windows. The build scripts are Py
 - Scores from ESPN's public scoreboard feed, which ESPN does not document or promise.
 - Bird reports from iNaturalist. Observations belong to the people who made them.
 - Star positions from the Hipparcos and HYG catalogs as packaged by the d3-celestial project.
+- Satellite orbits from CelesTrak, worked forward with the satellite.js library (SGP4). Planet and Moon positions use Paul Schlyter's published low-precision formulas.
 - Links out, with nothing copied: county property records, Google Street View, the University of Nebraska building pages, city and state election pages.
 - Rendering uses three.js (MIT license).
 
