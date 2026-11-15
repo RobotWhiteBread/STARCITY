@@ -41,6 +41,16 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 
 #bMenu{grid-column:1/-1}
 #tools.shut>:not(#bMenu):not(#bFind):not(#tray):not(.sel.on){display:none!important}
+#tools.shut>.base,#tools.shut>.pref,#tools.shut>.auto{display:none!important}
+#tools .btn.base.on,#tools .btn.pref.on,#tools .btn.auto.on{background:var(--glass);color:var(--ink);border-color:var(--line)}
+#tools .btn.base.on::before,#tools .btn.pref.on::before{content:'✓ ';color:var(--accent)}
+#tools .btn.auto.on::before{content:'● ';color:#7ee08a;font-size:.72em;vertical-align:1px}
+#wkX{background:rgba(233,185,73,.96)!important;color:#1b1608!important;border-color:transparent!important;font-weight:800}
+body.sky #wkUp,body.looking #wkUp{display:none!important}
+#gbody pre{background:#0b0f15;border:1px solid var(--line);border-radius:8px;padding:10px 11px;margin:4px 0 8px;overflow-x:auto;font:11.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cfe8ff;white-space:pre;-webkit-overflow-scrolling:touch}
+#gbody .row{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px}#gbody .row input{flex:1;min-width:150px;background:#0b0f15;border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:9px 10px;font:inherit;font-size:14px}
+#gbody .step{display:flex;gap:9px;margin:0 0 9px}#gbody .step b.n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#1b1608;font-size:12px;line-height:24px;text-align:center}#gbody .step div{flex:1}#gbody .step p{margin:0 0 3px}
+#gbody .flow{display:flex;flex-wrap:wrap;gap:4px;align-items:stretch;margin:4px 0 8px}#gbody .flow button{flex:1;min-width:92px;white-space:normal;text-align:center;font-size:11.5px;padding:8px 6px}#gbody .flow button b{display:block;font-size:17px;color:var(--accent)}#gbody .flow i{align-self:center;color:var(--dim);font-style:normal}
 #bBar{pointer-events:auto;padding:5px 10px;font-size:11px}
 #bottom.shut #sun,#bottom.shut #chips,#bottom.shut #legend,#bottom.shut #attr{display:none!important}
 #bMore{display:none}
@@ -263,15 +273,15 @@ body.hc .btn{border-width:2px}
     <button class="btn x" id="bPulse">Pulse</button>
     <button class="btn x" id="bBiz">Local</button>
     <button class="btn x" id="bRide">Bike ride</button>
-    <button class="btn on x" id="bTrails">Trails</button>
+    <button class="btn on x base" id="bTrails">Trails</button>
     <button class="btn x" id="b2D">2D view</button>
     <button class="btn x" id="bNorth">North up</button>
     <button class="btn x" id="bShare">Share view</button>
-    <button class="btn on x" id="bBus">Buses</button>
+    <button class="btn on x base" id="bBus">Buses</button>
     <button class="btn x" id="bGame">Game day</button>
-    <button class="btn on x" id="bLabels">Labels</button>
-    <button class="btn on x" id="bShadow">Shadows</button>
-    <button class="btn on x" id="bBirds">Birds</button>
+    <button class="btn on x base" id="bLabels">Labels</button>
+    <button class="btn on x base" id="bShadow">Shadows</button>
+    <button class="btn on x base" id="bBirds">Birds</button>
     <button class="btn x" id="bPride">Pride</button>
     <button class="btn x" id="bVB">Volleyballs</button>
     <button class="btn x" id="bTraf">Traffic</button>
@@ -279,13 +289,13 @@ body.hc .btn{border-width:2px}
     <button class="btn x" id="bNat">Native Lincoln</button>
     <button class="btn x" id="bNIL">Play in Lincoln</button>
     <button class="btn x" id="bFly">Flights</button>
-    <button class="btn on x" id="bCre">Creatures</button>
+    <button class="btn on x base" id="bCre">Creatures</button>
     <button class="btn x" id="bCompare">Compare</button>
     <button class="btn x" id="bFeeds">Data feeds</button>
     <button class="btn x" id="bSky">Night sky</button>
     <button class="btn x" id="bSay">Describe view</button>
-    <button class="btn x" id="bText">Text size</button>
-    <button class="btn x" id="bHC">High contrast</button>
+    <button class="btn x pref" id="bText">Text size</button>
+    <button class="btn x pref" id="bHC">High contrast</button>
     <button class="btn x" id="bCode">Code view</button>
   </div>
 </div>
@@ -293,7 +303,7 @@ body.hc .btn{border-width:2px}
 <div id="guide" role="dialog" aria-label="Guide to this map"><div id="gbox"><div id="ghead"><b id="gtitle">STAR<i>CITY</i> guide</b><button id="gx" aria-label="Close">×</button></div>
   <div id="gtabs"><button class="btn on" data-t="0">What it does</button><button class="btn" data-t="1">Explore</button><button class="btn" data-t="2">The data</button></div><div id="gbody"></div></div></div>
 <div id="hint" role="status"></div>
-<div id="wkui"><div id="wkhud" role="status"></div><div id="wjoy" role="application" aria-label="Walk joystick. Drag to move"><i></i></div><div id="wkbt"><button class="btn" id="wkSp" aria-label="Walking speed">Walk</button><button class="btn" id="wkX">Leave walk</button></div><div id="wktip"></div></div>
+<div id="wkui"><div id="wkhud" role="status"></div><div id="wjoy" role="application" aria-label="Walk joystick. Drag to move"><i></i></div><div id="wkbt"><button class="btn" id="wkSp" aria-label="Walking speed">Walk</button><button class="btn" id="wkUp">Stay here, from above</button><button class="btn" id="wkX">← Back to the map</button></div><div id="wktip"></div></div>
 <div id="roll" role="region" aria-label="Records, scrolling like film credits"><div id="rollh"><span id="rollt"></span><button id="rollx" aria-label="Close">×</button></div><div id="rollb" tabindex="0"></div></div><div id="rollL"></div>
 <div id="find"><input id="q" type="search" placeholder="Search a street, address or building" autocomplete="off" enterkeyhint="search"><div id="res"></div><a id="cty" href="https://orion.lancaster.ne.gov/Advanced-Search" target="_blank" rel="noopener noreferrer">Lancaster County property search ↗</a></div>
 <div id="biz" role="region" aria-label="Local businesses"><div id="bizh"><b>SHOP LOCAL</b><button id="bizm">◂ Hide list</button><button id="bizx" aria-label="Close">×</button></div><input id="bizq" type="search" placeholder="Search a name or a kind of place" autocomplete="off" aria-label="Search local businesses"><div id="bizb"></div></div>
@@ -457,7 +467,9 @@ async function build(){
    // casings (kerb/shoulder) for real streets
    const lamps=[];const addLamps=(p,sp,off)=>{let acc=sp*.5;for(let j=0;j<p.length/2-1;j++){const ax=p[2*j],az=p[2*j+1],dx=p[2*j+2]-ax,dz=p[2*j+3]-az,L=Math.hypot(dx,dz);if(L<.01)continue;while(acc<L){const f=acc/L;lamps.push(ax+dx*f-dz/L*off,az+dz*f+dx/L*off);acc+=sp}acc-=L}};
    for(const c of [0,1,2,3,4])for(const i of byc[c])addLamps(get(i),55,HW[c]+1);
-   for(const i of byc[5])addLamps(get(i),95,HW[5]+1);
+   for(const i of byc[5])addLamps(get(i),62,HW[5]+1);
+   // service streets and alleys: a light now and then, enough to trace a block at night
+   for(const c of [6,10,11])for(const i of byc[c])addLamps(get(i),130,HW[c]+1);
    for(let i=0;i<S.s_xy.length;i+=2)for(let k=0;k<3;k++)lamps.push(S.s_xy[i]*Qm+(k-1)*3,-S.s_xy[i+1]*Qm);
    LM.lamps=lamps;
    const kerb=hex(0xb9b5a8);
@@ -492,12 +504,12 @@ async function build(){
     for(let i=0;i<rn.length;i++){const tc=rtc[i];if(tc===255)continue;const p=get(i);const bi=brInfo.get(i);const step=bi?8:35;
       const d=[p[0],p[1]];const ix=new Int32Array(p.length/2);for(let k=1;k<p.length/2;k++){const ax=p[2*k-2],az=p[2*k-1],bx=p[2*k],bz=p[2*k+1];const L=Math.hypot(bx-ax,bz-az);const n=Math.max(1,Math.ceil(L/step));for(let j=1;j<=n;j++)d.push(ax+(bx-ax)*j/n,az+(bz-az)*j/n);ix[k]=d.length/2-1}
       const n=d.length/2;const ys=new Float32Array(n);let sl=0;
-      for(let k=0;k<n;k++){if(k>0)sl+=Math.hypot(d[2*k]-d[2*k-2],d[2*k+1]-d[2*k-1]);let y=hAt(d[2*k],d[2*k+1])+.7;if(bi){const t=Math.min(1,Math.max(0,(bi[0]+sl)/bi[1]));y+=.3+bi[2]*Math.pow(Math.sin(Math.PI*t),.75)}ys[k]=y}
-      const P=tc<3?offP:onP,C=tc<3?offC:onC,col=TC[tc],dim=tc===4?.72:1;
+      for(let k=0;k<n;k++){if(k>0)sl+=Math.hypot(d[2*k]-d[2*k-2],d[2*k+1]-d[2*k-1]);let y=hAt(d[2*k],d[2*k+1])+(tc>=3?1.15:.7);if(bi){const t=Math.min(1,Math.max(0,(bi[0]+sl)/bi[1]));y+=.3+bi[2]*Math.pow(Math.sin(Math.PI*t),.75)}ys[k]=y}
+      const P=tc<3?offP:onP,C=tc<3?offC:onC,col=TC[tc],dim=tc===4?.92:1;
       for(let k=1;k<n;k++){P.push(d[2*k-2],ys[k-1],d[2*k-1],d[2*k],ys[k],d[2*k+1]);C.push(col.r*dim,col.g*dim,col.b*dim,col.r*dim,col.g*dim,col.b*dim)}
       LM.trailOf[i]=LM.trails.length;LM.trails.push({tc,tn:rtn[i],d:Float32Array.from(d),len:sl,ts:S.r_ts?S.r_ts[i]:0,ri:i,ix,ys})}
     const mk=(P,C,w)=>{const g=new LineSegmentsGeometry();g.setPositions(P);g.setColors(C);const m=new LineMaterial({linewidth:w,vertexColors:true,worldUnits:false,fog:false});m.resolution.set(innerWidth,innerHeight);const l=new LineSegments2(g,m);l.frustumCulled=false;scene.add(l);return l};
-    LM.trailLines=[];if(onP.length)LM.trailLines.push(mk(onP,onC,mobile?1.8:2.1));if(offP.length)LM.trailLines.push(mk(offP,offC,mobile?3:3.3))}
+    LM.trailLines=[];if(onP.length)LM.trailLines.push(mk(onP,onC,mobile?2.6:3));if(offP.length)LM.trailLines.push(mk(offP,offC,mobile?3:3.3))}
    // rails
    const rail=hex(0x3a3836);for(const i of byc[9]){const p=get(i);ribbon(p,0.78,hex(0x6d665c));ribbon(p,0.12,rail)}
   }
@@ -655,7 +667,7 @@ async function build(){
   {const cv=document.createElement('canvas');cv.width=cv.height=64;const c=cv.getContext('2d');const gr=c.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,220,150,.75)');gr.addColorStop(1,'rgba(255,180,80,0)');c.fillStyle=gr;c.fillRect(0,0,64,64);
    const tex=new THREE.CanvasTexture(cv);const n=LM.lamps.length/2;const P=new Float32Array(n*3);for(let i=0;i<n;i++){P[3*i]=LM.lamps[2*i];P[3*i+2]=LM.lamps[2*i+1];P[3*i+1]=7+hAt(P[3*i],P[3*i+2])}
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));
-   LM.lampMat=new THREE.PointsMaterial({map:tex,size:26,sizeAttenuation:true,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,color:0xffd9a0,fog:false});
+   LM.lampMat=new THREE.PointsMaterial({map:tex,size:30,sizeAttenuation:true,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,color:0xffd9a0,fog:false});
    const pts=new THREE.Points(g,LM.lampMat);pts.frustumCulled=false;pts.visible=false;scene.add(pts);LM.lampPts=pts;LM.lamps=null;
    const SN=1800,SP=new Float32Array(SN*3);for(let i=0;i<SN;i++){const u=rnd(i*2+5)*6.283,v=Math.acos(rnd(i*2+6)*.96+.04);SP[3*i]=42000*Math.sin(v)*Math.cos(u);SP[3*i+1]=42000*Math.cos(v);SP[3*i+2]=42000*Math.sin(v)*Math.sin(u)}
    const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(SP,3));
@@ -869,7 +881,7 @@ function setTime(t){curHour=t;
   hemi.intensity=.25+.85*day;hemi.color.setRGB(.55+.26*day,.62+.27*day,.85+.15*day);hemi.groundColor.setRGB(.2+.34*day,.2+.32*day,.22+.19*day);
   cTmp.copy(cNight).lerp(cDay,day);if(day>0.02&&day<1)cTmp.lerp(cDusk,gold*day*(1-day)*2.2);
   if(cloud>0){const g=.42+.3*day;cTmp.lerp(cGrey.setRGB(g,g*1.02,g*1.06),cloud*.85);sun.intensity*=1-.7*cloud;hemi.intensity*=1-.15*cloud}
-  scene.background.copy(cTmp);scene.fog.color.copy(cTmp);LM.hemi0=hemi.intensity;if(!LM.bg0)LM.bg0=new THREE.Color();LM.bg0.copy(cTmp);
+  scene.background.copy(cTmp);if(scene.fog)scene.fog.color.copy(cTmp);LM.hemi0=hemi.intensity;if(!LM.bg0)LM.bg0=new THREE.Color();LM.bg0.copy(cTmp);
   
   if(LM.lampMat){const n=U.uNight.value;LM.lampMat.opacity=.95*n;LM.lampPts.visible=n>.02;LM.starMat.opacity=Math.max(0,n*1.3-.3);LM.starPts.visible=n>.3}
   if(LM.glow){const n=U.uNight.value;LM.glow[0].emissiveIntensity=.3*n;LM.glow[1].emissiveIntensity=.22*n;LM.glow[2].emissiveIntensity=.12+.75*n}
@@ -917,7 +929,8 @@ function layoutCard(){bottomH=$('bottom').offsetHeight||120;$('card').style.bott
 let cardAct=null;
 let rangeFn=null;
 function cardRange(label,val,fn){$('crange').style.display='flex';$('crange').firstElementChild.textContent=label;$('cR').value=val;rangeFn=fn}
-function showCard(title,body,way,act,link){$('ch').textContent=title;$('cp').textContent=body;$('cp').scrollTop=0;$('crange').style.display='none';rangeFn=null;{const h=$('clinks');h.textContent='';for(const l of (link?(Array.isArray(link)?link:[link]):[])){const a=document.createElement(l.fn?'button':'a');a.className='btn';if(l.fn){a.onclick=()=>l.fn(a)}else{a.target='_blank';a.rel='noopener noreferrer';a.href=l.href}a.textContent=l.label;h.appendChild(a)}}rideWay=(way===undefined?-1:way);cardAct=act||null;$('cride').style.display=(rideWay>=0||cardAct)?'inline-block':'none';$('cride').textContent=cardAct?cardAct.label:'▶ Ride this trail';$('cspd').style.display='none';$('card').style.display='block'}
+let cardTag=null,menuAt=0;const MENUS=[];
+function showCard(title,body,way,act,link){cardTag=null;$('ch').textContent=title;$('cp').textContent=body;$('cp').scrollTop=0;$('crange').style.display='none';rangeFn=null;{const h=$('clinks');h.textContent='';for(const l of (link?(Array.isArray(link)?link:[link]):[])){const a=document.createElement(l.fn?'button':'a');a.className='btn';if(l.fn){a.onclick=()=>{if(cardTag)menuAt=performance.now();l.fn(a)}}else{a.target='_blank';a.rel='noopener noreferrer';a.href=l.href}a.textContent=l.label;h.appendChild(a)}}rideWay=(way===undefined?-1:way);cardAct=act||null;$('cride').style.display=(rideWay>=0||cardAct)?'inline-block':'none';$('cride').textContent=cardAct?cardAct.label:'▶ Ride this trail';$('cspd').style.display='none';$('card').style.display='block'}
 function hideCard(){$('card').style.display='none';rideWay=-1;cardAct=null}
 const TL=['Paved trail','Crushed rock trail','Dirt trail','On-street bike lane','Signed on-street bike route'];
 function groundPoint(){const o=ray.ray.origin,d=ray.ray.direction;if(d.y>-1e-4)return null;let t=(hAt(controls.target.x,controls.target.z)-o.y)/d.y;for(let k=0;k<6;k++){t=(hAt(o.x+d.x*t,o.z+d.z*t)-o.y)/d.y}if(!(t>0))return null;return {x:o.x+d.x*t,z:o.z+d.z*t,t}}
@@ -1122,7 +1135,7 @@ function ridePick(){const gp=groundPoint();if(!gp)return;const v=bgNearest(gp.x,
   if(v<0){if(rideA>=0)showCard('Bike ride',`Start is set on ${roadName(nodeRoad(rideA))}. Nothing to ride where you tapped; tap closer to a street or trail to finish.`,-1,act);else rideIntro('No street or trail there.');return}
   if(rideA<0){rideA=v;clearRoute();clearPins();setPin(0,v);showCard('Bike ride',`Start set on ${roadName(nodeRoad(v))}. Now tap where to finish.`,-1,act)}
   else{const a=rideA;rideA=-1;setPin(1,v);rideRoute(a,v)}}
-function pick(x,y){if(performance.now()-rideStopT<500)return;ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(rideMode){ridePick();return}if(pickMore(x,y))return;if(!codeOn&&dlPick(x,y,true))return;const hit=ray.intersectObjects(pickables,true)[0];if(!codeOn&&treePick(hit?hit.distance:1e9))return;if(!hit){if(!codeOn&&dlPick(x,y,false))return;if(!pickTrail())hideCard();return}
+function pick(x,y){if(performance.now()-rideStopT<500)return;menuAt=0;ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(rideMode){ridePick();return}if(pickMore(x,y))return;if(!codeOn&&dlPick(x,y,true))return;const hit=ray.intersectObjects(pickables,true)[0];if(!codeOn&&treePick(hit?hit.distance:1e9))return;if(!hit){if(!codeOn&&dlPick(x,y,false))return;if(!pickTrail())hideCard();return}
   let o=hit.object;while(o&&!o.userData.info&&!o.userData.ids&&!o.userData.bus&&!o.userData.card)o=o.parent;if(!o)return;if(o.userData.card){o.userData.card(hit);return}
   let title,body;
   if(o.userData.bus){const st=busState[hit.instanceId];if(!st)return;if(BX.ok){busCard(st);return}title='StarTran route '+st.short+(st.long?' · '+st.long:'');body='Scheduled position from the published timetable, not a live GPS reading.'}
@@ -1205,7 +1218,7 @@ addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||walk.on||ride||e.m
   const v=viewAngles(),a=v.az*Math.PI/180,fx=-Math.sin(a),fz=-Math.cos(a),st=v.d*.16,t=controls.target;
   switch(e.key){case 'ArrowUp':shiftView(fx*st,fz*st);break;case 'ArrowDown':shiftView(-fx*st,-fz*st);break;case 'ArrowLeft':shiftView(fz*st,-fx*st);break;case 'ArrowRight':shiftView(-fz*st,fx*st);break;
     case '+':case '=':zoomBy(.7);break;case '-':case '_':zoomBy(1.42);break;case 'q':case 'Q':flyTo(camTo(t.x,t.z,v.d,v.az+20,v.el),300);break;case 'e':case 'E':flyTo(camTo(t.x,t.z,v.d,v.az-20,v.el),300);break}});
-$('cx').onclick=()=>{if(ride)stopRide();if(wxDemo)setDemo(-1);hideCard()};
+$('cx').onclick=()=>{const was=cardTag;if(ride)stopRide();if(wxDemo)setDemo(-1);hideCard();cardBack(was)};
 $('cride').onclick=()=>{if(ride){stopRide();return}if(cardAct){cardAct.fn();return}if(rideWay>=0)startRide(rideWay)};
 $('cspd').onclick=()=>{if(!ride)return;const R=ride;R.mul=R.mul>=8?1:R.mul*2;R.v=R.v0*R.mul;$('cspd').textContent='Speed '+R.mul+'×'};
 $('bRide').onclick=()=>setRideMode(!rideMode);
@@ -1313,7 +1326,7 @@ function makeBolt(){const t=controls.target,dC=camera.position.distanceTo(t),a=M
 function stepStorm(dt,now){
   if(thunder&&now>nextFlash){nextFlash=now+1400+4300*Math.random();flashT=now;makeBolt()}
   const age=now-flashT,f=age<0?0:(age<110?1:(age<190?.25:(age<320?.85:(age<520?.3:0))));
-  if(f>0||LM.flashing){LM.flashing=f>0;hemi.intensity=LM.hemi0+2.9*f;scene.background.copy(LM.bg0).lerp(cWhite,.46*f);scene.fog.color.copy(scene.background);if(bolt){bolt.visible=f>.15;if(LM.boltGlow)LM.boltGlow.visible=f>.15}dirty=true}
+  if(f>0||LM.flashing){LM.flashing=f>0;hemi.intensity=LM.hemi0+2.9*f;scene.background.copy(LM.bg0).lerp(cWhite,.46*f);if(scene.fog)scene.fog.color.copy(scene.background);if(bolt){bolt.visible=f>.15;if(LM.boltGlow)LM.boltGlow.visible=f>.15}dirty=true}
   for(const fn of funnels){fn.rotation.y+=dt*5;if(fn.userData.rg)fn.userData.rg.scale.setScalar(1+.22*Math.sin(now*.006));fn.position.x+=fn.userData.vx*dt;fn.position.z+=fn.userData.vz*dt;fn.position.y=hAt(fn.position.x,fn.position.z);if(fn.userData.lb){fn.userData.lb.x=fn.position.x;fn.userData.lb.z=fn.position.z;fn.userData.lb.y=fn.position.y+1000}if(fn.userData.say){const q=fn.userData.say;q.x=fn.position.x;q.z=fn.position.z;q.y=fn.position.y+620;naderSay(fn,now)}dirty=true}}
 function placeStorms(){for(const f of funnels)scene.remove(f);funnels=[];wxLabels.length=0;if(!wxOn)return;
   for(const a of wxAlerts()){if(a.event!=='Tornado Warning'||!a.storm)continue;const st=a.storm,el=Math.min(2700,Math.max(0,(Date.now()-st.t)/1000)),sp=st.kt*.5144,dr=(st.from+180)*Math.PI/180,vx=Math.sin(dr)*sp,vz=-Math.cos(dr)*sp;
@@ -1638,7 +1651,7 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
  ['Roll the credits','The record book scrolls out of the Devaney Center like the end of a film. Memorial Stadium has one too.',()=>{chipGo('Devaney');setTimeout(()=>rollOpen('vb'),2700)}],
  ['How Lincoln has voted','Five elections as stacks of votes on every precinct. Press play to run the years.',()=>setVotes(true)],
  ['Every district at one spot','Tap anywhere and a ring rises for each body you elect there.',()=>civArm()],
- ['What City Hall is deciding','How the council works, and the cases headed for a vote, on the ground where they would happen.',()=>councilCard()],
+ ['How the City Council works','Who sits on it, when it meets next, how an ordinance becomes law in three Mondays, how to speak, and what is on its way to a vote.',()=>councilCard()],
  ['The numbers for where you are looking','Values, taxes and sales for the area in view, the whole map, each neighborhood and each district.',()=>openSheet(NUMS,0)],
  ['Real estate in eight steps','Total value, value per acre, typical home, sales, tax per acre, then every property as a bar.',()=>reTour(0)],
  ['Native Lincoln','Whose homeland this is, and the places and street names that say so.',()=>{setNative(true);$('bNat').classList.add('on')}],
@@ -1654,9 +1667,10 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
  ['Birds here this month','The whole Lincoln list, with who is here now and who is passing through.',()=>openSheet(BIRDSS,0)],
  ['The names on Devaney','DBK Universe on top, then the arena, the court and the building, with lights and roses.',()=>devFest(true,true)],
  ['All city data','Browse the public map server the city runs and draw any layer it publishes.',()=>cityData()],
- ['This view in words','A plain description of what the map is showing, for reading or a screen reader.',()=>describeView()]];
+ ['This view in words','A plain description of what the map is showing, for reading or a screen reader.',()=>describeView()],
+ ['Make this for your city','Type any place, ZIP code or GPS point and see it in 3D from open map data. The code is free to copy.',()=>openSheet(FORKS,0)]];
 function guideHTML(i){const c=H.counts||{},n=v=>(v||0).toLocaleString(),org=c.org||[0,0,0];
-  if(i===0)return `<h4>What this is</h4><p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account. This is release 0.9.1.</p>
+  if(i===0)return `<h4>What this is</h4>${COUNTH}<p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account. This is release 0.9.2.</p>
 <h4>Getting around</h4><ul><li><b>Phone:</b> drag to move, pinch to zoom, twist two fingers to turn, slide two fingers up or down to tilt, double tap to zoom in, tap with two fingers to zoom out.</li><li><b>Computer:</b> drag to move, scroll to zoom, right-drag or Shift-drag to turn and tilt. Arrow keys, + and -, Q and E work too.</li><li><b>The round buttons</b> on the right: drag the compass to turn the map or tap it for north up, + and - zoom (hold to keep going), and the last one tilts.</li><li><b>Street names</b> come in by size: main roads from far out, every street as you move in close.</li><li><b>Tap anything</b> for a card that says what it is and how sure the map is about it. Buildings lead with their assessed value and a tax estimate. Trees on the city list give their kind, trunk size and city tree ID.</li><li>The <b>slider</b> at the bottom sets the time of day. The <b>ribbon</b> under it jumps to places.</li></ul>
 <h4>The buttons</h4><ul><li><b>Search</b> streets, addresses, buildings, parks and trails. <b>Tour</b> flies a short loop.</li><li><b>Find me</b> puts a blue dot where you are. It stays on your device.</li><li><b>Bike ride</b> rides trails and bike streets. <b>Trails</b> shows or hides them.</li><li><b>Weather</b> shows wind, rain, snow, lightning and warnings. The line under the title is the weather right now: tap it for alerts and the forecast.</li><li><b>Huskers</b> has live scores. <b>Democracy</b> shows how Lincoln has voted, who represents any spot, and what City Hall is deciding. <b>Real estate</b> is a switch. On, building cards lead with assessed value and a tax estimate, and value bars, new sales, taxes by district, the statistics and a compare-everything table are one tap away. Off, the map is about the place and a card offers its value only when you ask.</li><li><b>Walk</b> puts you on the street with a joystick. Tap a spot to walk there, or a building for its card.</li><li><b>Now</b> and <b>Reset</b> sit at the top of the screen. Now sets the map to this moment and says what is going on in Lincoln. Reset brings you back to the whole city from above with everything switched back, whenever you get lost. Under them is a row of reasons you may be here: tap one for a short list of where to go.</li><li><b>Menu</b> folds the buttons away for a clear view, and the small button at the bottom left does the same for the key, the time slider and the places ribbon. Tap again to bring them back.</li><li><b>More</b> holds Now (the real time of day), 2D view, North up, Share view, Buses, Game day, Labels, Shadows, Birds, Pride, Volleyballs, Traffic, the Real estate tour, Native Lincoln, Play in Lincoln, Flights and Creatures.</li></ul>
 <h4>Real, estimated, or just for fun</h4><p>Buildings, streets, trails, terrain, weather, scores, assessed values, election results and city records are real data. Some heights, all roof shapes, every property tax figure and the hour-by-hour traffic curve are estimates. The giraffes, penguins, dogs, cyclists, rainbows, volleyballs, lake monsters, Sasquatch, the East Campus cattle and combine, the birds circling the Capitol and the example planes are just for fun. Each card says which is which.</p>`;
@@ -1673,11 +1687,11 @@ function openSheet(d,tab){sheet=d;const i=tab||0;$('guide').style.display='block
 function closeSheet(){$('guide').style.display='none';$('bGuide').classList.remove('on');sheet=null}
 const GUIDE={title:'STAR<i>CITY</i> guide',tabs:['What it does','Explore','The data'],html:guideHTML,click:e=>{const b=e.target.closest('.go');if(!b)return;closeSheet();lastInput=performance.now();TRY[+b.dataset.go][2]()}};
 function setGuide(on,tab){if(!on){closeSheet();return}openSheet(GUIDE,tab)}
-$('bGuide').onclick=()=>setGuide(sheet!==GUIDE);$('gx').onclick=closeSheet;
+$('bGuide').onclick=()=>setGuide(sheet!==GUIDE);$('gx').onclick=()=>{closeSheet();sheetBack()};
 $('guide').addEventListener('click',e=>{if(e.target===$('guide'))closeSheet()});
 $('gtabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&sheet)openSheet(sheet,+b.dataset.t)});
 $('gbody').addEventListener('click',e=>{if(sheet&&sheet.click)sheet.click(e)});
-addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet)closeSheet()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet){closeSheet();sheetBack()}});
 // Traffic heat wave. This is an estimate, not a live feed: how busy a road is comes from its type, and how busy the hour is
 // comes from a typical weekday curve. Measured counts and live closures are meant to replace it.
 let trafOn=false,traf=null,trafH=1;
@@ -1702,7 +1716,7 @@ function trafCard(){const lv=trafLevel(curHour),word=lv>.9?'rush hour':lv>.7?'bu
 function setTraffic(on){trafOn=on;$('bTraf').classList.toggle('on',on);if(on&&!traf)buildTraffic();if(traf)traf.mesh.visible=on;if(on){lastInput=performance.now();trafCard()}else hideCard();dirty=true}
 $('bTraf').onclick=()=>setTraffic(!trafOn);
 // Bird's eye reset: back to the whole city from above, at the current time of day, out of any mode that moves the camera
-function birdsEye(){resetAll();resetMenu();if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}setLive(true);flyTo(camTo(-1300,-900,17500,-10,50),1800)}
+function birdsEye(){MENUS.length=0;menuAt=0;VIEW.keep=null;TRAY.mute=true;try{resetAll();resetMenu()}finally{TRAY.mute=false}coreReset();if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}setLive(true);flyTo(camTo(-1300,-900,17500,-10,50),1800)}
 $('bHome').onclick=birdsEye;addEventListener('keydown',e=>{if(e.target.tagName!=='INPUT'&&(e.key==='Home'||e.key==='0'))birdsEye()});
 $('b2D').onclick=()=>set2D(!flat);
 // Find me: a blue dot where your device says you are. The position never leaves the device.
@@ -1781,7 +1795,7 @@ $('sunR').oninput=e=>{if(liveOn){liveOn=false;$('bNow').classList.remove('on')}c
 // ground tints with a glowing fence, and grids become hexagon columns. Each layer has clickable tiers,
 // a height slider, a see-through slider and a card on tap.
 // =====================================================================================================
-let H2=null,S2=null;const DL=new Map(),dlOn=[],dlLabels=[];let dlHS=1,dlAL=1,dlTop=null,dlAuto=1;
+let H2=null,S2=null;const DL=new Map(),dlOn=[],dlLabels=[];let dlHS=1,dlAL=1,dlTop=null,dlAuto=1,dlHSuser=false;
 const SKY=402.3; // a quarter mile in meters: how tall the tallest value in any metric layer stands at the default setting
 const RAMP={value:[0x2b83ba,0x74c7b8,0xcfe8a6,0xfee08b,0xfdae61,0xf46d43,0xd7191c],heat:[0x2fbf71,0xa8d94a,0xffe14d,0xff9f1c,0xf2541b,0xd90429],civic:[0xe6dcff,0xbba6ff,0x9476f2,0x6d48d8,0x4a22b0],cool:[0xd9f7ff,0x97dcff,0x55adff,0x2f74e6,0x1c3fb0],green:[0xf1f8d8,0xbfe39a,0x7cc66b,0x3d9e50,0x1c6b3a],age:[0x5b3a8c,0x8f5fb8,0xd98fb3,0xf6c58f,0xf9f1a5]};
 const AUTOPAL=[0x4cc9f0,0xf72585,0xffd166,0x06d6a0,0xb388ff,0xff9f1c,0x80ed99,0xef476f,0x48bfe3,0xf4a261,0x90be6d,0xc77dff,0xffadad,0x9bf6ff];
@@ -1893,7 +1907,7 @@ function dlBuild(L){dlStyle(L);const k=L.def.k,st=L.def.st;
 function dlSet(id,on,quiet){const L=DL.get(id);if(!L)return;if(on&&!L.obj){if(L.def.live&&!L.loaded){dlLive(L,quiet);return}dlBuild(L)}
   if(L.on===on)return;L.on=on;if(L.obj)L.obj.visible=on;const k=dlOn.indexOf(L);if(on&&k<0)dlOn.push(L);if(!on&&k>=0)dlOn.splice(k,1);
   dlLabels.length=0;for(const q of dlOn)if(q.lbl)for(const l of q.lbl)dlLabels.push(l);
-  if(on){dlTop=L;for(const m of L.mats)m.uniforms.uSolo.value=-1;L.solo=-1}else if(dlTop===L)dlTop=dlOn[dlOn.length-1]||null;
+  if(on){dlTop=L;for(const m of L.mats)m.uniforms.uSolo.value=-1;L.solo=-1;hsFit(L)}else if(dlTop===L)dlTop=dlOn[dlOn.length-1]||null;
   dlLegend();if(on&&!quiet)dlIntro(L);if(L.def.onSet)L.def.onSet(on,L);lastInput=performance.now();dirty=true}
 function dlIntro(L){const d=L.def;showCard(d.t,(d.note||'')+' '+(d.k!=='fn'&&typeof d.st.h!=='number'?(d.id==='pv'?'Height is in straight proportion to value: a quarter mile for every $1 million, seen from about two miles out, and it follows your zoom so the picture holds as you move in. Anything above $6 million is drawn at the $6 million height. The gold ring on the ground marks the area being totaled in the gold box. ':'The tallest stand about a quarter mile high and fade into the sky, and they follow your zoom so the picture holds as you move in. '):'')+(L.n?L.n.toLocaleString('en-US')+(d.k==='hx'?' hexagons':d.k==='pt'?' points':d.k==='ln'?' segments':' areas')+'. ':'')+'Tap one for its numbers. Source: '+d.src+(d.asof?(d.asof==='live'?', read live just now':', as of '+d.asof):'')+'.')}
 // keep heights and widths readable at every zoom, and apply the two sliders
@@ -1937,7 +1951,7 @@ function dlLegend(){const h=$('dlg');$('bottom').classList.toggle('haslayer',!!d
 function dlSolo(L,t){if(!L.mats||!L.mats.length)return;L.solo=L.solo===t?-1:t;for(const m of L.mats)m.uniforms.uSolo.value=L.solo;dlLegend();dirty=true}
 function dlWire(){const h=$('dlg');
   h.addEventListener('click',e=>{const k=e.target.closest('.dlk'),b=e.target.closest('.dlb');if(k&&dlTop)dlSolo(dlTop,+k.dataset.t);else if(b&&dlTop){if(b.dataset.a==='off')dlSet(dlTop.id,false);else dlIntro(dlTop)}});
-  h.addEventListener('input',e=>{const s=e.target.dataset.s;if(!s)return;if(s==='h')dlHS=+e.target.value/100;else dlAL=1.4*(1-(+e.target.value)/100);lastInput=performance.now();dirty=true})}
+  h.addEventListener('input',e=>{const s=e.target.dataset.s;if(!s)return;if(s==='h'){dlHS=+e.target.value/100;dlHSuser=true}else dlAL=1.4*(1-(+e.target.value)/100);lastInput=performance.now();dirty=true})}
 // ---- the Layers sheet
 const DLG=['Property and taxes','People','Getting around','Places','Environment'];
 function layHTML(){let s='<p>Every dataset behind the map, each with a 3D form. Turn on as many as you like. The newest one gets the key at the bottom, where you can tap a tier to single it out and slide the height and see-through bars.</p><button class="btn" data-id="__tax">Open the property and taxes explorer</button>';
@@ -2196,7 +2210,7 @@ function rawCard(b){const pid=S.b_p1&&S.b_p1[b]?String(S.b_p1[b]).padStart(7,'0'
 function footballCard(){showCard('Nebraska football: the one-score ledger','Second billing to the volleyball record, but worth knowing. From 2018 through 2024 Nebraska went 10-35 in games decided by one score. The 2025 team went 5-2 in them. The 2026 team is 0-3 so far: Indiana 20-17, Oregon 17-14 and Washington 17-10, before a 31-0 win at Rutgers on Nov 14. One count has 53 one-score losses since 2014, 11 more than any other team in the country. Why it matters: across college and pro football, close games behave a lot like coin flips over time, and Nebraska itself went 115-106-5 in them from 1962 through 2024. If the 2018 to 2024 games had been coin flips, going 10-35 or worse would happen about once in 8,000 tries. That is this map\'s own arithmetic. A gap that size is not luck. It points to things that repeat, such as turnovers, kicking and late-game decisions. Updated Nov 14, 2026.',undefined,undefined,[{href:'https://www.cornnation.com/football/99232/huskers-football-2025-26-part-2-we-conquer-the-one-score-game-cursebut-a-few-get-away',label:'Corn Nation ↗'},{href:'https://www.footballscoop.com/2026/11/02/house-of-horrors-ranking-nebraska-one-score-losses-matt-rhule',label:'FootballScoop ↗'}])}
 // ---- Bird's eye reset also puts every switch in the menu back where it started
 function resetMenu(){if(codeOn)setCode(0);if(wxOn)setWx(false);if(prideOn)setPride(false);if(vbOn)setVB(false);if(trafOn)setTraffic(false);if(rideMode)setRideMode(false);if(gameOn)$('bGame').click();if(!trailsOn)setTrails(true);if(!busOn)$('bBus').click();if(!labelsOn)$('bLabels').click();if(!birdsOn)$('bBirds').click();
-  if(shadowsOn!==!mobile)$('bShadow').click();for(const L of dlOn.slice())dlSet(L.id,false,true);if(bizOn)setBiz(false);dlHS=1;dlAL=1;Object.assign(bizF,{who:-1,cat:-1,cu:-1,how:0,open:false,q:''});if($('bizq'))$('bizq').value='';
+  if(shadowsOn!==!mobile)$('bShadow').click();for(const L of dlOn.slice())dlSet(L.id,false,true);if(bizOn)setBiz(false);dlHS=1;dlAL=1;dlHSuser=false;Object.assign(bizF,{who:-1,cat:-1,cu:-1,how:0,open:false,q:''});if($('bizq'))$('bizq').value='';
   $('find').style.display='none';$('bFind').classList.remove('on');if(sheet)closeSheet();closeCam();hideCard()}
 
 
@@ -2281,14 +2295,14 @@ const WSPD=[['Walk',4.5],['Jog',10],['Fast',26]],walkLabels=[];let wkSp=0,wkGo=n
 function wkMove(x,z,dx,dz){const lim=8100,L=Math.hypot(dx,dz)||1,px=dx/L*.7,pz=dz/L*.7,here=bAt(x,z),ok=(a,b)=>{const q=bAt(a,b);return q<0||q===here};
   const nx=Math.max(-lim,Math.min(lim,x+dx)),nz=Math.max(-lim,Math.min(lim,z+dz));
   if(ok(nx+px,nz+pz))return [nx,nz];if(ok(nx+Math.sign(dx)*.7,z))return [nx,z];if(ok(x,nz+Math.sign(dz)*.7))return [x,nz];return [x,z]}
-function setWalk(on,at){if(on===walk.on&&!at)return;if(on&&rideMode)setRideMode(false);stopTour();fly=null;if(ride)stopRide();const was=walk.on;walk.on=on;$('bWalk').classList.toggle('on',on);controls.enabled=!on;
+function setWalk(on,at){if(on===walk.on&&!at)return;if(on)viewKeep();if(on&&rideMode)setRideMode(false);stopTour();fly=null;if(ride)stopRide();const was=walk.on;walk.on=on;$('bWalk').classList.toggle('on',on);controls.enabled=!on;
   $('wkui').style.display=on?'block':'none';document.body.classList.toggle('walking',on);wkGo=null;if(wkMark)wkMark.visible=false;walkLabels.length=0;walk.mx=walk.mz=0;walk.keys={};walk.look=null;
   if(on){document.body.style.setProperty('--wktop',Math.round($('title').getBoundingClientRect().bottom+6)+'px');wkGrid();let x,z;if(at){x=at.x;z=at.z;if(at.yaw!==undefined)walk.yaw=at.yaw}else if(!was){const t=controls.target,dx=t.x-camera.position.x,dz=t.z-camera.position.z,dh=Math.hypot(dx,dz)||1,back=Math.min(60,dh*.25);walk.yaw=Math.atan2(-dx,-dz);x=t.x-dx/dh*back;z=t.z-dz/dh*back}
     if(x!==undefined){[x,z]=wkFree(Math.max(-8000,Math.min(8000,x)),Math.max(-8000,Math.min(8000,z)));walk.pitch=.02;camera.position.set(x,hAt(x,z)+1.7,z);camera.near=.4;camera.fov=62;camera.updateProjectionMatrix()}
     walk.t=performance.now();$('wktip').textContent=mobile?'Stick moves you · drag the view to look · tap a spot to walk there':'W A S D or arrows to walk · drag to look · click a spot to walk there · Shift to hurry · Esc to leave';$('wktip').style.display='block';setTimeout(()=>{$('wktip').style.display='none'},7000);
     $('wkSp').textContent=WSPD[wkSp][0];hideCard();wkHud()}
   else if(was){const fx=-Math.sin(walk.yaw),fz=-Math.cos(walk.yaw),x=camera.position.x,z=camera.position.z;camera.fov=45;controls.target.set(x+fx*60,hAt(x+fx*60,z+fz*60),z+fz*60);camera.position.set(x-fx*220,hAt(x,z)+170,z-fz*220);camera.updateProjectionMatrix()}
-  layoutCard();shadowDirty=true;dirty=true}
+  if(!on&&was)viewBack();layoutCard();shadowDirty=true;dirty=true}
 function stepWalk(now){const dt=Math.min(.1,(now-walk.t)/1000||0);walk.t=now;let mx=walk.mx,mz=walk.mz;const k=walk.keys;
   if(k.KeyW||k.ArrowUp)mz-=1;if(k.KeyS||k.ArrowDown)mz+=1;if(k.KeyA)mx-=1;if(k.KeyD)mx+=1;if(k.ArrowLeft||k.KeyQ){walk.yaw+=1.7*dt;dirty=true}if(k.ArrowRight||k.KeyE){walk.yaw-=1.7*dt;dirty=true}
   let x=camera.position.x,z=camera.position.z,moved=false;const sp=WSPD[wkSp][1]*((k.ShiftLeft||k.ShiftRight)?2.4:1),m=Math.hypot(mx,mz);
@@ -2317,7 +2331,7 @@ function walkInit(){const j=$('wjoy'),knob=j.firstElementChild;let jp=null;
   const mv=e=>{const r=j.getBoundingClientRect(),R=r.width/2;let dx=e.clientX-(r.left+R),dy=e.clientY-(r.top+R);const m=Math.hypot(dx,dy),lim=R-14;if(m>lim){dx*=lim/m;dy*=lim/m}walk.mx=dx/lim;walk.mz=dy/lim;knob.style.transform=`translate(${dx}px,${dy}px)`;dirty=true;lastInput=performance.now()};
   j.addEventListener('pointerdown',e=>{e.preventDefault();jp=e.pointerId;try{j.setPointerCapture(jp)}catch(_){}mv(e)});j.addEventListener('pointermove',e=>{if(e.pointerId===jp)mv(e)});
   const up=e=>{if(e.pointerId!==jp)return;jp=null;walk.mx=walk.mz=0;knob.style.transform=''};j.addEventListener('pointerup',up);j.addEventListener('pointercancel',up);
-  $('wkSp').onclick=()=>{wkSp=(wkSp+1)%WSPD.length;$('wkSp').textContent=WSPD[wkSp][0]};$('wkX').onclick=()=>setWalk(false)}
+  $('wkSp').onclick=()=>{wkSp=(wkSp+1)%WSPD.length;$('wkSp').textContent=WSPD[wkSp][0]};$('wkX').onclick=()=>viewExit(false);$('wkUp').onclick=()=>viewExit(true)}
 
 
 // =====================================================================================================
@@ -2580,7 +2594,8 @@ LIVEL.push({id:'cases',t:'Decisions in the works',g:'City Hall',k:'pg',st:{h:34,
   live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/Planning/DevRevAPPLICATIONS/MapServer/1',get where(){return "STATUS IN ('Approved','Approved with Conditions','Denied','Withdrawn') AND SUBTYPE IN ('Change of Zone','Special Permit','Annexation','Preliminary Plat','Final Plat','Comp Plan Amendment','Street and Alley Vacation','Use Permit') AND SUBMITTAL_DATE >= DATE '"+isoAgo(365)+"'"},off:.00002,max:900,fields:CASE_F}},
  {id:'permits',t:'Building permits this year',g:'City Hall',k:'pt',st:{h:60,col:0xffb347,r:.8},note:'Building permits other than new houses issued so far this year, from the city\'s permit map.',src:'City of Lincoln Building and Safety, through the Planning Department permit layers',
   live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/Planning/Commercial_New_Construction_Permits/MapServer/2',max:1000,fields:[['DescWork','Work','s','',v=>nice(String(v||'').trim())],['Address','Address','s','',v=>String(v||'').trim()],['PermType','Type','s'],['Issued','Issued','s','',v=>String(v||'').trim()],['CurrStatus','Status','s'],['PermNo','Permit','s']]}});
-function councilCard(){const L=DL.get('council'),m=[];if(L){const f=k=>fget(L,L.fields.find(q=>q.k===k)),nm=f('name'),mb=f('member'),al=f('atlarge'),seen=new Set();for(let i=0;i<L.n;i++){if(seen.has(nm(i)))continue;seen.add(nm(i));m.push(nm(i).replace('City Council ','')+': '+mb(i))}if(L.n)m.push('at large: '+al(0))}
+function councilCard(){councilOpen(0)}
+function councilCardOld(){const L=DL.get('council'),m=[];if(L){const f=k=>fget(L,L.fields.find(q=>q.k===k)),nm=f('name'),mb=f('member'),al=f('atlarge'),seen=new Set();for(let i=0;i<L.n;i++){if(seen.has(nm(i)))continue;seen.add(nm(i));m.push(nm(i).replace('City Council ','')+': '+mb(i))}if(L.n)m.push('at large: '+al(0))}
   showCard('Lincoln City Council','Seven members: four elected by district and three by the whole city. '+(m.length?'As the city\'s own map lists them, '+m.join(' · ')+'. ':'')
   +'The council meets most Mondays at 3 p.m., and at 5:30 p.m. on the last Monday of the month, in the Council Chambers on the first floor of the County-City Building, 555 S. 10th Street. Agendas come out by 4 p.m. the Thursday before. Anyone may speak on an item at its public hearing, and there is an open microphone on the second and last Mondays. Meetings air live on LNKTV. '
   +'Turn on Decisions in the works to see what is headed to the Planning Commission and the council, on the ground where it would happen.',undefined,{label:'Decisions in the works',fn:()=>{dlSet('cases',true);dlSet('council',true,true)}},
@@ -2658,7 +2673,7 @@ function civicStack(x,z){civClear();const g=new THREE.Group(),y0=hAt(x,z),parts=
 function civFrame(){if(!CIV.g)return;const k=Math.min(5.5,Math.max(.2,camera.position.distanceTo(controls.target)/3600));if(Math.abs(k-CIV.k)<.004)return;CIV.k=k;CIV.g.scale.y=k;for(const l of civLabels)l.y=CIV.y0+l.ly*k;dirty=true}
 function civArm(){civClear();CIV.arm=true;showCard('Every district at one spot','Tap anywhere in the city. The map will raise a wall around each district that spot belongs to: precinct, City Council, County Board, school board, Legislature and more.',undefined,{label:'Cancel',fn:()=>{CIV.arm=false;hideCard()}})}
 function demoCard(){showCard('How Lincoln governs itself','Four ways in. Vote history turns every precinct into a stack of votes for five elections, 2012 to 2020, plus who is registered now. Districts at a spot raises a wall around every district you vote in, from wherever you tap. City Council explains when it meets and how to speak. Decisions in the works shows what is headed for a vote, on the ground where it would happen, read live from the Planning Department.',undefined,{label:'Vote history in 3D',fn:()=>setVotes(true)},
-  [{label:'Districts at a spot',fn:civArm},{label:'City Council',fn:councilCard},{label:'Decisions in the works',fn:()=>dlSet('cases',true)},{label:'Polling places',fn:()=>dlSet('polls',true)}])}
+  [{label:'Districts at a spot',fn:civArm},{label:'City Council',fn:()=>councilOpen(0)},{label:'Decisions in the works',fn:()=>dlSet('cases',true)},{label:'Polling places',fn:()=>dlSet('polls',true)}])}
 // ---- Native Lincoln: the homeland this is, the places that carry Native names and history, and the streets named for Native nations
 function nativeInit(){const pts=[],add=(t,about,x,z)=>{if(x!==undefined&&Math.abs(x)<8150&&Math.abs(z)<8150)pts.push([t,about,x,z])},B=(n,about)=>{const b=bByName(n);if(b>=0)add(n,about,LM.bc[2*b],LM.bc[2*b+1])};
   add('Thunderbird mosaics, Nebraska State Capitol','Eight thunderbird mosaics circle the tower beneath the dome. The Capitol\'s guide says they speak to how much water matters to the people who farm this land.',LM.capitol[0],LM.capitol[1]);
@@ -2819,12 +2834,12 @@ function skyCard(){const ms=skyMs(),B=n=>NSKY.bodies.find(b=>b.name===n)||{alt:-
     +`Moon ${Math.round((moon.phase||0)*100)}% lit, ${moon.waxing?'waxing':'waning'}, ${moon.alt>0?Math.round(moon.alt)+'° up, '+compass(moon.az):'below the horizon'}. `+(up.length?'Planets: '+up.join('; ')+'. ':'No bright planets are up. ')
     +(NSKY.rec?`${NSKY.nUp} bright satellites are above the horizon`+(st.length?', with the '+st.map(s=>s.name+' '+Math.round(s.alt)+'° up, '+compass(s.az)).join(' and the '):'')+'. ':hosted()?(NSKY.satFail?'The satellite list could not be reached just now. ':'Reading satellite orbits… '):'Satellites load on the website copy. ')
     +(mobile?'Drag to look, pinch to zoom, tap a star.':'Drag to look, scroll to zoom, click a star.'),
-    undefined,{label:'Leave the sky',fn:()=>setSky(false)},[{label:'−1 hour',fn:()=>skyShift(NSKY.off-1)},{label:'+1 hour',fn:()=>skyShift(NSKY.off+1)},{label:'Tonight, 10 PM',fn:skyTonight},{label:'Now',fn:()=>skyShift(0)},{label:'How this is worked out',fn:skyHow}])}
+    undefined,{label:'\u2190 Back to the map',fn:()=>viewExit(false)},[{label:'−1 hour',fn:()=>skyShift(NSKY.off-1)},{label:'+1 hour',fn:()=>skyShift(NSKY.off+1)},{label:'Tonight, 10 PM',fn:skyTonight},{label:'Now',fn:()=>skyShift(0)},{label:'How this is worked out',fn:skyHow}])}
 function skyHow(){showCard('How the sky is worked out','Stars: the 1,627 brightest in the Hipparcos catalog, placed for Lincoln at the minute shown by arithmetic. Nothing is fetched. The Moon and the planets: standard low-precision formulas, good to a fraction of a degree, so a planet sits in the right part of the right constellation but this is not an almanac. Satellites: orbits published by CelesTrak for about 150 of the brightest objects and the two space stations, read on the website copy and worked forward with the standard SGP4 method. A satellite above the horizon is only visible when it is in sunlight and your sky is dark, which is mostly soon after dusk and before dawn. Lights, clouds and the real horizon are not modeled.',undefined,{label:'Back to the sky',fn:skyCard})}
 function skyShift(h){NSKY.off=h;skyUpdate(true);skyCard()}
 function skyTonight(){const n=lincolnNow();let h=(22*3600-n.sec)/3600;if(h<-2)h+=24;skyShift(Math.round(h*4)/4)}
-function skyDark(){scene.background.setHex(0x05080f);scene.fog.color.setHex(0x05080f);if(LM.bg0)LM.bg0.setHex(0x05080f)}
-function setSky(on){if(on===NSKY.on)return;if(on&&!skyBuild()){showCard('Night sky','The star catalog did not load with this copy of the map.');return}NSKY.on=on;$('bSky').classList.toggle('on',on);document.body.classList.toggle('sky',on);$('wkX').textContent=on?'Leave the sky':'Leave walk';
+function skyDark(){scene.background.setHex(0x05080f);if(scene.fog)scene.fog.color.setHex(0x05080f);if(LM.bg0)LM.bg0.setHex(0x05080f)}
+function setSky(on){if(on===NSKY.on)return;if(on&&codeOn)setCode(0);if(on&&!skyBuild()){showCard('Night sky','The star catalog did not load with this copy of the map.');return}NSKY.on=on;$('bSky').classList.toggle('on',on);document.body.classList.toggle('sky',on);$('wkX').textContent='\u2190 Back to the map';
   if(on){NSKY.keep={live:liveOn,h:curHour,walk:walk.on};if(!walk.on)setWalk(true);walk.sky=true;walk.pitch=.72;setHour(22.4);skyDark();scene.add(NSKY.grp);NSKY.off=0;skyUpdate(true);
     if((NSKY.bodies.find(b=>b.name==='Sun')||{alt:0}).alt>-6)skyTonight();else skyCard();skySats()}
   else{walk.sky=false;scene.remove(NSKY.grp);skyLabels.length=0;const k=NSKY.keep;NSKY.keep=null;if(k){if(!k.walk&&walk.on)setWalk(false);else if(walk.on){camera.fov=Math.min(camera.fov,72);camera.updateProjectionMatrix()}if(k.live)setLive(true);else setHour(k.h)}if(/^(Night sky|In the sky|How the sky)/.test($('ch').textContent))hideCard()}
@@ -3036,7 +3051,7 @@ const INTENT=[
  ['now','Happening now','What is going on in Lincoln at this moment: the weather and any warnings, Husker scores, what City Hall is deciding, and streets that are closed.',
   [['Lincoln right now',()=>pulseCard()],['Husker scores',()=>huskOpen(0)],['Weather and alerts',()=>wxDetail()],LY('cases','Decisions in the works'),LY('closures','Road closures now'),LY('permits','Building permits this year')]],
  ['hall','City Hall and votes','Who represents any spot, how the council works, what is on its way to a vote, and how every precinct has voted since 2012.',
-  [['City Council',()=>councilCard()],LY('cases','Decisions in the works'),['Every district at one spot',()=>civArm()],['How Lincoln voted',()=>setVotes(true)],LY('polls','Polling places'),['More',()=>demoCard()]]],
+  [['How the council works',()=>councilOpen(0)],['What is on its way to a vote',()=>councilOpen(4)],['Speak at a meeting',()=>councilOpen(3)],['Every district at one spot',()=>civArm()],['How Lincoln voted',()=>setVotes(true)],LY('polls','Polling places')]],
  ['money','Values and taxes','Every property\'s assessed value as a bar, a tax estimate for every tax district at the 2025 levy, recent sales, and the statistics for whatever part of the city is in view. Tax figures are estimates from value and levy, not bills.',
   [LY('pv','Every property as a value bar'),['Taxes by district',()=>openSheet(TAXS,0)],['The numbers for this view',()=>openSheet(NUMS,0)],['Compare everything here',()=>openSheet(CMPS,0)],['New sales and where',()=>openSheet(SALESS,0)],['Rents',()=>rentCard()],LY('redlines','1930s redlining lines'),['Switch real estate on',()=>setRE(true)]]],
  ['nature','Birds, trees and sky','Which birds are here this month and which are passing through, every tree on the city\'s list, floodplain and salt marsh, and tonight\'s sky over Lincoln with the planets and satellites that are up.',
@@ -3046,8 +3061,8 @@ const INTENT=[
  ['safe','Safety','Weather warnings as the Weather Service issues them, where water goes in a flood, where help is, where crashes have happened, and how to use the state\'s offender registry the way it is meant to be used.',
   [['Weather alerts',()=>wxDetail()],LY('flood100','Floodplain'),LY('fire','Fire stations'),LY('medical','Hospitals'),LY('crashes','Crash reports, 2019'),['The registry and the law',()=>safeCard()]]],
  ['data','All city data','Everything here comes from public sources, and each card says which. Browse the city\'s own map server for any layer it publishes, see where every number on this map came from, or read the code.',
-  [['Compare everything here',()=>openSheet(CMPS,0)],['Data feeds, live',()=>setFeeds(true)],['Browse all city data',()=>cityData()],['Layers on this map',()=>openSheet(LAYS,0)],['Where every number comes from',()=>openSheet(GUIDE,2)],['Describe this view in words',()=>describeView()]]]];
-function intentCard(k){const I=INTENT.find(q=>q[0]===k);if(!I)return;sgUse(k);SG.topic=k;sgDraw(true);showCard(I[1],I[2],undefined,undefined,I[3].map(([label,fn])=>({label,fn:()=>{lastInput=performance.now();fn()}})))}
+  [['Compare everything here',()=>openSheet(CMPS,0)],['Data feeds, live',()=>setFeeds(true)],['Browse all city data',()=>cityData()],['Layers on this map',()=>openSheet(LAYS,0)],['Where every number comes from',()=>openSheet(GUIDE,2)],['Make this for your city',()=>openSheet(FORKS,0)]]]];
+function intentCard(k,again){const I=INTENT.find(q=>q[0]===k);if(!I)return;if(!again)sgUse(k);SG.topic=k;sgDraw(true);menuCard('i:'+k,()=>showCard(I[1],I[2],undefined,undefined,I[3].map(([label,fn])=>({label,fn:()=>{lastInput=performance.now();fn()}}))),!again)}
 // the chips: what is live or timely first, then the reasons people come, most used first on this device
 function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date.now(),wd=n.dow<5;
   for(const s of HK.sp.slice(1)){const e=(HK.ev[s[0]]||[]).find(q=>q.st==='in');if(e)out.push({t:'LIVE · '+hkLine(e,s),c:'hot',fn:()=>huskOpen(0)})}
@@ -3059,7 +3074,7 @@ function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date
   if(wd&&((h>=6.75&&h<9)||(h>=15.75&&h<18.25)))out.push({t:'Rush hour traffic',c:'ctx',fn:()=>setTraffic(true)});
   if(BX.ok&&n.dow<6&&h>=5.5&&h<21.5)out.push({t:'Next bus near here',c:'ctx',fn:()=>busNear()});
   {const s=skyBody('Sun',skyDay(nowMs));if(skyAltAz(s.ra,s.dec,nowMs).alt<-6&&S2&&S2.sky_ra)out.push({t:'Tonight\'s sky',c:'ctx',fn:()=>setSky(true)})}
-  if(n.dow===0&&h<18.5)out.push({t:'City Council meets Mondays',c:'ctx',fn:()=>councilCard()});
+  {const c=ccChip();if(c)out.push({t:c,c:'ctx',fn:()=>councilOpen(1)})}
   {const m=Math.floor(n.ymd/100)%100;if(H2&&H2.birdyear)out.push({t:[3,4,5,9,10].includes(m)?'Migration: who is passing through':'Birds here in '+MONTHS[m-1],c:'ctx',fn:()=>openSheet(BIRDSS,0)})}
   const rest=INTENT.map((I,i)=>({t:I[1],k:I[0],u:U[I[0]]||0,i,fn:()=>intentCard(I[0])})).sort((a,b)=>b.u-a.u||a.i-b.i);return out.slice(0,6).concat(rest)}
 // once a topic is chosen the row becomes that topic: every one of its views stays one tap away and its layers stack, with any other layer and the compare table at the end
@@ -3199,7 +3214,7 @@ function birdHTML(tab){const Y=birdYear(),m=birdMonth(),M=MONTHS[m-1];if(!Y)retu
   return `<p>Every species reported near Lincoln, most reported first: <b>${all.length} in all, ${hereN} of them reported in ${M}</b>. The strip shows the months each one turns up, with ${M} outlined. ${src}</p><table class="btab">${head}${all.map(row).join('')}</table>`}
 const BIRDSS={title:'Birds <i>of Lincoln</i>',tabs:['Here now','The whole list','How this works'],html:birdHTML,click:()=>{}};
 // ---- one place to start each of the pieces above, and to keep them moving
-function init2(){const run=(n,f)=>{try{f()}catch(e){console.warn('STARCITY: could not start '+n,e)}};run('bus stops',busxInit);run('front door',frontInit);run('sky',()=>{$('bSky').onclick=()=>setSky(!NSKY.on);if(!S2||!S2.sky_ra)$('bSky').style.display='none'});run('access',accessInit);run('tray',trayInit);run('compare',()=>{$('bCompare').onclick=()=>openSheet(CMPS,0)});run('community',()=>{communityInit()});run('real estate and look',init3);run('data console',feedInit)}
+function init2(){const run=(n,f)=>{try{f()}catch(e){console.warn('STARCITY: could not start '+n,e)}};run('bus stops',busxInit);run('front door',frontInit);run('sky',()=>{$('bSky').onclick=()=>setSky(!NSKY.on);if(!S2||!S2.sky_ra)$('bSky').style.display='none'});run('access',accessInit);run('tray',trayInit);run('compare',()=>{$('bCompare').onclick=()=>openSheet(CMPS,0)});run('community',()=>{communityInit()});run('real estate and look',init3);run('data console',feedInit);run('council',()=>{if(hosted())ccPipe(false)})}
 function frame2(now,dt){festFrame(now,dt);busFrame(now);skyFrame(now);coreFrame(now);frame3();feedFrame(now);stackFrame();trayDraw(false);if(SG.topic)sgDraw(false)}
 function reset2(){if(RE.on)setRE(false,true);if(FEED.on)setFeeds(false);if(LOOK.on)setLook(false);if(FEST.on)devFest(false);if(NSKY.on)setSky(false);busLine(null);cityClear();coreReset();SG.topic=null;sgDraw(true)}
 
@@ -3260,13 +3275,13 @@ function accessInit(){$('bText').onclick=()=>accSet((ACC.z+1)%3,ACC.hc);$('bHC')
   // a device set to reduce motion starts with the decorative animation off; every switch still works
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){if(birdsOn)$('bBirds').click();if(CR.on)setCreatures(false);hideCard();hintShow('Your device asks for less motion, so the birds and creatures start switched off. They are under More.',9000)}}
 // ---- the tray: what you have switched on, kept in sight when the button grid folds away, with Menu one tap from adding more
-const TRAY={key:'',at:0};
+const TRAY={key:'',at:0,mute:false};
 // a view wide enough to see what was just switched on
 const PANOUT={bTraf:5200,bTrails:5200,bBus:4200,bVB:6000,bWx:7000,bBiz:3200},PANK={hx:9000,pg:8000,ln:6000,pt:2600};
 function panOut(minD){if(walk.on||ride||fly||tour)return;const v=viewAngles(),t=controls.target;if(v.d>=minD*.55)return;flyTo(camTo(t.x,t.z,minD,v.az,Math.max(v.el,46),-hAt(t.x,t.z)+t.y),1400)}
 function trayItems(){const a=[];for(const L of dlOn)if(!(CORE.cl&&L.id==='closures'))a.push([L.def.t,()=>dlSet(L.id,false)]);if(DM.on)a.push(['Vote history',()=>setVotes(false)]);if(CIV.g)a.push(['District walls',()=>civClear()]);if(FEST.on)a.push(['Devaney lights',()=>devFest(false)]);
   if(BX.route!=null&&H.bus)a.push(['Route '+H.bus.routes[BX.route][0]+' path',()=>busLine(null)]);return a}
-function trayDraw(force){const now=performance.now();if(!force&&now-TRAY.at<400)return;TRAY.at=now;const T=$('tools'),it=trayItems(),shut=T.classList.contains('shut'),nb=T.querySelectorAll('.btn.sel.on').length,key=it.map(q=>q[0]).join('|')+'#'+shut+'#'+nb;if(key===TRAY.key)return;TRAY.key=key;
+function trayDraw(force){if(TRAY.mute)return;const now=performance.now();if(!force&&now-TRAY.at<400)return;TRAY.at=now;const T=$('tools'),it=trayItems(),shut=T.classList.contains('shut'),nb=T.querySelectorAll('.btn.sel.on').length,key=it.map(q=>q[0]).join('|')+'#'+shut+'#'+nb;if(key===TRAY.key)return;TRAY.key=key;
   const host=$('tray');host.textContent='';for(const [t,off] of it){const b=document.createElement('button');b.className='btn on';b.textContent=t+'  ×';b.setAttribute('aria-label','Showing '+t+'. Tap to turn it off');b.onclick=e=>{e.stopPropagation();lastInput=performance.now();off();trayDraw(true)};host.appendChild(b)}
   const n=it.length+nb;$('bMenu').textContent=shut?(n?'Menu · '+n+' on ▾':'Menu ▾'):'Menu ▴'}
 function trayInit(){const T=$('tools'),t=document.createElement('div');t.id='tray';t.setAttribute('role','group');t.setAttribute('aria-label','Switched on now');T.appendChild(t);
@@ -3410,9 +3425,9 @@ const SALESS={title:'New <i>sales</i>',tabs:['Newest','Where it is happening'],h
 // ---- look around from where the camera is: hold and drag to look up to the horizon and all the way round
 const LOOK={on:false,keep:null};
 function setLook(on){if(on===LOOK.on)return;if(on){if(walk.on||ride||NSKY.on)return;const p=camera.position.clone(),t=controls.target.clone(),v=viewAngles();LOOK.keep={p,t};LOOK.on=true;walk.eye=Math.max(1.7,p.y-hAt(p.x,p.z));
-    setWalk(true,{x:p.x,z:p.z,yaw:v.az*Math.PI/180});walk.pitch=-Math.min(1.15,Math.max(0,v.el)*Math.PI/180);camera.fov=58;camera.updateProjectionMatrix();document.body.classList.add('looking');$('wkX').textContent='Stop looking';$('bLook').classList.add('on');
-    hintShow(mobile?'Drag to look up to the horizon and all the way round · pinch to zoom · Stop looking goes back':'Hold the mouse and drag to look up to the horizon and all the way round · scroll to zoom · Stop looking goes back',8000)}
-  else{LOOK.on=false;walk.eye=0;document.body.classList.remove('looking');$('wkX').textContent='Leave walk';$('bLook').classList.remove('on');if(walk.on)setWalk(false);const k=LOOK.keep;LOOK.keep=null;if(k){fly=null;camera.position.copy(k.p);controls.target.copy(k.t);controls.update()}}
+    setWalk(true,{x:p.x,z:p.z,yaw:v.az*Math.PI/180});walk.pitch=-Math.min(1.15,Math.max(0,v.el)*Math.PI/180);camera.fov=58;camera.updateProjectionMatrix();document.body.classList.add('looking');$('wkX').textContent='← Back to the map';$('bLook').classList.add('on');
+    hintShow(mobile?'Drag to look up to the horizon and all the way round · pinch to zoom · Back to the map returns you':'Hold the mouse and drag to look up to the horizon and all the way round · scroll to zoom · Back to the map returns you',8000)}
+  else{LOOK.on=false;walk.eye=0;document.body.classList.remove('looking');$('wkX').textContent='← Back to the map';$('bLook').classList.remove('on');if(walk.on)setWalk(false);const k=LOOK.keep;LOOK.keep=null;if(k){fly=null;camera.position.copy(k.p);controls.target.copy(k.t);controls.update()}}
   lastInput=performance.now();dirty=true}
 function init3(){redlinesInit();$('bNum').textContent='Real estate';$('bNum').onclick=()=>{if(RE.on)reCard();else setRE(true)};
   $('bLook').onclick=()=>setLook(!LOOK.on);addEventListener('keydown',e=>{if(e.target.tagName!=='INPUT'&&(e.key==='l'||e.key==='L')&&!e.ctrlKey&&!e.metaKey)setLook(!LOOK.on)})}
@@ -3477,6 +3492,181 @@ function chHTML(tab){const D=numData();if(!D)return '<p>The property data did no
 const CHS={title:'Real estate <i>charts</i>',tabs:['Value spikes','Tax spikes','Prices over time','Sales per month'],html:chHTML,click:e=>{const c=e.target.closest('[data-ch]');if(!c)return;if(c.dataset.ch==='clear')CH.b=-1;const t=[...$('gtabs').children].findIndex(q=>q.classList.contains('on'));openSheet(CHS,Math.max(0,t))}};
 function chartsFor(b){CH.b=b==null?-1:b;openSheet(CHS,0)}
 
+// ---- 0.9.2: boxes that close go back to their options, a way back from close-up views, the City Council in depth, and this map for any city
+
+// A card that is a list of options. Anything opened from it comes back to it when its box is closed, and what was switched on stays on.
+function menuCard(tag,show,root){if(root)MENUS.length=0;const i=MENUS.findIndex(m=>m.tag===tag);if(i>=0)MENUS.length=i;MENUS.push({tag,show});show();cardTag=tag}
+const deepView=()=>walk.on||!!ride||rideMode||gameOn||!!tour;
+function menuTop(skip){const m=MENUS[MENUS.length-1];if(m)return m;if(SG.topic&&skip!=='i:'+SG.topic)return {tag:'i:'+SG.topic,show:()=>intentCard(SG.topic,true)};return null}
+function menuShowTop(skip){const m=menuTop(skip);if(!m)return false;m.show();if(MENUS.length)cardTag=MENUS[MENUS.length-1].tag;return true}
+// was: the tag of the card that just closed, if it was a list of options
+function cardBack(was){if(deepView())return;if(was){const i=MENUS.findIndex(m=>m.tag===was);if(i<0)return;MENUS.length=i;if(i>0)menuShowTop();return}if(menuAt>0)menuShowTop()}
+function sheetBack(){if(deepView()||sheet||$('card').style.display==='block')return;if(menuAt>0)menuShowTop()}
+
+// ---- close-up views (the sky, walking, looking around, a bike ride) remember the map as it was, and Back to the map puts it back
+const VIEW={keep:null,stay:false};
+function viewKeep(){if(VIEW.keep)return;VIEW.keep={p:camera.position.clone(),t:controls.target.clone(),fov:camera.fov,near:camera.near}}
+function viewBack(){const k=VIEW.keep;VIEW.keep=null;if(!k||VIEW.stay)return;fly=null;camera.position.copy(k.p);controls.target.copy(k.t);camera.fov=k.fov;camera.near=k.near;camera.updateProjectionMatrix();controls.update();shadowDirty=true;dirty=true}
+// the one way out of every close-up view. stay: come up above where you are standing instead of going back
+function viewExit(stay){VIEW.stay=!!stay;try{if(NSKY.on)setSky(false);if(LOOK.on)setLook(false);if(walk.on)setWalk(false)}finally{VIEW.stay=false}lastInput=performance.now();if(!stay&&menuAt>0&&$('card').style.display!=='block')menuShowTop()}
+
+// ---- the City Council in depth: who, when, how a law is made, how to speak, and what is on its way to a vote
+// Meeting dates are the city's own list (City Council Public Meeting page), read Nov 14, 2026. A trailing e marks a 5:30 p.m. meeting.
+const CCD='2026-11-16 2026-11-23e 2026-12-07 2026-12-14 2026-12-21e 2027-01-11 2027-01-25e 2027-02-01 2027-02-08 2027-02-22e 2027-03-01 2027-03-08 2027-03-15 2027-03-22 2027-03-29e 2027-04-05 2027-04-12 2027-04-19 2027-04-26e 2027-05-03 2027-05-10 2027-05-17 2027-05-24e 2027-06-07 2027-06-14 2027-06-28e 2027-07-12 2027-07-19 2027-07-26e 2027-08-02 2027-08-09 2027-08-16 2027-08-23 2027-08-30e 2027-09-13 2027-09-20 2027-09-27e 2027-10-04 2027-10-18 2027-10-25e 2027-11-01 2027-11-08 2027-11-22e 2027-12-06 2027-12-13 2027-12-20e'.split(' ').map(s=>({ymd:+s.slice(0,10).replace(/-/g,''),eve:s.endsWith('e')}));
+const CC={tab:0,vid:null,vidAt:0,vidErr:false,vbusy:false,pipe:null,pipeAt:0,pipeErr:'',pbusy:false,ready:[],over:false};
+const CCU={meet:'https://www.lincoln.ne.gov/City/City-Council/City-Council-Public-Meeting',members:'https://www.lincoln.ne.gov/City/City-Council/Council-Members',faq:'https://www.lincoln.ne.gov/City/City-Council/FAQ',agenda:'https://www.lincoln.ne.gov/City/City-Council/Minutes-Agendas',comment:'https://www.lincoln.ne.gov/City/City-Council/Comment',speak:'https://www.lincoln.ne.gov/City/Departments/Finance/City-Clerk/Clerk-Council/request-to-speak',tv:'https://lnktv.lincoln.ne.gov/CablecastPublicSite/gallery/5?channel=1',yt:'https://www.youtube.com/playlist?list=PLj13AfdUD7Y9k1KQ6ABREcSPXh5p4Ma4y',site:'https://robotwhitebread.github.io/STARCITY/'};
+const ext=(href,label)=>`<a href="${href}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
+const ymdMs=y=>Date.UTC(Math.floor(y/10000),Math.floor(y/100)%100-1,y%100);
+function ccNext(n){const now=lincolnNow(),out=[];for(const m of CCD){if(m.ymd<now.ymd)continue;if(m.ymd===now.ymd&&now.sec>(m.eve?19.5:17)*3600)continue;out.push(m);if(out.length>=n)break}return out}
+const ccTime=m=>m.eve?'5:30 p.m.':'3 p.m.';
+function ccDay(m){const now=lincolnNow(),y=Math.floor(m.ymd/10000),d=Math.round((ymdMs(m.ymd)-ymdMs(now.ymd))/864e5);return (d===0?'Today, ':d===1?'Tomorrow, ':'')+'Mon, '+MON3[Math.floor(m.ymd/100)%100-1]+' '+(m.ymd%100)+(y!==Math.floor(now.ymd/10000)?', '+y:'')}
+// the chip for the top row: only when a meeting on the city's list is today or within two days
+function ccChip(){const m=ccNext(1)[0];if(!m)return null;const d=Math.round((ymdMs(m.ymd)-ymdMs(lincolnNow().ymd))/864e5);if(d>2)return null;return 'City Council meets '+(d===0?'today':d===1?'tomorrow':'Monday')+' at '+ccTime(m)}
+function ccWho(){const L=DL.get('council'),D=[];let al='';try{if(L&&L.n){const f=k=>fget(L,L.fields.find(q=>q.k===k)),nm=f('name'),mb=f('member'),a=f('atlarge'),seen=new Set();for(let i=0;i<L.n;i++){const d=+String(nm(i)).replace(/\D/g,'');if(!d||seen.has(d))continue;seen.add(d);D.push([d,mb(i)])}al=a(0)||''}}catch(e){}D.sort((p,q)=>p[0]-q[0]);return {D,al:String(al).split(',').map(s=>s.trim()).filter(Boolean),asof:L&&L.def&&L.def.asof||''}}
+const CCQ={1:'Northeast',2:'Southeast',3:'Southwest',4:'Northwest'};
+// recordings of past meetings, read live from the city's own TV channel
+async function ccVideos(){if(!hosted()||CC.vbusy||(CC.vid&&Date.now()-CC.vidAt<6e5))return;CC.vbusy=true;
+  try{const j=await (await fetch('https://lnktv.lincoln.ne.gov/CablecastAPI/v1/shows?search='+encodeURIComponent('Lincoln City Council Meeting')+'&page_size=12&include=vod')).json(),len=new Map((j.vods||[]).map(v=>[v.id,v.length]));
+    CC.vid=(j.shows||[]).filter(s=>/^Lincoln City Council Meeting/i.test(s.title||'')&&s.eventDate).map(s=>({id:s.id,d:String(s.eventDate).slice(0,10),len:len.get((s.vods||[])[0])||0})).sort((a,b)=>a.d<b.d?1:-1).slice(0,6);CC.vidAt=Date.now();CC.vidErr=false}
+  catch(e){CC.vidErr=true}CC.vbusy=false;const el=$('ccvid');if(el)el.innerHTML=ccVidHTML()}
+function ccVidHTML(){if(!hosted())return `<p>Recordings are listed live on the website copy of the map. ${ext(CCU.tv,'All recordings on LNKTV')}</p>`;if(CC.vidErr)return `<p>The city's TV site could not be reached just now. ${ext(CCU.tv,'All recordings on LNKTV')}</p>`;if(!CC.vid)return '<p>Asking LNKTV for the latest recordings…</p>';
+  if(!CC.vid.length)return `<p>No recordings were listed. ${ext(CCU.tv,'LNKTV')}</p>`;
+  return CC.vid.map(v=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(v.d),h=Math.floor(v.len/3600),mi=Math.round(v.len%3600/60);return `<a class="btn go" href="https://lnktv.lincoln.ne.gov/CablecastPublicSite/show/${v.id}?channel=1" target="_blank" rel="noopener noreferrer">Meeting of ${MON3[+m[2]-1]} ${+m[3]}, ${m[1]} ↗<small>${v.len?'Video: '+(h?h+' h ':'')+mi+' min, with the agenda beside it':'Video and agenda'} · read live from LNKTV just now</small></a>`}).join('')}
+// where every open planning request stands, read live from the Planning Department. One case can cover several pieces of ground, so cases are counted once.
+const CCST=[['In review',['In Review','Hold','Listed']],['Ready for a design board',['UDC Ready','NCEC Ready']],['Ready for the Planning Commission',['Planning Commission Ready']],['Ready for the City Council or County Board',['City Council Ready','County/City Ready']],['Decided',['Approved','Approved with Conditions','Denied','Withdrawn']]];
+async function ccPipe(force){if(!hosted()){CC.pipeErr='off';return}if(CC.pbusy||(!force&&CC.pipe&&Date.now()-CC.pipeAt<3e5))return;CC.pbusy=true;CC.pipeErr='';
+  try{const base=CITYSRV+'/Planning/DevRevAPPLICATIONS/MapServer/1/query?',w="SUBMITTAL_DATE >= DATE '"+isoAgo(540)+"'",get=async u=>{const r=await fetch(u);if(!r.ok)throw new Error('http');const j=await r.json();if(j.error||!j.features)throw new Error('server');return j};
+    const a=await get(base+'where='+encodeURIComponent(w)+'&outFields='+encodeURIComponent('APPNUM,STATUS')+'&returnGeometry=false&resultRecordCount=4000&f=json'),seen=new Set(),by=new Map();
+    for(const f of a.features){const q=f.attributes,s=String(q.STATUS||'Not set').trim(),k=(q.APPNUM||Math.random())+'|'+s;if(seen.has(k))continue;seen.add(k);by.set(s,(by.get(s)||0)+1)}
+    const b=await get(base+'where='+encodeURIComponent("STATUS IN ('City Council Ready','County/City Ready','Planning Commission Ready','UDC Ready','NCEC Ready') AND "+w)+'&outFields='+encodeURIComponent('PROJECT_NAME,SUBTYPE,STATUS,APPNUM,PC_HEARING,CC_ORDINANCE_,CC_RESOLUTION_,DESCRIPTION,SUBMITTAL_DATE')+'&returnGeometry=true&outSR=4326&geometryPrecision=5&maxAllowableOffset=0.0005&resultRecordCount=400&f=json'),items=new Map();
+    for(const f of b.features){const q=f.attributes,id=q.APPNUM||q.PROJECT_NAME;let it=items.get(id);if(!it){it={a:Object.assign({},q),x0:1e9,x1:-1e9,y0:1e9,y1:-1e9};items.set(id,it)}if(!it.a.SUBTYPE&&q.SUBTYPE)it.a.SUBTYPE=q.SUBTYPE;for(const r of (f.geometry&&f.geometry.rings)||[])for(const p of r){it.x0=Math.min(it.x0,p[0]);it.x1=Math.max(it.x1,p[0]);it.y0=Math.min(it.y0,p[1]);it.y1=Math.max(it.y1,p[1])}}
+    CC.pipe=by;CC.ready=[...items.values()].sort((p,q)=>(p.a.PC_HEARING||0)-(q.a.PC_HEARING||0));CC.over=!!a.exceededTransferLimit;CC.pipeAt=Date.now()}
+  catch(e){CC.pipeErr='fail'}CC.pbusy=false;const el=$('ccpipe');if(el)el.innerHTML=ccPipeHTML()}
+function ccPipeHTML(){if(CC.pipeErr==='off')return `<p>This tab reads the Planning Department's list live, which works on the website copy of the map. ${ext(CCU.site,'Open the website copy')}</p>`;
+  if(CC.pipeErr)return '<p>The city\'s server could not be reached just now.</p><p><button class="btn" data-cc="retry">Try again</button></p>';if(!CC.pipe)return '<p>Reading the Planning Department\'s list from the city…</p>';
+  const n=k=>CC.pipe.get(k)||0,sum=a=>a.reduce((s,k)=>s+n(k),0),used=new Set(CCST.flatMap(q=>q[1])),rest=[...CC.pipe].filter(([k])=>!used.has(k)).sort((a,b)=>b[1]-a[1]),t=new Date(CC.pipeAt).toLocaleTimeString('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'2-digit'});
+  let h='<div class="flow">'+CCST.map((q,i)=>`<button class="btn" data-cc="st${i}"><b>${sum(q[1])}</b>${q[0]}</button>`).join('<i>›</i>')+'</div>'
+    +`<p class="psub">Cases filed in the last 18 months, counted once each, read live at ${t}. Decided: ${n('Approved')+n('Approved with Conditions')} approved, ${n('Denied')} denied, ${n('Withdrawn')} withdrawn.${rest.length?' Other labels the department uses: '+rest.map(([k,v])=>esc(k)+' '+v).join(', ')+'.':''}${CC.over?' The server cut the list short, so the counts are low.':''}</p>`;
+  const list=(title,sts,empty)=>{const it=CC.ready.map((q,i)=>[q,i]).filter(([q])=>sts.includes(String(q.a.STATUS).trim()));return `<h4>${title} (${it.length})</h4>`+(it.length?it.map(([q,i])=>{const a=q.a;return `<button class="btn go" data-cc="it${i}">${esc(a.PROJECT_NAME||a.APPNUM||'Unnamed request')}<small>${esc(a.SUBTYPE||'Request')}${a.APPNUM?' · case '+esc(a.APPNUM):''}${a.PC_HEARING?' · Planning Commission '+dayStr(a.PC_HEARING):''}${a.CC_ORDINANCE_?' · ordinance '+esc(a.CC_ORDINANCE_):''}${a.CC_RESOLUTION_?' · resolution '+esc(a.CC_RESOLUTION_):''}</small></button>`}).join(''):`<p>${empty}</p>`)};
+  h+=list('Ready for the City Council or County Board',CCST[3][1],'Nothing is listed at this stage right now.')+list('Ready for the Planning Commission',CCST[2][1],'Nothing is listed at this stage right now.')+list('Ready for a design board',CCST[1][1],'Nothing is listed at this stage right now.');
+  return h+'<p><button class="btn go2" data-cc="st0">Show every open request on the map</button></p><p class="psub">Source: Lincoln and Lancaster County Planning Department, development review applications. Only planning and zoning requests are here. Contracts, the budget and the rest of the council\'s business are on its agenda.</p>'}
+const step=(n,t,d)=>`<div class="step"><b class="n">${n}</b><div><p><b>${t}</b></p><p>${d}</p></div></div>`;
+function ccHTML(tab){CC.tab=tab;
+  if(tab===0){const W=ccWho(),nx=ccNext(1)[0];
+    return (nx?`<p><b>Next meeting: ${ccDay(nx)} at ${ccTime(nx)}</b>, Council Chambers, County-City Building, 555 S. 10th Street.</p>`:'')
+    +'<h4>Seven members</h4><p>Four are elected by district, one for each quarter of the city. Three are elected by the whole city. So four of the seven answer to every resident: your district member and the three at large.</p>'
+    +(W.D.length?W.D.map(([d,m])=>`<button class="btn go" data-cc="lay">District ${d} · ${CCQ[d]||''}<small>${esc(m||'See the city\'s list')}</small></button>`).join('')+(W.al.length?`<button class="btn go" data-cc="lay">At large, elected citywide<small>${W.al.map(esc).join(' · ')}</small></button>`:''):'<p>The district layer did not load with this copy of the map.</p>')
+    +`<p class="psub">Names as the city's own district map lists them${W.asof?', saved with this map on '+esc(W.asof):''}. Chair: Brodey Weber. Vice chair: Tom Duden, as the city's council page listed them on Nov 14, 2026. ${ext(CCU.members,'The city\'s member pages')}</p>`
+    +'<button class="btn go2" data-cc="spot">Tap a spot to see every district it is in</button><button class="btn go2" data-cc="lay">Show the four districts on the map</button>'
+    +'<h4>Terms, pay and the mayor</h4><ul><li>A term is four years. The city lists council pay at $24,000 a year.</li><li>District seats and the mayor are elected together: last in May 2023, next in spring 2027.</li><li>At-large seats were last elected in May 2025 and are next elected in 2029.</li><li>The mayor, Leirion Gaylor Baird, first elected in 2019, can veto what the council passes. Five of the seven members can override a veto.</li></ul>'
+    +'<h4>What voters changed on Nov 3, 2026</h4><p>As reported after the election, and subject to the county\'s certified count:</p><ul><li>City elections move to even years, alongside state elections, starting in 2030. The mayor and the district seats are elected in 2027 and again in 2030. At-large seats are elected in 2029 and again in 2032.</li><li>Council members are limited to two four-year terms in a row, counting terms that begin in 2027 or later.</li><li>A proposal to let people who live within three miles outside the city limits vote in city elections did not pass.</li></ul>'
+    +`<p class="psub">Sources: City of Lincoln council pages and FAQ. Election changes: ${ext('https://nebraskapublicmedia.org/en/news/news-articles/later-election-nights-could-become-the-norm-in-lincoln-after-voters-elect-to-combine-city-and-state-elections/','Nebraska Public Media')}, ${ext('https://nebraskaexaminer.com/2026/11/05/lincolnites-favor-changing-timing-of-city-elections-limiting-terms-of-city-council-members/','Nebraska Examiner')}, ${ext('https://klin.com/2026/11/04/election-2026-lincoln-voters-back-volleyball-complex-and-charter-changes-as-nebraska-republicans-lead-statewide-races/','KLIN')}.</p>`}
+  if(tab===1){const nx=ccNext(7);setTimeout(ccVideos,0);
+    return '<h4>Next meetings</h4>'+(nx.length?'<table>'+nx.map(m=>`<tr><td><b>${ccDay(m)}</b></td><td>${ccTime(m)}${m.eve?' · the evening meeting':''}</td></tr>`).join('')+'</table>':'<p>The dates saved with this map have run out.</p>')
+    +`<p class="psub">From the city's own list of meeting dates, read Nov 14, 2026. Most Mondays at 3 p.m. The last Monday of the month starts at 5:30 p.m. so there is one evening meeting. No meeting in a week with a Monday holiday. Dates can change: ${ext(CCU.meet,'check the city\'s list')} before you go.</p>`
+    +'<h4>Where</h4><p>Council Chambers, Room 112, first floor of the County-City Building, 555 S. 10th Street.</p><button class="btn go2" data-cc="fly">Fly to the County-City Building</button>'
+    +'<p class="psub">Parking, as the city posted in November 2026: the public lot north of the building is closed for construction. Parking is validated for the Carriage Park garage, 1128 L Street, and the Center Park garage, 1120 N Street.</p>'
+    +`<h4>Agendas</h4><p>Posted on the city's site late in the week before each meeting. One city page says by 4 p.m. Thursday, another says Friday. ${ext(CCU.agenda,'Agendas and minutes')}</p>`
+    +`<h4>Watch</h4><p>Live on LNKTV City (Allo channel 2, Spectrum channel 1300) and on YouTube. ${ext(CCU.yt,'Past meetings on YouTube')}</p><div id="ccvid">${ccVidHTML()}</div>`}
+  if(tab===2)return '<h4>An ordinance is a city law. It takes three Mondays.</h4>'
+    +step(1,'First reading','The bill is introduced and its title is read. This is the public\'s notice. No testimony yet.')
+    +step(2,'Second reading: the public hearing','The following Monday. Anyone may speak for up to five minutes.')
+    +step(3,'Third reading: the vote','The Monday after that. The council debates, can amend, and votes.')
+    +step(4,'The mayor','Signs it, or vetoes it. Five of the seven members can override a veto.')
+    +'<p class="psub">State law requires the three readings on three different days. The council can waive that by a two-thirds vote, but never for an annexation or for redrawing its own districts (Nebraska Revised Statute 15-404).</p>'
+    +'<h4>A resolution is a decision</h4><p>A contract, an appointment, a permit, a plan. It is on the agenda twice. The first time is notice. The second time it gets its public hearing and its vote on the same day. When a resolution travels with an ordinance, the two are voted on together.</p>'
+    +'<h4>The consent agenda</h4><p>Routine items, such as reports, appointments and setting hearing dates, are heard together at the start of the meeting and voted on together. Anyone may speak on one of them then.</p>'
+    +'<h4>Where a bill comes from</h4><p>A city department or a council member asks for it, and the City Attorney\'s office drafts it. The request reaches the City Clerk by the Friday ten days before the meeting where it will be introduced. The Clerk gives it a number: 26-123 would be an ordinance, 26R-123 a resolution.</p>'
+    +'<h4>The numbers</h4><ul><li>7 members. 4 is a majority.</li><li>5 votes override the mayor\'s veto.</li><li>Anything that spends money needs a majority of all seven members, not only of those in the room (state law).</li></ul>'
+    +'<h4>What the council decides</h4><p>City laws and the city code. The two-year budget, the tax levy, fees and rates. Zoning and land use. Redevelopment agreements and bonds. Appointments to boards and commissions. Liquor license recommendations to the state. Claims against the city. What goes to voters on the ballot. It can also look into the work of any city department.</p>'
+    +'<h4>A zone change, start to finish</h4><p>An owner applies. Planning staff review it and write a report. The Planning Commission holds its own public hearing and makes a recommendation. Then it goes to the council as an ordinance: three readings, a hearing, a vote.</p><button class="btn go2" data-cc="tab4">See where every open request stands today</button>'
+    +'<h4>The budget</h4><p>The city budgets two years at a time. The mayor proposes it and the council amends and adopts it. In 2026 the council took up eight amendments to the mayor\'s proposed 2026-28 budget on July 13 and approved its final changes on August 17.</p>'
+    +`<p class="psub">Sources: ${ext(CCU.faq,'City Council FAQ')}, ${ext(CCU.speak,'the City Clerk\'s guide to speaking')}, ${ext('https://law.justia.com/codes/nebraska/chapter-15/statute-15-404/','Nebraska Revised Statute 15-404')}, and the city\'s 2026-28 budget documents.</p>`;
+  if(tab===3)return '<h4>At the meeting</h4>'
+    +step(1,'Find your item','Ordinances take testimony at second reading. Resolutions and the consent agenda take it the day they are voted on.')
+    +step(2,'Sign up','At the table in the lobby outside the Council Chambers.')
+    +step(3,'When you are called','Give your name and address, and say whether you support, oppose or are neutral. The address can be waived for your safety.')
+    +step(4,'You have five minutes','Green light: go. Yellow: one minute left. Red: stop.')
+    +'<p>Speakers are called in this order: supporters, opponents, neutral. Bring ten copies of anything you hand out. Signs are not allowed in the chambers.</p>'
+    +'<h4>Open microphone</h4><p>At the end of the meeting on the second and last Mondays of the month, residents may raise anything that is not on the agenda.</p>'
+    +`<h4>In writing</h4><p>Use the city's comment form, write to the council office at councilpacket@lincoln.ne.gov, or leave a message at 402-441-7515. Everything said or sent to the council becomes a public record.</p><p>${ext(CCU.comment,'Submit a comment')} · ${ext(CCU.members,'Email your member')}</p>`
+    +'<h4>If you need an accommodation</h4><p>Assistive listening devices are in the chambers. For anything else, ask at least a week ahead: Lincoln Commission on Human Rights, 402-441-7624.</p>'
+    +`<p class="psub">Source: ${ext(CCU.speak,'the City Clerk\'s guide to speaking at a meeting')} and the ${ext(CCU.faq,'City Council FAQ')}, read Nov 14, 2026.</p>`;
+  setTimeout(()=>ccPipe(false),0);return '<p>Requests the Planning Department is working on now, and how far each has come. Tap a stage to see those requests on the ground where they would happen. Tap a request to fly to it.</p><div id="ccpipe">'+ccPipeHTML()+'</div>'}
+const COUNCILS={title:'City <i>Council</i>',tabs:['Who','Meetings','How a law is made','Speak up','In the works'],html:ccHTML,click:e=>{const b=e.target.closest('[data-cc]');if(!b)return;const v=b.dataset.cc;lastInput=performance.now();
+  if(v==='retry'){ccPipe(true);return}if(v==='tab4'){openSheet(COUNCILS,4);return}closeSheet();
+  if(v==='spot'){civArm();return}if(v==='lay'){dlSet('council',true);return}
+  if(v==='fly'){const x=(-96.70773-H.lon0)*KXm,z=-(40.80887-H.lat0)*KYm,nx=ccNext(1)[0];flyTo(camTo(x,z,420,200,30),2200);showCard('County-City Building','555 S. 10th Street. The City Council meets in the Council Chambers, Room 112, on the first floor.'+(nx?' Next meeting: '+ccDay(nx)+' at '+ccTime(nx)+'.':''),undefined,{label:'Back to the council',fn:()=>openSheet(COUNCILS,1)},[{href:CCU.meet,label:'Meeting dates ↗'}]);return}
+  if(v.startsWith('st')){dlSet('cases',true);return}
+  if(v.startsWith('it')){const q=CC.ready[+v.slice(2)];if(!q)return;const a=q.a,x=((q.x0+q.x1)/2-H.lon0)*KXm,z=-((q.y0+q.y1)/2-H.lat0)*KYm,span=Math.max((q.x1-q.x0)*KXm,(q.y1-q.y0)*KYm,60);dlSet('cases',true,true);
+    if(Math.abs(x)<8150&&Math.abs(z)<8150)flyTo(camTo(x,z,Math.min(6000,Math.max(520,span*2.6)),200,44),2200);
+    showCard(a.PROJECT_NAME||a.APPNUM||'Planning request',[(a.SUBTYPE||'Request')+(a.APPNUM?', case '+a.APPNUM:''),'Where it stands: '+String(a.STATUS).trim(),a.PC_HEARING?'Planning Commission hearing: '+dayStr(a.PC_HEARING):'',a.CC_ORDINANCE_?'Council ordinance '+a.CC_ORDINANCE_:'',a.CC_RESOLUTION_?'Council resolution '+a.CC_RESOLUTION_:'',a.SUBMITTAL_DATE?'Filed '+dayStr(a.SUBMITTAL_DATE):'',a.DESCRIPTION?String(a.DESCRIPTION).trim():'',Math.abs(x)<8150&&Math.abs(z)<8150?'':'This one lies outside the area the map covers.','Read live from the Planning Department'].filter(Boolean).join('. ')+'.',undefined,{label:'Back to the list',fn:()=>openSheet(COUNCILS,4)},[{href:CCU.agenda,label:'Council agendas ↗'}])}}};
+function councilOpen(tab){openSheet(COUNCILS,tab||0)}
+
+// ---- this map for any city: a link that builds a place from open map data, and the code to copy
+const FORKU='https://robotwhitebread.github.io/STARCITY/anycity/';
+// a plain count of how many times the map has been opened, from hits.sh, which keeps no account and asks for nothing
+const COUNTSVG='https://hits.sh/robotwhitebread.github.io/STARCITY.svg?style=flat-square&label=times%20opened&color=e9b949&labelColor=1b1f26';
+const COUNTH='<p><img src="'+COUNTSVG+'" alt="How many times this map has been opened" height="20" style="vertical-align:-4px"> &nbsp;<a href="'+FORKU+'" target="_blank" rel="noopener noreferrer">See your own city \u2197</a></p>';
+const FORKCODE=`# STARCITY for any city. Free to copy (MIT license).
+
+# 1. Just look. Put a place, a ZIP code or a GPS point in the link.
+${FORKU}?place=Omaha, Nebraska
+${FORKU}?zip=68102
+${FORKU}?lat=41.2565&lon=-95.9345&km=1.5
+
+# 2. Make it yours. Run it on your own computer:
+git clone https://github.com/RobotWhiteBread/STARCITY.git
+cd STARCITY
+python3 -m http.server 8000
+# then open http://localhost:8000/anycity/?place=Your City, State
+
+# To put it online, fork the repo on GitHub, open Settings, then Pages,
+# and publish the main branch. Your link becomes
+# https://YOUR-NAME.github.io/STARCITY/anycity/?place=Your City, State
+
+# 3. Go deeper, the way Lincoln does. Add your city's own public data:
+#   community/     drop in GeoJSON layers and list them in index.json
+#   DATA_PLAN.md   the kinds of public sources to look for, and where
+#   src/           the whole Lincoln pipeline, as a worked example`;
+function forkHTML(tab){
+  if(tab===0)return COUNTH+'<p>The Lincoln map is built from Lincoln\'s own public records. The same idea works anywhere there is open map data. Type a place, a ZIP code or a GPS point, and a 3D map of it is built in your browser from OpenStreetMap, the free map of the world that volunteers keep.</p>'
+    +'<div class="row"><input id="fkq" type="text" placeholder="City, address or ZIP code" aria-label="City, address or ZIP code" autocomplete="off"><button class="btn" data-fk="go">Build it ↗</button></div>'
+    +`<div class="row"><a class="btn" href="${FORKU}?gps=1" target="_blank" rel="noopener noreferrer">Use my location ↗</a><a class="btn" href="${FORKU}?place=Omaha%2C%20Nebraska" target="_blank" rel="noopener noreferrer">Omaha ↗</a><a class="btn" href="${FORKU}?place=Chicago%20Loop" target="_blank" rel="noopener noreferrer">Chicago ↗</a><a class="btn" href="${FORKU}?place=Notre-Dame%20de%20Paris" target="_blank" rel="noopener noreferrer">Paris ↗</a></div>`
+    +'<p class="psub">It opens in a new tab. Buildings, streets, parks, water and trees come from OpenStreetMap, so the picture is as complete as local mappers have made it. Where a building\'s height is not mapped, the page estimates it and says so on the building\'s card. Lincoln\'s own layers, such as values, buses, votes and birds, are not part of it: those come from Lincoln\'s records, and every city has its own to add.</p>';
+  if(tab===1)return '<p>Three ways to use it, from a link to your own copy. Everything here is free to copy and change.</p><p><button class="btn" data-fk="copy">Copy the code</button> '+ext('https://github.com/RobotWhiteBread/STARCITY','Open the repository')+`</p><pre id="fkcode">${esc(FORKCODE)}</pre>`;
+  return '<h4>What makes the Lincoln map more than buildings</h4><p>Public records, joined to the ground. Most cities and counties publish the same kinds of things:</p><ul><li>Parcels and assessed values, from the county assessor.</li><li>Bus timetables, in the GTFS format transit agencies give to trip planners.</li><li>Trees, trails, parks and public art, from the parks department.</li><li>Traffic counts, crashes and road closures, from public works or the state.</li><li>Precinct results and districts, from the election office.</li><li>Zoning and what is headed to a vote, from the planning department.</li><li>Weather, river gauges, birds and the sky, from national sources that cover everywhere.</li></ul>'
+    +`<p>${ext('https://github.com/RobotWhiteBread/STARCITY/blob/main/DATA_PLAN.md','The data plan')} lists every source behind the Lincoln map and what each one took. ${ext('https://github.com/RobotWhiteBread/STARCITY/blob/main/CONTRIBUTING.md','The contributing guide')} is the open invitation: a city office, a university, a business or a neighbor can add a layer.</p><p class="psub">Two rules worth keeping if you build your own: say where every number came from, and never publish people\'s names where a place will do.</p>`}
+const FORKS={title:'Make this for <i>your city</i>',tabs:['Try a place','Copy the code','Go deeper'],html:forkHTML,click:e=>{const b=e.target.closest('[data-fk]');if(!b)return;const v=b.dataset.fk;
+  if(v==='go'){const q=($('fkq').value||'').trim();if(!q){$('fkq').focus();return}const a=document.createElement('a');a.href=FORKU+(/^\d{5}$/.test(q)?'?zip='+q:'?place='+encodeURIComponent(q));a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();a.remove();return}
+  if(v==='copy'){const done=ok=>{b.textContent=ok?'Copied':'Select the text below and copy it'};try{navigator.clipboard.writeText(FORKCODE).then(()=>done(true),()=>done(false))}catch(err){done(false)}}}};
+addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='fkq'){const b=document.querySelector('[data-fk="go"]');if(b)b.click()}});
+
+// ---- data heights that fit the screen: when a layer is switched on, the tallest bar is sized against the view you are in
+function hsMax(L){
+  if(L.hmax!=null)return L.hmax;
+  let m=0;
+  const look=o=>{const g=o.geometry;if(!g||!g.attributes)return;const A=g.attributes;
+    if(A.aH){const a=A.aH.array;for(let i=0;i<a.length;i++)if(a[i]>m)m=a[i];return}
+    if(A.aS&&A.aS.itemSize===2){const a=A.aS.array;for(let i=0;i<a.length;i+=2)if(a[i]>m)m=a[i];return}
+    if(A.a&&A.a.itemSize>=2){const a=A.a.array,s=A.a.itemSize;for(let i=0;i<a.length;i+=s){const v=a[i]*a[i+1];if(v>m)m=v}}};
+  if(L.obj)L.obj.traverse(o=>{if(o.isMesh||o.isLine||o.isPoints||o.isInstancedMesh)look(o)});
+  L.hmax=m||0;return L.hmax}
+// the same zoom factor dlFrame uses, so the fit holds the moment it is applied
+function hsZoom(L,d){const k=L.def.k,num=typeof L.def.st.h!=='number';
+  return L.flat?Math.min(6,Math.max(.6,d/1500)):Math.min(5.5,Math.max(.08,d/(k==='pt'&&!num?2500:k==='ln'&&!num?3000:3600)))}
+function hsFit(L){
+  if(dlHSuser||!L||!L.obj)return;
+  const h=hsMax(L);if(!(h>0))return;
+  const d=camera.position.distanceTo(controls.target),z=hsZoom(L,d);
+  if(!(z>0))return;
+  // the tallest should stand about a fifth of the way across the view, and never look like a wall or a stain
+  const want=Math.max(40,Math.min(2600,d*.21))/(h*z);
+  const s=Math.max(.2,Math.min(3.2,want));
+  if(Math.abs(s-dlHS)<.02)return;
+  dlHS=s;dirty=true;
+  const sl=document.querySelector('#dlg input[data-s="h"]');if(sl)sl.value=Math.round(dlHS*100)}
+
 
 // ---------- loop
 let dirty=true,lastF=0,fAvg=20,fN=0,perfStep=0;
@@ -3511,7 +3701,7 @@ function frame(now){requestAnimationFrame(frame);
   setTime(+$('sunR').value);updateBuses();
   if(location.protocol.startsWith('http')){loadWeather();loadWater();loadSightings()}
   requestAnimationFrame(frame);
-  window.__ready=true;window.__x={setVotes,dmShow,dmCard,civicStack,civArm,setNative,openSheet,closeSheet,NUMS,NILS,HUSK,TAXS,reTour,setWalk,walkTap,walkToB,setFlights,setCreatures,setVB,councilCard,demoCard,setDemo,setWx,capitolMore,wxDetail,rollOpen,rollClose,huskOpen,hkParse,hkAfter,HK,DM,CR,FLT,CIV,ROLL,labels,walk,LM,numStats,vbTally,resetAll,dlSet,setTraffic,flyTo,camTo,showB,bByName,bAt,streetNear,setTime,pick,H,S,DL,pickables,placeStorms,updateLabels,TR,treeCard,treePick,treeNear,rideRoute,bgNearest,bikeGraph,setRideMode,stopRide,get ride(){return ride},get sheet(){return sheet},setSky,NSKY,skyCard,skyTap,skyShift,devFest,FEST,festLabels,busNear,stopCard,busCard,BX,BUSS,stopNext,busState,BIRDSS,birdPool,birdYear,birdLook,intentCard,sgList,sgDraw,nowTap,safeCard,cityData,cdLoad,CD,CITYD,describeView,accSet,ACC,VBS,vbSeason,rollData,setFall,fallAmt,setLive,pulseCard,CORE,coreSet,trayDraw,CMPS,CMP,cmpDraw,cmpCorr,sleepy,SLEEP,roostPick,RE,setRE,reCard,rentCard,FEED,setFeeds,feedText,CHS,chartsFor,BED,get fly(){return !!fly},get tour(){return tour},SALESS,saleRows,setLook,LOOK,showB:showB,trayItems,panOut,get trafOn(){return trafOn},get wxOn(){return wxOn},get liveOn(){return liveOn},get flocks(){return flocks}};window.__dl=(id,on)=>{dlSet(id,on);return dlOn.map(L=>L.id)};window.__dls=()=>[...DL.values()].map(L=>[L.id,L.def.k,L.n,L.on]);window.__biz=setBiz;window.__bizf=o=>{Object.assign(bizF,o);bizApply();bizRender();return [bizL.shown,bizL.local]};window.__code=setCode;window.__pulse=pulseCard;window.__around=aroundCard;window.__sheet=(n,t)=>openSheet(n==='tax'?TAXS:n==='lay'?LAYS:GUIDE,t);window.__paint=paintBuildings;window.__showB=showB;window.__reset=birdsEye;window.__solo=t=>dlTop&&dlSolo(dlTop,t);window.__hs=(h,a)=>{dlHS=h;if(a!==undefined)dlAL=a;dirty=true};window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__wake=()=>{lastInput=performance.now()};window.__amb=v=>{ambOK=v;return v};window.__sim=(sec,step)=>{step=step||.05;let t=(frame.t||performance.now())+simOff;for(let q=0;q<sec;q+=step){t+=step*1000;simOff+=step*1000;lastInput=performance.now();stepLife(step,t)}dirty=true;return 1};window.__vb=setVB;window.__guide=setGuide;window.__pen=()=>zoo&&zoo.pen?[Math.round(zoo.pen.px),Math.round(zoo.pen.pz)]:null;window.__tl=name=>{const ti=H.tnames.indexOf(name),q=(H.tlabels||[]).find(l=>l[0]===ti);return q?[q[1],-q[2]]:null};window.__share=()=>({n:birdShare.length,src:shareSrc,top:birdShare.slice(0,3).map(q=>q.c+' '+pct(q.p/birdShare.tot))});window.__chips=()=>list.map(l=>l[0]);window.__prideR=v=>{if(v!==undefined)LM.prideR=v;return Math.round(LM.prideR||0)};window.__bikers=()=>bikers&&!bikers.none?{n:bikers.list.length,vis:bikers.m.visible,paths:new Set(bikers.list.map(q=>q.T)).size}:null;window.__traf=setTraffic;window.__sight=()=>({n:sightings.length,fail:sightFail,flocks:flocks.filter(f=>f.sg).map(f=>f.lb.t+' | '+f.lb.sub)});window.__loadSight=()=>{sightT=0;return loadSightings().then(()=>sightings.length)};window.__view=()=>{const v=viewAngles(),t=controls.target;return {x:Math.round(t.x),z:Math.round(t.z),d:Math.round(v.d),az:Math.round(v.az),el:Math.round(v.el),pan:!!pan,panV:!!panV}};window.__zoom=zoomBy;window.__g=(x,y)=>{const h=groundAt(x,y);return h?[Math.round(h.x),Math.round(h.z)]:null};window.__2d=set2D;window.__roofed=()=>LM.roofed;window.__lm=()=>({dev:LM.dev,statue:LM.cookStatue,zoo:H.zoo,dogs:(H.dogparks||[]).map(q=>q[3]),pid:S.b_p1?S.b_p1.length:0});window.__link=()=>[...$('clinks').children].map(a=>a.textContent+' -> '+a.href).join(' | ')||null;window.__perf=()=>({frCost:+frCost.toFixed(1),lblScale,perfStep});window.__pride=setPride;window.__life=()=>({flocks:flocks.map(f=>f.b[0]),birds:birdMesh?birdMesh.count:0,eaten:zoo?zoo.eaten:-1,lettuce:zoo?zoo.let.length:-1,dogs:dogs?dogs.list.length:0,sites:dogs?dogs.sites.length:0,month:birdMonth(),dev:devI});window.__wx=setWx;window.__demo=setDemo;window.__wxs=()=>({wx,alerts:alerts.length,wet:ovl?ovl.wet:null,radar:!!(ovl&&ovl.radar),precip,thunder,wind:windV?+windV.ms.toFixed(1):0,funnels:funnels.length,fail:wxFail,bolt:!!bolt,rain:!!(LM.rainL&&LM.rainL.visible),snow:!!(pPts&&pPts.visible)});window.__bg=()=>{const g=bikeGraph();return {nodes:g.NV,arcs:g.na,bikeEdges:g.nE,mi:+(g.total/1609.344).toFixed(1),islands:g.islands,linkMi:+(g.linkLen/1609.344).toFixed(1),links:g.links.length,bridges:g.nb,dead:g.dead,ms:g.ms}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9,false),b=bgNearest(x1,z1,1e9,false);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9,true);R.cov=new Uint8Array(g.nE);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0,unL=0;for(let e=0;e<g.nE;e++)if(!R.cov[e]){un++;unL+=g.eLen[e]}const mi=m=>+(m/1609.344).toFixed(1);return {legs,routeMi:mi(R.L),coveredMi:mi(R.cv[R.cv.length-1]),totalMi:mi(g.total),uncoveredEdges:un,uncoveredFt:Math.round(unL*3.281),newMi:mi(R.sm[0]),retraceMi:mi(R.sm[1]),linkMi:mi(R.sm[2]),bridgeMi:mi(R.sm[3]),turns:R.turns,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;
+  window.__ready=true;window.__x={setVotes,dmShow,dmCard,civicStack,civArm,setNative,openSheet,closeSheet,NUMS,NILS,HUSK,TAXS,reTour,setWalk,walkTap,walkToB,setFlights,setCreatures,setVB,councilCard,demoCard,setDemo,setWx,capitolMore,wxDetail,rollOpen,rollClose,huskOpen,hkParse,hkAfter,HK,DM,CR,FLT,CIV,ROLL,labels,walk,LM,numStats,vbTally,resetAll,dlSet,setTraffic,flyTo,camTo,showB,bByName,bAt,streetNear,setTime,pick,H,S,DL,pickables,placeStorms,updateLabels,TR,treeCard,treePick,treeNear,rideRoute,bgNearest,bikeGraph,setRideMode,stopRide,get ride(){return ride},get sheet(){return sheet},setSky,NSKY,skyCard,skyTap,skyShift,devFest,FEST,festLabels,busNear,stopCard,busCard,BX,BUSS,stopNext,busState,BIRDSS,birdPool,birdYear,birdLook,intentCard,sgList,sgDraw,nowTap,safeCard,cityData,cdLoad,CD,CITYD,describeView,accSet,ACC,VBS,vbSeason,rollData,setFall,fallAmt,setLive,pulseCard,CORE,coreSet,trayDraw,CMPS,CMP,cmpDraw,cmpCorr,sleepy,SLEEP,roostPick,RE,setRE,reCard,rentCard,FEED,setFeeds,feedText,CHS,chartsFor,BED,get fly(){return !!fly},get tour(){return tour},SALESS,saleRows,setLook,LOOK,showB:showB,trayItems,panOut,get trafOn(){return trafOn},get wxOn(){return wxOn},get liveOn(){return liveOn},get flocks(){return flocks},councilOpen,COUNCILS,FORKS,viewExit,viewKeep,viewBack,MENUS,SG,ccNext,ccChip,hsFit,CC,ccPipe};window.__dl=(id,on)=>{dlSet(id,on);return dlOn.map(L=>L.id)};window.__dls=()=>[...DL.values()].map(L=>[L.id,L.def.k,L.n,L.on]);window.__biz=setBiz;window.__bizf=o=>{Object.assign(bizF,o);bizApply();bizRender();return [bizL.shown,bizL.local]};window.__code=setCode;window.__pulse=pulseCard;window.__around=aroundCard;window.__sheet=(n,t)=>openSheet(n==='tax'?TAXS:n==='lay'?LAYS:GUIDE,t);window.__paint=paintBuildings;window.__showB=showB;window.__reset=birdsEye;window.__solo=t=>dlTop&&dlSolo(dlTop,t);window.__hs=(h,a)=>{dlHS=h;if(a!==undefined)dlAL=a;dirty=true};window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__wake=()=>{lastInput=performance.now()};window.__amb=v=>{ambOK=v;return v};window.__sim=(sec,step)=>{step=step||.05;let t=(frame.t||performance.now())+simOff;for(let q=0;q<sec;q+=step){t+=step*1000;simOff+=step*1000;lastInput=performance.now();stepLife(step,t)}dirty=true;return 1};window.__vb=setVB;window.__guide=setGuide;window.__pen=()=>zoo&&zoo.pen?[Math.round(zoo.pen.px),Math.round(zoo.pen.pz)]:null;window.__tl=name=>{const ti=H.tnames.indexOf(name),q=(H.tlabels||[]).find(l=>l[0]===ti);return q?[q[1],-q[2]]:null};window.__share=()=>({n:birdShare.length,src:shareSrc,top:birdShare.slice(0,3).map(q=>q.c+' '+pct(q.p/birdShare.tot))});window.__chips=()=>list.map(l=>l[0]);window.__prideR=v=>{if(v!==undefined)LM.prideR=v;return Math.round(LM.prideR||0)};window.__bikers=()=>bikers&&!bikers.none?{n:bikers.list.length,vis:bikers.m.visible,paths:new Set(bikers.list.map(q=>q.T)).size}:null;window.__traf=setTraffic;window.__sight=()=>({n:sightings.length,fail:sightFail,flocks:flocks.filter(f=>f.sg).map(f=>f.lb.t+' | '+f.lb.sub)});window.__loadSight=()=>{sightT=0;return loadSightings().then(()=>sightings.length)};window.__view=()=>{const v=viewAngles(),t=controls.target;return {x:Math.round(t.x),z:Math.round(t.z),d:Math.round(v.d),az:Math.round(v.az),el:Math.round(v.el),pan:!!pan,panV:!!panV}};window.__zoom=zoomBy;window.__g=(x,y)=>{const h=groundAt(x,y);return h?[Math.round(h.x),Math.round(h.z)]:null};window.__2d=set2D;window.__roofed=()=>LM.roofed;window.__lm=()=>({dev:LM.dev,statue:LM.cookStatue,zoo:H.zoo,dogs:(H.dogparks||[]).map(q=>q[3]),pid:S.b_p1?S.b_p1.length:0});window.__link=()=>[...$('clinks').children].map(a=>a.textContent+' -> '+a.href).join(' | ')||null;window.__perf=()=>({frCost:+frCost.toFixed(1),lblScale,perfStep});window.__pride=setPride;window.__life=()=>({flocks:flocks.map(f=>f.b[0]),birds:birdMesh?birdMesh.count:0,eaten:zoo?zoo.eaten:-1,lettuce:zoo?zoo.let.length:-1,dogs:dogs?dogs.list.length:0,sites:dogs?dogs.sites.length:0,month:birdMonth(),dev:devI});window.__wx=setWx;window.__demo=setDemo;window.__wxs=()=>({wx,alerts:alerts.length,wet:ovl?ovl.wet:null,radar:!!(ovl&&ovl.radar),precip,thunder,wind:windV?+windV.ms.toFixed(1):0,funnels:funnels.length,fail:wxFail,bolt:!!bolt,rain:!!(LM.rainL&&LM.rainL.visible),snow:!!(pPts&&pPts.visible)});window.__bg=()=>{const g=bikeGraph();return {nodes:g.NV,arcs:g.na,bikeEdges:g.nE,mi:+(g.total/1609.344).toFixed(1),islands:g.islands,linkMi:+(g.linkLen/1609.344).toFixed(1),links:g.links.length,bridges:g.nb,dead:g.dead,ms:g.ms}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9,false),b=bgNearest(x1,z1,1e9,false);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9,true);R.cov=new Uint8Array(g.nE);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0,unL=0;for(let e=0;e<g.nE;e++)if(!R.cov[e]){un++;unL+=g.eLen[e]}const mi=m=>+(m/1609.344).toFixed(1);return {legs,routeMi:mi(R.L),coveredMi:mi(R.cv[R.cv.length-1]),totalMi:mi(g.total),uncoveredEdges:un,uncoveredFt:Math.round(unL*3.281),newMi:mi(R.sm[0]),retraceMi:mi(R.sm[1]),linkMi:mi(R.sm[2]),bridgeMi:mi(R.sm[3]),turns:R.turns,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;window.__hsv=()=>dlHS;window.__hsu=()=>dlHSuser;window.__lamps=()=>LM.lampPts?LM.lampPts.geometry.attributes.position.count:0;window.__fog=()=>!!scene.fog;
   const ld=$('load');if(ld){ld.style.opacity=0;setTimeout(()=>ld.remove(),700)}
   const want=list.find(l=>'#'+l[1].slug===location.hash);let shared=null;{const m=/^#v=(-?\d+),(-?\d+),(\d+),(-?\d+),(-?\d+)$/.exec(location.hash||'');if(m){const q=m.slice(1).map(Number);if(Math.abs(q[0])<=8700&&Math.abs(q[1])<=8700)shared=camTo(q[0],q[1],Math.min(24000,Math.max(45,q[2])),q[3],Math.min(89,Math.max(4,q[4])))}}
   setTimeout(()=>flyTo(shared||(want||list[1])[1],shared?2600:4200),900);

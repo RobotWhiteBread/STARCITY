@@ -114,9 +114,9 @@ const SALESS={title:'New <i>sales</i>',tabs:['Newest','Where it is happening'],h
 // ---- look around from where the camera is: hold and drag to look up to the horizon and all the way round
 const LOOK={on:false,keep:null};
 function setLook(on){if(on===LOOK.on)return;if(on){if(walk.on||ride||NSKY.on)return;const p=camera.position.clone(),t=controls.target.clone(),v=viewAngles();LOOK.keep={p,t};LOOK.on=true;walk.eye=Math.max(1.7,p.y-hAt(p.x,p.z));
-    setWalk(true,{x:p.x,z:p.z,yaw:v.az*Math.PI/180});walk.pitch=-Math.min(1.15,Math.max(0,v.el)*Math.PI/180);camera.fov=58;camera.updateProjectionMatrix();document.body.classList.add('looking');$('wkX').textContent='Stop looking';$('bLook').classList.add('on');
-    hintShow(mobile?'Drag to look up to the horizon and all the way round · pinch to zoom · Stop looking goes back':'Hold the mouse and drag to look up to the horizon and all the way round · scroll to zoom · Stop looking goes back',8000)}
-  else{LOOK.on=false;walk.eye=0;document.body.classList.remove('looking');$('wkX').textContent='Leave walk';$('bLook').classList.remove('on');if(walk.on)setWalk(false);const k=LOOK.keep;LOOK.keep=null;if(k){fly=null;camera.position.copy(k.p);controls.target.copy(k.t);controls.update()}}
+    setWalk(true,{x:p.x,z:p.z,yaw:v.az*Math.PI/180});walk.pitch=-Math.min(1.15,Math.max(0,v.el)*Math.PI/180);camera.fov=58;camera.updateProjectionMatrix();document.body.classList.add('looking');$('wkX').textContent='← Back to the map';$('bLook').classList.add('on');
+    hintShow(mobile?'Drag to look up to the horizon and all the way round · pinch to zoom · Back to the map returns you':'Hold the mouse and drag to look up to the horizon and all the way round · scroll to zoom · Back to the map returns you',8000)}
+  else{LOOK.on=false;walk.eye=0;document.body.classList.remove('looking');$('wkX').textContent='← Back to the map';$('bLook').classList.remove('on');if(walk.on)setWalk(false);const k=LOOK.keep;LOOK.keep=null;if(k){fly=null;camera.position.copy(k.p);controls.target.copy(k.t);controls.update()}}
   lastInput=performance.now();dirty=true}
 function init3(){redlinesInit();$('bNum').textContent='Real estate';$('bNum').onclick=()=>{if(RE.on)reCard();else setRE(true)};
   $('bLook').onclick=()=>setLook(!LOOK.on);addEventListener('keydown',e=>{if(e.target.tagName!=='INPUT'&&(e.key==='l'||e.key==='L')&&!e.ctrlKey&&!e.metaKey)setLook(!LOOK.on)})}

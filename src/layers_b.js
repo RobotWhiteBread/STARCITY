@@ -36,7 +36,7 @@ function dlBuild(L){dlStyle(L);const k=L.def.k,st=L.def.st;
 function dlSet(id,on,quiet){const L=DL.get(id);if(!L)return;if(on&&!L.obj){if(L.def.live&&!L.loaded){dlLive(L,quiet);return}dlBuild(L)}
   if(L.on===on)return;L.on=on;if(L.obj)L.obj.visible=on;const k=dlOn.indexOf(L);if(on&&k<0)dlOn.push(L);if(!on&&k>=0)dlOn.splice(k,1);
   dlLabels.length=0;for(const q of dlOn)if(q.lbl)for(const l of q.lbl)dlLabels.push(l);
-  if(on){dlTop=L;for(const m of L.mats)m.uniforms.uSolo.value=-1;L.solo=-1}else if(dlTop===L)dlTop=dlOn[dlOn.length-1]||null;
+  if(on){dlTop=L;for(const m of L.mats)m.uniforms.uSolo.value=-1;L.solo=-1;hsFit(L)}else if(dlTop===L)dlTop=dlOn[dlOn.length-1]||null;
   dlLegend();if(on&&!quiet)dlIntro(L);if(L.def.onSet)L.def.onSet(on,L);lastInput=performance.now();dirty=true}
 function dlIntro(L){const d=L.def;showCard(d.t,(d.note||'')+' '+(d.k!=='fn'&&typeof d.st.h!=='number'?(d.id==='pv'?'Height is in straight proportion to value: a quarter mile for every $1 million, seen from about two miles out, and it follows your zoom so the picture holds as you move in. Anything above $6 million is drawn at the $6 million height. The gold ring on the ground marks the area being totaled in the gold box. ':'The tallest stand about a quarter mile high and fade into the sky, and they follow your zoom so the picture holds as you move in. '):'')+(L.n?L.n.toLocaleString('en-US')+(d.k==='hx'?' hexagons':d.k==='pt'?' points':d.k==='ln'?' segments':' areas')+'. ':'')+'Tap one for its numbers. Source: '+d.src+(d.asof?(d.asof==='live'?', read live just now':', as of '+d.asof):'')+'.')}
 // keep heights and widths readable at every zoom, and apply the two sliders
@@ -80,7 +80,7 @@ function dlLegend(){const h=$('dlg');$('bottom').classList.toggle('haslayer',!!d
 function dlSolo(L,t){if(!L.mats||!L.mats.length)return;L.solo=L.solo===t?-1:t;for(const m of L.mats)m.uniforms.uSolo.value=L.solo;dlLegend();dirty=true}
 function dlWire(){const h=$('dlg');
   h.addEventListener('click',e=>{const k=e.target.closest('.dlk'),b=e.target.closest('.dlb');if(k&&dlTop)dlSolo(dlTop,+k.dataset.t);else if(b&&dlTop){if(b.dataset.a==='off')dlSet(dlTop.id,false);else dlIntro(dlTop)}});
-  h.addEventListener('input',e=>{const s=e.target.dataset.s;if(!s)return;if(s==='h')dlHS=+e.target.value/100;else dlAL=1.4*(1-(+e.target.value)/100);lastInput=performance.now();dirty=true})}
+  h.addEventListener('input',e=>{const s=e.target.dataset.s;if(!s)return;if(s==='h'){dlHS=+e.target.value/100;dlHSuser=true}else dlAL=1.4*(1-(+e.target.value)/100);lastInput=performance.now();dirty=true})}
 // ---- the Layers sheet
 const DLG=['Property and taxes','People','Getting around','Places','Environment'];
 function layHTML(){let s='<p>Every dataset behind the map, each with a 3D form. Turn on as many as you like. The newest one gets the key at the bottom, where you can tap a tier to single it out and slide the height and see-through bars.</p><button class="btn" data-id="__tax">Open the property and taxes explorer</button>';

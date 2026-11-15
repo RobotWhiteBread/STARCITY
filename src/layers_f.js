@@ -80,14 +80,14 @@ const WSPD=[['Walk',4.5],['Jog',10],['Fast',26]],walkLabels=[];let wkSp=0,wkGo=n
 function wkMove(x,z,dx,dz){const lim=8100,L=Math.hypot(dx,dz)||1,px=dx/L*.7,pz=dz/L*.7,here=bAt(x,z),ok=(a,b)=>{const q=bAt(a,b);return q<0||q===here};
   const nx=Math.max(-lim,Math.min(lim,x+dx)),nz=Math.max(-lim,Math.min(lim,z+dz));
   if(ok(nx+px,nz+pz))return [nx,nz];if(ok(nx+Math.sign(dx)*.7,z))return [nx,z];if(ok(x,nz+Math.sign(dz)*.7))return [x,nz];return [x,z]}
-function setWalk(on,at){if(on===walk.on&&!at)return;if(on&&rideMode)setRideMode(false);stopTour();fly=null;if(ride)stopRide();const was=walk.on;walk.on=on;$('bWalk').classList.toggle('on',on);controls.enabled=!on;
+function setWalk(on,at){if(on===walk.on&&!at)return;if(on)viewKeep();if(on&&rideMode)setRideMode(false);stopTour();fly=null;if(ride)stopRide();const was=walk.on;walk.on=on;$('bWalk').classList.toggle('on',on);controls.enabled=!on;
   $('wkui').style.display=on?'block':'none';document.body.classList.toggle('walking',on);wkGo=null;if(wkMark)wkMark.visible=false;walkLabels.length=0;walk.mx=walk.mz=0;walk.keys={};walk.look=null;
   if(on){document.body.style.setProperty('--wktop',Math.round($('title').getBoundingClientRect().bottom+6)+'px');wkGrid();let x,z;if(at){x=at.x;z=at.z;if(at.yaw!==undefined)walk.yaw=at.yaw}else if(!was){const t=controls.target,dx=t.x-camera.position.x,dz=t.z-camera.position.z,dh=Math.hypot(dx,dz)||1,back=Math.min(60,dh*.25);walk.yaw=Math.atan2(-dx,-dz);x=t.x-dx/dh*back;z=t.z-dz/dh*back}
     if(x!==undefined){[x,z]=wkFree(Math.max(-8000,Math.min(8000,x)),Math.max(-8000,Math.min(8000,z)));walk.pitch=.02;camera.position.set(x,hAt(x,z)+1.7,z);camera.near=.4;camera.fov=62;camera.updateProjectionMatrix()}
     walk.t=performance.now();$('wktip').textContent=mobile?'Stick moves you · drag the view to look · tap a spot to walk there':'W A S D or arrows to walk · drag to look · click a spot to walk there · Shift to hurry · Esc to leave';$('wktip').style.display='block';setTimeout(()=>{$('wktip').style.display='none'},7000);
     $('wkSp').textContent=WSPD[wkSp][0];hideCard();wkHud()}
   else if(was){const fx=-Math.sin(walk.yaw),fz=-Math.cos(walk.yaw),x=camera.position.x,z=camera.position.z;camera.fov=45;controls.target.set(x+fx*60,hAt(x+fx*60,z+fz*60),z+fz*60);camera.position.set(x-fx*220,hAt(x,z)+170,z-fz*220);camera.updateProjectionMatrix()}
-  layoutCard();shadowDirty=true;dirty=true}
+  if(!on&&was)viewBack();layoutCard();shadowDirty=true;dirty=true}
 function stepWalk(now){const dt=Math.min(.1,(now-walk.t)/1000||0);walk.t=now;let mx=walk.mx,mz=walk.mz;const k=walk.keys;
   if(k.KeyW||k.ArrowUp)mz-=1;if(k.KeyS||k.ArrowDown)mz+=1;if(k.KeyA)mx-=1;if(k.KeyD)mx+=1;if(k.ArrowLeft||k.KeyQ){walk.yaw+=1.7*dt;dirty=true}if(k.ArrowRight||k.KeyE){walk.yaw-=1.7*dt;dirty=true}
   let x=camera.position.x,z=camera.position.z,moved=false;const sp=WSPD[wkSp][1]*((k.ShiftLeft||k.ShiftRight)?2.4:1),m=Math.hypot(mx,mz);
@@ -116,4 +116,4 @@ function walkInit(){const j=$('wjoy'),knob=j.firstElementChild;let jp=null;
   const mv=e=>{const r=j.getBoundingClientRect(),R=r.width/2;let dx=e.clientX-(r.left+R),dy=e.clientY-(r.top+R);const m=Math.hypot(dx,dy),lim=R-14;if(m>lim){dx*=lim/m;dy*=lim/m}walk.mx=dx/lim;walk.mz=dy/lim;knob.style.transform=`translate(${dx}px,${dy}px)`;dirty=true;lastInput=performance.now()};
   j.addEventListener('pointerdown',e=>{e.preventDefault();jp=e.pointerId;try{j.setPointerCapture(jp)}catch(_){}mv(e)});j.addEventListener('pointermove',e=>{if(e.pointerId===jp)mv(e)});
   const up=e=>{if(e.pointerId!==jp)return;jp=null;walk.mx=walk.mz=0;knob.style.transform=''};j.addEventListener('pointerup',up);j.addEventListener('pointercancel',up);
-  $('wkSp').onclick=()=>{wkSp=(wkSp+1)%WSPD.length;$('wkSp').textContent=WSPD[wkSp][0]};$('wkX').onclick=()=>setWalk(false)}
+  $('wkSp').onclick=()=>{wkSp=(wkSp+1)%WSPD.length;$('wkSp').textContent=WSPD[wkSp][0]};$('wkX').onclick=()=>viewExit(false);$('wkUp').onclick=()=>viewExit(true)}

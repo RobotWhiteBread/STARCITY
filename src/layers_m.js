@@ -14,7 +14,7 @@ const INTENT=[
  ['now','Happening now','What is going on in Lincoln at this moment: the weather and any warnings, Husker scores, what City Hall is deciding, and streets that are closed.',
   [['Lincoln right now',()=>pulseCard()],['Husker scores',()=>huskOpen(0)],['Weather and alerts',()=>wxDetail()],LY('cases','Decisions in the works'),LY('closures','Road closures now'),LY('permits','Building permits this year')]],
  ['hall','City Hall and votes','Who represents any spot, how the council works, what is on its way to a vote, and how every precinct has voted since 2012.',
-  [['City Council',()=>councilCard()],LY('cases','Decisions in the works'),['Every district at one spot',()=>civArm()],['How Lincoln voted',()=>setVotes(true)],LY('polls','Polling places'),['More',()=>demoCard()]]],
+  [['How the council works',()=>councilOpen(0)],['What is on its way to a vote',()=>councilOpen(4)],['Speak at a meeting',()=>councilOpen(3)],['Every district at one spot',()=>civArm()],['How Lincoln voted',()=>setVotes(true)],LY('polls','Polling places')]],
  ['money','Values and taxes','Every property\'s assessed value as a bar, a tax estimate for every tax district at the 2025 levy, recent sales, and the statistics for whatever part of the city is in view. Tax figures are estimates from value and levy, not bills.',
   [LY('pv','Every property as a value bar'),['Taxes by district',()=>openSheet(TAXS,0)],['The numbers for this view',()=>openSheet(NUMS,0)],['Compare everything here',()=>openSheet(CMPS,0)],['New sales and where',()=>openSheet(SALESS,0)],['Rents',()=>rentCard()],LY('redlines','1930s redlining lines'),['Switch real estate on',()=>setRE(true)]]],
  ['nature','Birds, trees and sky','Which birds are here this month and which are passing through, every tree on the city\'s list, floodplain and salt marsh, and tonight\'s sky over Lincoln with the planets and satellites that are up.',
@@ -24,8 +24,8 @@ const INTENT=[
  ['safe','Safety','Weather warnings as the Weather Service issues them, where water goes in a flood, where help is, where crashes have happened, and how to use the state\'s offender registry the way it is meant to be used.',
   [['Weather alerts',()=>wxDetail()],LY('flood100','Floodplain'),LY('fire','Fire stations'),LY('medical','Hospitals'),LY('crashes','Crash reports, 2019'),['The registry and the law',()=>safeCard()]]],
  ['data','All city data','Everything here comes from public sources, and each card says which. Browse the city\'s own map server for any layer it publishes, see where every number on this map came from, or read the code.',
-  [['Compare everything here',()=>openSheet(CMPS,0)],['Data feeds, live',()=>setFeeds(true)],['Browse all city data',()=>cityData()],['Layers on this map',()=>openSheet(LAYS,0)],['Where every number comes from',()=>openSheet(GUIDE,2)],['Describe this view in words',()=>describeView()]]]];
-function intentCard(k){const I=INTENT.find(q=>q[0]===k);if(!I)return;sgUse(k);SG.topic=k;sgDraw(true);showCard(I[1],I[2],undefined,undefined,I[3].map(([label,fn])=>({label,fn:()=>{lastInput=performance.now();fn()}})))}
+  [['Compare everything here',()=>openSheet(CMPS,0)],['Data feeds, live',()=>setFeeds(true)],['Browse all city data',()=>cityData()],['Layers on this map',()=>openSheet(LAYS,0)],['Where every number comes from',()=>openSheet(GUIDE,2)],['Make this for your city',()=>openSheet(FORKS,0)]]]];
+function intentCard(k,again){const I=INTENT.find(q=>q[0]===k);if(!I)return;if(!again)sgUse(k);SG.topic=k;sgDraw(true);menuCard('i:'+k,()=>showCard(I[1],I[2],undefined,undefined,I[3].map(([label,fn])=>({label,fn:()=>{lastInput=performance.now();fn()}}))),!again)}
 // the chips: what is live or timely first, then the reasons people come, most used first on this device
 function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date.now(),wd=n.dow<5;
   for(const s of HK.sp.slice(1)){const e=(HK.ev[s[0]]||[]).find(q=>q.st==='in');if(e)out.push({t:'LIVE · '+hkLine(e,s),c:'hot',fn:()=>huskOpen(0)})}
@@ -37,7 +37,7 @@ function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date
   if(wd&&((h>=6.75&&h<9)||(h>=15.75&&h<18.25)))out.push({t:'Rush hour traffic',c:'ctx',fn:()=>setTraffic(true)});
   if(BX.ok&&n.dow<6&&h>=5.5&&h<21.5)out.push({t:'Next bus near here',c:'ctx',fn:()=>busNear()});
   {const s=skyBody('Sun',skyDay(nowMs));if(skyAltAz(s.ra,s.dec,nowMs).alt<-6&&S2&&S2.sky_ra)out.push({t:'Tonight\'s sky',c:'ctx',fn:()=>setSky(true)})}
-  if(n.dow===0&&h<18.5)out.push({t:'City Council meets Mondays',c:'ctx',fn:()=>councilCard()});
+  {const c=ccChip();if(c)out.push({t:c,c:'ctx',fn:()=>councilOpen(1)})}
   {const m=Math.floor(n.ymd/100)%100;if(H2&&H2.birdyear)out.push({t:[3,4,5,9,10].includes(m)?'Migration: who is passing through':'Birds here in '+MONTHS[m-1],c:'ctx',fn:()=>openSheet(BIRDSS,0)})}
   const rest=INTENT.map((I,i)=>({t:I[1],k:I[0],u:U[I[0]]||0,i,fn:()=>intentCard(I[0])})).sort((a,b)=>b.u-a.u||a.i-b.i);return out.slice(0,6).concat(rest)}
 // once a topic is chosen the row becomes that topic: every one of its views stays one tap away and its layers stack, with any other layer and the compare table at the end
@@ -177,6 +177,6 @@ function birdHTML(tab){const Y=birdYear(),m=birdMonth(),M=MONTHS[m-1];if(!Y)retu
   return `<p>Every species reported near Lincoln, most reported first: <b>${all.length} in all, ${hereN} of them reported in ${M}</b>. The strip shows the months each one turns up, with ${M} outlined. ${src}</p><table class="btab">${head}${all.map(row).join('')}</table>`}
 const BIRDSS={title:'Birds <i>of Lincoln</i>',tabs:['Here now','The whole list','How this works'],html:birdHTML,click:()=>{}};
 // ---- one place to start each of the pieces above, and to keep them moving
-function init2(){const run=(n,f)=>{try{f()}catch(e){console.warn('STARCITY: could not start '+n,e)}};run('bus stops',busxInit);run('front door',frontInit);run('sky',()=>{$('bSky').onclick=()=>setSky(!NSKY.on);if(!S2||!S2.sky_ra)$('bSky').style.display='none'});run('access',accessInit);run('tray',trayInit);run('compare',()=>{$('bCompare').onclick=()=>openSheet(CMPS,0)});run('community',()=>{communityInit()});run('real estate and look',init3);run('data console',feedInit)}
+function init2(){const run=(n,f)=>{try{f()}catch(e){console.warn('STARCITY: could not start '+n,e)}};run('bus stops',busxInit);run('front door',frontInit);run('sky',()=>{$('bSky').onclick=()=>setSky(!NSKY.on);if(!S2||!S2.sky_ra)$('bSky').style.display='none'});run('access',accessInit);run('tray',trayInit);run('compare',()=>{$('bCompare').onclick=()=>openSheet(CMPS,0)});run('community',()=>{communityInit()});run('real estate and look',init3);run('data console',feedInit);run('council',()=>{if(hosted())ccPipe(false)})}
 function frame2(now,dt){festFrame(now,dt);busFrame(now);skyFrame(now);coreFrame(now);frame3();feedFrame(now);stackFrame();trayDraw(false);if(SG.topic)sgDraw(false)}
 function reset2(){if(RE.on)setRE(false,true);if(FEED.on)setFeeds(false);if(LOOK.on)setLook(false);if(FEST.on)devFest(false);if(NSKY.on)setSky(false);busLine(null);cityClear();coreReset();SG.topic=null;sgDraw(true)}

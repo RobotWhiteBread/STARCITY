@@ -55,13 +55,13 @@ function accessInit(){$('bText').onclick=()=>accSet((ACC.z+1)%3,ACC.hc);$('bHC')
   // a device set to reduce motion starts with the decorative animation off; every switch still works
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){if(birdsOn)$('bBirds').click();if(CR.on)setCreatures(false);hideCard();hintShow('Your device asks for less motion, so the birds and creatures start switched off. They are under More.',9000)}}
 // ---- the tray: what you have switched on, kept in sight when the button grid folds away, with Menu one tap from adding more
-const TRAY={key:'',at:0};
+const TRAY={key:'',at:0,mute:false};
 // a view wide enough to see what was just switched on
 const PANOUT={bTraf:5200,bTrails:5200,bBus:4200,bVB:6000,bWx:7000,bBiz:3200},PANK={hx:9000,pg:8000,ln:6000,pt:2600};
 function panOut(minD){if(walk.on||ride||fly||tour)return;const v=viewAngles(),t=controls.target;if(v.d>=minD*.55)return;flyTo(camTo(t.x,t.z,minD,v.az,Math.max(v.el,46),-hAt(t.x,t.z)+t.y),1400)}
 function trayItems(){const a=[];for(const L of dlOn)if(!(CORE.cl&&L.id==='closures'))a.push([L.def.t,()=>dlSet(L.id,false)]);if(DM.on)a.push(['Vote history',()=>setVotes(false)]);if(CIV.g)a.push(['District walls',()=>civClear()]);if(FEST.on)a.push(['Devaney lights',()=>devFest(false)]);
   if(BX.route!=null&&H.bus)a.push(['Route '+H.bus.routes[BX.route][0]+' path',()=>busLine(null)]);return a}
-function trayDraw(force){const now=performance.now();if(!force&&now-TRAY.at<400)return;TRAY.at=now;const T=$('tools'),it=trayItems(),shut=T.classList.contains('shut'),nb=T.querySelectorAll('.btn.sel.on').length,key=it.map(q=>q[0]).join('|')+'#'+shut+'#'+nb;if(key===TRAY.key)return;TRAY.key=key;
+function trayDraw(force){if(TRAY.mute)return;const now=performance.now();if(!force&&now-TRAY.at<400)return;TRAY.at=now;const T=$('tools'),it=trayItems(),shut=T.classList.contains('shut'),nb=T.querySelectorAll('.btn.sel.on').length,key=it.map(q=>q[0]).join('|')+'#'+shut+'#'+nb;if(key===TRAY.key)return;TRAY.key=key;
   const host=$('tray');host.textContent='';for(const [t,off] of it){const b=document.createElement('button');b.className='btn on';b.textContent=t+'  ×';b.setAttribute('aria-label','Showing '+t+'. Tap to turn it off');b.onclick=e=>{e.stopPropagation();lastInput=performance.now();off();trayDraw(true)};host.appendChild(b)}
   const n=it.length+nb;$('bMenu').textContent=shut?(n?'Menu · '+n+' on ▾':'Menu ▾'):'Menu ▴'}
 function trayInit(){const T=$('tools'),t=document.createElement('div');t.id='tray';t.setAttribute('role','group');t.setAttribute('aria-label','Switched on now');T.appendChild(t);

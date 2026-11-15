@@ -1,16 +1,33 @@
 # STARCITY
 
+[![Times opened](https://hits.sh/robotwhitebread.github.io/STARCITY.svg?style=flat-square&label=times%20opened&color=e9b949&labelColor=1b1f26)](https://robotwhitebread.github.io/STARCITY/)
+[![Cities built](https://hits.sh/robotwhitebread.github.io/STARCITY-anycity.svg?style=flat-square&label=cities%20built&color=4c9a6a&labelColor=1b1f26)](https://robotwhitebread.github.io/STARCITY/anycity/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+
+**Open the map:** [robotwhitebread.github.io/STARCITY](https://robotwhitebread.github.io/STARCITY/)
+
+**See your own city in 3D:** [robotwhitebread.github.io/STARCITY/anycity](https://robotwhitebread.github.io/STARCITY/anycity/) — type any place, ZIP code or GPS point and it is built in your browser from OpenStreetMap. Free to copy.
 An interactive 3D map of Lincoln, Nebraska that runs in a web browser. One HTML file, no server, no API keys, no account, no tracking. It is built only from public data, and every estimate and every decoration is labeled as one.
 
 **Open the live map: https://robotwhitebread.github.io/STARCITY/**
 
 That link works on a phone or a computer. Nothing to install. You can also download `index.html` and open it in any modern browser, though the live feeds only load from the website copy.
 
-This is release 0.9.1. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
+This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
 
 ## What is in it
 
-### New in 0.9.1
+### New in 0.9.2
+
+- **The City Council, in depth.** Five tabs: who sits on it and what voters changed on November 3, 2026; the next meetings from the city's own calendar, with the recordings read live from LNKTV; how an ordinance becomes law in three Mondays and how a resolution differs; how to speak, sign up and get five minutes; and where every open planning request stands, read live from the Planning Department and placed on the ground where it would happen.
+- **Closing a box takes you back.** Pick a reason for being here, open one of its views, close it, and the list of options is there again with the map still showing what you turned on.
+- **Reset clears everything.** Nothing stays marked as chosen. What belongs to the base map comes back quietly, with a check mark rather than a gold button, so gold only ever means you chose it.
+- **One way out of every close-up view.** The night sky, walking and looking around all carry the same **Back to the map** button, and it returns you to the exact view you left, with your settings. There is also **Stay here, from above** for coming up where you are standing.
+- **Data heights fit the screen.** When a layer is switched on, the tallest bar is sized against the view you are in, so a new layer never arrives as a wall or a smear. The height slider still overrides it.
+- **Minor streets at night.** Residential streets carry a lamp every 62 m and service streets and alleys one every 130 m, so the whole block grid reads in the dark.
+- **This map for your city.** `anycity/` builds a 3D view of any place, ZIP code or GPS point in the browser from OpenStreetMap, and the guide hands you the code to copy.
+
+## New in 0.9.1
 
 - **Now and Reset at the top of the screen**, with a row of reasons you may be here under them. What is live or timely comes first: a game in progress, a weather warning, the next bus, tonight's sky. Then nine ways in: my home and block, getting around, happening now, City Hall and votes, values and taxes, birds, trees and sky, history and culture, safety, and all city data. The ones you use most move to the front, on your own device only.
 - **Bus stops and times.** Every StarTran stop is on the map. Tap one for its next departures, tap a bus for where it is headed and the nearest place to catch that route, or ask for the nearest stop with a bus still to come. A table lists every route with its first and last run and how often it comes. StarTran's own live arrival board is one tap from every stop.

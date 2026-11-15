@@ -127,3 +127,24 @@ ESPN does not document or promise its feed. If it stops answering, the scores pa
 5. Copy `index.html` to the top of the repository and publish.
 
 The levy table is the one hand step: each November the Department of Revenue posts the new Taxing Unit Group Summary, and the `LEVY` table in `process2.py` is updated from it.
+
+## 0.9.2: the City Council, and this map for any city
+
+| What | Where it comes from | How it is read | Notes |
+| --- | --- | --- | --- |
+| Council members and districts | City of Lincoln Planning Department election boundaries, through the city GIS server | Saved with the map | The four district seats carry the member's name as the city's own layer gives it. Chair and vice chair come from the city's council page, read Nov 14, 2026. |
+| Meeting dates and times | City of Lincoln, City Council Public Meeting page | Typed into the map from the city's own list, read Nov 14, 2026 | Most Mondays at 3 p.m.; the last Monday of the month at 5:30 p.m. The card says to check the city's list before going, because dates change. |
+| Recordings of past meetings | LNKTV City, the city's own television channel (Cablecast public API) | Read live on the website copy | Title, date and length only. The link opens the city's own page, with the agenda beside the video. |
+| How a law is made | City Council FAQ, the City Clerk's guide to speaking, and Nebraska Revised Statute 15-404 | Written into the map | Three readings on three Mondays; the council may waive that by a two-thirds vote, never for an annexation or for redrawing its own districts. |
+| What is on its way to a vote | Lincoln and Lancaster County Planning Department, development review applications | Read live | Counted once per case, since one case can cover several pieces of ground. Only planning and zoning requests are here; the rest of the council's business is on its agenda. |
+| What voters changed on Nov 3, 2026 | Nebraska Public Media, Nebraska Examiner and KLIN reports of the results | Written into the map, marked as subject to the certified count | Even-year city elections from 2030; a two-term limit counting terms that begin in 2027. |
+| Any city, in 3D | OpenStreetMap, through the Overpass API, and Nominatim for place names | Read live in the browser | Buildings, streets, water, parks and mapped trees. Where a building has no height mapped, the page estimates it from what kind of building it is and says so on the card. Map data © OpenStreetMap contributors, under the Open Database License. |
+
+### Still blocked
+
+| What | Why |
+| --- | --- |
+| Asking rents | No open live feed. The Census Bureau's data service now needs a free key that only the repository owner can request. Zillow's Observed Rent Index is monthly by ZIP code and free with credit to Zillow; it is not on the map yet. |
+| Live arrivals and departures at Lincoln Airport | No open feed. The airport's own board would need to be shared, or a small relay run. |
+| Value and tax history for one property | Not in the open data. The assessor publishes the current year. |
+| Lincoln's own residency rule for the offender registry | Two searches found only other Nebraska towns and the state statute, so no zones are drawn and the safety card says so. |
