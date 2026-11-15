@@ -1,0 +1,166 @@
+
+// =====================================================================================================
+// Links on every building, the volleyball storm, and the life of the city that is just for fun:
+// lake monsters, fish, Sasquatch, cattle, a combine and an ice cream cone on East Campus, falcons and
+// hawks at the Capitol. Also the Capitol's thunderbird band, a note on whose homelands these are, and
+// the airport. Everything invented is labeled as invented on its card.
+// =====================================================================================================
+const polyArea=r=>{let a=0;for(let i=0;i<r.length;i++){const p=r[i],q=r[(i+1)%r.length];a+=p[0]*q[1]-q[0]*p[1]}return Math.abs(a)/2};
+const polyBox=r=>{let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of r){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}return [x0,x1,z0,z1]};
+function polyRand(r,bx,tries=14){for(let k=0;k<tries;k++){const x=bx[0]+Math.random()*(bx[1]-bx[0]),z=bx[2]+Math.random()*(bx[3]-bx[2]);if(pinR(x,z,r))return [x,z]}return null}
+const camDist=(x,y,z)=>Math.hypot(camera.position.x-x,camera.position.y-y,camera.position.z-z);
+function bByName(n){if(!bByName.m){const m=new Map(),bi=S.b_info;for(let b=0;b<bi.length;b++)if(bi[b]&&!m.has(H.infos[bi[b]]))m.set(H.infos[bi[b]],b);bByName.m=m}const b=bByName.m.get(n);return b===undefined?-1:b}
+// ---- what a building card links to: its own website, UNL's page for it, the businesses mapped inside it, and a way to walk there
+function bInside(b){if(!H2||!H2.biz)return [];if(!bizL)bizSetup();if(!bInside.m){const m=new Map();for(let i=0;i<bizL.n;i++){const q=bAt(bizL.X[2*i],bizL.X[2*i+1]);if(q>=0){let l=m.get(q);if(!l){l=[];m.set(q,l)}l.push(i)}}bInside.m=m}return bInside.m.get(b)||[]}
+function bLinks(b,links){const u=S2&&S2.b_url?H2.urls[S2.b_url[b]]:'',c=S2&&S2.b_unl?H2.unl[S2.b_unl[b]]:'';if(c)links.unshift({href:'https://maps.unl.edu/'+encodeURIComponent(c),label:'UNL building page ↗'});if(u)links.unshift({href:u,label:'Website ↗'});
+  const ins=bInside(b);let n=0;for(const i of ins){const w=H2.biz.u[i];if(w&&w!==u&&n<3){links.push({href:w,label:(H2.biz.n[i].length>24?H2.biz.n[i].slice(0,23)+'…':H2.biz.n[i])+' ↗'});n++}}
+  links.push({label:'Walk here',fn:()=>walkToB(b)});return ins.length?' · inside: '+ins.slice(0,5).map(i=>H2.biz.n[i]).join(', ')+(ins.length>5?' and '+(ins.length-5)+' more':''):''}
+// ---- the volleyball storm: as big as the week's wins, carried by the day's weather
+const VB26=[['2026-08-30T00:30Z','UNLV',3,0],['2026-08-30T19:30Z','Texas',3,0],['2026-09-03T00:00Z','South Dakota State',3,0],['2026-09-04T22:00Z','DePaul',3,0],['2026-09-10T23:30Z','New Mexico',3,0],['2026-09-12T00:00Z','Baylor',3,0],['2026-09-12T19:00Z','Georgia Tech',3,1],
+ ['2026-09-16T23:00Z','Creighton',3,0],['2026-09-19T00:00Z','North Carolina',3,1],['2026-09-20T17:00Z','Florida Gulf Coast',3,1],['2026-09-23T23:00Z','Missouri',3,0],['2026-09-26T00:00Z','Rutgers',3,0],['2026-09-27T01:00Z','Ohio State',3,0],['2026-10-01T23:00Z','Penn State',3,0],
+ ['2026-10-03T23:00Z','Maryland',3,0],['2026-10-08T22:30Z','Indiana',3,0],['2026-10-10T23:00Z','Wisconsin',3,0],['2026-10-16T00:00Z','Northwestern',3,0],['2026-10-17T21:00Z','Purdue',3,1],['2026-10-22T23:00Z','UCLA',3,0],['2026-10-25T01:00Z','USC',3,0],
+ ['2026-10-30T22:30Z','Michigan',3,1],['2026-10-31T20:30Z','Michigan State',3,1],['2026-11-08T03:00Z','Oregon',3,0],['2026-11-08T23:30Z','Washington',3,0],['2026-11-13T00:00Z','Illinois',3,0],['2026-11-15T00:00Z','Iowa',3,0]/*VBMORE*/];
+const VB26ASOF='Nov 14, 2026';
+let vbOn=false,vbs=null,vbT=null;
+function vbTally(){const now=Date.now(),lv=typeof HK!=='undefined'&&HK.ev.vb&&HK.ev.vb.some(e=>e.st==='post'),ev=lv?HK.ev.vb.filter(e=>e.st==='post'&&e.my!=null).map(e=>[e.t,e.opp,+e.my,+e.th,!!e.win]):VB26.map(r=>[Date.parse(r[0]),r[1],r[2],r[3],r[2]>r[3]]);
+  const w=ev.filter(e=>e[4]).length,wk=ev.filter(e=>e[4]&&now-e[0]<7*864e5&&now>=e[0]),on=lv?HK.ev.vb.find(e=>e.st==='in'):null;return {w,l:ev.length-w,wk,live:lv,on}}
+function vbWeather(){const w=wxNow();let wx_=0,wz_=0,mph=0,from='';if(w&&w.kmh!=null&&w.dir!=null){const ms=w.kmh/3.6,a=w.dir*Math.PI/180;wx_=-Math.sin(a)*ms;wz_=Math.cos(a)*ms;mph=Math.round(w.kmh*.621);from=['north','northeast','east','southeast','south','southwest','west','northwest'][Math.round(w.dir/45)%8]}
+  return {w,wx:wx_,wz:wz_,mph,from,mode:w&&(w.precip==='snow'||(w.tC!=null&&w.tC<=0))?2:(w&&w.precip==='rain'?1:0)}}
+function setupVB(){const N=mobile?260:520,m=new THREE.InstancedMesh(new THREE.SphereGeometry(1,12,8),new THREE.MeshLambertMaterial({map:vbTexture(),emissive:0x2c2c2c}),N);m.count=0;m.frustumCulled=false;m.visible=false;scene.add(m);
+  vbs={m,N,n:0,p:new Float32Array(N*3),s:new Float32Array(N*8),k:new Uint8Array(N),b:new Uint8Array(N)}}
+function vbSpawn(i,W,first){const V=vbs,t=controls.target,o=3*i,q=8*i,loc=i%5<2,d=camera.position.distanceTo(t),R=Math.min(3600,Math.max(70,d*.62));V.k[i]=loc?1:0;V.b[i]=0;
+  let tx,tz;if(loc){const a=Math.random()*6.283,r=Math.sqrt(Math.random())*R;tx=t.x+Math.cos(a)*r;tz=t.z+Math.sin(a)*r}else{tx=(Math.random()*2-1)*7800;tz=(Math.random()*2-1)*7800}
+  if(W.mode===0){const D=LM.dev||{x:LM.stadium[0],z:LM.stadium[1]},dist=Math.hypot(tx-D.x,tz-D.z),T=Math.min(11,Math.max(2.2,dist/1100));tx+=W.wx*T*5;tz+=W.wz*T*5; // a serve from the Devaney Center, pushed by the wind
+    V.s[q]=D.x;V.s[q+1]=D.z;V.s[q+2]=tx;V.s[q+3]=tz;V.s[q+4]=T;V.s[q+5]=first?Math.random()*T:0;V.s[q+6]=Math.min(2200,Math.max(40,dist*.22));V.s[q+7]=24;V.p[o]=D.x;V.p[o+1]=24;V.p[o+2]=D.z}
+  else{const top=loc?R*(.8+.5*Math.random()):600+900*Math.random();V.p[o]=tx;V.p[o+2]=tz;V.p[o+1]=first?top*Math.random():top;V.s[q]=0;V.s[q+1]=0}}
+function stepVB(dt,now){const V=vbs;if(!V||!vbOn)return;if(!vbT||now-vbT.at>4000){const T=vbTally(),W=vbWeather();vbT={at:now,T,W,n:Math.min(V.N,Math.round((50+110*T.wk.length)*(mobile?.6:1)))}}
+  const W=vbT.W,n=vbT.n;if(V.n!==n||V.mode!==W.mode){V.mode=W.mode;for(let i=0;i<n;i++)vbSpawn(i,W,true);V.n=n;V.m.count=n}
+  const t=controls.target,d=camera.position.distanceTo(t),R=Math.min(3600,Math.max(70,d*.62));
+  for(let i=0;i<n;i++){const o=3*i,q=8*i;let x=V.p[o],y=V.p[o+1],z=V.p[o+2];const loc=V.k[i]===1;
+    if(loc&&((x-t.x)**2+(z-t.z)**2>R*R*2.2)){vbSpawn(i,W,false);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}
+    const r=Math.min(150,Math.max(.35,camDist(x,hAt(x,z)+y,z)*.011));
+    if(W.mode===0){V.s[q+5]+=dt;const T=V.s[q+4],u=Math.min(1,V.s[q+5]/T);x=V.s[q]+(V.s[q+2]-V.s[q])*u;z=V.s[q+1]+(V.s[q+3]-V.s[q+1])*u;y=V.s[q+7]*(1-u)+4*V.s[q+6]*u*(1-u)+r;
+      if(u>=1){if(V.b[i]<2){V.b[i]++;const dx=V.s[q+2]-V.s[q],dz=V.s[q+3]-V.s[q+1],L=Math.hypot(dx,dz)||1,hop=Math.min(260,V.s[q+6]*.22);V.s[q]=x;V.s[q+1]=z;V.s[q+2]=x+dx/L*hop*1.6;V.s[q+3]=z+dz/L*hop*1.6;V.s[q+4]=Math.max(.5,T*.3);V.s[q+5]=0;V.s[q+6]=hop;V.s[q+7]=0}else{vbSpawn(i,W,false);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}}}
+    else if(W.mode===1){V.s[q]-=(loc?R*.45:900)*dt;y+=V.s[q]*dt;x+=W.wx*4*dt;z+=W.wz*4*dt;if(y<r){if(V.b[i]<2){y=r;V.s[q]=Math.abs(V.s[q])*.42;V.b[i]++}else{vbSpawn(i,W,false);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}}}
+    else{if(y>r){y=Math.max(r,y-(loc?R*.085:70)*dt);x+=(Math.sin(now*.0011+i)*r*.9+W.wx*5)*dt;z+=(Math.cos(now*.0013+i*1.7)*r*.9+W.wz*5)*dt}else{y=r;if((V.s[q+1]+=dt)>2.2){vbSpawn(i,W,false);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}}}
+    V.p[o]=x;V.p[o+1]=y;V.p[o+2]=z;lP.set(x,hAt(x,z)+y,z);lE.set(now*.0021+i,now*.0017+i*2.3,0);lQ.setFromEuler(lE);lS.setScalar(r);lM.compose(lP,lQ,lS);V.m.setMatrixAt(i,lM)}
+  V.m.instanceMatrix.needsUpdate=true;ambient=true}
+function vbCard(){const T=vbTally(),W=vbWeather(),n=Math.min(vbs?vbs.N:520,Math.round((50+110*T.wk.length)*(mobile?.6:1))),day=ms=>new Date(ms).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'});
+  const wk=T.wk.length?T.wk.map(e=>`${e[1]} ${e[2]}-${e[3]} on ${day(e[0])}`).join(', '):'none';
+  showCard('Volleyball storm',`Nebraska volleyball is ${T.w}-${T.l} this season. Wins in the last seven days: ${T.wk.length} (${wk}).`+(T.on?` Playing ${T.on.opp} right now.`:'')+` Every win in the last week sends 110 more volleyballs up, on top of 50 for a season in progress, so about ${n.toLocaleString('en-US')} are over the whole city now. `
+    +(W.mode===2?'It is freezing, so they drift down like snow and sit a moment.':W.mode===1?'It is raining, so they pour down and bounce.':'It is dry, so they are served from the Devaney Center and land all over town.')
+    +(W.mph?` The wind is from the ${W.from} at ${W.mph} mph and pushes them along.`:(W.w?' The air is calm.':' Weather has not loaded, so they fly as on a calm, dry day.'))
+    +(T.live?' Scores are read live from ESPN\'s public scoreboard.':` Scores are the map\'s saved list as of ${VB26ASOF}. On the website copy they are read live.`)+' The storm is for fun. The record is real.',undefined,{label:'Husker scores',fn:()=>huskOpen(1)})}
+function setVB(on){vbOn=on;$('bVB').classList.toggle('on',on);if(!vbs)return;vbs.m.visible=on;vbs.m.count=0;vbs.n=-1;vbT=null;if(on){lastInput=performance.now();vbCard()}else hideCard();dirty=true}
+// ---- creatures: a lake monster and jumping fish in the lakes, Sasquatch in the woods
+const CR={on:true,lakes:[],nes:[],fish:null,sq:null,cows:null,labels:[]};
+function creaturesInit(){const lakes=[];for(const w of LM.waters||[]){const a=polyArea(w[0]),bx=[w[1],w[2],w[3],w[4]],ba=(bx[1]-bx[0])*(bx[3]-bx[2]);if(a>7000&&a/ba>.22)lakes.push({r:w[0],bx,a,cx:(bx[0]+bx[1])/2,cz:(bx[2]+bx[3])/2})}
+  lakes.sort((p,q)=>q.a-p.a);CR.lakes=lakes;
+  const G=0x2e6f5e,Lt=0x58a184,nes=boxes([[1.1,3.8,1.1,0,1.5,0,G],[1.2,.95,2.2,0,3.7,-.75,G],[.5,.2,.3,0,3.25,-1.6,Lt],[.22,.22,.22,-.45,3.95,-1.2,0x111111],[.22,.22,.22,.45,3.95,-1.2,0x111111],[.3,.5,.3,-.3,4.35,-.2,Lt],[.3,.5,.3,.3,4.35,-.2,Lt],
+    [2.3,1.5,2.8,0,.25,3,G],[2.7,2,3.2,0,.4,6.6,G],[2.1,1.3,2.6,0,.2,10,G],[.9,.6,2,0,-.1,12.4,Lt]]),mat=new THREE.MeshLambertMaterial({vertexColors:true});
+  const big=lakes.filter(l=>l.a>60000).slice(0,3),nm=new THREE.InstancedMesh(nes,mat,Math.max(1,big.length));nm.count=big.length;nm.frustumCulled=false;
+  nm.userData.info=['Lake monster','A long-necked something surfaces, swims a lap and goes under again. Just for fun, added by this map: nobody has reported a monster in a Lincoln lake. The fish that jump around it are an animation too.'];scene.add(nm);pickables.push(nm);
+  CR.nesM=nm;CR.nes=big.map((l,i)=>{const cx=l.r.reduce((s,p)=>s+p[0],0)/l.r.length,cz=l.r.reduce((s,p)=>s+p[1],0)/l.r.length;let path=l.r.map(p=>[cx+(p[0]-cx)*.42,cz+(p[1]-cz)*.42]).filter(p=>pinR(p[0],p[1],l.r));if(path.length<3)path=[[cx,cz],[cx+8,cz],[cx,cz+8]];
+    const cum=[0];for(let k=1;k<=path.length;k++){const a=path[k-1],b=path[k%path.length];cum.push(cum[k-1]+Math.hypot(b[0]-a[0],b[1]-a[1]))}return {l,path,cum,s:Math.random()*cum[cum.length-1],dive:0,next:6+Math.random()*14,lb:{t:'Lake monster?',x:cx,y:0,z:cz,k:3,pri:380,near:0,far:2600}}});
+  const fg=boxes([[.34,.5,1.3,0,0,0,0xc9d3da],[.08,.62,.5,0,0,.85,0x9fb0bb],[.08,.3,.4,0,.36,-.1,0x9fb0bb]]),NF=mobile?22:40,fm=new THREE.InstancedMesh(fg,mat,NF);fm.frustumCulled=false;fm.count=NF;const col=new THREE.Color();
+  for(let i=0;i<NF;i++){fm.setColorAt(i,col.set(i%7===0?0xf2a23c:i%5===0?0x8fb07a:0xffffff));lM.makeScale(0,0,0);fm.setMatrixAt(i,lM)}
+  fm.userData.info=['Jumping fish','Fish jump in the lakes and ponds near where you are looking. An animation for fun, not a fish count.'];scene.add(fm);pickables.push(fm);CR.fish={m:fm,N:NF,st:Array.from({length:NF},()=>({w:Math.random()*4,t:0,x:0,z:0,a:0,on:false}))};
+  // Sasquatch, in two poses so he strides
+  const F=0x3b2a1e,F2=0x4c3828,pose=s=>boxes([[.42,1.15,.42,-.26,.58,s*.34,F],[.42,1.15,.42,.26,.58,-s*.34,F],[1.05,1.25,.62,0,1.75,0,F],[.82,.5,.5,0,2.05,-.08,F2],[.34,1.35,.34,-.72,1.7,-s*.38,F],[.34,1.35,.34,.72,1.7,s*.38,F],[.56,.56,.56,0,2.68,-.04,F],[.42,.12,.1,0,2.74,-.33,0x1c130d]]);
+  const woods=(LM.woods||[]).filter(w=>w[1]==='wood').map(w=>({r:w[0],a:polyArea(w[0]),bx:polyBox(w[0])})).filter(w=>w.a>70000).sort((p,q)=>q.a-p.a).slice(0,mobile?4:6),sqA=new THREE.InstancedMesh(pose(1),mat,Math.max(1,woods.length)),sqB=new THREE.InstancedMesh(pose(-1),mat,Math.max(1,woods.length));
+  for(const m of [sqA,sqB]){m.count=woods.length;m.frustumCulled=false;m.userData.info=['Sasquatch','Tall, hairy, mid-stride and never quite in focus. One wanders each of the biggest woods on the map, most of them in Wilderness Park. Just for fun: there is no evidence of Sasquatch in Lancaster County, only stories.'];scene.add(m);pickables.push(m)}
+  CR.sq={A:sqA,B:sqB,list:woods.map(w=>{const p=polyRand(w.r,w.bx,40)||[(w.bx[0]+w.bx[1])/2,(w.bx[2]+w.bx[3])/2];return {w,x:p[0],z:p[1],tx:p[0],tz:p[1],h:0,wait:1,ph:0,lb:{t:'Sasquatch?',x:p[0],y:0,z:p[1],k:3,pri:380,near:0,far:1900}}})};
+  farmInit(mat);capitolExtras(mat)}
+function stepCreatures(dt,now){if(!CR.on||!CR.nesM)return;const t=controls.target,sc=(x,z,ref,mx)=>Math.min(mx,Math.max(1,camDist(x,hAt(x,z),z)/ref));
+  CR.nes.forEach((n,i)=>{const L=n.cum[n.cum.length-1];n.s=(n.s+2.6*dt)%L;n.next-=dt;if(n.next<0){n.dive=n.dive?0:1;n.next=n.dive?5:14+Math.random()*16}n.d=(n.d||0)+((n.dive?1:0)-(n.d||0))*Math.min(1,dt*1.2);
+    let k=1;while(n.cum[k]<n.s)k++;const a=n.path[k-1],b=n.path[k%n.path.length],f=(n.s-n.cum[k-1])/((n.cum[k]-n.cum[k-1])||1),x=a[0]+(b[0]-a[0])*f,z=a[1]+(b[1]-a[1])*f,s=sc(x,z,170,12)*1.4;
+    lP.set(x,hAt(x,z)+(Math.sin(now*.0016+i)*.25-n.d*5.2)*s,z);lQ.setFromAxisAngle(lUp,Math.atan2(-(b[0]-a[0]),-(b[1]-a[1])));lS.setScalar(s);lM.compose(lP,lQ,lS);CR.nesM.setMatrixAt(i,lM);n.lb.x=x;n.lb.z=z;n.lb.y=hAt(x,z)+7*s;if(n.d<.5)lifeLabels.push(n.lb)});
+  CR.nesM.instanceMatrix.needsUpdate=true;
+  if(camera.position.distanceTo(t)<9000){const F=CR.fish,near=CR.lakes.filter(l=>(l.cx-t.x)**2+(l.cz-t.z)**2<3200*3200).slice(0,10);
+    F.st.forEach((f,i)=>{if(!f.on){f.w-=dt;if(f.w<0&&near.length){const l=near[(Math.random()*near.length)|0],p=polyRand(l.r,l.bx);if(p){f.x=p[0];f.z=p[1];f.a=Math.random()*6.283;f.t=0;f.on=true}else f.w=1}if(!f.on){lM.makeScale(0,0,0);F.m.setMatrixAt(i,lM);return}}
+      f.t+=dt/.95;const u=Math.min(1,f.t),s=sc(f.x,f.z,150,13),x=f.x+Math.sin(f.a)*u*2.4*s,z=f.z+Math.cos(f.a)*u*2.4*s;lP.set(x,hAt(f.x,f.z)+(4*u*(1-u)*2.1-.2)*s,z);lE.set((u-.5)*2.2,f.a+Math.PI,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);F.m.setMatrixAt(i,lM);if(u>=1){f.on=false;f.w=.6+Math.random()*5}});
+    F.m.instanceMatrix.needsUpdate=true}
+  const Q=CR.sq;Q.list.forEach((q,i)=>{const dx=q.tx-q.x,dz=q.tz-q.z,d=Math.hypot(dx,dz),s=sc(q.x,q.z,120,13)*1.25;let walking=false;
+    if(q.wait>0)q.wait-=dt;else if(d>1){const st=Math.min(d,1.7*Math.sqrt(s)*dt);q.x+=dx/d*st;q.z+=dz/d*st;let dh=Math.atan2(-dx,-dz)-q.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));q.h+=dh*Math.min(1,dt*4);q.ph+=st/s*1.5;walking=true}
+    else{const p=polyRand(q.w.r,q.w.bx,20);if(p){q.tx=p[0];q.tz=p[1]}q.wait=Math.random()<.4?2+Math.random()*4:0}
+    const A=!walking||Math.sin(q.ph)>0;lP.set(q.x,hAt(q.x,q.z)+(walking?Math.abs(Math.sin(q.ph))*.08*s:0),q.z);lQ.setFromAxisAngle(lUp,q.h);lS.setScalar(s);lM.compose(lP,lQ,lS);Q.A.setMatrixAt(i,lM);Q.B.setMatrixAt(i,lM);
+    lM.makeScale(0,0,0);(A?Q.B:Q.A).setMatrixAt(i,lM);q.lb.x=q.x;q.lb.z=q.z;q.lb.y=hAt(q.x,q.z)+4.2*s;lifeLabels.push(q.lb)});
+  Q.A.instanceMatrix.needsUpdate=true;Q.B.instanceMatrix.needsUpdate=true;stepFarm(dt,now,sc);stepCapitol(dt,now,sc);ambient=true}
+function setCreatures(on){CR.on=on;$('bCre').classList.toggle('on',on);for(const m of [CR.nesM,CR.fish&&CR.fish.m,CR.sq&&CR.sq.A,CR.sq&&CR.sq.B,CR.cowM,CR.comb,CR.crop,CR.stub,CR.cone,CR.capB&&CR.capB[0],CR.capB&&CR.capB[1]])if(m)m.visible=on;dirty=true}
+// ---- East Campus: cattle by the Animal Science Complex, a combine working the research plots, ice cream at the Dairy Store
+function farmInit(mat){const an=bByName('Animal Science Complex'),ds=bByName('UNL Dairy Store');if(an<0)return;const ax=LM.bc[2*an],az=LM.bc[2*an+1];
+  const fields=(LM.fields||[]).map(r=>({r,a:polyArea(r),bx:polyBox(r)})).map(f=>Object.assign(f,{cx:(f.bx[0]+f.bx[1])/2,cz:(f.bx[2]+f.bx[3])/2})).filter(f=>Math.hypot(f.cx-ax,f.cz-az)<1150&&f.a>7000);
+  if(!fields.length)return;const past=fields.slice().sort((p,q)=>Math.hypot(p.cx-ax,p.cz-az)-Math.hypot(q.cx-ax,q.cz-az))[0],crop=fields.filter(f=>f!==past).sort((p,q)=>q.a-p.a)[0]||past;
+  const BK=0x1c1b1a,RD=0x7a2e1e,WH=0xe9e4da,cow=c=>boxes([[.95,1,2.2,0,1.15,0,c],[.5,.55,.75,0,1.25,-1.4,c===RD?WH:c],[.16,.7,.16,-.32,.35,-.8,c],[.16,.7,.16,.32,.35,-.8,c],[.16,.7,.16,-.32,.35,.8,c],[.16,.7,.16,.32,.35,.8,c],[.08,.7,.08,0,1.2,1.15,c]]);
+  const NC=14,cm=new THREE.InstancedMesh(cow(BK),mat,NC),col=new THREE.Color();cm.frustumCulled=false;cm.count=NC;for(let i=0;i<NC;i++)cm.setColorAt(i,col.set(i%3===0?0xc0705a:0xffffff));
+  cm.userData.info=['Cattle on East Campus','A small herd grazes by the Animal Science Complex. East Campus is the university\'s agriculture campus. The animals here are an animation for fun, not a live count of anything.'];scene.add(cm);pickables.push(cm);CR.cowM=cm;
+  CR.cows=Array.from({length:NC},()=>{const p=polyRand(past.r,past.bx,40)||[past.cx,past.cz];return {x:p[0],z:p[1],tx:p[0],tz:p[1],h:Math.random()*6,wait:Math.random()*6,f:past}});
+  labels.push({t:'Cattle',x:past.cx,y:hAt(past.cx,past.cz)+10,z:past.cz,k:3,pri:330,near:0,far:900});
+  // the crop and the combine: rows across the field, a stubble trail behind
+  const R=crop.r,tr=THREE.ShapeUtils.triangulateShape(R.map(p=>new THREE.Vector2(p[0],p[1])),[]),P=[];for(const p of R)P.push(p[0],hAt(p[0],p[1])+.55,p[1]);const cg=new THREE.BufferGeometry();cg.setAttribute('position',new THREE.Float32BufferAttribute(P,3));cg.setIndex(tr.flat());
+  CR.crop=new THREE.Mesh(cg,new THREE.MeshBasicMaterial({color:0xd9b44a,transparent:true,opacity:.82,side:THREE.DoubleSide,depthWrite:false}));CR.crop.renderOrder=1;scene.add(CR.crop);
+  const pts=[],bx=crop.bx,wide=(bx[1]-bx[0])>(bx[3]-bx[2]);let flip=false;
+  for(let v=(wide?bx[2]:bx[0])+5;v<(wide?bx[3]:bx[1]);v+=9){const row=[];for(let u=(wide?bx[0]:bx[2]);u<(wide?bx[1]:bx[3]);u+=4){const x=wide?u:v,z=wide?v:u;if(pinR(x,z,R))row.push([x,z])}if(row.length<3)continue;if(flip)row.reverse();flip=!flip;for(const p of row)pts.push(p)}
+  if(pts.length<8)return;const NS=Math.min(2600,pts.length),sg=new THREE.PlaneGeometry(9,4.6);sg.rotateX(-Math.PI/2);CR.stub=new THREE.InstancedMesh(sg,new THREE.MeshBasicMaterial({color:0x8a6a3a,side:THREE.DoubleSide}),NS);CR.stub.count=0;CR.stub.frustumCulled=false;CR.stub.renderOrder=2;scene.add(CR.stub);
+  const RED=0xb5271f,g=new THREE.Group(),body=new THREE.Mesh(boxes([[3.2,2.4,5.4,0,2.3,.6,RED],[2.2,1.6,1.8,0,3.6,-1.6,0x9fc4d6],[7.6,.9,1.5,0,.9,-3.6,0xe0b63a],[7.2,.5,.5,0,1.5,-4.1,0x8a8a8a],[.9,1.9,1.9,-1.9,.95,-.6,0x1a1a1a],[.9,1.9,1.9,1.9,.95,-.6,0x1a1a1a],[.6,1.1,1.1,-1.4,.55,2.6,0x1a1a1a],[.6,1.1,1.1,1.4,.55,2.6,0x1a1a1a],[.5,.5,4.6,2.2,4.1,1.4,RED]]),mat);
+  g.add(body);g.userData.info=['Harvest on East Campus','A combine works back and forth across the research plots east of the Animal Science Complex, leaving stubble behind, then the field grows back and it starts again. An animation for fun: this is not live equipment and the plots are not really one field of corn.'];scene.add(g);pickables.push(g);CR.comb=g;CR.path={pts,i:0,f:0};
+  labels.push({t:'Harvest',x:crop.cx,y:hAt(crop.cx,crop.cz)+14,z:crop.cz,k:3,pri:330,near:0,far:1100});
+  if(ds>=0){const x=LM.bc[2*ds],z=LM.bc[2*ds+1],c=new THREE.Group(),L=m=>new THREE.MeshLambertMaterial({color:m});const cone=new THREE.Mesh(new THREE.ConeGeometry(1.5,4.4,14),L(0xd9a05b));cone.rotation.x=Math.PI;cone.position.y=2.2;c.add(cone);
+    [[0xfff3d6,5,0,0],[0xd9435e,6.5,.35,0],[0x6b3f2a,7.9,0,.2]].forEach(([m,y,ox,oz])=>{const s=new THREE.Mesh(new THREE.SphereGeometry(1.55,14,10),L(m));s.position.set(ox,y,oz);c.add(s)});const ch=new THREE.Mesh(new THREE.SphereGeometry(.45,10,8),L(0xc1121f));ch.position.y=9.6;c.add(ch);
+    c.position.set(x,hAt(x,z)+S.b_h[ds]/10+3,z);c.userData.card=()=>showCard('UNL Dairy Store','Ice cream made by the university\'s food science students. The Dairy Store opened in 1917 as Varsity Dairy, selling all the milk you could drink for a nickel if you brought your own glass. It is at 114 Food Industry Complex on East Campus. Scarlet and Cream is one of its best-known flavors. The giant cone is this map\'s own marker.',undefined,undefined,[{href:'https://dairystore.unl.edu/',label:'Dairy Store ↗'},{label:'Walk here',fn:()=>walkToB(ds)}]);
+    scene.add(c);pickables.push(c);CR.cone=c;labels.push({t:'UNL Dairy Store',sub:'ice cream since 1917',x,y:c.position.y+14,z,k:3,pri:520,near:0,far:2600})}}
+function stepFarm(dt,now,sc){if(!CR.cows)return;CR.cows.forEach((c,i)=>{const dx=c.tx-c.x,dz=c.tz-c.z,d=Math.hypot(dx,dz);if(c.wait>0)c.wait-=dt;else if(d>.6){const st=Math.min(d,.55*dt);c.x+=dx/d*st;c.z+=dz/d*st;let dh=Math.atan2(-dx,-dz)-c.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));c.h+=dh*Math.min(1,dt*2)}
+      else{const p=polyRand(c.f.r,c.f.bx);if(p){c.tx=p[0];c.tz=p[1]}c.wait=3+Math.random()*9}
+    const s=sc(c.x,c.z,260,5);lP.set(c.x,hAt(c.x,c.z),c.z);lE.set(c.wait>0?.16:0,c.h,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);CR.cowM.setMatrixAt(i,lM)});CR.cowM.instanceMatrix.needsUpdate=true;
+  if(CR.cone){CR.cone.rotation.y=now*.0005;CR.cone.scale.setScalar(sc(CR.cone.position.x,CR.cone.position.z,330,9))}
+  const Pth=CR.path;if(!Pth||!CR.comb)return;const a=Pth.pts[Pth.i],b=Pth.pts[Pth.i+1];if(!b){Pth.i=0;Pth.f=0;CR.stub.count=0;return}
+  const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;Pth.f+=5.5*dt/L;if(Pth.f>=1){Pth.f=0;Pth.i++;if(L<12&&CR.stub.count<CR.stub.instanceMatrix.count){lP.set(a[0],hAt(a[0],a[1])+.75,a[1]);lQ.setFromAxisAngle(lUp,Math.atan2(b[0]-a[0],b[1]-a[1])+Math.PI/2);lS.setScalar(1);lM.compose(lP,lQ,lS);CR.stub.setMatrixAt(CR.stub.count++,lM);CR.stub.instanceMatrix.needsUpdate=true}return}
+  const x=a[0]+(b[0]-a[0])*Pth.f,z=a[1]+(b[1]-a[1])*Pth.f;CR.comb.position.set(x,hAt(x,z)+.4,z);if(L<12)CR.comb.rotation.y=Math.atan2(-(b[0]-a[0]),-(b[1]-a[1]));CR.comb.scale.setScalar(sc(x,z,320,5))}
+// ---- the Capitol: the thunderbird band under the dome, the falcon nest box on the tower, falcons and hawks in the air
+function thunderTex(){const c=document.createElement('canvas');c.width=256;c.height=96;const x=c.getContext('2d');x.fillStyle='#cdbf9c';x.fillRect(0,0,256,96);x.fillStyle='#8a6b3d';x.fillRect(0,0,256,7);x.fillRect(0,89,256,7);
+  const t=(pts,col)=>{x.fillStyle=col;x.beginPath();pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fill()};
+  t([[128,22],[150,44],[128,82],[106,44]],'#1f5f8b');for(const s of [-1,1]){t([[128+s*14,34],[128+s*112,24],[128+s*112,36],[128+s*88,36],[128+s*88,48],[128+s*64,48],[128+s*64,60],[128+s*40,60],[128+s*40,70],[128+s*18,56]],'#b23a2e');t([[128+s*20,38],[128+s*104,30],[128+s*104,33],[128+s*22,44]],'#d9a520')}
+  t([[118,22],[138,22],[142,12],[150,16],[138,26]],'#1f5f8b');t([[122,82],[134,82],[140,92],[116,92]],'#d9a520');x.fillStyle='#d9a520';x.fillRect(125,40,6,22);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;return tx}
+function capitolExtras(mat){const g=LM.capG;if(!g)return;const tb=new THREE.MeshLambertMaterial({map:thunderTex()});for(let k=0;k<8;k++){const a=k*Math.PI/4,p=new THREE.Mesh(new THREE.PlaneGeometry(6.6,2.5),tb);p.position.set(Math.sin(a)*9.22,107.9,Math.cos(a)*9.22);p.rotation.y=a;g.add(p)}
+  const nest=new THREE.Mesh(boxes([[2.2,.25,1.7,0,0,0,0x8d8674],[1.6,1.1,1.3,0,.65,-.1,0x6e6a5e],[.9,.6,.1,0,.6,.6,0x15130f],[1.5,.22,1.2,0,.2,.45,0x5a4126]]),mat);nest.position.set(12.9,86.5,2.5);nest.rotation.y=Math.PI/2;g.add(nest);
+  const wp=new THREE.Vector3(14,88,2.5).applyAxisAngle(lUp,g.rotation.y).add(g.position);labels.push({t:'Falcon nest box',sub:'peregrines, 18th floor',x:wp.x,y:wp.y+3,z:wp.z,k:3,pri:640,near:0,far:480});
+  labels.push({t:'Thunderbird mosaics',sub:'eight, circling the drum under the dome',x:LM.capTop.x,y:g.position.y+112,z:LM.capTop.z,k:3,pri:645,near:0,far:620});
+  g.userData.info[1]+=' Under the dome, eight thunderbird mosaics circle the drum, and a peregrine falcon nest box sits outside the 18th floor.';g.userData.act={label:'Thunderbirds, falcons, homelands',fn:capitolMore};
+  const bird=(c,c2)=>boxes([[.34,.3,1.3,0,0,0,c],[1.7,.07,.72,-1,0,.02,c],[1.7,.07,.72,1,0,.02,c],[.5,.06,.55,0,0,.85,c2],[.26,.26,.3,0,.04,-.74,c2]]);
+  CR.capB=[new THREE.InstancedMesh(bird(0x4a5560,0x2e353c),mat,2),new THREE.InstancedMesh(bird(0x7a5230,0xb5552b),mat,2)];
+  CR.capB[0].userData.info=['Peregrine falcons','Real falcons live on this tower. A nest box went up outside the 18th floor in 1991 and a pair first raised chicks in 2005. Nebraska Game and Parks runs a nest camera in spring. The two circling here are an animation, drawn bigger than life so you can find them.'];
+  CR.capB[1].userData.info=['Red-tailed hawks','Two hawks ride the air above the Capitol grounds. An animation for fun, drawn bigger than life.'];
+  for(const m of CR.capB){m.frustumCulled=false;scene.add(m);pickables.push(m)}CR.capL=[{t:'Peregrine falcons',x:0,y:0,z:0,k:3,pri:360,near:0,far:1500},{t:'Red-tailed hawks',x:0,y:0,z:0,k:3,pri:350,near:0,far:2200}]}
+function stepCapitol(dt,now,sc){if(!CR.capB)return;const cx=LM.capTop.x,cz=LM.capTop.z,gy=LM.capG.position.y,T=now*.001;
+  for(let k=0;k<4;k++){const hawk=k>1,j=k%2,w=hawk?.16:.55+.1*j,th=T*w*(j?-1:1)+j*2.4+(hawk?1:0),R=hawk?210+50*Math.sin(T*.13+j*3):34+14*Math.sin(T*.4+j*2),x=cx+Math.cos(th)*R,z=cz+Math.sin(th)*R,y=gy+(hawk?170+26*Math.sin(T*.11+j):96+16*Math.sin(T*.5+j*1.7));
+    const s=sc(x,z,hawk?300:240,hawk?12:9)*(hawk?1.5:1.1),dir=j?-1:1,hx=-Math.sin(th)*dir,hz=Math.cos(th)*dir;lP.set(x,y,z);lE.set(0,Math.atan2(-hx,-hz),(hawk?.28:.5)*dir+(hawk?0:Math.sin(now*.02+j)*.25),'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);CR.capB[hawk?1:0].setMatrixAt(j,lM);
+    if(j===0){const l=CR.capL[hawk?1:0];l.x=x;l.y=y+2.4*s;l.z=z;lifeLabels.push(l)}}
+  CR.capB[0].instanceMatrix.needsUpdate=true;CR.capB[1].instanceMatrix.needsUpdate=true}
+function capitolMore(){showCard('Thunderbirds, falcons and homelands','Beneath the Sower, a band of eight thunderbird mosaics circles the tower. Hartley Burr Alexander, who planned the Capitol\'s art in the 1920s, insisted that the story of Nebraska include its first people. The Capitol\'s own guide says the thunderbird speaks to how much water matters to the people who farm here, past, present and future. '
+  +'This is Otoe-Missouria homeland: the City of Lincoln has formally recognized the Otoe-Missouria as the original stewards of the land that became Lancaster County. They were moved to a reservation on the Big Blue River in 1854 and to Indian Territory, now Oklahoma, in 1880 and 1881, and they return each September for Otoe-Missouria Day. The University of Nebraska also names the Pawnee, Ponca, Omaha, Dakota, Lakota, Arapaho, Cheyenne and Kaw peoples, and the relocated Ho-Chunk, Iowa and Sac and Fox peoples, as peoples of this land. '
+  +'The falcons are real too: peregrines have nested on the tower since 2005. The band drawn on this model is a simple stand-in, not a copy of the mosaic.',undefined,undefined,
+  [{href:'https://capitol.nebraska.gov/building/artwork/native-american-inspired-artwork/',label:'Capitol artwork ↗'},{href:'https://plains.unl.edu/walking-footsteps-our-ancestors/',label:'Otoe-Missouria project ↗'},{href:'https://outdoornebraska.gov/about/press-events/news/capitol-peregrine-falcon-chicks-banded-naming-contest-begins',label:'The falcons ↗'}])}
+// ---- the airport, just off the northwest corner of the map, and the planes
+const FLIGHT_FEED=''; // a relay address goes here to show live aircraft; see relay/README.md in the repo
+const FLT={on:false,pad:null,m:null,list:[],lb:[],next:0,
+  routes:[['United','Chicago O\'Hare',76],['United','Denver',266],['American','Dallas/Fort Worth',182],['American','Chicago O\'Hare',76],['Breeze','Orlando',128],['Breeze','Las Vegas',252]]};
+function flightsInit(){const ax=(-96.7592-H.lon0)*KXm,az=-(40.851-H.lat0)*KYm,y=hAt(-8150,-8150)+1,g=new THREE.Group(),M=c=>new THREE.MeshLambertMaterial({color:c});
+  const pad=new THREE.Mesh(new THREE.BoxGeometry(4300,2,5200),M(0x93a57a));pad.position.set(0,-1.2,0);g.add(pad);
+  for(const [len,w,x,z,hd] of [[3930,60,-700,-150,3],[2640,46,250,650,143],[1770,30,900,-900,3]]){const r=new THREE.Mesh(new THREE.BoxGeometry(w,.6,len),M(0x3c3f44));r.position.set(x,.3,z);r.rotation.y=-hd*Math.PI/180;g.add(r)}
+  const term=new THREE.Mesh(new THREE.BoxGeometry(260,14,70),M(0xcfd3d6));term.position.set(1150,7,300);g.add(term);g.position.set(ax,y,az);
+  g.userData.card=()=>flightCard();scene.add(g);pickables.push(g);FLT.pad=g;FLT.at={x:ax,y,z:az};labels.push({t:'Lincoln Airport (LNK)',sub:'just off the map, drawn as a simple plan',x:ax+900,y:y+120,z:az+1500,k:3,pri:700,near:0,far:26000});
+  const pg=boxes([[3.6,3.6,34,0,0,0,0xf2f4f6],[30,.7,6,0,-.6,1,0xdfe3e6],[11,.6,3.4,0,.4,15,0xdfe3e6],[.7,6,5,0,3.2,15,0x2f6fb5],[3.2,3.2,2,0,0,-17.6,0x23272b]]),m=new THREE.InstancedMesh(pg,new THREE.MeshLambertMaterial({vertexColors:true}),8);m.count=0;m.frustumCulled=false;m.visible=false;
+  m.userData.card=h=>{const f=FLT.list[h.instanceId];if(f)showCard(f.t,f.live?f.body:'An example of the flights Lincoln has, not a live aircraft. '+f.body,undefined,{label:'About flights here',fn:flightCard})};scene.add(m);pickables.push(m);FLT.m=m;
+  $('bFly').onclick=()=>setFlights(!FLT.on)}
+function flightCard(){showCard('Flights at Lincoln Airport','Who flies from Lincoln now, per the airport: United to Chicago and Denver every day. American, which started here in June 2026, to Dallas/Fort Worth and Chicago every day, with winter flights to Phoenix starting December 17. Breeze to Orlando, Las Vegas and Orange County on Wednesdays and Saturdays. Flights run from about 5 a.m. to 11 p.m. '
+  +(FLIGHT_FEED?'The planes on the map are live positions from aircraft transponders.':'The planes on the map are examples that take off and land the way those flights do. They are not live: every free aircraft feed refuses to answer a web page, so live planes need a small relay, which is written and waiting in the repo.')+' The airport sits about a mile past the northwest corner of the map.',undefined,undefined,
+  [{href:'https://lincolnairport.com/',label:'Lincoln Airport ↗'},{href:'https://www.flightaware.com/live/airport/KLNK',label:'Live arrivals and departures ↗'}])}
+function setFlights(on){FLT.on=on;$('bFly').classList.toggle('on',on);FLT.m.visible=on;if(on){lastInput=performance.now();flightCard();flyTo(camTo(-6400,-6200,6500,135,24),2200);FLT.next=0}else{FLT.m.count=0;FLT.list=[];hideCard()}dirty=true}
+function stepFlights(dt,now){if(!FLT.on)return;const A=FLT.at;
+  if(!FLIGHT_FEED){FLT.next-=dt;if(FLT.next<=0&&FLT.list.length<4){FLT.next=9+Math.random()*9;const r=FLT.routes[(Math.random()*FLT.routes.length)|0],dep=Math.random()<.5,b=r[2]*Math.PI/180;
+      FLT.list.push({t:r[0]+(dep?' to ':' from ')+r[1],body:(dep?'Taking off for ':'Coming in from ')+r[1]+'.',dep,bx:Math.sin(b),bz:-Math.cos(b),u:0})}
+    FLT.list=FLT.list.filter(f=>(f.u+=dt/46)<1);
+    FLT.list.forEach((f,i)=>{const u=f.dep?f.u:1-f.u,roll=Math.min(1,u/.16),air=Math.max(0,(u-.16)/.84),rx=A.x-700,rz=A.z-150+(.5-roll)*3400*(f.dep?1:-1)*(u<.16?1:0);let x,y,z,hd;
+      if(u<.16){x=rx;z=A.z-150+(1.7-3.4*roll)*1000*(f.dep?1:1);y=A.y+3;hd=0}else{const e=air*air*(3-2*air),d=air*15000;x=rx+f.bx*d*e;z=A.z-150-1700-(1-e)*air*2500+f.bz*d*e;y=A.y+3+air*2300;hd=Math.atan2(-(f.bx*e+0),-(-(1-e)+f.bz*e))}
+      f.x=x;f.y=y;f.z=z;const s=Math.min(26,Math.max(1.6,camDist(x,y,z)/600));lP.set(x,y,z);lE.set((u<.16?0:.14)*(f.dep?1:-1),f.dep?hd:hd+Math.PI,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);FLT.m.setMatrixAt(i,lM)})}
+  FLT.m.count=FLT.list.length;FLT.m.instanceMatrix.needsUpdate=true;FLT.lb.length=0;FLT.list.forEach((f,i)=>{if(f.x===undefined)return;const l=FLT.lb[i]||(FLT.lb[i]={k:7,pri:500,near:0,far:40000});l.t=f.t;l.sub=f.live?f.sub:'example, not live';l.x=f.x;l.y=f.y+60;l.z=f.z;lifeLabels.push(l)});ambient=true}

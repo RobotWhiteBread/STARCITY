@@ -1,0 +1,98 @@
+
+// =====================================================================================================
+// Live: Husker scores as they happen, weather alerts that load on their own, and what City Hall is
+// deciding right now. Every feed here is read by the page itself from a public source. If a feed
+// cannot be reached, the map says so instead of guessing.
+// =====================================================================================================
+const ESPN='https://site.api.espn.com/apis/site/v2/sports/',huskLabels=[];
+const HK={sp:[['now','Now'],['vb','Volleyball','volleyball/womens-college-volleyball','Devaney Sports Center',[8,9,10,11,12]],['fb','Football','football/college-football','Memorial Stadium',[8,9,10,11,12,1]],
+  ['mbb','Men\'s hoops','basketball/mens-college-basketball','Pinnacle Bank Arena',[11,12,1,2,3,4]],['wbb','Women\'s hoops','basketball/womens-college-basketball','Pinnacle Bank Arena',[11,12,1,2,3,4]],['bsb','Baseball','baseball/college-baseball','Haymarket Park',[2,3,4,5,6]]],
+  ev:{},rec:{},sum:{},at:0,ok:false,fail:false,busy:false,beacon:null};
+function hkParse(e){const c=e.competitions&&e.competitions[0];if(!c||!c.competitors)return null;const me=c.competitors.find(q=>q.team&&q.team.id==='158'),op=c.competitors.find(q=>q!==me);if(!me||!op)return null;
+  const ty=((c.status||e.status||{}).type)||{},sc=q=>q.score==null?null:(typeof q.score==='object'?q.score.displayValue:String(q.score)),rk=q=>q.curatedRank&&q.curatedRank.current>0&&q.curatedRank.current<=25?q.curatedRank.current:0;
+  return {id:e.id,t:Date.parse(e.date),ha:me.homeAway,neutral:!!c.neutralSite,opp:op.team.shortDisplayName||op.team.displayName||'',oa:op.team.abbreviation||'',st:ty.state||'pre',det:ty.shortDetail||ty.detail||'',done:!!ty.completed,my:sc(me),th:sc(op),win:me.winner,
+    venue:(c.venue&&c.venue.fullName)||'',ls:(me.linescores||[]).map(l=>l.displayValue),lo:(op.linescores||[]).map(l=>l.displayValue),rk:rk(me),ork:rk(op)}}
+const hkSeason=s=>s[4].includes(lincolnNow().ymd/100%100|0);
+async function hkLoad(force){if(!hosted()||HK.busy||(!force&&Date.now()-HK.at<9e5))return;HK.busy=true;let any=false;
+  await Promise.all(HK.sp.slice(1).filter(hkSeason).map(async s=>{try{const j=await (await fetch(ESPN+s[2]+'/teams/158/schedule')).json(),ev=(j.events||[]).map(hkParse).filter(Boolean).sort((a,b)=>a.t-b.t);if(!ev.length)return;
+      const fin=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null),w=fin.filter(e=>e.win).length;HK.ev[s[0]]=ev;HK.rec[s[0]]=(j.team&&j.team.recordSummary)||(w+'-'+(fin.length-w));any=true}catch(e){}}));
+  HK.busy=false;HK.at=Date.now();HK.ok=HK.ok||any;HK.fail=!any&&!HK.ok;hkAfter()}
+const hkHot=e=>{const n=Date.now();return e.st==='in'||(e.st==='pre'&&e.t-n<12e5&&n-e.t<144e5)||(e.st==='post'&&n-e.t<144e5&&!e.sett)};
+async function hkTick(){if(!hosted()||document.hidden||!HK.ok)return;let ch=false;
+  for(const s of HK.sp.slice(1)){for(const e of (HK.ev[s[0]]||[]).filter(hkHot)){try{const j=await (await fetch(ESPN+s[2]+'/scoreboard/'+e.id)).json(),u=hkParse(j);if(u){const was=e.st;Object.assign(e,u);if(e.st==='post'&&e.done){e.sett=true;if(was!=='post'){const fin=HK.ev[s[0]].filter(q=>q.st==='post'&&q.done&&q.my!=null),w=fin.filter(q=>q.win).length;HK.rec[s[0]]=w+'-'+(fin.length-w)}}ch=true}}catch(err){}}}
+  if(ch)hkAfter();if(Date.now()-HK.at>9e5)hkLoad()}
+function hkLine(e,s){const vb=s[0]==='vb',lead=`Nebraska ${e.my??0}, ${e.opp} ${e.th??0}`;if(e.st!=='in')return lead;return lead+' · '+(vb&&e.ls.length?`set ${e.ls.length}: ${e.ls[e.ls.length-1]}-${e.lo[e.lo.length-1]??0}`:e.det)}
+const hkWhen=t=>new Date(t).toLocaleString('en-US',{timeZone:'America/Chicago',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+function hkVenue(n){if(n==='Memorial Stadium')return {x:LM.stadium[0],z:LM.stadium[1],h:70};if(n==='Devaney Sports Center'&&LM.dev)return {x:LM.dev.x,z:LM.dev.z,h:60};const b=H.blabels.find(q=>q[0]===n);return b?{x:b[1],z:-b[2],h:b[4]+34}:null}
+function hkAfter(){huskLabels.length=0;const live=[],byV=new Map();
+  for(const s of HK.sp.slice(1)){const ev=HK.ev[s[0]];if(!ev)continue;const on=ev.find(e=>e.st==='in'),nx=ev.find(e=>e.st==='pre'&&e.t>Date.now()-36e5);if(on)live.push([s,on]);
+    let v=byV.get(s[3]);if(!v){v={rec:[],sub:'',live:false};byV.set(s[3],v)}v.rec.push(s[1]+' '+HK.rec[s[0]]);
+    if(on&&on.ha==='home'&&!on.neutral){v.live=true;v.sub='LIVE: '+hkLine(on,s)}else if(!v.sub&&nx&&nx.ha==='home'&&!nx.neutral)v.sub='next here: '+nx.opp+', '+hkWhen(nx.t)}
+  for(const [n,v] of byV){const p=hkVenue(n);if(p)huskLabels.push({t:v.rec.join(' · '),sub:v.sub,x:p.x,y:hAt(p.x,p.z)+p.h+26,z:p.z,k:3,pri:v.live?1500:930,near:0,far:v.live?30000:7000})}
+  const b=$('liveB');if(live.length){const [s,e]=live[0];b.textContent='● LIVE '+s[1]+': '+hkLine(e,s)+(live.length>1?' (+'+(live.length-1)+')':'');b.style.display='block'}else b.style.display='none';
+  if(HK.beacon){const U=HK.beacon.material.uniforms;U.uA.value=live.some(([s,e])=>e.ha==='home')?1.25:.8}
+  if(sheet===HUSK)hkRefresh();if(vbOn)vbT=null;dirty=true}
+function hkRefresh(){const b=$('gbody'),y=b.scrollTop,i=[...$('gtabs').children].findIndex(q=>q.classList.contains('on'));b.innerHTML=hkHTML(Math.max(0,i));b.scrollTop=y}
+const HKSTAT={fb:['totalYards','netPassingYards','rushingYards','firstDowns','thirdDownEff','turnovers','totalPenaltiesYards','possessionTime'],bb:['fieldGoalsMade-fieldGoalsAttempted','fieldGoalPct','threePointFieldGoalsMade-threePointFieldGoalsAttempted','freeThrowsMade-freeThrowsAttempted','totalRebounds','assists','turnovers','largestLead']};
+async function hkSum(k,id){const s=HK.sp.find(q=>q[0]===k);HK.sum[id]={busy:true};hkRefresh();try{const j=await (await fetch(ESPN+s[2]+'/summary?event='+id)).json(),bx=j.boxscore||{},T=bx.teams||[],me=T.find(t=>t.team.id==='158'),op=T.find(t=>t.team.id!=='158'),want=HKSTAT[k==='fb'?'fb':'bb'],rows=[];
+    if(me&&op&&me.statistics)for(const n of want){const a=me.statistics.find(q=>q.name===n),b=(op.statistics||[]).find(q=>q.name===n);if(a)rows.push([a.label||n,a.displayValue,b?b.displayValue:''])}
+    const stars=[];for(const p of (bx.players||[]).filter(p=>p.team.id==='158'))for(const g of p.statistics||[]){const L=g.labels||[];if(k==='fb'){if(['passing','rushing','receiving'].includes(g.name)&&g.athletes&&g.athletes[0])stars.push(g.athletes[0].athlete.displayName+' ('+g.name+'): '+g.athletes[0].stats.map((v,q)=>v+' '+L[q]).slice(0,4).join(', '))}
+        else{const pi=L.indexOf('PTS');if(pi>=0)for(const a of (g.athletes||[]).filter(a=>a.stats&&a.stats.length).sort((x,y)=>(+y.stats[pi]||0)-(+x.stats[pi]||0)).slice(0,3))stars.push(a.athlete.displayName+': '+a.stats[pi]+' pts, '+a.stats[L.indexOf('REB')]+' reb, '+a.stats[L.indexOf('AST')]+' ast')}}
+    HK.sum[id]={rows,stars,at:Date.now()}}catch(e){HK.sum[id]={err:true}}hkRefresh()}
+function hkGame(e,s,big){const k=s[0],su=HK.sum[e.id],fin=e.st==='post'&&e.done&&e.my!=null,rk=q=>q?'#'+q+' ':'';let h=`<div class="hkg${e.st==='in'?' live':''}">`;
+  if(e.st==='pre')h+=`<b>${e.ha==='home'?'vs':'at'} ${rk(e.ork)}${esc(e.opp)}</b><small>${hkWhen(e.t)}${e.venue?' · '+esc(e.venue):''}</small>`;
+  else if(fin||e.st==='in'){h+=`<b>${e.st==='in'?'<i>LIVE</i> ':(e.win?'W ':'L ')}Nebraska ${esc(e.my)}, ${esc(e.opp)} ${esc(e.th)}</b><small>${e.st==='in'?esc(e.det):new Date(e.t).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'})}${e.ha==='home'?' · home':' · away'}${e.venue&&big?' · '+esc(e.venue):''}</small>`;
+    if(e.ls.length&&big)h+=`<small>${k==='vb'?'Sets':k==='fb'?'Quarters':k==='bsb'?'Innings':'Periods'}: ${e.ls.map((v,q)=>esc(v)+'-'+esc(e.lo[q]??'')).join(' · ')}</small>`;
+    if(big&&k!=='vb'&&k!=='bsb'){if(!su)h+=`<button class="btn" data-sum="${k}:${e.id}">Team stats</button>`;else if(su.busy)h+='<small>Reading the box score…</small>';else if(su.err||!su.rows.length)h+='<small>No box score is posted for this game.</small>';
+      else h+='<table><tr><th></th><th>Nebraska</th><th>'+esc(e.oa||e.opp)+'</th></tr>'+su.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')+'</table>'+su.stars.map(x=>`<small>${esc(x)}</small>`).join('')}
+    if(big&&k==='vb')h+='<small>The feed carries set scores for volleyball, not kills or digs.</small>'}
+  else h+=`<b>${e.ha==='home'?'vs':'at'} ${esc(e.opp)}</b><small>${esc(e.det||'postponed')}</small>`;return h+'</div>'}
+function hkHTML(i){if(!hosted())return '<p>Scores are read live from ESPN\'s public scoreboard. That works on the website copy of the map, not inside the Claude app.</p>';if(!HK.ok)return HK.fail?'<p>The scoreboard could not be reached just now. It will try again in a few minutes. Inside the Claude app it cannot be reached at all: scores load on the website copy of the map.</p>':'<p>Reading the scoreboard…</p>';
+  const note='<p class="psub">Scores come from ESPN\'s public scoreboard feed and refresh about every 20 seconds while a game is on. ESPN does not promise the feed, so if it goes quiet this panel will say so.</p>';
+  if(i===0){let h='';const now=Date.now(),day=lincolnNow().ymd,ymd=t=>+new Date(t).toLocaleDateString('en-CA',{timeZone:'America/Chicago'}).replace(/-/g,''),live=[],today=[],rest=[];
+    for(const s of HK.sp.slice(1)){const ev=HK.ev[s[0]];if(!ev)continue;for(const e of ev){if(e.st==='in')live.push([s,e]);else if(ymd(e.t)===day)today.push([s,e])}
+      const last=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null).pop(),nx=ev.find(e=>e.st==='pre'&&e.t>now);rest.push(`<h4>${s[1]} · ${HK.rec[s[0]]}</h4>`+(last?hkGame(last,s,false):'')+(nx?hkGame(nx,s,false):''))}
+    if(live.length)h+='<h4>On now</h4>'+live.map(([s,e])=>`<p class="psub">${s[1]}</p>`+hkGame(e,s,true)).join('');
+    if(today.length)h+='<h4>Today</h4>'+today.map(([s,e])=>`<p class="psub">${s[1]}</p>`+hkGame(e,s,true)).join('');
+    if(!live.length&&!today.length)h+='<p>No Husker team in this feed plays today.</p>';return h+rest.join('')+note}
+  const s=HK.sp[i],ev=HK.ev[s[0]];if(!ev)return `<p>${s[1]} is out of season, or its schedule is not in the feed yet.</p>`+note;
+  let h=`<h4>${s[1]} · ${HK.rec[s[0]]}</h4>`;if(s[0]==='fb'){const o=hkOneScore();if(o)h+=`<p>In games decided by one score this season: ${o[0]}-${o[1]}.</p>`}
+  const fin=ev.filter(e=>e.st!=='pre').reverse(),up=ev.filter(e=>e.st==='pre');return h+(up.length?'<h4>Coming up</h4>'+up.slice(0,6).map(e=>hkGame(e,s,false)).join(''):'')+'<h4>Results</h4>'+fin.map(e=>hkGame(e,s,e.st==='in')).join('')+note}
+function hkOneScore(){const ev=HK.ev.fb;if(!ev)return null;const f=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null&&Math.abs(e.my-e.th)<=8);return [f.filter(e=>e.win).length,f.filter(e=>!e.win).length]}
+const HUSK={title:'Husker <i>scores</i>',tabs:HK.sp.map(s=>s[1]),html:hkHTML,click:e=>{const b=e.target.closest('[data-sum]');if(b){const [k,id]=b.dataset.sum.split(':');hkSum(k,id)}}};
+function huskOpen(tab){openSheet(HUSK,tab||0);hkLoad()}
+function huskInit(){$('bHusk').onclick=()=>{if(sheet===HUSK)closeSheet();else huskOpen(0)};$('liveB').onclick=()=>huskOpen(0);
+  // the arenas get a scarlet beacon, the way the stadium gets its own treatment
+  const V=['Devaney Sports Center','Pinnacle Bank Arena'].map(hkVenue).filter(Boolean);if(V.length){const n=V.length,X=new Float32Array(n*2),Hh=new Float32Array(n).fill(SKY),C=new Float32Array(n*3),Ti=new Float32Array(n);V.forEach((p,i)=>{X[2*i]=p.x;X[2*i+1]=p.z;C.set(c3(0xe41c38),3*i)});
+    HK.beacon=mkPillars(n,X,Hh,null,C,Ti);HK.beacon.material.uniforms.uA.value=.8;scene.add(HK.beacon)}
+  if(hosted()){setTimeout(()=>hkLoad(),6000);setInterval(hkTick,20000)}}
+function huskFrame(){if(!HK.beacon)return;const d=camera.position.distanceTo(controls.target),u=HK.beacon.material.uniforms;u.uR.value=Math.min(40,Math.max(3,d*.002));u.uHS.value=Math.min(4,Math.max(.25,d/3600))}
+function pbaCard(b){const m=HK.rec.mbb,w=HK.rec.wbb,links=[];bLinks(b,links);showCard('Pinnacle Bank Arena','Home court of Nebraska men\'s and women\'s basketball since 2013, with 15,500 seats in the West Haymarket. The men have ranked in the national top 25 for attendance every season here, and the women ranked 15th in the country in 2025-26. '
+  +(m||w?`This season: men ${m||'not started'}, women ${w||'not started'}. `:'')+'The scarlet beacon marks it on the map. '+(propLines(b)||''),undefined,{label:'Husker scores',fn:()=>huskOpen(3)},links)}
+// ---- weather that loads on its own: current conditions, any alert in force, and the next few forecast periods
+async function wxDetail(){const dirs=['N','NE','E','SE','S','SW','W','NW'],base=()=>{const w=wxNow();return w&&w.tC!=null?`Now at Lincoln Airport: ${Math.round(w.tC*9/5+32)}°F, ${w.desc||'no sky report'}`+(w.kmh!=null?`, wind ${w.dir!=null?dirs[Math.round(w.dir/45)%8]+' ':''}${Math.round(w.kmh*.621)} mph`+(w.gust?`, gusts to ${Math.round(w.gust*.621)}`:''):'')+'. ':'Current conditions have not loaded. '};
+  const links=[{href:'https://forecast.weather.gov/MapClick.php?lat=40.8136&lon=-96.7026',label:'Full forecast ↗'},{label:wxOn?'Weather effects are on':'Show wind and rain on the map',fn:()=>{if(!wxOn)setWx(true)}}];
+  if(!hosted()){showCard('Weather in Lincoln','Live weather and alerts come from the National Weather Service and load on the website copy of the map. The Claude app does not let a page reach them.',undefined,undefined,links);return}
+  showCard('Weather in Lincoln',base()+'Reading alerts and the forecast…',undefined,undefined,links);lastInput=performance.now();let al='',fc='';
+  await Promise.all([fetch('https://api.weather.gov/alerts/active?point=40.8136,-96.7026',{headers:{Accept:'application/geo+json'}}).then(r=>r.json()).then(j=>{const f=j.features||[];al=f.length?f.map(q=>{const p=q.properties;return `${p.event}${p.ends||p.expires?' until '+clock(p.ends||p.expires):''}: ${(p.headline||'').replace(/\s+/g,' ')}`+(p.instruction?' '+p.instruction.replace(/\s+/g,' ').slice(0,260):'')}).join(' · ')+'. ':'No weather alerts are in force for Lincoln. '}).catch(()=>{al='Alerts could not be read just now. '}),
+    fetch('https://api.weather.gov/gridpoints/OAX/56,40/forecast').then(r=>r.json()).then(j=>{fc=j.properties.periods.slice(0,4).map(p=>`${p.name}: ${p.shortForecast.toLowerCase()}, ${p.isDaytime?'high':'low'} ${p.temperature}°F`+(p.probabilityOfPrecipitation&&p.probabilityOfPrecipitation.value?`, ${p.probabilityOfPrecipitation.value}% chance of precipitation`:'')).join(' · ')+'. '}).catch(()=>{fc='The forecast could not be read just now. '})]);
+  if($('ch').textContent==='Weather in Lincoln')showCard('Weather in Lincoln',base()+al+fc+'All from the National Weather Service, read just now.',undefined,undefined,links)}
+function wxInit(){const el=$('wx');el.setAttribute('role','button');el.tabIndex=0;el.onclick=wxDetail;el.onkeydown=e=>{if(e.key==='Enter')wxDetail()};
+  if(hosted()){setTimeout(()=>{loadAlerts();if(!wx)loadWeather()},1500);setInterval(()=>{if(!document.hidden&&!wxDemo){loadAlerts();if(!wxOn)loadWeather()}},180000)}
+  // inside the Claude app nothing live can load, so say where the live copy is
+  setTimeout(()=>{if(!wx&&(!hosted()||/claude|anthropic/i.test(location.hostname+document.referrer)))$('offl').style.display='block'},9000)}
+// ---- City Hall: what is being decided now, read live from the Planning Department, and how the council works
+DLG.push('City Hall');
+const CASE_F=[['PROJECT_NAME','Project','s'],['SUBTYPE','Kind of request','s'],['STATUS','Where it stands','s'],['DESCRIPTION','About','s'],['APPNUM','Case number','s'],['SUBMITTAL_DATE','Filed','s','',dayStr],['PC_HEARING','Planning Commission hearing','s','',v=>v?dayStr(v):''],['NUMBER_OF_DUS','Homes proposed','n'],['NUMBER_OF_LOTS','Lots','n'],['CC_ORDINANCE_','Council ordinance','s'],['CC_RESOLUTION_','Council resolution','s']];
+const isoAgo=d=>new Date(Date.now()-d*864e5).toISOString().slice(0,10);
+LIVEL.push({id:'cases',t:'Decisions in the works',g:'City Hall',k:'pg',st:{h:34,c:'STATUS',pal:'auto',a:.62},note:'Requests the Planning Department is working on now: zone changes, special permits, plats, annexations and design reviews that are in review or waiting for the Planning Commission or the City Council.',src:'Lincoln and Lancaster County Planning Department, development review applications',
+  live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/Planning/DevRevAPPLICATIONS/MapServer/1',get where(){return "STATUS IN ('In Review','Planning Commission Ready','City Council Ready','County/City Ready','UDC Ready','NCEC Ready','Hold','Listed') AND SUBMITTAL_DATE >= DATE '"+isoAgo(540)+"'"},off:.00002,max:600,empty:'Nothing is listed as in the works right now.',fields:CASE_F}},
+ {id:'decided',t:'Decided in the last year',g:'City Hall',k:'pg',st:{h:26,c:'SUBTYPE',pal:'auto',a:.5},note:'Zone changes, special permits, annexations, plats and street vacations filed in the last twelve months that have been approved, denied or withdrawn.',src:'Lincoln and Lancaster County Planning Department, development review applications',
+  live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/Planning/DevRevAPPLICATIONS/MapServer/1',get where(){return "STATUS IN ('Approved','Approved with Conditions','Denied','Withdrawn') AND SUBTYPE IN ('Change of Zone','Special Permit','Annexation','Preliminary Plat','Final Plat','Comp Plan Amendment','Street and Alley Vacation','Use Permit') AND SUBMITTAL_DATE >= DATE '"+isoAgo(365)+"'"},off:.00002,max:900,fields:CASE_F}},
+ {id:'permits',t:'Building permits this year',g:'City Hall',k:'pt',st:{h:60,col:0xffb347,r:.8},note:'Building permits other than new houses issued so far this year, from the city\'s permit map.',src:'City of Lincoln Building and Safety, through the Planning Department permit layers',
+  live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/Planning/Commercial_New_Construction_Permits/MapServer/2',max:1000,fields:[['DescWork','Work','s','',v=>nice(String(v||'').trim())],['Address','Address','s','',v=>String(v||'').trim()],['PermType','Type','s'],['Issued','Issued','s','',v=>String(v||'').trim()],['CurrStatus','Status','s'],['PermNo','Permit','s']]}});
+function councilCard(){const L=DL.get('council'),m=[];if(L){const f=k=>fget(L,L.fields.find(q=>q.k===k)),nm=f('name'),mb=f('member'),al=f('atlarge'),seen=new Set();for(let i=0;i<L.n;i++){if(seen.has(nm(i)))continue;seen.add(nm(i));m.push(nm(i).replace('City Council ','')+': '+mb(i))}if(L.n)m.push('at large: '+al(0))}
+  showCard('Lincoln City Council','Seven members: four elected by district and three by the whole city. '+(m.length?'As the city\'s own map lists them, '+m.join(' · ')+'. ':'')
+  +'The council meets most Mondays at 3 p.m., and at 5:30 p.m. on the last Monday of the month, in the Council Chambers on the first floor of the County-City Building, 555 S. 10th Street. Agendas come out by 4 p.m. the Thursday before. Anyone may speak on an item at its public hearing, and there is an open microphone on the second and last Mondays. Meetings air live on LNKTV. '
+  +'Turn on Decisions in the works to see what is headed to the Planning Commission and the council, on the ground where it would happen.',undefined,{label:'Decisions in the works',fn:()=>{dlSet('cases',true);dlSet('council',true,true)}},
+  [{href:'https://www.lincoln.ne.gov/City/City-Council/City-Council-Public-Meeting',label:'Meeting dates ↗'},{href:'https://www.lincoln.ne.gov/City/Departments/Finance/City-Clerk/Clerk-Council',label:'Agendas and members ↗'},{href:'https://www.lincoln.ne.gov/City/Departments/Finance/City-Clerk/Clerk-Council/request-to-speak',label:'How to speak ↗'},{href:'https://lnktv.lincoln.ne.gov/',label:'Watch on LNKTV ↗'}])}

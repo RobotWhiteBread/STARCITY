@@ -10,7 +10,7 @@ $geo = "geometry=-96.80%2C40.65%2C-96.50%2C40.90&geometryType=esriGeometryEnvelo
 function Save($name, $url) {
   $body = Join-Path $out $name
   $hdr = $body + ".headers.txt"
-  & curl.exe -sS -L -A $ua -m 90 -H "Origin: $origin" -D $hdr -o $body $url
+  & curl.exe -sS -L -A $ua -m 90 --connect-timeout 20 -H "Origin: $origin" -D $hdr -o $body $url
   $len = 0; if (Test-Path $body) { $len = (Get-Item $body).Length }
   $cors = "no"
   if ((Test-Path $hdr) -and (Select-String -Path $hdr -Pattern "access-control-allow-origin" -Quiet)) { $cors = "YES" }
@@ -22,7 +22,9 @@ $roots = [ordered]@{
   "city"       = "https://gis.lincoln.ne.gov/public/rest/services"
   "cityhosted" = "https://gis.lincoln.ne.gov/hosted/rest/services"
   "cityold"    = "https://ags3.lincoln.ne.gov/arcgis/rest/services"
+  "cityext"    = "https://gisext.lincoln.ne.gov/arcgis/rest/services"
   "ndot"       = "https://giscat.ne.gov/dot/rest/services"
+  "state"      = "https://giscat.ne.gov/enterprise/rest/services"
 }
 foreach ($k in $roots.Keys) {
   Save "catalog_$k.json" ($roots[$k] + "?f=json")
@@ -59,6 +61,9 @@ Save "bikelnk_gbfs.json"     "https://gbfs.bcycle.com/bcycle_bikelnk/gbfs.json"
 Save "bikelnk_stations.json" "https://gbfs.bcycle.com/bcycle_bikelnk/station_information.json"
 Save "bikelnk_status.json"   "https://gbfs.bcycle.com/bcycle_bikelnk/station_status.json"
 Save "planes.json"           "https://opensky-network.org/api/states/all?lamin=40.60&lomin=-96.95&lamax=40.95&lomax=-96.40"
+Save "planes_adsblol.json"   "https://api.adsb.lol/v2/point/40.851/-96.759/30"
+Save "planes_aplive.json"    "https://api.airplanes.live/v2/point/40.851/-96.759/30"
+Save "tiger_legislative.json" "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer?f=json"
 Save "startran_vehicles.pb"  "https://startran.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/vehicleposition"
 
 Write-Host "5. Signed bike routes from OpenStreetMap..."
@@ -71,5 +76,39 @@ for ($try = 0; ($try -lt 6) -and (-not $ok); $try++) {
   else { Write-Host "   try $($try+1) failed, waiting 15s" -ForegroundColor Yellow; Start-Sleep -Seconds 15 }
 }
 Write-Host ("bikeroutes.json: {0}" -f $(if ($ok) { "{0:N0} bytes" -f (Get-Item $br).Length } else { "FAILED" }))
+
+Write-Host "6. What each city and state map service contains (layer lists, no records)..."
+$sdir = Join-Path $out "svc"; New-Item -ItemType Directory -Force -Path $sdir | Out-Null
+$count = 0
+foreach ($k in @("city", "cityhosted", "ndot", "state")) {
+  $done = 0
+  $cfs = Get-ChildItem $out | Where-Object { ($_.Name -eq "catalog_$k.json") -or ($_.Name -like "catalog_${k}_*.json") }
+  foreach ($cf in $cfs) {
+    try { $j = Get-Content $cf.FullName -Raw | ConvertFrom-Json } catch { continue }
+    $maps = @{}
+    foreach ($s in $j.services) { if ($s.type -eq "MapServer") { $maps[$s.name] = 1 } }
+    foreach ($s in $j.services) {
+      if ($s.type -eq "FeatureServer") { if ($maps.ContainsKey($s.name)) { continue } }
+      elseif ($s.type -ne "MapServer") { continue }
+      if ($done -ge 350) { continue }
+      $done++
+      $fn = ("{0}__{1}__{2}.json" -f $k, ($s.name -replace '[^A-Za-z0-9_.-]', '_'), $s.type)
+      & curl.exe -sS -L -A $ua -m 60 --connect-timeout 20 -o (Join-Path $sdir $fn) ($roots[$k] + "/" + $s.name + "/" + $s.type + "/layers?f=json")
+      $count++
+      Start-Sleep -Milliseconds 150
+    }
+  }
+}
+Write-Host ("   {0} services described" -f $count)
+$zip = Join-Path $out "svc.zip"
+if (Test-Path $zip) { Remove-Item $zip -Force }
+try { Compress-Archive -Path (Join-Path $sdir "*") -DestinationPath $zip -ErrorAction Stop; Write-Host ("   svc.zip: {0:N0} bytes" -f (Get-Item $zip).Length) } catch { Write-Host "   could not zip the svc folder" -ForegroundColor Yellow }
+$zip2 = Join-Path $out "top.zip"
+if (Test-Path $zip2) { Remove-Item $zip2 -Force }
+try {
+  $files = Get-ChildItem $out -File | Where-Object { $_.Extension -ne ".zip" } | ForEach-Object { $_.FullName }
+  Compress-Archive -Path $files -DestinationPath $zip2 -ErrorAction Stop
+  Write-Host ("   top.zip: {0:N0} bytes" -f (Get-Item $zip2).Length)
+} catch { Write-Host "   could not zip the live2 files" -ForegroundColor Yellow }
 
 Write-Host "`nFinished. Results are in $out" -ForegroundColor Green

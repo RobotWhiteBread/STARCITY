@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>STARCITY: Lincoln, Nebraska in 3D</title>
+<meta name="description" content="A free 3D map of Lincoln, Nebraska built from public data: every building, street and trail, live weather and Husker scores, property values and taxes, city decisions and how each precinct has voted.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="STARCITY: Lincoln, Nebraska in 3D">
+<meta property="og:description" content="Every building, street and trail in Lincoln, with live weather and Husker scores, property values and taxes, city decisions and vote history. Free, open source, no app or account.">
+<meta property="og:url" content="https://robotwhitebread.github.io/STARCITY/">
+<meta property="og:image" content="https://robotwhitebread.github.io/STARCITY/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#10141a">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
 :root{--ink:#f3efe6;--dim:#b9b4a8;--glass:rgba(18,22,28,.72);--line:rgba(255,255,255,.14);--accent:#e9b949}
@@ -52,9 +60,12 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 #gbody a{color:#ffe9a8}
 #gbody .go{display:block;width:100%;text-align:left;white-space:normal;margin:0 0 7px;padding:10px 12px;font-size:13.5px;font-weight:700;line-height:1.3}
 #gbody .go small{display:block;font-weight:400;color:var(--dim);margin-top:2px;font-size:12px}
-#nav{position:fixed;right:12px;bottom:calc(150px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:6px;z-index:2}
-#nav .btn{width:38px;height:38px;padding:0;font-size:19px;line-height:1}
-#nav.mob{display:none}
+#nav{position:fixed;right:12px;bottom:calc(150px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:7px;z-index:3;transition:bottom .2s}
+#nav .btn{width:44px;height:44px;padding:0;font-size:21px;line-height:1;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none}
+#bCmp{border-radius:50%}#bTilt{font-size:12px!important;font-weight:800;letter-spacing:.04em}
+#cmpN{position:relative;display:block;width:10px;height:30px;pointer-events:none}
+#cmpN:before,#cmpN:after{content:"";position:absolute;left:0;border-left:5px solid transparent;border-right:5px solid transparent}
+#cmpN:before{top:0;border-bottom:15px solid #ff5348}#cmpN:after{bottom:0;border-top:15px solid #e8e6df}
 #tools.mob #bMore{display:block}
 #tools.mob.min .x{display:none}
 #wx{display:block;font-size:10.5px;color:#e9d9a6;margin-top:2px}
@@ -93,9 +104,6 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 #res button:last-child{border-bottom:0}
 #res button small{color:var(--dim);margin-left:6px}
 #tools2{display:contents}
-#joy{position:fixed;width:96px;height:96px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);display:none;pointer-events:none;transform:translate(-50%,-50%);z-index:4}
-#joy i{position:absolute;left:50%;top:50%;width:38px;height:38px;margin:-19px;border-radius:50%;background:rgba(233,185,73,.85)}
-#walkHint{position:fixed;left:50%;top:calc(120px + env(safe-area-inset-top));transform:translateX(-50%);background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:12px;color:var(--dim);display:none;white-space:nowrap;pointer-events:none}
 #row0{display:flex;flex-wrap:wrap-reverse;justify-content:space-between;align-items:flex-end;gap:4px 10px;margin:0 12px 6px;pointer-events:none}
 #legend{display:none;flex-wrap:wrap;gap:3px 10px;align-items:center;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:5px 10px;font-size:11px;color:var(--ink);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);pointer-events:auto;max-width:100%}
 #legend b{font-weight:700}
@@ -106,24 +114,107 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 #attr button{background:none;border:0;padding:0;font:inherit;text-decoration:underline;cursor:pointer}
 #srcMore{display:none}
 
+#clinks button{display:inline-block;margin-top:9px;margin-right:6px;padding:7px 12px;font-size:12px}
+#dlg{display:none;margin:0 12px 6px;background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:7px 10px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);pointer-events:auto;max-width:560px}
+.dlh{display:flex;align-items:center;gap:8px;font-size:12.5px}.dlh b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dlc{font-size:10.5px;color:var(--dim);white-space:nowrap}
+.dlb{background:none;border:1px solid var(--line);color:var(--ink);border-radius:50%;width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer;padding:0;font-family:inherit;flex:none}
+.dlt{display:flex;gap:5px;overflow-x:auto;margin-top:6px;scrollbar-width:none}.dlt::-webkit-scrollbar{display:none}
+.dlk{flex:none;display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.dlk i{width:10px;height:10px;border-radius:3px;display:inline-block}.dlk.on{border-color:var(--accent);background:rgba(233,185,73,.28)}
+.dls{display:flex;gap:12px;margin-top:6px}.dls label{flex:1;display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--dim);min-width:0}.dls input{flex:1;min-width:0;accent-color:var(--accent)}
+.lyg{display:flex;flex-wrap:wrap;gap:6px}#gbody .lyb{white-space:normal;text-align:left;font-size:12.5px}.lyb small{color:#9fe3b0;font-weight:400;margin-left:3px}.lyb.on small{color:#1b1608}
+#biz{position:fixed;left:12px;top:calc(64px + env(safe-area-inset-top));bottom:calc(150px + env(safe-area-inset-bottom));width:min(340px,calc(100vw - 24px));display:none;flex-direction:column;background:rgba(16,20,26,.66);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:6;overflow:hidden}
+#biz.min{bottom:auto;width:auto}#biz.min #bizb,#biz.min #bizq{display:none}
+#bizh{display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)}#bizh b{flex:1;font-size:13px;letter-spacing:.06em;white-space:nowrap}
+#bizh button{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap}
+#bizq{margin:8px 10px 0;background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 10px;font-size:16px;font-family:inherit;outline:none}
+#bizb{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:8px 10px 12px}
+.bzs{font-size:12px;color:var(--dim);margin-bottom:6px}.bzs b{color:var(--ink)}
+.bzr{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-bottom:7px}.bzr em{font-style:normal;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);width:100%}
+.bzc{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:5px 8px;font-size:11.5px;cursor:pointer;font-family:inherit}
+.bzc i{width:9px;height:9px;border-radius:50%;display:inline-block}.bzc small{color:var(--dim)}.bzc.on{background:rgba(233,185,73,.92);color:#1b1608;border-color:transparent}.bzc.on small{color:#1b1608}
+.bzi{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);padding:7px 2px;font-family:inherit;cursor:pointer}.bzi b{display:block;font-size:13px}.bzi small{color:var(--dim);font-size:11px}
+.bzn{font-size:11px;color:var(--dim);line-height:1.4;margin:8px 0 0}.bzn a{color:#ffe9a8}
+#cam{position:fixed;right:12px;top:calc(64px + env(safe-area-inset-top));width:min(420px,calc(100vw - 24px));display:none;flex-direction:column;background:rgba(16,20,26,.92);border:1px solid var(--line);border-radius:14px;z-index:7;overflow:hidden}
+#camh{display:flex;align-items:center;padding:8px 10px;gap:8px}#camh b{flex:1;font-size:13px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#camx{background:none;border:0;color:var(--dim);font-size:20px;cursor:pointer}
+#camv{background:#000;aspect-ratio:16/10}#camv img,#camv iframe{width:100%;height:100%;border:0;display:block;object-fit:contain}
+#cama{display:block;padding:8px 10px;font-size:12px;color:#ffe9a8}
+#hud{position:fixed;left:12px;top:calc(118px + env(safe-area-inset-top));display:none;white-space:pre;font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#7dffb0;background:rgba(2,8,5,.74);border:1px solid rgba(57,255,136,.35);border-radius:8px;padding:8px 10px;pointer-events:none;z-index:3;max-width:calc(100vw - 24px);overflow:hidden}
+.pbar{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;min-width:40px}.pbar i{display:block;height:100%;border-radius:4px}
+.prow{display:flex;align-items:center;gap:8px;font-size:12.5px;margin:6px 0 0}.prow span:first-child{width:42%;min-width:0}.prow b{white-space:nowrap;font-size:12px}
+#gbody .psub{font-size:11px;color:var(--dim);margin:1px 0 4px}
+.spark{display:flex;align-items:flex-end;gap:1px;height:56px;margin:4px 0 6px}.spark i{flex:1;background:var(--accent);opacity:.8;border-radius:1px 1px 0 0}
+#gbody .go2{display:block;width:100%;text-align:left;white-space:normal;margin:6px 0 0;padding:9px 12px;font-size:13px}
+#gbody table{border-collapse:collapse;width:100%;font-size:11.5px;margin:4px 0 8px}#gbody td,#gbody th{border-top:1px solid var(--line);padding:5px 4px;text-align:left;vertical-align:top;color:#d9d4c8}#gbody th{color:var(--accent);font-weight:600}
+
+.lb.k8{font-size:calc(10px*var(--ls,1));font-weight:800;color:#fff;letter-spacing:.08em;text-transform:uppercase}
+.lb.k9{font-size:calc(11px*var(--ls,1));font-weight:600;color:#dfe8ff;letter-spacing:.03em}
+.lb.k10{font-size:calc(10px*var(--ls,1));font-weight:700;color:#8fb4ff;letter-spacing:.2em;text-transform:uppercase;opacity:.85}
+.lb.k11{white-space:normal;width:196px;margin-left:128px;margin-top:-34px;background:#fffdf6;color:#c8102e;border-radius:16px;padding:7px 11px 8px;text-shadow:none;font-size:10.5px;font-weight:800;line-height:1.3;letter-spacing:.14em;text-transform:uppercase;text-align:left;box-shadow:0 3px 14px rgba(0,0,0,.55)}
+.lb.k11 .sub{color:#14181d;font-style:normal;font-weight:700;font-size:12px;letter-spacing:0;text-transform:none;margin-top:2px}
+.lb.k11:after{content:"";position:absolute;left:-11px;bottom:12px;border:7px solid transparent;border-right:12px solid #fffdf6;border-left:0}
+#wx{cursor:pointer}
+#liveB{display:none;width:100%;margin-top:6px;text-align:left;background:#c8102e;border:0;color:#fff;border-radius:8px;padding:5px 9px;font-size:11.5px;font-weight:700;line-height:1.25;font-family:inherit;cursor:pointer;white-space:normal}
+#rv{display:none;margin:0 12px 6px;background:rgba(233,185,73,.95);color:#1b1608;border:0;border-radius:10px;padding:7px 11px;font-size:12px;font-weight:700;line-height:1.3;text-align:left;font-family:inherit;pointer-events:auto;max-width:560px;cursor:pointer}
+body.walking #rv{display:none!important}
+#offl{display:none;margin-top:4px;font-size:10.5px;color:#ffe9a8;max-width:230px}
+#hint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(172px + env(safe-area-inset-bottom));max-width:min(92vw,560px);text-align:center;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:12.5px;color:var(--ink);display:none;z-index:6;pointer-events:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#wkui{display:none}
+#wkhud{position:fixed;left:12px;right:12px;top:var(--wktop,66px);margin:0 auto;max-width:540px;text-align:center;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;color:var(--ink);z-index:4;pointer-events:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#wjoy{position:fixed;left:calc(18px + env(safe-area-inset-left));bottom:calc(30px + env(safe-area-inset-bottom));width:126px;height:126px;border-radius:50%;border:2px solid rgba(255,255,255,.45);background:rgba(0,0,0,.28);z-index:5;touch-action:none;cursor:grab}
+#wjoy i{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border-radius:50%;background:rgba(233,185,73,.92);pointer-events:none}
+#wkbt{position:fixed;right:12px;bottom:calc(30px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:5}
+#wkbt .btn{padding:12px 14px;font-size:13px}
+#wktip{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(176px + env(safe-area-inset-bottom));max-width:92vw;text-align:center;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:12px;color:var(--ink);display:none;z-index:5;pointer-events:none}
+body.walking #tools,body.walking #sun,body.walking #chips,body.walking #bBar,body.walking #dlg,body.walking #legend{display:none!important}
+body.walking #card{bottom:auto!important;top:calc(var(--wktop,66px) + 40px)}
+body.walking #bZin,body.walking #bZout,body.walking #bTilt{display:none}
+.hkg{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:0 0 7px;background:rgba(255,255,255,.04)}
+.hkg.live{border-color:#e41c38}
+.hkg b{display:block;font-size:13.5px;color:var(--ink)}.hkg b i{font-style:normal;background:#c8102e;color:#fff;border-radius:4px;padding:0 5px;font-size:10.5px;margin-right:4px}
+.hkg small{display:block;font-size:11.5px;color:var(--dim);margin-top:2px}
+.hkg .btn{margin-top:6px;padding:5px 9px;font-size:11.5px}
+#roll{position:fixed;right:68px;top:calc(118px + env(safe-area-inset-top));width:min(300px,calc(100vw - 92px));height:min(52vh,440px);display:none;z-index:6;background:rgba(5,6,9,.9);border:1px solid rgba(233,185,73,.55);border-radius:14px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#roll.pop{animation:rollPop .6s cubic-bezier(.2,.9,.25,1.08)}
+@keyframes rollPop{from{transform:scale(.03);opacity:0}to{transform:scale(1);opacity:1}}
+#rollh{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:7px 10px 14px;font-size:10.5px;font-weight:800;letter-spacing:.2em;color:var(--accent);z-index:2;background:linear-gradient(#050609 55%,rgba(5,6,9,0))}
+#rollx{background:none;border:0;color:var(--dim);font-size:22px;line-height:1;cursor:pointer;padding:0 2px}
+#rollb{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding:230px 16px 250px;text-align:center;-webkit-mask-image:linear-gradient(transparent 5%,#000 24%,#000 80%,transparent 98%);mask-image:linear-gradient(transparent 5%,#000 24%,#000 80%,transparent 98%)}
+#rollb::-webkit-scrollbar{display:none}
+#rollb h5{margin:34px 0 12px;font-size:11.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);font-weight:800}
+#rollb p{margin:0 0 13px;font-size:16px;font-weight:800;color:#fff;line-height:1.25}
+#rollb p small{display:block;font-size:9.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#b9b4a8;margin-bottom:2px}
+#rollb p.t{font-size:13px;font-weight:600;color:#e8e3d6}
+#rollL{position:fixed;height:2px;display:none;z-index:5;transform-origin:0 50%;background:linear-gradient(90deg,rgba(233,185,73,.95),rgba(233,185,73,.2));pointer-events:none}
+@media (max-width:700px){#roll{left:12px;right:66px;width:auto;top:calc(104px + env(safe-area-inset-top));height:36vh}}
+@media (max-width:700px){#bottom.haslayer #legend,#bottom.haslayer #sun{display:none!important}#cp{max-height:27vh}}
+@media (prefers-reduced-motion:reduce){#roll.pop{animation:none}#nav{transition:none}}
+.btn:focus-visible,#rollx:focus-visible,#gx:focus-visible,#cx:focus-visible{outline:2px solid #ffe9a8;outline-offset:2px}
 </style>
 </head>
 <body>
-<canvas id="c"></canvas>
+<canvas id="c" role="img" aria-label="3D map of Lincoln, Nebraska. Use Search to find a place and Guide for a written way in to everything the map holds."></canvas>
 <div id="labels"></div>
 <div id="top">
-  <div id="title"><b>STAR<i>CITY</i></b><span id="stats">Lincoln, Nebraska</span><span id="wx"></span><button class="btn" id="bHome" aria-label="Reset to the bird's eye view of the whole city">⌂ Bird's eye reset</button></div>
+  <div id="title"><b>STAR<i>CITY</i></b><span id="stats">Lincoln, Nebraska</span><span id="wx"></span><button id="liveB" aria-live="polite"></button><a id="offl" href="https://robotwhitebread.github.io/STARCITY/" target="_blank" rel="noopener noreferrer">Live weather, scores and city feeds load on the website copy ↗</a><button class="btn" id="bHome" aria-label="Reset to the bird's eye view of the whole city">⌂ Bird's eye reset</button></div>
   <div id="tools">
     <button class="btn" id="bMenu" aria-expanded="true">Menu ▴</button>
-    <div id="tools2"><button class="btn" id="bFind">Search</button><button class="btn" id="bTour">▶ Tour</button></div>
-    <button class="btn" id="bGuide">Guide</button>
+    <button class="btn" id="bFind">Search</button>
     <button class="btn" id="bMe">Find me</button>
-    <button class="btn" id="bRide">Bike ride</button>
+    <button class="btn" id="bGuide">Guide</button>
+    <button class="btn" id="bLay">Layers</button>
     <button class="btn" id="bWx">Weather</button>
-    <button class="btn on" id="bTrails">Trails</button>
+    <button class="btn" id="bHusk">Huskers</button>
+    <button class="btn" id="bCiv">Democracy</button>
+    <button class="btn" id="bNum">Numbers</button>
+    <button class="btn" id="bWalk">Walk</button>
     <button class="btn" id="bMore">More ▾</button>
+    <button class="btn x" id="bTour">▶ Tour</button>
+    <button class="btn x" id="bPulse">Pulse</button>
+    <button class="btn x" id="bBiz">Local</button>
+    <button class="btn x" id="bRide">Bike ride</button>
+    <button class="btn on x" id="bTrails">Trails</button>
     <button class="btn x" id="bNow">Now</button>
-    <button class="btn x" id="bWalk">Walk</button>
     <button class="btn x" id="b2D">2D view</button>
     <button class="btn x" id="bNorth">North up</button>
     <button class="btn x" id="bShare">Share view</button>
@@ -135,21 +226,34 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
     <button class="btn x" id="bPride">Pride</button>
     <button class="btn x" id="bVB">Volleyballs</button>
     <button class="btn x" id="bTraf">Traffic</button>
+    <button class="btn x" id="bRE">Real estate tour</button>
+    <button class="btn x" id="bNat">Native Lincoln</button>
+    <button class="btn x" id="bNIL">Play in Lincoln</button>
+    <button class="btn x" id="bFly">Flights</button>
+    <button class="btn on x" id="bCre">Creatures</button>
+    <button class="btn x" id="bCode">Code view</button>
   </div>
 </div>
-<div id="nav"><button class="btn" id="bZin" aria-label="Zoom in">+</button><button class="btn" id="bZout" aria-label="Zoom out">−</button></div>
-<div id="guide" role="dialog" aria-label="Guide to this map"><div id="gbox"><div id="ghead"><b>STAR<i>CITY</i> guide</b><button id="gx" aria-label="Close">×</button></div>
+<div id="nav"><button class="btn" id="bCmp" aria-label="Compass. Tap for north up, drag sideways to turn the map"><i id="cmpN"></i></button><button class="btn" id="bZin" aria-label="Zoom in. Hold to keep zooming">+</button><button class="btn" id="bZout" aria-label="Zoom out. Hold to keep zooming">−</button><button class="btn" id="bTilt" aria-label="Tilt. Tap to switch between flat and tilted, drag up or down to tilt">2D</button></div>
+<div id="guide" role="dialog" aria-label="Guide to this map"><div id="gbox"><div id="ghead"><b id="gtitle">STAR<i>CITY</i> guide</b><button id="gx" aria-label="Close">×</button></div>
   <div id="gtabs"><button class="btn on" data-t="0">What it does</button><button class="btn" data-t="1">Explore</button><button class="btn" data-t="2">The data</button></div><div id="gbody"></div></div></div>
-<div id="joy"><i></i></div><div id="walkHint">Left side moves · right side looks</div>
+<div id="hint" role="status"></div>
+<div id="wkui"><div id="wkhud" role="status"></div><div id="wjoy" role="application" aria-label="Walk joystick. Drag to move"><i></i></div><div id="wkbt"><button class="btn" id="wkSp" aria-label="Walking speed">Walk</button><button class="btn" id="wkX">Leave walk</button></div><div id="wktip"></div></div>
+<div id="roll" role="region" aria-label="Records, scrolling like film credits"><div id="rollh"><span id="rollt"></span><button id="rollx" aria-label="Close">×</button></div><div id="rollb" tabindex="0"></div></div><div id="rollL"></div>
 <div id="find"><input id="q" type="search" placeholder="Search a street, address or building" autocomplete="off" enterkeyhint="search"><div id="res"></div><a id="cty" href="https://orion.lancaster.ne.gov/Advanced-Search" target="_blank" rel="noopener noreferrer">Lancaster County property search ↗</a></div>
+<div id="biz" role="region" aria-label="Local businesses"><div id="bizh"><b>SHOP LOCAL</b><button id="bizm">◂ Hide list</button><button id="bizx" aria-label="Close">×</button></div><input id="bizq" type="search" placeholder="Search a name or a kind of place" autocomplete="off" aria-label="Search local businesses"><div id="bizb"></div></div>
+<div id="cam" role="region" aria-label="Traffic camera"><div id="camh"><b id="camt"></b><button id="camx" aria-label="Close">×</button></div><div id="camv"></div><a id="cama" target="_blank" rel="noopener noreferrer"></a></div>
+<div id="hud" aria-hidden="true"></div>
 <div id="card"><button id="cx" aria-label="Close">×</button><h3 id="ch"></h3><p id="cp"></p><div id="crange"><label for="cR">Intensity</label><input id="cR" type="range" min="0" max="100" value="60" aria-label="Pride intensity"></div><span id="clinks"></span><button class="btn" id="cride">▶ Ride this trail</button><button class="btn" id="cspd">Speed 1×</button></div>
 <div id="bottom">
+  <div id="dlg"></div>
   <div id="row0"><button class="btn" id="bBar" aria-expanded="true">▾ Hide key and places</button><div id="legend"></div><div id="attr">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · <button id="srcBtn">all sources</button><span id="srcMore"> · City of Lincoln/Lancaster County GIS (2026 building footprints, assessor year built and story counts, trail layers, parcel numbers that link a building to its public county property record) · <a href="https://www.inaturalist.org">iNaturalist</a> (recent bird reports) · <a href="https://github.com/microsoft/GlobalMLBuildingFootprints">Microsoft</a> building footprints · Mapzen terrain · StarTran · National Weather Service · USGS</span></div></div>
   <div id="sun"><label id="sunL">2:00 PM</label><input id="sunR" type="range" min="5" max="22.5" step="0.05" value="14.5" aria-label="Time of day"></div>
   <div id="chips"></div>
 </div>
 <div id="load"><b>STAR<i>CITY</i></b><div id="bar"><div></div></div><span id="ls">Unpacking Lincoln…</span></div>
 <script type="application/octet-stream" id="d">/*DATA*/</script>
+<script type="application/octet-stream" id="d2">/*DATA2*/</script>
 <script type="importmap">/*IMPORTMAP*/</script>
 <script type="module">
 import * as THREE from 'three';
@@ -158,20 +262,20 @@ import {LineSegments2} from 'three/addons/lines/LineSegments2.js';
 import {LineSegmentsGeometry} from 'three/addons/lines/LineSegmentsGeometry.js';
 import {LineMaterial} from 'three/addons/lines/LineMaterial.js';
 const $=id=>document.getElementById(id);
-const prog=(f,t)=>{if($('bar')){$('bar').firstElementChild.style.width=(f*100)+'%';if(t)$('ls').textContent=t}return new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)))};
-const fail=m=>{$('ls').textContent=m;$('ls').style.color='#f39a8a'};
+const prog=(f,t)=>{if($('bar')){$('bar').firstElementChild.style.width=(f*100)+'%';if(t)$('ls').textContent=t}return new Promise(r=>{let go=()=>{go=null;r()};requestAnimationFrame(()=>setTimeout(()=>go&&go(),0));setTimeout(()=>go&&go(),120)})};
+const fail=m=>{const e=$('ls');if(e){e.textContent=m;e.style.color='#f39a8a'}else console.warn('STARCITY',m)};
 window.addEventListener('error',e=>fail('Error: '+e.message));
 window.addEventListener('unhandledrejection',e=>fail('Error: '+(e.reason&&e.reason.message||e.reason)));
 
 // ---------- data
-async function unpack(){
-  const b64=$('d').textContent.trim();const bin=atob(b64);const u=new Uint8Array(bin.length);
+async function unpackEl(id){
+  const el=$(id),b64=el.textContent.trim();el.textContent='';const bin=atob(b64);const u=new Uint8Array(bin.length);
   for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
   if(typeof DecompressionStream==='undefined')throw new Error('This browser is too old to unpack the map data.');
   const buf=await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate'))).arrayBuffer();
   const hl=new DataView(buf).getUint32(0,true);
   const head=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,hl)));
-  const base=4+hl;const T={B:Uint8Array,H:Uint16Array,h:Int16Array,I:Uint32Array};const S={};
+  const base=4+hl;const T={B:Uint8Array,H:Uint16Array,h:Int16Array,I:Uint32Array,f:Float32Array};const S={};
   for(const k in head.secs){const [o,n,t]=head.secs[k];const C=T[t];S[k]=new C(buf.slice(base+o,base+o+n*C.BYTES_PER_ELEMENT));}
   return {head,S};
 }
@@ -198,7 +302,7 @@ function tri(outer,holes){ // arrays of [x,z]
 const canvas=$('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
 const mobile=matchMedia('(pointer:coarse)').matches||innerWidth<700;
-if(mobile){document.getElementById('tools').classList.add('mob','min');document.getElementById('nav').classList.add('mob');document.getElementById('bShadow').classList.remove('on')}
+document.getElementById('tools').classList.add('mob','min');if(mobile)document.getElementById('bShadow').classList.remove('on');
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.5:2));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
 renderer.toneMapping=THREE.NoToneMapping;
@@ -239,7 +343,7 @@ const matG=patch(new THREE.MeshLambertMaterial({vertexColors:true,flatShading:tr
 const pickables=[];let H,S,Qm;let hAt=(x,z)=>0;
 const LM={lineMats:[]}; // landmarks world coords
 async function build(){
-  const d=await unpack();H=d.head;S=d.S;Qm=H.q;
+  const d=await unpackEl('d');H=d.head;S=d.S;Qm=H.q;
   if(H.terrain){const g=H.terrain.g,half=H.terrain.half,e=S.e_h,k=(g-1)/(2*half),mx=g-1.0001;
     hAt=(x,z)=>{let fx=(x+half)*k,fy=(half-z)*k;fx=fx<0?0:(fx>mx?mx:fx);fy=fy<0?0:(fy>mx?mx:fy);const i=fx|0,j=fy|0,tx=fx-i,ty=fy-j,o=j*g+i;
       return ((e[o]*(1-tx)+e[o+1]*tx)*(1-ty)+(e[o+g]*(1-tx)+e[o+g+1]*tx)*ty)*.1}}
@@ -257,18 +361,18 @@ async function build(){
       else{const i0=G.v(a3[0],hAt(a3[0],a3[1]),a3[1],...col),i1=G.v(b3[0],hAt(b3[0],b3[1]),b3[1],...col),i2=G.v(c3[0],hAt(c3[0],c3[1]),c3[1],...col);G.t(i0,i1,i2)}}};
   const LCOL={farmland:0xcbbd86,meadow:0xb7c78c,residential:0xcdd1b6,commercial:0xd2ccc0,industrial:0xc3c1bd,institutional:0xd3d0bd,grass:0xa9c784,park:0x98c074,golf:0xa2cc82,cemetery:0xa6c296,wood:0x6c9a58,scrub:0x8fae76,wetland:0x8db09c,sand:0xe2d5a6,parking:0x8b8e93,pitch:0x79b062,track:0xb3533b,playground:0xd8b678,water:0x4f86b4,pool:0x66c4de,construction:0xc6b79e,garden:0xa4cc88};
   const lcol=H.landc.map(n=>hex(LCOL[n]));
-  {let ri=0,xi=0;const lr=S.l_rings,lc=S.l_c,rs=S.l_rs,xy=S.l_xy;const woods=[],waters=[];
+  {let ri=0,xi=0;const lr=S.l_rings,lc=S.l_c,rs=S.l_rs,xy=S.l_xy;const woods=[],waters=[],fields=[];
    for(let i=0;i<lr.length;i++){
     const rings=[];for(let k=0;k<lr[i];k++){const n=rs[ri++];const r=new Array(n);for(let j=0;j<n;j++){r[j]=[xy[xi]*Qm,-xy[xi+1]*Qm];xi+=2}rings.push(r)}
     let col=lcol[lc[i]];const nm=H.landc[lc[i]];
     if(nm==='farmland'||nm==='grass'||nm==='residential')col=shade(col,.96+.08*rnd(i));
     let f;try{f=tri(rings[0],rings.slice(1))}catch(e){continue}
     {const all=[];for(const r of rings)for(const p of r)all.push(p);for(const t of f)emitTri(all[t[0]],all[t[1]],all[t[2]],col)}
-    if(nm==='wood'||nm==='park'||nm==='cemetery'||nm==='golf')woods.push([rings[0],nm]);
+    if(nm==='wood'||nm==='park'||nm==='cemetery'||nm==='golf')woods.push([rings[0],nm]);if(nm==='farmland'||nm==='meadow'||nm==='grass')fields.push(rings[0]);
     if(nm==='water'){let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of rings[0]){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}waters.push([rings[0],x0,x1,z0,z1])}
     if(i%3000===0)await prog(.08+.12*i/lr.length);
    }
-   LM.woods=woods;LM.waters=waters;}
+   LM.woods=woods;LM.waters=waters;LM.fields=fields;}
   function ribbon(pts,hw,col,closed){ // pts: flat [x,z,...]
     {const d=[pts[0],pts[1]];for(let i=1;i<pts.length/2;i++){const ax=pts[2*i-2],az=pts[2*i-1],bx=pts[2*i],bz=pts[2*i+1];const L=Math.hypot(bx-ax,bz-az);const k=Math.ceil(L/45);for(let j=1;j<=k;j++)d.push(ax+(bx-ax)*j/k,az+(bz-az)*j/k)}pts=d}
     const n=pts.length/2;if(n<2)return;const base=G.nv;
@@ -342,7 +446,7 @@ async function build(){
    // rails
    const rail=hex(0x3a3836);for(const i of byc[9]){const p=get(i);ribbon(p,0.78,hex(0x6d665c));ribbon(p,0.12,rail)}
   }
-  const ground=new THREE.Mesh(G.geo(true),matG);ground.renderOrder=-10;ground.frustumCulled=false;ground.receiveShadow=true;scene.add(ground);
+  const ground=new THREE.Mesh(G.geo(true),matG);ground.renderOrder=-10;ground.frustumCulled=false;ground.receiveShadow=true;scene.add(ground);LM.ground=ground;
   await prog(.46,'Raising '+H.counts.buildings.toLocaleString()+' buildings…');
   // ===== buildings
   const NG=7,CS=16400/NG;const chunks=[];for(let i=0;i<NG*NG;i++)chunks.push({m:new MeshB(20000),start:[],ids:[]});
@@ -492,7 +596,7 @@ async function build(){
    const m4=new THREE.Matrix4(),qq=new THREE.Quaternion(),sc=new THREE.Vector3(),ps=new THREE.Vector3(),col=new THREE.Color(),up=new THREE.Vector3(0,1,0);
    for(let i=0;i<pts.length;i++){const s=7+7*rnd(i*5+1);ps.set(pts[i][0],hAt(pts[i][0],pts[i][1]),pts[i][1]);sc.set(s*(.9+.5*rnd(i*5+2)),s,s*(.9+.5*rnd(i*5+3)));qq.setFromAxisAngle(up,rnd(i)*6.28);m4.compose(ps,qq,sc);tm.setMatrixAt(i,m4);
      const g=rnd(i*5+4);col.setRGB(.8+.35*g,.85+.25*rnd(i*9),.7+.3*g);tm.setColorAt(i,col)}
-   tm.castShadow=true;tm.receiveShadow=false;tm.frustumCulled=false;scene.add(tm);LM.ntrees=pts.length;LM.treeMesh=tm;LM.treePts=pts;LM.woods=null;LM.waters=null}
+   tm.castShadow=true;tm.receiveShadow=false;tm.frustumCulled=false;scene.add(tm);LM.ntrees=pts.length;LM.treeMesh=tm;LM.treePts=pts}
   {const cv=document.createElement('canvas');cv.width=cv.height=64;const c=cv.getContext('2d');const gr=c.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,220,150,.75)');gr.addColorStop(1,'rgba(255,180,80,0)');c.fillStyle=gr;c.fillRect(0,0,64,64);
    const tex=new THREE.CanvasTexture(cv);const n=LM.lamps.length/2;const P=new Float32Array(n*3);for(let i=0;i<n;i++){P[3*i]=LM.lamps[2*i];P[3*i+2]=LM.lamps[2*i+1];P[3*i+1]=7+hAt(P[3*i],P[3*i+2])}
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));
@@ -509,6 +613,11 @@ async function build(){
 }
 
 // ---------- hand-built landmarks
+// stone panel with carved capital letters
+function carve(lines,w,h,stone,ink){const cv=document.createElement('canvas');cv.width=w;cv.height=h;const c=cv.getContext('2d');c.fillStyle=stone;c.fillRect(0,0,w,h);c.strokeStyle='rgba(0,0,0,.18)';c.lineWidth=6;c.strokeRect(8,8,w-16,h-16);
+  const F='"Trajan Pro","Cinzel",Georgia,"Times New Roman",serif',n=lines.length,lh=(h-56)/n;c.textAlign='center';c.textBaseline='middle';
+  lines.forEach((t,i)=>{let fs=Math.floor(lh*.62);c.font=`700 ${fs}px ${F}`;const tw=c.measureText(t).width;if(tw>w-56){fs=Math.floor(fs*(w-56)/tw);c.font=`700 ${fs}px ${F}`}const y=28+lh*(i+.5);c.fillStyle='rgba(255,255,255,.55)';c.fillText(t,w/2+1.5,y+1.5);c.fillStyle=ink;c.fillText(t,w/2,y)});
+  const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;tx.anisotropy=8;return tx}
 function landmarks(cap,std){
   const lime=new THREE.MeshLambertMaterial({color:0xddd5c2,flatShading:true,emissive:0xffe2b0,emissiveIntensity:0});
   const lime2=new THREE.MeshLambertMaterial({color:0xcfc6b0,flatShading:true,emissive:0xffe2b0,emissiveIntensity:0});
@@ -546,7 +655,13 @@ function landmarks(cap,std){
   add(new THREE.CylinderGeometry(.42,.55,3.6,8),gold,0,124.2,0);
   add(new THREE.SphereGeometry(.42,10,8),gold,0,126.35,0);
   const arm=add(new THREE.CylinderGeometry(.16,.2,2.1,6),gold,.85,125.1,0);arm.rotation.z=-1.05;
-  g.userData.info=['Nebraska State Capitol','Hand-modeled from its real footprint. Tower about 400 ft (122 m), gold dome topped by The Sower.'];
+  // the words carved over the north entrance, by Hartley Burr Alexander
+  {const tx=carve(['THE SALVATION','OF THE STATE IS','WATCHFULNESS','IN THE CITIZEN'],640,400,'#d9d0bb','#4d463a');
+   const pl=new THREE.Mesh(new THREE.PlaneGeometry(15,9.4),new THREE.MeshLambertMaterial({map:tx}));pl.position.set(0,15.6,-S2-9.06);pl.rotation.y=Math.PI;g.add(pl);
+   const door=new THREE.Mesh(new THREE.PlaneGeometry(6.4,7.2),new THREE.MeshLambertMaterial({color:0x5a4526}));door.position.set(0,6.7,-S2-9.05);door.rotation.y=Math.PI;g.add(door);
+   const panel=new THREE.Mesh(new THREE.PlaneGeometry(15,1.5),new THREE.MeshStandardMaterial({color:0xd4a72c,metalness:.5,roughness:.4}));panel.position.set(0,21.2,-S2-9.05);panel.rotation.y=Math.PI;g.add(panel);
+   const wp=new THREE.Vector3(0,17,-S2-11).applyAxisAngle(new THREE.Vector3(0,1,0),g.rotation.y).add(g.position);LM.capQuote={x:wp.x,y:wp.y+6,z:wp.z}}
+  g.userData.info=['Nebraska State Capitol','Hand-modeled from its real footprint. Tower about 400 ft (122 m), gold dome topped by The Sower. Carved over the north entrance: "The Salvation of the State is Watchfulness in the Citizen." The words are by Hartley Burr Alexander, the University of Nebraska philosopher who wrote every inscription on the building. He said the line came from his father. It sits under Lee Lawrie\'s gold panel, The Spirit of the Pioneers.'];
   scene.add(g);pickables.push(g);LM.capG=g;LM.capTop={x:cap.x,y:g.position.y+127.5,z:-cap.n};
 
   // ---- Memorial Stadium
@@ -590,6 +705,12 @@ function landmarks(cap,std){
    const f1=new THREE.Mesh(new THREE.PlaneGeometry(38.6,13.5),bm);f1.position.set(0,52,-(az-4)+1.56);s.add(f1);
    const f2=new THREE.Mesh(new THREE.PlaneGeometry(38.6,13.5),bm);f2.rotation.y=Math.PI;f2.position.set(0,52,-(az-4)-1.56);s.add(f2)}
   for(const sx of [-1,1])for(const sz of [-1,1])pb(sx*(ax-5),14,sz*(az-5),10,28,10,conc);
+  // the four corner inscriptions of 1923, by Hartley Burr Alexander. The southwest one is the famous one.
+  {const Q={'-1,1':['NOT THE VICTORY','BUT THE ACTION','NOT THE GOAL','BUT THE GAME','IN THE DEED','THE GLORY'],'1,1':['IN COMMEMORATION','OF THE MEN OF NEBRASKA','WHO SERVED AND FELL','IN THE NATION\'S WARS'],'-1,-1':['COURAGE  GENEROSITY','FAIRNESS  HONOR','IN THESE ARE','THE TRUE AWARDS','OF MANLY SPORT'],'1,-1':['THEIR LIVES THEY HELD','THEIR COUNTRY\'S TRUST','THEY KEPT ITS FAITH','THEY DIED ITS HEROES']};
+   for(const sx of [-1,1])for(const sz of [-1,1]){const tx=carve(Q[sx+','+sz],512,560,'#cfcac0','#4a4640'),mat=new THREE.MeshLambertMaterial({map:tx});
+     const a=new THREE.Mesh(new THREE.PlaneGeometry(9.2,10),mat);a.position.set(sx*(ax-5)+sx*5.06,20,sz*(az-5));a.rotation.y=sx*Math.PI/2;s.add(a);
+     const b=new THREE.Mesh(new THREE.PlaneGeometry(9.2,10),mat);b.position.set(sx*(ax-5),20,sz*(az-5)+sz*5.06);b.rotation.y=sz>0?0:Math.PI;s.add(b)}
+   const wp=new THREE.Vector3(-(ax-5)-6,26,(az-5)+6).applyAxisAngle(new THREE.Vector3(0,1,0),s.rotation.y).add(s.position);LM.stdQuote={x:wp.x,y:wp.y+8,z:wp.z}}
   // goal posts
   const gp=new THREE.MeshLambertMaterial({color:0xf2d21f});
   for(const sz of [-1,1]){pb(0,2.2,sz*55,.25,3.2,.25,gp);pb(0,3.8,sz*55,5.7,.2,.2,gp);pb(-2.8,7,sz*55,.18,6.4,.18,gp);pb(2.8,7,sz*55,.18,6.4,.18,gp)}
@@ -625,7 +746,7 @@ function landmarks(cap,std){
      st.userData.info=['John Cook statue','A bronze statue of John Cook by Nebraska-born sculptor George Lundeen stands on the north side of John Cook Arena. It was unveiled in September 2025. On this map the figure is drawn larger than life so it can be seen, and its exact spot is a guess.'];scene.add(st);pickables.push(st);LM.cookStatue={x:sx,y:sy,z:sz}}
     LM.devLabelY=D.top+1.2+hgt+34;
     g.userData.info=['Devaney Sports Center',VBREC];g.userData.dev=true;scene.add(g);pickables.push(g)}
-  s.userData.info=['Memorial Stadium',`World record holder: on Volleyball Day in Nebraska (Aug 30, 2023), ${RECORD.toLocaleString('en-US')} fans watched Nebraska sweep Omaha here, the largest announced crowd ever for a women's sporting event. Hand-modeled bowl on the real footprint, with the field drawn to scale (120 yd by 53⅓ yd).`];
+  s.userData.info=['Memorial Stadium',`World record holder: on Volleyball Day in Nebraska (Aug 30, 2023), ${RECORD.toLocaleString('en-US')} fans watched Nebraska sweep Omaha here, the largest announced crowd ever for a women's sporting event. Hand-modeled bowl on the real footprint, with the field drawn to scale (120 yd by 53⅓ yd). Carved on the southwest corner since 1923: "Not the victory but the action; Not the goal but the game; In the deed the glory." Each of the four corners carries an inscription by Hartley Burr Alexander, the same philosopher who wrote the Capitol's. The stadium is a memorial to Nebraskans who served and fell in the nation's wars.`];s.userData.act={label:'Football: the one-score ledger',fn:()=>footballCard()};
   scene.add(s);pickables.push(s);
 }
 
@@ -635,7 +756,7 @@ const TAG='Center of the Volleyball Universe',RECORD=92003;
 const VBMSG=[['CENTER OF THE','VOLLEYBALL UNIVERSE'],['DEVANEY CENTER · ALSO KNOWN AS','DBK UNIVERSE ★'],['OPENED 1976 · NAMED FOR BOB DEVANEY IN 1978','BOB DEVANEY SPORTS CENTER'],['THE ARENA · NAMED APRIL 11, 2025','JOHN COOK ARENA'],['THE COURT · DEDICATED SEPT 6, 2013','TERRY PETTIT COURT'],['COACH DANI BUSBOOM KELLY · SINCE 2025','THE DBK UNIVERSE'],['EVERY HOME MATCH SINCE 2001','350+ STRAIGHT SELLOUTS'],['WORLD RECORD CROWD · AUG 30, 2023','92,003'],['NCAA ATTENDANCE LEADER · AS OF 2025','11 YEARS RUNNING'],['2021 NCAA FINAL · A RECORD THEN','18,755'],['2022 AT CREIGHTON · A RECORD THEN','15,797'],['2025 AT UCLA · PAULEY PAVILION RECORD','10,498'],['OF THE 9 BIGGEST NCAA CROWDS · AS OF 2023','NEBRASKA PLAYED IN 8']];
 const VBREC=TAG+". Crowd records: more than 350 straight sellouts, every home match since 2001, the longest streak in NCAA women's sports (the 350th was Nov 20, 2025). Led the NCAA in attendance 11 years running as of 2025. 92,003 at Memorial Stadium on Aug 30, 2023, the world record for a women's sporting event. 18,755 at the 2021 NCAA final and 15,797 at Creighton in 2022, both records at the time. 10,498 at UCLA in 2025, the most ever for volleyball at Pauley Pavilion. Played in 8 of the 9 biggest crowds in NCAA volleyball history as of 2023. The rooftop sign and the giant volleyball are this map's own additions.";
 const VBNAMES="The building is the Bob Devaney Sports Center. It opened in 1976 as the NU Sports Complex and was named in 1978 for Bob Devaney, the football coach and athletic director who pushed to get it built. The arena inside is John Cook Arena, named by the Board of Regents on April 11, 2025, for the coach who led Nebraska volleyball for 25 seasons. A bronze statue of Cook by Nebraska-born sculptor George Lundeen went up on the north side in September 2025. The court is Terry Pettit Court, dedicated Sept 6, 2013, for the coach of the program's first national championship team. The coach now is Dani Busboom Kelly, DBK, a Nebraska native and former Husker, named the program's fourth head coach on Jan 29, 2025. Her first team went unbeaten in the Big Ten. Welcome to the DBK universe.";
-function devCard(i){const names=i===1;showCard(names?'Devaney Center · the names':'Devaney Sports Center',names?VBNAMES:VBREC,undefined,{label:names?'Crowd records ▸':'The names ▸',fn:()=>devCard(names?0:1)})}
+function devCard(i){const names=i===1;showCard(names?'Devaney Center · the names':'Devaney Sports Center',names?VBNAMES:VBREC,undefined,{label:names?'Crowd records ▸':'The names ▸',fn:()=>devCard(names?0:1)},[{label:'Roll the records',fn:()=>rollOpen('vb')},{label:'Husker scores',fn:()=>huskOpen(1)}])}
 function vbTexture(){if(LM.vbTex)return LM.vbTex;const bc=document.createElement('canvas');bc.width=512;bc.height=256;const q=bc.getContext('2d');q.fillStyle='#fbfaf6';q.fillRect(0,0,512,256);q.strokeStyle='#c8102e';q.lineWidth=7;
   for(let k=0;k<3;k++)for(let j=-1;j<=1;j++){q.beginPath();for(let x=0;x<=512;x+=8){const y=128+70*Math.sin(x/512*Math.PI*2+k*2.094)+j*26;if(x)q.lineTo(x,y);else q.moveTo(x,y)}q.stroke()}
   const bt=new THREE.CanvasTexture(bc);bt.colorSpace=THREE.SRGBColorSpace;return LM.vbTex=bt}
@@ -647,28 +768,33 @@ function setupLabels(){
   const top=new Set(['Devaney Sports Center','Pinnacle Bank Arena','Haymarket Park']);
   for(const [n,x,nn,a,h] of H.blabels){if(n==='Memorial Stadium'||n==='Nebraska State Capitol')continue;
     if(top.has(n)){L(n,x,h+10,-nn,0,980,0,12000);if(n==='Devaney Sports Center'){const l=labels[labels.length-1];l.sub='aka DBK Universe ⭐🚀🌽🏐';if(LM.devLabelY)l.y=LM.devLabelY}}else L(n,x,h+6,-nn,3,300+Math.min(200,a/100),0,a>7000?2600:(a>3000?1300:800))}
+  if(LM.capQuote)labels.push({t:'“The Salvation of the State is Watchfulness in the Citizen”',sub:'carved over the north entrance',x:LM.capQuote.x,y:LM.capQuote.y,z:LM.capQuote.z,k:3,pri:650,near:0,far:520});
+  if(LM.stdQuote)labels.push({t:'“Not the victory but the action…”',sub:'southwest corner, carved 1923',x:LM.stdQuote.x,y:LM.stdQuote.y,z:LM.stdQuote.z,k:3,pri:650,near:0,far:560});
   if(LM.dev){const D=LM.dev;labels.push({t:'John Cook Arena',sub:'Terry Pettit Court',x:D.x,y:hAt(D.x,D.z)+5,z:D.z,k:3,pri:640,near:0,far:1500});
     if(LM.cookStatue)labels.push({t:'John Cook statue',x:LM.cookStatue.x,y:LM.cookStatue.y+8,z:LM.cookStatue.z,k:3,pri:610,near:0,far:900})}
   for(const [n,x,nn,kind] of H.places){if(kind==='city')continue;const big=kind!=='neighbourhood';L(n,x,30,-nn,1,big?700:280,big?1500:700,big?15000:4200)}
   for(const [n,x,nn,a,c] of H.plabels){L(n,x,12,-nn,c==='water'?5:2,600+Math.min(250,a/8000),0,a>300000?11000:(a>60000?5000:2500))}
   for(const [ti,x,nn] of H.tlabels||[])L(H.tnames[ti],x,7,-nn,6,660,0,5600);
-  for(const [n,x,nn,c] of H.slabels){L(n,x,4,-nn,4,c<=2?260:(c===3?240:(c===4?200:120)),0,c<=3?2600:(c===4?1500:520))}
-  const host=$('labels');for(let i=0;i<(mobile?46:80);i++){const d=document.createElement('div');d.className='lb';host.appendChild(d);pool.push({d,t:'',k:-1,on:false})}
+  {const sl=streetLabels();if(sl.length)for(const l of sl)labels.push(l);else for(const [n,x,nn,c] of H.slabels){L(n,x,4,-nn,4,c<=2?260:(c===3?240:(c===4?200:120)),0,c<=3?2600:(c===4?1500:520))}}
+  const host=$('labels');for(let i=0;i<(mobile?72:124);i++){const d=document.createElement('div');d.className='lb';host.appendChild(d);pool.push({d,t:'',k:-1,on:false})}
 }
 const v3=new THREE.Vector3();let lblTick=0,lblScale=1;
 function updateLabels(){
   if(!labels.length)return;
   const w=innerWidth,h=innerHeight;const cam=camera.position;const cand=[];
   {const dc=walk.on?300:cam.distanceTo(controls.target),ls=dc<380?(mobile?1.36:1.45):dc<900?1.34:dc<2200?1.22:dc<5000?1.1:1;if(ls!==lblScale){lblScale=ls;$('labels').style.setProperty('--ls',ls)}}
-  if(labelsOn){for(const l of ((busLabels.length||wxLabels.length||lifeLabels.length)?labels.concat(busLabels,wxLabels,lifeLabels):labels)){const dx=l.x-cam.x,dy=l.y-cam.y,dz=l.z-cam.z;const d=Math.sqrt(dx*dx+dy*dy+dz*dz);if(d>l.far||d<l.near)continue;if(l.k===6&&!trailsOn)continue;if(walk.on&&l.k!==0&&d>450)continue;
+  if(labelsOn||walk.sky){for(const set of labelSets())for(const l of set){const dx=l.x-cam.x,dy=l.y-cam.y,dz=l.z-cam.z;const d=Math.sqrt(dx*dx+dy*dy+dz*dz);if(d>l.far||d<l.near)continue;if(l.k===6&&!trailsOn)continue;if(walk.on&&l.k!==0&&l.k<9&&d>450)continue;
     v3.set(l.x,l.y,l.z).project(camera);if(v3.z>1||v3.z<-1||Math.abs(v3.x)>1.05||Math.abs(v3.y)>1.05)continue;
     cand.push({l,sx:(v3.x*.5+.5)*w,sy:(-v3.y*.5+.5)*h,s:l.pri-d/l.far*150,sub:l.sub&&!(l.subFar&&d<l.subFar)?l.sub:''})}}
   cand.sort((a,b)=>b.s-a.s);const placed=[];let pi=0;
   if(LM.devSign&&!walk.on){const g=LM.devSign,dS=cam.distanceTo(g.position);if(dS<1300){v3.copy(g.position).project(camera);if(v3.z<1&&v3.z>-1){const ppm=h/(2*Math.tan(camera.fov*Math.PI/360)*dS),bw=LM.devDim[0]*ppm,bh=LM.devDim[1]*ppm;placed.push([(v3.x*.5+.5)*w-bw/2,(-v3.y*.5+.5)*h-bh/2,bw,bh])}}}
-  for(const c of cand){if(pi>=pool.length)break;const lk=c.l.k,pill=lk===3||lk===7,fs=(lk===0?13:lk===1?12:lk===3?11.5:11)*lblScale;const bw=Math.max(c.l.t.length*(lk===1?.78:lk===0?.7:.58),c.sub?c.sub.length*.56:0)*fs+(pill?22:10),bh=fs+8+(c.sub?fs+3:0)+(pill?6:0);const x0=c.sx-bw/2,y0=c.sy-bh/2;
+  for(const c of cand){if(pi>=pool.length)break;const lk=c.l.k,pill=lk===3||lk===7,fs=(lk===0?13:lk===1?12:lk===3?11.5:11)*lblScale;let bw=Math.max(c.l.t.length*(lk===1?.78:lk===0||lk===8?.7:.58),c.sub?c.sub.length*.56:0)*fs+(pill?22:10),bh=fs+8+(c.sub?fs+3:0)+(pill?6:0),rot=0,ox=0,oy=0;
+    if(lk===11){bw=218;bh=44+Math.ceil(c.sub.length/29)*16;ox=128;oy=-34}
+    else if(c.l.ax!==undefined){v3.set(c.l.x+c.l.ax*40,c.l.y,c.l.z+c.l.az*40).project(camera);const ex=(v3.x*.5+.5)*w-c.sx,ey=(-v3.y*.5+.5)*h-c.sy;if(v3.z<1&&v3.z>-1&&(ex||ey)){rot=Math.atan2(ey,ex);if(rot>1.5708)rot-=Math.PI;else if(rot<-1.5708)rot+=Math.PI;const cs=Math.abs(Math.cos(rot)),sn=Math.abs(Math.sin(rot)),w2=bw*cs+bh*sn;bh=bw*sn+bh*cs;bw=w2}}
+    const x0=c.sx+ox-bw/2,y0=c.sy+oy-bh/2;
     if(y0<54||y0>h-bottomH-12)continue;let ok=true;for(const p of placed){if(x0<p[0]+p[2]&&x0+bw>p[0]&&y0<p[1]+p[3]&&y0+bh>p[1]){ok=false;break}}
     if(!ok)continue;placed.push([x0,y0,bw,bh]);const e=pool[pi++];const key=c.sub?c.l.t+'|'+c.sub:c.l.t;if(e.t!==key){e.d.textContent=c.l.t;if(c.sub){const sp=document.createElement('span');sp.className='sub';sp.textContent=c.sub;e.d.appendChild(sp)}e.t=key}if(e.k!==c.l.k){e.d.className='lb k'+c.l.k;e.k=c.l.k}
-    e.d.style.transform=`translate(${Math.round(c.sx)}px,${Math.round(c.sy)}px) translate(-50%,-50%)`;e.on=true}
+    e.d.style.transform=`translate(${Math.round(c.sx)}px,${Math.round(c.sy)}px) translate(-50%,-50%)`+(rot?` rotate(${rot.toFixed(2)}rad)`:'');e.on=true}
   for(;pi<pool.length;pi++){const e=pool[pi];if(e.on){e.d.style.transform='translate(-9999px,-9999px)';e.on=false}}
 }
 
@@ -734,7 +860,9 @@ const ray=new THREE.Raycaster();const ndc=new THREE.Vector2();
 let bottomH=120,rideWay=-1,ride=null,trailsOn=true;
 function layoutCard(){bottomH=$('bottom').offsetHeight||120;$('card').style.bottom=(bottomH+8)+'px'}
 let cardAct=null;
-function showCard(title,body,way,act,link){$('ch').textContent=title;$('cp').textContent=body;$('cp').scrollTop=0;$('crange').style.display='none';{const h=$('clinks');h.textContent='';for(const l of (link?(Array.isArray(link)?link:[link]):[])){const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=l.href;a.textContent=l.label;h.appendChild(a)}}rideWay=(way===undefined?-1:way);cardAct=act||null;$('cride').style.display=(rideWay>=0||cardAct)?'inline-block':'none';$('cride').textContent=cardAct?cardAct.label:'▶ Ride this trail';$('cspd').style.display='none';$('card').style.display='block'}
+let rangeFn=null;
+function cardRange(label,val,fn){$('crange').style.display='flex';$('crange').firstElementChild.textContent=label;$('cR').value=val;rangeFn=fn}
+function showCard(title,body,way,act,link){$('ch').textContent=title;$('cp').textContent=body;$('cp').scrollTop=0;$('crange').style.display='none';rangeFn=null;{const h=$('clinks');h.textContent='';for(const l of (link?(Array.isArray(link)?link:[link]):[])){const a=document.createElement(l.fn?'button':'a');a.className='btn';if(l.fn){a.onclick=()=>l.fn(a)}else{a.target='_blank';a.rel='noopener noreferrer';a.href=l.href}a.textContent=l.label;h.appendChild(a)}}rideWay=(way===undefined?-1:way);cardAct=act||null;$('cride').style.display=(rideWay>=0||cardAct)?'inline-block':'none';$('cride').textContent=cardAct?cardAct.label:'▶ Ride this trail';$('cspd').style.display='none';$('card').style.display='block'}
 function hideCard(){$('card').style.display='none';rideWay=-1;cardAct=null}
 const TL=['Paved trail','Crushed rock trail','Dirt trail','On-street bike lane','Signed on-street bike route'];
 function groundPoint(){const o=ray.ray.origin,d=ray.ray.direction;if(d.y>-1e-4)return null;let t=(hAt(controls.target.x,controls.target.z)-o.y)/d.y;for(let k=0;k<6;k++){t=(hAt(o.x+d.x*t,o.z+d.z*t)-o.y)/d.y}if(!(t>0))return null;return {x:o.x+d.x*t,z:o.z+d.z*t,t}}
@@ -766,9 +894,13 @@ function trailPath(w0){const TR=LM.trails,T0=TR[w0];const off0=T0.tc<3,named=T0.
   grow(true);grow(false);return pts}
 const rA=new THREE.Vector3(),rB=new THREE.Vector3(),rC=new THREE.Vector3();
 function ridePos(R,s,out){s=Math.min(R.L,Math.max(0,s));let lo=0,hi=R.cum.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(R.cum[m]<=s)lo=m;else hi=m}const seg=R.cum[hi]-R.cum[lo]||1,u=(s-R.cum[lo])/seg;out.x=R.pts[2*lo]+(R.pts[2*hi]-R.pts[2*lo])*u;out.z=R.pts[2*lo+1]+(R.pts[2*hi+1]-R.pts[2*lo+1])*u;out.y=hAt(out.x,out.z);return out}
-function ridePose(R,s){const pv=Math.min(R.v,300);const back=50+pv*.9,look=80+pv*1.2,hgt=22+pv*.42;ridePos(R,s-back,rA);ridePos(R,s+look,rB);ridePos(R,s,rC);let cx=rA.x,cz=rA.z;
+// The camera rides behind and above. Zooming (R.zm) brings it down to just behind the handlebars, a sideways drag (R.yo) swings it
+// around the rider to see into a turn, and an up or down drag (R.hm) raises or lowers it. None of that stops the ride.
+function ridePose(R,s){const pv=Math.min(R.v,300),zm=R.zm||1,yo=R.yo||0;const back=(50+pv*.9)*zm,look=(80+pv*1.2)*Math.max(.3,Math.min(1.6,zm)),hgt=Math.max(1.7,(22+pv*.42)*zm*(R.hm||1));ridePos(R,s-back,rA);ridePos(R,s+look,rB);ridePos(R,s,rC);let cx=rA.x,cz=rA.z;
   if(s<back){const hx=rC.x-rB.x,hz=rC.z-rB.z,hl=Math.hypot(hx,hz)||1,ex=back-s;cx+=hx/hl*ex;cz+=hz/hl*ex}
-  return {cx,cy:Math.max(rA.y,rC.y)+hgt,cz,tx:rB.x,ty:rB.y+4,tz:rB.z,look}}
+  let tx=rB.x,ty=rB.y+4,tz=rB.z;
+  if(yo){const dx=cx-rC.x,dz=cz-rC.z,c=Math.cos(yo),sn=Math.sin(yo),k=Math.min(1,Math.abs(yo)/1.1);cx=rC.x+dx*c-dz*sn;cz=rC.z+dx*sn+dz*c;tx+=(rC.x-tx)*k;ty+=(rC.y+2-ty)*k;tz+=(rC.z-tz)*k}
+  return {cx,cy:Math.max(hAt(cx,cz),rC.y)+hgt,cz,tx,ty,tz,look}}
 const miles=m=>(m/1609.344).toFixed(1);let rideStopT=0;
 function beginRide(R){const p=ridePose(R,0);
   flyTo({p:new THREE.Vector3(p.cx,p.cy,p.cz),t:new THREE.Vector3(p.tx,p.ty,p.tz)},1700,()=>{R.t=performance.now();ride=R;controls.enabled=false;$('cride').style.display='inline-block';$('cride').textContent='■ Stop';$('cspd').style.display='inline-block';$('cspd').textContent='Speed '+R.mul+'×';dirty=true})}
@@ -779,13 +911,13 @@ function startRide(w){stopTour();let pts=trailPath(w);let n=pts.length/2;if(n<2)
 function wayName(w){const T=LM.trails[w];return T.tn!==65535?H.tnames[T.tn]:(T.tc<3?'an unnamed trail':(T.tc===3?'a bike lane':'a signed bike route'))}
 function roadName(i){const w=LM.trailOf[i];if(w>=0)return wayName(w);const RD=LM.road,sn=RD.rsn?RD.rsn[i]:65535;if(sn!==65535&&H.snl)return H.snl[sn];const c=RD.rc[i];return (c===7||c===8||c===11)?'a path':(c===6?'a service road':'a side street')}
 function rideAt(R){const s=Math.min(R.s,R.L);let lo=0,hi=R.cum.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(R.cum[m]<=s)lo=m;else hi=m}return hi}
-function rideText(R){if(R.kind==='trail')return `${miles(Math.min(R.s,R.L))} of ${miles(R.L)} mi · tap the map to stop`;
+function rideText(R){if(R.kind==='trail')return `${miles(Math.min(R.s,R.L))} of ${miles(R.L)} mi · press Stop to end the ride`;
   const i=rideAt(R),md=R.md[i],nm=md===3?'':roadName(R.wy[i]);
   if(R.kind==='all'){const to=R.tg[i]>=0?' to the next closest, '+roadName(R.tg[i]):'';let what;
     if(md===0)what='riding new ground on '+nm;else if(md===1)what='retracing '+nm+to;else if(md===2)what='linking on '+nm+' (no bike lane)'+to;else what='no street link here, bridging'+to;
     if(R.ut[i]||R.ut[i-1])what='turned around, '+what;
-    return `Covered ${miles(R.cv[i])} of ${miles(BG.total)} mi (${Math.floor(100*R.cv[i]/BG.total)}%) · ${what} · tap the map to stop`}
-  return `${miles(Math.min(R.s,R.L))} of ${miles(R.L)} mi · ${md===3?'bridging a gap':'on '+nm+(md===2?' (no bike lane)':'')} · tap the map to stop`}
+    return `Covered ${miles(R.cv[i])} of ${miles(BG.total)} mi (${Math.floor(100*R.cv[i]/BG.total)}%) · ${what} · press Stop to end the ride`}
+  return `${miles(Math.min(R.s,R.L))} of ${miles(R.L)} mi · ${md===3?'bridging a gap':'on '+nm+(md===2?' (no bike lane)':'')} · press Stop to end the ride`}
 function stepRide(now){const R=ride;const dt=Math.min(.1,(now-R.t)/1000);R.t=now;R.s+=R.v*dt;if(R.more&&R.L-R.s<2200)R.more();
   if(R.ev){const g=BG;let did=false;while(R.ei<R.ev.length&&R.ev[R.ei]<=R.s){const j=R.ea[R.ei],m=R.em[R.ei];R.ei++;if(m===0){paintEdge(LM.covPaint,g.aE[j]);did=true}else if(m===2)did=paintLink(j)||did}if(did){LM.covPaint.flush();LM.linkPaint.flush()}}
   const p=ridePose(R,R.s);const k=1-Math.exp(-dt*3.2);const c=camera.position,t=controls.target;
@@ -844,7 +976,9 @@ function bikeGraph(){if(BG)return BG;const t0=performance.now();const RD=LM.road
   // adjacency lists
   const head=new Int32Array(NV+1);for(let j=0;j<na;j++)head[aFrom[j]+1]++;for(let i=0;i<NV;i++)head[i+1]+=head[i];
   const adj=new Int32Array(na),fill=head.slice(0,NV);for(let j=0;j<na;j++)adj[fill[aFrom[j]]++]=j;
-  bgTmp=BG={NV,NX,NZ,na,nE,total,aFrom,aTo,aW,aL,aRoad,aE,aF,eA,eB,eLen,eRoad,eK,head,adj,isBike,nb:bridges.length,
+  // a second set of costs for the shortest way: plain distance, with the wrong way down a one-way street and the straight bridges still held back
+  const aS=new Float32Array(na);for(let j=0;j<na;j++){const fl=aF[j];aS[j]=(fl&3)===3?aW[j]:(fl&4)?aL[j]*6+40:aL[j]+.01}
+  bgTmp=BG={NV,NX,NZ,na,nE,total,aFrom,aTo,aW,aS,aL,aRoad,aE,aF,eA,eB,eLen,eRoad,eK,head,adj,isBike,nb:bridges.length,
     dist:new Float64Array(NV),prev:new Int32Array(NV),pa:new Int32Array(NV),st:new Int32Array(NV),cur:0,hv:new Int32Array(na+NV+16),hd:new Float64Array(na+NV+16),pd:0};
   // dead ends: a bike route stops and the only way on is back
   const dead=[];for(let v=0;v<NV;v++){if(!isBike[v])continue;let n0=-1,many=false;for(let i=head[v];i<head[v+1];i++){const u=aTo[adj[i]];if(n0<0)n0=u;else if(u!==n0){many=true;break}}if(!many)dead.push(v)}
@@ -871,7 +1005,7 @@ function paintLink(j){const g=BG,a=g.aFrom[j],b=g.aTo[j],k=a<b?a*g.NV+b:b*g.NV+a
   for(let i=1;i<=n;i++){const x=g.NX[a]+(g.NX[b]-g.NX[a])*i/n,z=g.NZ[a]+(g.NZ[b]-g.NZ[a])*i/n,y=hAt(x,z)+1.1;LM.linkPaint.add(px,py,pz,x,y,z);px=x;py=y;pz=z}return true}
 function bgNearest(x,z,thr,bikeOnly){const g=BG,X=g.NX,Z=g.NZ;let best=-1,bd=thr*thr;for(let v=0;v<g.NV;v++){if(!g.ok[v]||(bikeOnly&&!g.isBike[v]))continue;const dx=X[v]-x,dz=Z[v]-z,dd=dx*dx+dz*dz;if(dd<bd){bd=dd;best=v}}return best}
 // shortest way over the network from the sources to the first node that satisfies isT
-function bgRoute(srcs,isT){const g=BG||bgTmp,head=g.head,adj=g.adj,aTo=g.aTo,aW=g.aW,dist=g.dist,prev=g.prev,pa=g.pa,st=g.st,hv=g.hv,hd=g.hd;const cur=++g.cur;let hn=0;
+function bgRoute(srcs,isT,W){const g=BG||bgTmp,head=g.head,adj=g.adj,aTo=g.aTo,aW=W||g.aW,dist=g.dist,prev=g.prev,pa=g.pa,st=g.st,hv=g.hv,hd=g.hd;const cur=++g.cur;let hn=0;
   const push=(v,d)=>{let i=hn++;while(i>0){const p=(i-1)>>1;if(hd[p]<=d)break;hd[i]=hd[p];hv[i]=hv[p];i=p}hd[i]=d;hv[i]=v};
   const pop=()=>{const v=hv[0];g.pd=hd[0];hn--;if(hn>0){const lv=hv[hn],ld=hd[hn];let i=0;for(;;){let c=2*i+1;if(c>=hn)break;if(c+1<hn&&hd[c+1]<hd[c])c++;if(hd[c]>=ld)break;hd[i]=hd[c];hv[i]=hv[c];i=c}hd[i]=ld;hv[i]=lv}return v};
   for(const s0 of srcs){dist[s0]=0;st[s0]=cur;prev[s0]=-1;pa[s0]=-1;push(s0,0)}
@@ -907,10 +1041,14 @@ function rideAll(){const g=bikeGraph();stopTour();clearRoute();clearPins();rideA
   R.more=()=>{for(let k=0;k<120&&R.L-R.s<4000;k++){const P=allNext(R);if(!P){R.more=null;break}appendLeg(R,P)}};
   R.more();if(R.pts.length<4){rideIntro('There is nothing to ride near here.');return}
   showCard('Bike ride','Riding everything…',-1);beginRide(R)}
-function rideRoute(a,b){const g=bikeGraph();const t=bgRoute([a],v=>v===b);if(t<0){rideIntro('There is no way between those two spots.');return}
+function rideRoute(a,b,trails){const g=bikeGraph();const t=bgRoute([a],v=>v===b,trails?g.aW:g.aS);if(t<0){rideIntro('There is no way between those two spots.');return}
   const R=newRide('route');appendLeg(R,bgPath(t));if(R.L<60){rideIntro('Those two spots are right next to each other.');return}
+  // how long the other kind of route would be
+  let other=0;{const t2=bgRoute([a],v=>v===b,trails?g.aS:g.aW);if(t2>=0)for(const j of bgPath(t2).a)other+=g.aL[j]}const differs=other>0&&Math.abs(other-R.L)>R.L*.02;
   R.v0=Math.min(150,Math.max(22,R.L/70));R.v=R.v0;const parts=[];if(R.sk[0]>40)parts.push(miles(R.sk[0])+' on trails');if(R.sk[1]>40)parts.push(miles(R.sk[1])+' on bike streets');if(R.sk[2]>40)parts.push(miles(R.sk[2])+' on regular streets');if(R.sk[3]>40)parts.push(miles(R.sk[3])+' bridged');
-  R.sum=`${miles(R.L)} mi (${parts.join(', ')})`;showRoute(R.pts);showCard('Bike ride',R.sum,-1);beginRide(R)}
+  R.sum=(trails?'The way that keeps to trails and bike streets: ':'The shortest way: ')+`${miles(R.L)} mi (${parts.join(', ')})`+(differs?(trails?`. The shortest way is ${miles(other)} mi`:`. Keeping to trails and bike streets would be ${miles(other)} mi`):'');
+  showRoute(R.pts);showCard('Bike ride',R.sum+'. Shortest means the least distance over streets and paths a bike can use, with one-way streets ridden the legal way.',-1);beginRide(R);
+  if(differs){const h=$('clinks'),bt=document.createElement('button');bt.className='btn';bt.textContent=trails?'Ride the shortest way':'Ride the trail way';bt.onclick=()=>{if(ride)stopRide();fly=null;rideA=-1;clearRoute();setPin(0,a);setPin(1,b);rideRoute(a,b,!trails)};h.appendChild(bt)}}
 function showRoute(pts){clearRoute();const P=[];for(let k=2;k<pts.length;k+=2){const ax=pts[k-2],az=pts[k-1],bx=pts[k],bz=pts[k+1],n=Math.max(1,Math.ceil(Math.hypot(bx-ax,bz-az)/40));let px=ax,pz=az,py=hAt(ax,az)+1.9;
     for(let i=1;i<=n;i++){const x=ax+(bx-ax)*i/n,z=az+(bz-az)*i/n,y=hAt(x,z)+1.9;P.push(px,py,pz,x,y,z);px=x;py=y;pz=z}}if(!P.length)return;
   if(!LM.routeMat){LM.routeMat=new LineMaterial({color:0xfff27a,linewidth:mobile?5:5.5,worldUnits:false,fog:false});LM.routeMat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(LM.routeMat)}
@@ -920,7 +1058,7 @@ function setPin(i,v){if(!LM.pins)LM.pins=[0x2bd46a,0xff4d4d].map(c=>{const g=new
   const g=LM.pins[i];g.position.set(BG.NX[v],hAt(BG.NX[v],BG.NZ[v]),BG.NZ[v]);g.visible=true;dirty=true}
 function clearPins(){for(const g of LM.pins||[])g.visible=false;dirty=true}
 let rideMode=false,rideA=-1;
-function rideIntro(msg){const g=BG;showCard('Bike ride',(msg?msg+' ':'')+`Tap two spots to ride between them. Or ride everything: every inch of all ${miles(g.total)} mi, turning around at dead ends and retracing to the next closest route. Orange dots: the ${g.dead} dead ends. Blue: regular streets that link one bike route to the next.`,-1,{label:'▶ Ride everything',fn:rideAll})}
+function rideIntro(msg){const g=BG;showCard('Bike ride',(msg?msg+' ':'')+`Tap two spots and the map rides the shortest way between them. Or ride everything: every inch of all ${miles(g.total)} mi, turning around at dead ends and retracing to the next closest route. Orange dots: the ${g.dead} dead ends. Blue: regular streets that link one bike route to the next.`,-1,{label:'▶ Ride everything',fn:rideAll})}
 function setRideMode(on){if(on===rideMode)return;rideMode=on;$('bRide').classList.toggle('on',on);
   if(on){if(walk.on)setWalk(false);if(!trailsOn)setTrails(true);bikeGraph();for(const o of [LM.bridgeLines,LM.deadDots])if(o)o.visible=true;LM.linkPaint.show(true);LM.covPaint.show(true);rideA=-1;rideIntro()}
   else{if(ride)stopRide();rideA=-1;clearPins();clearRoute();for(const o of [LM.bridgeLines,LM.deadDots])if(o)o.visible=false;LM.linkPaint.show(false);LM.covPaint.show(false);hideCard()}dirty=true}
@@ -929,19 +1067,19 @@ function ridePick(){const gp=groundPoint();if(!gp)return;const v=bgNearest(gp.x,
   if(v<0){if(rideA>=0)showCard('Bike ride',`Start is set on ${roadName(nodeRoad(rideA))}. Nothing to ride where you tapped; tap closer to a street or trail to finish.`,-1,act);else rideIntro('No street or trail there.');return}
   if(rideA<0){rideA=v;clearRoute();clearPins();setPin(0,v);showCard('Bike ride',`Start set on ${roadName(nodeRoad(v))}. Now tap where to finish.`,-1,act)}
   else{const a=rideA;rideA=-1;setPin(1,v);rideRoute(a,v)}}
-function pick(x,y){if(performance.now()-rideStopT<500)return;ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(rideMode){ridePick();return}const hit=ray.intersectObjects(pickables,true)[0];if(!hit){if(!pickTrail())hideCard();return}
-  let o=hit.object;while(o&&!o.userData.info&&!o.userData.ids&&!o.userData.bus)o=o.parent;if(!o)return;
+function pick(x,y){if(performance.now()-rideStopT<500)return;ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(rideMode){ridePick();return}if(pickMore(x,y))return;if(!codeOn&&dlPick(x,y,true))return;const hit=ray.intersectObjects(pickables,true)[0];if(!codeOn&&treePick(hit?hit.distance:1e9))return;if(!hit){if(!codeOn&&dlPick(x,y,false))return;if(!pickTrail())hideCard();return}
+  let o=hit.object;while(o&&!o.userData.info&&!o.userData.ids&&!o.userData.bus&&!o.userData.card)o=o.parent;if(!o)return;if(o.userData.card){o.userData.card(hit);return}
   let title,body;
   if(o.userData.bus){const st=busState[hit.instanceId];if(!st)return;title='StarTran route '+st.short+(st.long?' · '+st.long:'');body='Scheduled position from the published timetable, not a live GPS reading.'}
-  else if(o.userData.dev){devCard(0);return}
+  else if(o.userData.dev){devCard(0);rollOpen('vb');return}
   else if(o.userData.info){[title,body]=o.userData.info}
   else{const st=o.userData.start;const idx=hit.faceIndex*3;let lo=0,hi=st.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(st[m]<=idx)lo=m;else hi=m-1}
     showB(o.userData.ids[lo]);return}
-  showCard(title,body)}
-function showB(b){const info=H.infos[S.b_info[b]];const tag=H.tags[S.b_tag[b]];const h=S.b_h[b]/10;const src=S.b_src[b];const rf=S.b_roof[b],tc=S.b_tc[b];
+  showCard(title,body,undefined,o.userData.act);if(o.userData.roll)rollOpen(o.userData.roll)}
+function showB(b){if(codeOn){rawCard(b);return}const info=H.infos[S.b_info[b]];const tag=H.tags[S.b_tag[b]];const h=S.b_h[b]/10;const src=S.b_src[b];const rf=S.b_roof[b],tc=S.b_tc[b];
   const kinds={Residential:'Residential',Other:'Outbuilding',Commercial:'Commercial',Agricultural:'Agricultural',Industrial:'Industrial',yes:'Building',house:'House',detached:'Detached house',semidetached_house:'Duplex',garage:'Garage',garages:'Garages',shed:'Shed',apartments:'Apartments',roof:'Canopy',static_caravan:'Mobile home',retail:'Retail',commercial:'Commercial',industrial:'Industrial',university:'University building',office:'Office',church:'Church',school:'School',hotel:'Hotel',dormitory:'Residence hall',warehouse:'Warehouse',hospital:'Hospital',public:'Public building',stadium:'Stadium',residential:'Residential'};
   const kind=kinds[tag]||(tag.charAt(0).toUpperCase()+tag.slice(1).replace(/_/g,' '));
-  const parts=[];if(info==='Devaney Sports Center'){devCard(0);return}if(info)parts.push(kind);
+  const parts=[];if(info==='Devaney Sports Center'){devCard(0);rollOpen('vb');return}if(info==='Pinnacle Bank Arena'&&S2){pbaCard(b);return}if(info)parts.push(kind);
   const st=S.b_st&&H.stypes?H.stypes[S.b_st[b]]:'';if(st)parts.push(st);
   const yr=S.b_yr?S.b_yr[b]:0;if(yr)parts.push('built '+yr);
   if(S.b_fl&&(S.b_fl[b]&1))parts.push("new in the city's 2026 footprint update");
@@ -955,11 +1093,12 @@ function showB(b){const info=H.infos[S.b_info[b]];const tag=H.tags[S.b_tag[b]];c
   let body=parts.join(' · ');body=body.charAt(0).toUpperCase()+body.slice(1);
   // the county's public record for the parcel this building stands on (the map itself stores only the parcel number)
   const links=[],p1=S.b_p1?S.b_p1[b]:0,sqft=Math.round(bArea(b)*10.7639/10)*10;body+=` · footprint about ${sqft.toLocaleString()} sq ft`;
+  {const pl=propLines(b);if(pl)body=pl+' · '+body.charAt(0).toLowerCase()+body.slice(1)}
   if(p1){const pid=String(p1).padStart(7,'0')+String(S.b_p2[b]).padStart(3,'0')+String(S.b_p3[b]).padStart(3,'0');body+=` · county parcel ${pid.slice(0,2)}-${pid.slice(2,4)}-${pid.slice(4,7)}-${pid.slice(7,10)}-${pid.slice(10)}`;
-    links.push({href:CTY+pid,label:(S.b_fl[b]&2)?'County record for this site ↗':'County property record ↗'})}
-  // owner, value, sales, zoning and legal description live on the county page; the map stores none of them
+    links.push({href:CTY+pid,label:(S.b_fl[b]&2)?'County record for this site ↗':'County property record ↗'});if(!(S.b_fl[b]&2))links.push({label:'Show owner',fn:btn=>ownerLookup(pid,btn)})}
+  // the assessed value comes with the map; the owner is read from the county only when asked for and is never stored; sales and the legal description live on the county page
   links.push({href:`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${(H.lat0-LM.bc[2*b+1]/KYm).toFixed(6)},${(H.lon0+LM.bc[2*b]/KXm).toFixed(6)}`,label:'Street View ↗'});
-  showCard(info||kind,body,undefined,undefined,links)}
+  body+=bLinks(b,links);showCard(info||kind,body,undefined,undefined,links)}
 // footprint area of a building in square meters, from its outline (holes taken out)
 let bOff=null;
 function bArea(b){if(!bOff){const nr=S.b_rings,rs=S.b_rs,N=nr.length,ro=new Uint32Array(N),xo=new Uint32Array(N);let r=0,x=0;for(let i=0;i<N;i++){ro[i]=r;xo[i]=x;for(let k=0;k<nr[i];k++)x+=rs[r++]*2}bOff={ro,xo}}
@@ -975,7 +1114,7 @@ function shiftView(dx,dz){const t=controls.target,nx=Math.max(-8700,Math.min(870
 function panStart(id,cx,cy){panV=null;const d=camera.position.distanceTo(controls.target),h=groundAt(cx,cy);
   // grabbing near the horizon would fling the map, so there the drag is measured on the screen instead
   pan=(h&&h.t<d*4.5)?{id,ax:h.x,az:h.z,y0:h.y0,lt:performance.now(),vx:0,vz:0}:{id,rel:1,px:cx,py:cy,lt:performance.now(),vx:0,vz:0}}
-canvas.addEventListener('pointerdown',e=>{if(walk.on)return;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});if(ptrs.size===1&&(e.pointerType!=='mouse'||e.button===0))panStart(e.pointerId,e.clientX,e.clientY);else pan=null});
+canvas.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});if(walk.on||ride)return;if(ptrs.size===1&&(e.pointerType!=='mouse'||(e.button===0&&!(e.ctrlKey||e.shiftKey||e.metaKey))))panStart(e.pointerId,e.clientX,e.clientY);else pan=null});
 canvas.addEventListener('pointermove',e=>{const q=ptrs.get(e.pointerId);if(q){q.x=e.clientX;q.y=e.clientY}if(!pan||e.pointerId!==pan.id||walk.on||fly||ride)return;let dx,dz;const d=camera.position.distanceTo(controls.target);
   if(pan.rel){const k=2*d*Math.tan(camera.fov*Math.PI/360)/innerHeight,az=Math.atan2(camera.position.x-controls.target.x,camera.position.z-controls.target.z),fx=-Math.sin(az),fz=-Math.cos(az),sx=e.clientX-pan.px,sy=e.clientY-pan.py;pan.px=e.clientX;pan.py=e.clientY;dx=(fz*sx+fx*sy)*k;dz=(-fx*sx+fz*sy)*k}
   else{const h=planeHit(e.clientX,e.clientY,pan.y0);if(!h)return;dx=pan.ax-h.x;dz=pan.az-h.z;const lim=d*.6,m=Math.hypot(dx,dz);if(m>lim){dx*=lim/m;dz*=lim/m}}
@@ -992,30 +1131,22 @@ let flat=null;
 function set2D(on){if(walk.on)setWalk(false);const v=viewAngles(),t=controls.target;stopTour();panV=null;if(on){flat={az:v.az,el:v.el};flyTo(camTo(t.x,t.z,v.d,0,88.6),900)}else{const f=flat||{az:200,el:36};flat=null;flyTo(camTo(t.x,t.z,v.d,f.az,Math.min(60,Math.max(24,f.el))),900)}
   $('b2D').classList.toggle('on',on);$('b2D').textContent=on?'3D view':'2D view'}
 const walk={on:false,yaw:0,pitch:0,mx:0,mz:0,keys:{},look:null,joy:null,t:0};
-function setWalk(on){if(on===walk.on)return;if(on&&rideMode)setRideMode(false);stopTour();fly=null;if(ride)stopRide();walk.on=on;$('bWalk').classList.toggle('on',on);controls.enabled=!on;$('walkHint').style.display=on?'block':'none';if(on)setTimeout(()=>$('walkHint').style.display='none',4000);
-  if(on){const t=controls.target;const dx=t.x-camera.position.x,dz=t.z-camera.position.z;walk.yaw=Math.atan2(-dx,-dz);walk.pitch=.04;const dh=Math.hypot(dx,dz)||1,back=Math.min(140,dh*.4),sx=t.x-dx/dh*back,sz=t.z-dz/dh*back;camera.position.set(sx,hAt(sx,sz)+1.7,sz);camera.near=.4;camera.fov=62;camera.updateProjectionMatrix()}
-  else{$('joy').style.display='none';walk.mx=walk.mz=0;walk.keys={};const fx=-Math.sin(walk.yaw),fz=-Math.cos(walk.yaw);const x=camera.position.x,z=camera.position.z;camera.fov=45;controls.target.set(x+fx*60,hAt(x+fx*60,z+fz*60),z+fz*60);camera.position.set(x-fx*220,hAt(x,z)+170,z-fz*220);camera.updateProjectionMatrix()}
-  shadowDirty=true;dirty=true}
-function stepWalk(now){const dt=Math.min(.1,(now-walk.t)/1000||0);walk.t=now;let mx=walk.mx,mz=walk.mz;const k=walk.keys;
-  if(k.KeyW||k.ArrowUp)mz-=1;if(k.KeyS||k.ArrowDown)mz+=1;if(k.KeyA)mx-=1;if(k.KeyD)mx+=1;if(k.ArrowLeft){walk.yaw+=1.6*dt;dirty=true}if(k.ArrowRight){walk.yaw-=1.6*dt;dirty=true}
-  const m=Math.hypot(mx,mz);if(m>.02){const sp=(k.ShiftLeft||k.ShiftRight?45:13)*Math.min(1,m)*dt;const s=Math.sin(walk.yaw),c=Math.cos(walk.yaw);mx/=Math.max(1,m);mz/=Math.max(1,m);
-    let x=camera.position.x+(mx*c+mz*s)*sp/Math.min(1,m)*Math.min(1,m),z=camera.position.z+(-mx*s+mz*c)*sp/Math.min(1,m)*Math.min(1,m);x=Math.max(-8000,Math.min(8000,x));z=Math.max(-8000,Math.min(8000,z));camera.position.set(x,hAt(x,z)+1.7,z);dirty=true}
-  camera.rotation.set(walk.pitch,walk.yaw,0,'YXZ');controls.target.set(camera.position.x-Math.sin(walk.yaw)*40,camera.position.y,camera.position.z-Math.cos(walk.yaw)*40)}
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(walk.on){walk.keys[e.code]=1;dirty=true;if(e.code==='Escape')setWalk(false)}});
 addEventListener('keyup',e=>{walk.keys[e.code]=0});
-canvas.addEventListener('pointerdown',e=>{pd={x:e.clientX,y:e.clientY,t:performance.now()};if(tour)stopTour();fly=null;if(ride)stopRide();
-  if(walk.on){try{canvas.setPointerCapture(e.pointerId)}catch(_){}if(e.pointerType==='touch'&&e.clientX<innerWidth*.5&&!walk.joy){walk.joy={id:e.pointerId,x:e.clientX,y:e.clientY};const j=$('joy');j.style.left=e.clientX+'px';j.style.top=e.clientY+'px';j.style.display='block';j.firstElementChild.style.transform=''}
-    else if(!walk.look)walk.look={id:e.pointerId,x:e.clientX,y:e.clientY}}});
-canvas.addEventListener('pointermove',e=>{if(!walk.on)return;
-  if(walk.joy&&e.pointerId===walk.joy.id){let dx=e.clientX-walk.joy.x,dy=e.clientY-walk.joy.y;const m=Math.hypot(dx,dy),r=44;if(m>r){dx*=r/m;dy*=r/m}walk.mx=dx/r;walk.mz=dy/r;$('joy').firstElementChild.style.transform=`translate(${dx}px,${dy}px)`;dirty=true}
-  else if(walk.look&&e.pointerId===walk.look.id){walk.yaw-=(e.clientX-walk.look.x)*.0045;walk.pitch=Math.max(-1.2,Math.min(1.2,walk.pitch-(e.clientY-walk.look.y)*.0045));walk.look.x=e.clientX;walk.look.y=e.clientY;dirty=true}});
-const endPtr=e=>{if(walk.joy&&e.pointerId===walk.joy.id){walk.joy=null;walk.mx=walk.mz=0;$('joy').style.display='none'}if(walk.look&&e.pointerId===walk.look.id)walk.look=null};
+let rdg=null;
+canvas.addEventListener('pointermove',e=>{if(!ride||!rdg||e.pointerId!==rdg.id||ptrs.size>1)return;ride.yo=(ride.yo||0)+(e.clientX-rdg.x)*.0065;ride.hm=Math.min(4,Math.max(.2,(ride.hm||1)*Math.exp((e.clientY-rdg.y)*.006)));rdg.x=e.clientX;rdg.y=e.clientY;lastInput=performance.now();dirty=true});
+{const rdEnd=e=>{if(rdg&&e.pointerId===rdg.id)rdg=null};canvas.addEventListener('pointerup',rdEnd);canvas.addEventListener('pointercancel',rdEnd)}
+canvas.addEventListener('pointerdown',e=>{pd={x:e.clientX,y:e.clientY,t:performance.now()};if(tour)stopTour();if(ride){if(!rdg)rdg={id:e.pointerId,x:e.clientX,y:e.clientY};return}fly=null;
+  if(walk.on){try{canvas.setPointerCapture(e.pointerId)}catch(_){}if(!walk.look)walk.look={id:e.pointerId,x:e.clientX,y:e.clientY}}});
+// in Walk mode a drag turns your head: the view follows your finger, the way a street-level photo does
+canvas.addEventListener('pointermove',e=>{if(!walk.on||!walk.look||e.pointerId!==walk.look.id||ptrs.size>1)return;const k=.0042*camera.fov/62;walk.yaw+=(e.clientX-walk.look.x)*k;walk.pitch=Math.max(walk.sky?-.3:-1.2,Math.min(walk.sky?1.5533:1.2,walk.pitch+(e.clientY-walk.look.y)*k));walk.look.x=e.clientX;walk.look.y=e.clientY;lastInput=performance.now();dirty=true});
+const endPtr=e=>{if(walk.look&&e.pointerId===walk.look.id)walk.look=null};
 canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);
 canvas.addEventListener('pointerup',e=>{if(pd&&Math.hypot(e.clientX-pd.x,e.clientY-pd.y)<7&&performance.now()-pd.t<450){const now=performance.now();
-    if(lastTap&&now-lastTap.t<340&&Math.hypot(e.clientX-lastTap.x,e.clientY-lastTap.y)<36&&!walk.on&&!rideMode){lastTap=null;zoomBy(.45,e.clientX,e.clientY,650)}else{lastTap={t:now,x:e.clientX,y:e.clientY};pick(e.clientX,e.clientY)}}pd=null});
-canvas.addEventListener('wheel',()=>{if(tour)stopTour();fly=null;panV=null;if(ride)stopRide()},{passive:true});
+    if(lastTap&&now-lastTap.t<340&&Math.hypot(e.clientX-lastTap.x,e.clientY-lastTap.y)<36&&!walk.on&&!rideMode){lastTap=null;zoomBy(.45,e.clientX,e.clientY,650)}else{lastTap={t:now,x:e.clientX,y:e.clientY};if(walk.on)walkTap(e.clientX,e.clientY);else if(!ride)pick(e.clientX,e.clientY)}}pd=null});
+canvas.addEventListener('wheel',e=>{if(tour)stopTour();if(ride){ride.zm=Math.min(4,Math.max(.12,(ride.zm||1)*(e.deltaY>0?1.12:.89)));lastInput=performance.now();dirty=true;return}fly=null;panV=null},{passive:true});
 // keyboard: arrows move, + and - zoom, Q and E turn
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||walk.on||e.metaKey||e.ctrlKey||e.altKey)return;if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','+','=','-','_','q','Q','e','E'].includes(e.key))return;e.preventDefault();stopTour();panV=null;
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||walk.on||ride||e.metaKey||e.ctrlKey||e.altKey)return;if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','+','=','-','_','q','Q','e','E'].includes(e.key))return;e.preventDefault();stopTour();panV=null;
   const v=viewAngles(),a=v.az*Math.PI/180,fx=-Math.sin(a),fz=-Math.cos(a),st=v.d*.16,t=controls.target;
   switch(e.key){case 'ArrowUp':shiftView(fx*st,fz*st);break;case 'ArrowDown':shiftView(-fx*st,-fz*st);break;case 'ArrowLeft':shiftView(fz*st,-fx*st);break;case 'ArrowRight':shiftView(-fz*st,fx*st);break;
     case '+':case '=':zoomBy(.7);break;case '-':case '_':zoomBy(1.42);break;case 'q':case 'Q':flyTo(camTo(t.x,t.z,v.d,v.az+20,v.el),300);break;case 'e':case 'E':flyTo(camTo(t.x,t.z,v.d,v.az-20,v.el),300);break}});
@@ -1128,7 +1259,7 @@ function stepStorm(dt,now){
   if(thunder&&now>nextFlash){nextFlash=now+1400+4300*Math.random();flashT=now;makeBolt()}
   const age=now-flashT,f=age<0?0:(age<110?1:(age<190?.25:(age<320?.85:(age<520?.3:0))));
   if(f>0||LM.flashing){LM.flashing=f>0;hemi.intensity=LM.hemi0+2.9*f;scene.background.copy(LM.bg0).lerp(cWhite,.46*f);scene.fog.color.copy(scene.background);if(bolt){bolt.visible=f>.15;if(LM.boltGlow)LM.boltGlow.visible=f>.15}dirty=true}
-  for(const fn of funnels){fn.rotation.y+=dt*5;if(fn.userData.rg)fn.userData.rg.scale.setScalar(1+.22*Math.sin(now*.006));fn.position.x+=fn.userData.vx*dt;fn.position.z+=fn.userData.vz*dt;fn.position.y=hAt(fn.position.x,fn.position.z);if(fn.userData.lb){fn.userData.lb.x=fn.position.x;fn.userData.lb.z=fn.position.z;fn.userData.lb.y=fn.position.y+1000}dirty=true}}
+  for(const fn of funnels){fn.rotation.y+=dt*5;if(fn.userData.rg)fn.userData.rg.scale.setScalar(1+.22*Math.sin(now*.006));fn.position.x+=fn.userData.vx*dt;fn.position.z+=fn.userData.vz*dt;fn.position.y=hAt(fn.position.x,fn.position.z);if(fn.userData.lb){fn.userData.lb.x=fn.position.x;fn.userData.lb.z=fn.position.z;fn.userData.lb.y=fn.position.y+1000}if(fn.userData.say){const q=fn.userData.say;q.x=fn.position.x;q.z=fn.position.z;q.y=fn.position.y+620;naderSay(fn,now)}dirty=true}}
 function placeStorms(){for(const f of funnels)scene.remove(f);funnels=[];wxLabels.length=0;if(!wxOn)return;
   for(const a of wxAlerts()){if(a.event!=='Tornado Warning'||!a.storm)continue;const st=a.storm,el=Math.min(2700,Math.max(0,(Date.now()-st.t)/1000)),sp=st.kt*.5144,dr=(st.from+180)*Math.PI/180,vx=Math.sin(dr)*sp,vz=-Math.cos(dr)*sp;
     const x=(st.lon-H.lon0)*KXm+vx*el,z=-(st.lat-H.lat0)*KYm+vz*el;if(Math.abs(x)>26000||Math.abs(z)>26000)continue;
@@ -1136,7 +1267,7 @@ function placeStorms(){for(const f of funnels)scene.remove(f);funnels=[];wxLabel
     const g=new THREE.Group(),m1=new THREE.Mesh(new THREE.LatheGeometry(pts,20),new THREE.MeshLambertMaterial({color:0x50545c,transparent:true,opacity:.86,side:THREE.DoubleSide,flatShading:true}));
     const m2=new THREE.Mesh(new THREE.CylinderGeometry(120,55,46,18,1,true),new THREE.MeshLambertMaterial({color:0x9a8f7c,transparent:true,opacity:.5,side:THREE.DoubleSide}));m2.position.y=23;g.add(m1,m2);
     const rg=new THREE.Mesh(new THREE.RingGeometry(700,860,64),new THREE.MeshBasicMaterial({color:0xff2030,transparent:true,opacity:.8,side:THREE.DoubleSide,depthWrite:false,fog:false}));rg.rotation.x=-Math.PI/2;rg.position.y=45;g.add(rg);
-    g.position.set(x,hAt(x,z),z);const lb={t:(wxDemo?'Simulated tornado':'Tornado Warning storm')+' · last reported position',x,y:hAt(x,z)+1000,z,k:0,pri:1200,near:0,far:60000};g.userData={vx,vz,lb,rg};wxLabels.push(lb);scene.add(g);funnels.push(g)}
+    g.position.set(x,hAt(x,z),z);const lb={t:(wxDemo?'Simulated tornado':'Tornado Warning storm')+' · last reported position',x,y:hAt(x,z)+1000,z,k:0,pri:1200,near:0,far:60000},say={t:'Nader',sub:'',x,y:hAt(x,z)+620,z,k:11,pri:1300,near:0,far:60000};g.userData={vx,vz,lb,rg,say,alert:a};naderSay(g,performance.now());wxLabels.push(lb,say);scene.add(g);funnels.push(g)}
   dirty=true}
 // one sheet draped over the ground carries the radar picture and the outlines of warned areas
 let ovl=null;
@@ -1170,7 +1301,7 @@ function setDemo(i){const C=LM.capitol,soon=new Date(Date.now()+35*60000).toISOS
     {name:'Steady rain',say:'Rain falls only where the radar picture shows it. Move around and it starts and stops.',tC:11,desc:'Rain',kmh:19,gust:null,dir:170,cloud:1,precip:'rain',heavy:1,thunder:false,alerts:[],radar:'rain'},
     {name:'Heavy snow',say:'Below freezing, the same radar picture brings snow, blown sideways by the wind.',tC:-3,desc:'Heavy Snow',kmh:29,gust:48,dir:350,cloud:1,precip:'snow',heavy:1.6,thunder:false,alerts:[{event:'Winter Storm Warning',ends:soon,rank:75,polys:[],storm:null}],radar:'snow'},
     {name:'A thunderstorm',say:'Lightning flashes when the airport reports a thunderstorm. The orange outline is the warned area.',tC:23,desc:'Thunderstorm and Heavy Rain',kmh:32,gust:80,dir:240,cloud:1,precip:'rain',heavy:1.6,thunder:true,alerts:[{event:'Severe Thunderstorm Warning',ends:soon,rank:90,polys:[demoPoly(C[0]-6500,C[1]+5200,.82,9000,2300,4200)],storm:null}],radar:'storm'},
-    {name:'A tornado warning',say:'The red outline is the warned area. The funnel marks where the Weather Service last placed the storm and moves the way it reported.',tC:24,desc:'Thunderstorm',kmh:40,gust:88,dir:200,cloud:1,precip:'rain',heavy:1,thunder:true,alerts:[{event:'Tornado Warning',ends:soon,rank:100,polys:[demoPoly(C[0]-4300,C[1]+3600,.87,7200,1100,2900)],storm:Object.assign({t:Date.now(),from:230,kt:26},here(-2600,2300))}],radar:'storm'}];
+    {name:'A tornado warning',say:'The red outline is the warned area. The funnel marks where the Weather Service last placed the storm and moves the way it reported. The funnel has a name, Nader, and a speech cloud that says what to do.',tC:24,desc:'Thunderstorm',kmh:40,gust:88,dir:200,cloud:1,precip:'rain',heavy:1,thunder:true,alerts:[{event:'Tornado Warning',ends:soon,rank:100,polys:[demoPoly(C[0]-4300,C[1]+3600,.87,7200,1100,2900)],storm:Object.assign({t:Date.now(),from:230,kt:26},here(-2600,2300))}],radar:'storm'}];
   if(i<0||i>=D.length){wxDemo=null;setRadar(null);showWx();applyWx();placeStorms();drawOverlay();if(wxOn){loadRadar();wxCard()}return}
   wxDemo=D[i];wxDemo.i=i;setRadar(wxDemo.radar?demoRadar(wxDemo.radar):null);showWx();applyWx();placeStorms();drawOverlay();nextFlash=0;
   if(i===4&&!walk.on){stopTour();flyTo(camTo(C[0]-1500,C[1]+1200,6200,35,27),2200)}
@@ -1187,7 +1318,7 @@ async function loadWater(){if(gaugesLoaded)return;try{const r=await fetch('https
     const tidy=n=>n.toLowerCase().replace(/,?\s*nebr?\.?$/,'').replace(/\bc\b\.?/g,'creek').replace(/\bnr\b/g,'near').replace(/\b[a-z]/g,m=>m.toUpperCase()).replace(/\b(At|Near|Of|To)\b/g,m=>m.toLowerCase());
     const grp=new THREE.Group();const mat=new THREE.MeshLambertMaterial({color:0x2f8fe0,emissive:0x0a2a50});
     for(const f of j.features||[]){const c=f.geometry&&f.geometry.coordinates;if(!c)continue;const x=(c[0]-H.lon0)*KXm,z=-(c[1]-H.lat0)*KYm;if(Math.abs(x)>8000||Math.abs(z)>8000)continue;const v=parseFloat(f.properties.value);if(!isFinite(v))continue;
-      const id=f.properties.monitoring_location_id;const name=tidy(H.sites[id]||id);const y=hAt(x,z);const hgt=18+10*Math.log10(1+v);
+      const id=f.properties.monitoring_location_id;const name=tidy(H.sites[id]||id);(LM.gauges=LM.gauges||[]).push([name,v]);const y=hAt(x,z);const hgt=18+10*Math.log10(1+v);
       const pole=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,hgt,8),mat);pole.position.set(x,y+hgt/2,z);const ball=new THREE.Mesh(new THREE.SphereGeometry(4,12,8),mat);ball.position.set(x,y+hgt,z);
       const when=new Date(f.properties.time).toLocaleTimeString('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'2-digit'});
       const g=new THREE.Group();g.add(pole,ball);g.userData.info=[name,`Streamflow ${v.toLocaleString()} cubic feet per second at ${when}. USGS gauge ${id.replace('USGS-','')}, provisional data.`];grp.add(g);
@@ -1391,7 +1522,7 @@ function setupPride(){const g=LM.capG;if(!g)return;const grp=new THREE.Group(),R
   const hp=new THREE.Points(hg,new THREE.PointsMaterial({map:new THREE.CanvasTexture(hc),size:13,vertexColors:true,transparent:true,alphaTest:.2,depthWrite:false,fog:false}));hp.frustumCulled=false;hp.visible=false;scene.add(hp);LM.hearts=hp}
 function setPride(on){prideOn=on;$('bPride').classList.toggle('on',on);if(!LM.prideG)return;LM.prideG.visible=on;LM.spr.pts.visible=on;LM.hearts.visible=on;
   LM.prideR=0;if(LM.prideGround){LM.prideGround.visible=on;LM.prideGround.material.uniforms.uR.value=0}{const T=LM.prideTrees;if(T){T.p=0;T.m.instanceColor.array.set(T.c0);T.m.instanceColor.needsUpdate=true}}const lb=labels.find(l=>l.t==='Nebraska State Capitol');if(lb)lb.sub=on?'Happy Pride · everyone belongs here':'';
-  if(on){lastInput=performance.now();stopTour();flyTo(camTo(LM.capitol[0],LM.capitol[1],560,205,18,70),2200);showCard('Pride at the Capitol','The tower in rainbow colors, the Sower turned into a rainbow sprinkler, hearts rising, and a rainbow that starts in the Capitol lawn and spreads as a pulsing wave, street by street and tree by tree, across the whole city. Slide the intensity bar up to make it brighter, faster and more of everything. Zoom out and give it a few minutes to reach the edges. Everyone belongs in Lincoln. This is an option on this map, not something on the real building.');$('crange').style.display='flex';$('cR').value=Math.round((LM.prideI===undefined?.6:LM.prideI)*100)}else hideCard();
+  if(on){lastInput=performance.now();stopTour();flyTo(camTo(LM.capitol[0],LM.capitol[1],560,205,18,70),2200);showCard('Pride at the Capitol','The tower in rainbow colors, the Sower turned into a rainbow sprinkler, hearts rising, and a rainbow that starts in the Capitol lawn and spreads as a pulsing wave, street by street and tree by tree, across the whole city. Slide the intensity bar up to make it brighter, faster and more of everything. Zoom out and give it a few minutes to reach the edges. Everyone belongs in Lincoln. This is an option on this map, not something on the real building.');cardRange('Intensity',Math.round((LM.prideI===undefined?.6:LM.prideI)*100),v=>{LM.prideI=v/100})}else hideCard();
   shadowDirty=true;dirty=true}
 function stepPride(dt,now){if(!prideOn||!LM.spr)return;ambient=true;
   // the rainbow front moves out from the Capitol at about 100 mph and recolors the trees it passes
@@ -1426,24 +1557,7 @@ function stepBikers(dt,now){if(!bikers){if(!rideMode)return;setupBikers()}const 
     let k=q.k;while(k<n-2&&c[k+1]<q.s)k++;while(k>0&&c[k]>q.s)k--;q.k=k;const u=(q.s-c[k])/Math.max(.01,c[k+1]-c[k]),D=T.d,x0=D[2*k],z0=D[2*k+1],x1=D[2*k+2],z1=D[2*k+3],x=x0+(x1-x0)*u,z=z0+(z1-z0)*u,y=hAt(x,z)+.7;
     lP.set(x,y,z);lQ.setFromAxisAngle(lUp,Math.atan2(-(x1-x0)*q.dir,-(z1-z0)*q.dir));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM)}
   B.m.instanceMatrix.needsUpdate=true;ambient=true}
-// Volleyball storm: an option that rains and snows volleyballs around wherever you are looking
-let vbOn=false,vbs=null;
-function setupVB(){const N=mobile?170:300,m=new THREE.InstancedMesh(new THREE.SphereGeometry(1,12,8),new THREE.MeshLambertMaterial({map:vbTexture(),emissive:0x2c2c2c}),N);m.count=0;m.frustumCulled=false;m.visible=false;scene.add(m);
-  vbs={m,N,p:new Float32Array(N*3),v:new Float32Array(N),k:new Uint8Array(N),b:new Uint8Array(N),w:new Float32Array(N)}}
-function vbSpawn(i,R,top){const V=vbs,t=controls.target,a=Math.random()*6.283,r=Math.sqrt(Math.random())*R;V.p[3*i]=t.x+Math.cos(a)*r;V.p[3*i+2]=t.z+Math.sin(a)*r;V.p[3*i+1]=top?R*(.8+.5*Math.random()):R*1.3*Math.random();V.v[i]=0;V.b[i]=0;V.w[i]=0;V.k[i]=i%5<2?1:0}
-function stepVB(dt,now){const V=vbs;if(!V||!vbOn)return;const t=controls.target,d=camera.position.distanceTo(t),R=Math.min(3600,Math.max(70,d*.62)),r=Math.min(80,Math.max(.32,d*.0105)),g=R*.45;
-  if(!V.m.count){for(let i=0;i<V.N;i++)vbSpawn(i,R,false);V.m.count=V.N}
-  for(let i=0;i<V.N;i++){const o=3*i;let x=V.p[o],y=V.p[o+1],z=V.p[o+2];
-    if((x-t.x)**2+(z-t.z)**2>R*R*1.7||y>R*2.4){vbSpawn(i,R,false);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}
-    if(V.k[i]){ // snow: drifts down, sits a moment, goes again
-      if(y>r){y=Math.max(r,y-R*.085*dt);x+=Math.sin(now*.0011+i)*r*.9*dt;z+=Math.cos(now*.0013+i*1.7)*r*.9*dt}else{y=r;if((V.w[i]+=dt)>2.2){vbSpawn(i,R,true);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}}}
-    else{ // rain: falls fast and bounces twice
-      V.v[i]-=g*dt;y+=V.v[i]*dt;if(y<r){if(V.b[i]<2){y=r;V.v[i]=Math.abs(V.v[i])*.42;V.b[i]++}else{vbSpawn(i,R,true);x=V.p[o];y=V.p[o+1];z=V.p[o+2]}}}
-    V.p[o]=x;V.p[o+1]=y;V.p[o+2]=z;lP.set(x,hAt(x,z)+y,z);lE.set(now*.0021+i,now*.0017+i*2.3,0);lQ.setFromEuler(lE);lS.setScalar(r);lM.compose(lP,lQ,lS);V.m.setMatrixAt(i,lM)}
-  V.m.instanceMatrix.needsUpdate=true;ambient=true}
-function setVB(on){vbOn=on;$('bVB').classList.toggle('on',on);if(!vbs)return;vbs.m.visible=on;vbs.m.count=0;
-  if(on){lastInput=performance.now();showCard('Volleyball storm','It is raining and snowing volleyballs. The fast ones come down like rain and bounce. The slow ones drift down like snow and sit for a moment. The storm follows wherever you look. An optional extra, in honor of the Center of the Volleyball Universe.')}else hideCard();dirty=true}
-function stepLife(dt,now){lifeLabels.length=0;if(!(performance.now()-lastInput<120000||ride||tour||fly)){for(const f of flocks)lifeLabels.push(f.lb);return}stepBirds(dt,now);stepZoo(dt,now);stepDogs(dt,now);stepPride(dt,now);stepDev(dt,now);stepVB(dt,now);stepTraffic(dt,now);stepBikers(dt,now)}
+function stepLife(dt,now){lifeLabels.length=0;if(!(performance.now()-lastInput<120000||ride||tour||fly)){for(const f of flocks)lifeLabels.push(f.lb);return}stepBirds(dt,now);stepZoo(dt,now);stepDogs(dt,now);stepPride(dt,now);stepDev(dt,now);stepVB(dt,now);stepTraffic(dt,now);stepBikers(dt,now);stepMore(dt,now)}
 $('bVB').onclick=()=>setVB(!vbOn);
 // fold the button grid (top right) and the key, slider and places ribbon (bottom) out of the way, and bring them back
 $('bMenu').onclick=()=>{const shut=$('tools').classList.toggle('shut');$('bMenu').textContent=shut?'Menu ▾':'Menu ▴';$('bMenu').setAttribute('aria-expanded',!shut)};
@@ -1465,52 +1579,72 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
  ['Turn on Pride','A rainbow rolls out from the Capitol across the whole city. Slide the intensity bar.',()=>setPride(true)],
  ['Volleyball storm','It rains and snows volleyballs.',()=>setVB(true)],
  ['Walk the streets','Drop to street level in the Haymarket and look around.',()=>{chipGo('Haymarket');setTimeout(()=>setWalk(true),2600)}],
- ['See it at night','Street lights, lit windows and stars.',()=>{chipGo('Downtown');setHour(21.5)}]];
+ ['See it at night','Street lights, lit windows and stars.',()=>{chipGo('Downtown');setHour(21.5)}],
+ ['Live Husker scores','Volleyball, football, basketball and baseball as they are played, with the team stats that matter.',()=>huskOpen(0)],
+ ['Roll the credits','The record book scrolls out of the Devaney Center like the end of a film. Memorial Stadium has one too.',()=>{chipGo('Devaney');setTimeout(()=>rollOpen('vb'),2700)}],
+ ['How Lincoln has voted','Five elections as stacks of votes on every precinct. Press play to run the years.',()=>setVotes(true)],
+ ['Every district at one spot','Tap anywhere and a ring rises for each body you elect there.',()=>civArm()],
+ ['What City Hall is deciding','How the council works, and the cases headed for a vote, on the ground where they would happen.',()=>councilCard()],
+ ['The numbers for where you are looking','Values, taxes and sales for the area in view, the whole map, each neighborhood and each district.',()=>openSheet(NUMS,0)],
+ ['Real estate in eight steps','Total value, value per acre, typical home, sales, tax per acre, then every property as a bar.',()=>reTour(0)],
+ ['Native Lincoln','Whose homeland this is, and the places and street names that say so.',()=>{setNative(true);$('bNat').classList.add('on')}],
+ ['Play in Lincoln','For athletes weighing Nebraska: the stage, the deal, the market, the city.',()=>openSheet(NILS,0)],
+ ['Falcons and thunderbirds at the Capitol','The nest box on the tower, the birds in the air and the mosaics under the dome.',()=>{chipGo('Capitol');setTimeout(capitolMore,2700)}],
+ ['Harvest and ice cream on East Campus','Cattle, a combine working the plots and a cone on the Dairy Store. For fun.',()=>chipGo('UNL East Campus')],
+ ['Lake monsters and Sasquatch','Something surfaces in Holmes Lake, and something walks in the woods. For fun.',()=>chipGo('Holmes')],
+ ['Flights at the airport','Who flies from Lincoln, with example planes taking off and landing.',()=>setFlights(true)],
+ ['Every city tree, on the record','Street trees and park trees from the city inventory. Tap one for its kind, its trunk size and its city tree ID.',()=>{flyTo(camTo(-3300,-3500,430,-12,36),2400);showCard('City trees','Tap any tree along a street or in a park. If it is on the city list, its card gives the kind, the species, how big the trunk is and the tree ID the city knows it by.',undefined,{label:'All city trees as a layer',fn:()=>dlSet('trees',true)})}],
+ ['Meet Nader','The tornado who talks, in a clearly marked preview.',()=>{if(!wxOn)setWx(true);setDemo(4)}]];
 function guideHTML(i){const c=H.counts||{},n=v=>(v||0).toLocaleString(),org=c.org||[0,0,0];
-  if(i===0)return `<h4>What this is</h4><p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account.</p>
-<h4>Getting around</h4><ul><li><b>Phone:</b> drag to move, pinch to zoom, two fingers to turn and tilt, double tap to zoom in.</li><li><b>Computer:</b> drag to move, scroll to zoom, right-drag to turn. Arrow keys, + and - work too.</li><li><b>Tap anything</b> for a card that says what it is and how sure the map is about it.</li><li>The <b>slider</b> at the bottom sets the time of day. The <b>ribbon</b> under it jumps to places.</li></ul>
-<h4>The buttons</h4><ul><li><b>Search</b> streets, addresses, buildings, parks and trails. <b>Tour</b> flies a short loop.</li><li><b>Find me</b> puts a blue dot where you are. It stays on your device.</li><li><b>Bike ride</b> rides trails and bike streets. <b>Trails</b> shows or hides them.</li><li><b>Weather</b> shows wind, rain, snow, lightning and warnings.</li><li><b>Bird's eye reset</b>, under the title, brings you back to the whole city from above, at the current time of day, whenever you get lost.</li><li><b>Menu</b> folds the buttons away for a clear view, and the small button at the bottom left does the same for the key, the time slider and the places ribbon. Tap again to bring them back.</li><li><b>More</b> holds Now (the real time of day), Walk, 2D view, North up, Share view, Buses, Game day, Labels, Shadows, Birds, Pride, Volleyballs and Traffic.</li></ul>
-<h4>Real, estimated, or just for fun</h4><p>Buildings, streets, trails, terrain and weather are real data. Some heights, all roof shapes and the traffic layer are estimates. The giraffes, penguins, dogs, cyclists, rainbows and volleyballs are just for fun. Each card says which is which.</p>`;
-  if(i===1)return '<h4>Fifteen things to try</h4>'+TRY.map((t,k)=>`<button class="btn go" data-go="${k}">${t[0]}<small>${t[1]}</small></button>`).join('');
-  return `<h4>Buildings</h4><ul><li>${n(org[1])} outlines from the City of Lincoln and Lancaster County's 2026 footprint layer, ${n(org[0])} from OpenStreetMap, ${n(org[2])} from Microsoft's machine-traced footprints.</li><li>House style and year built for ${n(c.years)} homes from Lancaster County Assessor records. No owner names, addresses of owners or property values are stored. Those stay on the county's own site, which each building links to.</li><li>Heights come from assessor story counts, OpenStreetMap tags, Microsoft estimates or a guess from type and size. Tap a building to see which.</li></ul>
+  if(i===0)return `<h4>What this is</h4><p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account. This is release 0.9.</p>
+<h4>Getting around</h4><ul><li><b>Phone:</b> drag to move, pinch to zoom, twist two fingers to turn, slide two fingers up or down to tilt, double tap to zoom in, tap with two fingers to zoom out.</li><li><b>Computer:</b> drag to move, scroll to zoom, right-drag or Shift-drag to turn and tilt. Arrow keys, + and -, Q and E work too.</li><li><b>The round buttons</b> on the right: drag the compass to turn the map or tap it for north up, + and - zoom (hold to keep going), and the last one tilts.</li><li><b>Street names</b> come in by size: main roads from far out, every street as you move in close.</li><li><b>Tap anything</b> for a card that says what it is and how sure the map is about it. Buildings lead with their assessed value and a tax estimate. Trees on the city list give their kind, trunk size and city tree ID.</li><li>The <b>slider</b> at the bottom sets the time of day. The <b>ribbon</b> under it jumps to places.</li></ul>
+<h4>The buttons</h4><ul><li><b>Search</b> streets, addresses, buildings, parks and trails. <b>Tour</b> flies a short loop.</li><li><b>Find me</b> puts a blue dot where you are. It stays on your device.</li><li><b>Bike ride</b> rides trails and bike streets. <b>Trails</b> shows or hides them.</li><li><b>Weather</b> shows wind, rain, snow, lightning and warnings. The line under the title is the weather right now: tap it for alerts and the forecast.</li><li><b>Huskers</b> has live scores. <b>Democracy</b> shows how Lincoln has voted, who represents any spot, and what City Hall is deciding. <b>Numbers</b> runs the statistics on values, taxes and sales for whatever you are looking at.</li><li><b>Walk</b> puts you on the street with a joystick. Tap a spot to walk there, or a building for its card.</li><li><b>Bird's eye reset</b>, under the title, brings you back to the whole city from above, at the current time of day, whenever you get lost.</li><li><b>Menu</b> folds the buttons away for a clear view, and the small button at the bottom left does the same for the key, the time slider and the places ribbon. Tap again to bring them back.</li><li><b>More</b> holds Now (the real time of day), 2D view, North up, Share view, Buses, Game day, Labels, Shadows, Birds, Pride, Volleyballs, Traffic, the Real estate tour, Native Lincoln, Play in Lincoln, Flights and Creatures.</li></ul>
+<h4>Real, estimated, or just for fun</h4><p>Buildings, streets, trails, terrain, weather, scores, assessed values, election results and city records are real data. Some heights, all roof shapes, every property tax figure and the hour-by-hour traffic curve are estimates. The giraffes, penguins, dogs, cyclists, rainbows, volleyballs, lake monsters, Sasquatch, the East Campus cattle and combine, the birds circling the Capitol and the example planes are just for fun. Each card says which is which.</p>`;
+  if(i===1)return '<h4>'+TRY.length+' things to try</h4>'+TRY.map((t,k)=>`<button class="btn go" data-go="${k}">${t[0]}<small>${t[1]}</small></button>`).join('');
+  return `<h4>Buildings</h4><ul><li>${n(org[1])} outlines from the City of Lincoln and Lancaster County's 2026 footprint layer, ${n(org[0])} from OpenStreetMap, ${n(org[2])} from Microsoft's machine-traced footprints.</li><li>House style and year built for ${n(c.years)} homes from Lancaster County Assessor records. Assessed values come with the map. Owner names and owners' mailing addresses are never stored: the Show owner button reads the county's own public record for the one parcel you tapped.</li><li>Heights come from assessor story counts, OpenStreetMap tags, Microsoft estimates or a guess from type and size. Tap a building to see which.</li></ul>
 <h4>Streets, trails, land and water</h4><ul><li><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors, plus the Lincoln Parks and Recreation trail layers.</li><li>Terrain from Mapzen elevation tiles, which come from the USGS in the United States.</li></ul>
-<h4>Live layers</h4><ul><li>Weather and warnings: National Weather Service. Radar: Iowa Environmental Mesonet. Stream gauges: USGS.</li><li>Buses: the StarTran timetable. Positions are where each bus is scheduled to be, not GPS.</li><li>Birds: recent public reports from <a href="https://www.inaturalist.org" target="_blank" rel="noopener noreferrer">iNaturalist</a>, and a hand-made list of the usual species each month.</li><li>Live layers only load on the website copy of the map.</li></ul>
-<h4>Estimates</h4><ul><li>The traffic heat wave uses road type and a typical weekday. It has no traffic counts or live speeds behind it yet.</li><li>Roof shapes, chimneys and rooftop equipment are generated from each outline.</li></ul>
-<h4>Your privacy</h4><p>The map collects nothing about you. Find me draws your position on your own screen and sends it nowhere.</p>
+<h4>Live layers</h4><ul><li>Weather and warnings: National Weather Service. Radar: Iowa Environmental Mesonet. Stream gauges: USGS.</li><li>Buses: the StarTran timetable. Positions are where each bus is scheduled to be, not GPS.</li><li>Birds: recent public reports from <a href="https://www.inaturalist.org" target="_blank" rel="noopener noreferrer">iNaturalist</a>, and a hand-made list of the usual species each month.</li><li>Husker scores: ESPN's public scoreboard. City decisions, permits, street closures and more: the City of Lincoln's own map server. Your browser reads each one when you ask for it.</li><li>Live layers only load on the website copy of the map.</li></ul>
+<h4>Estimates</h4><ul><li>The traffic heat wave stands on measured daily counts from the city and the state. How it rises and falls through the day is a typical curve, not a live reading.</li><li>Property tax figures are each parcel's assessed value times the 2025 levy for its tax district, from the Nebraska Department of Revenue. They leave out credits and exemptions and are not what anyone was billed.</li><li>Past election results are drawn on today's precinct lines and matched by precinct name.</li><li>Roof shapes, chimneys and rooftop equipment are generated from each outline.</li></ul>
+${manHTML()}<h4>Your privacy</h4><p>The map collects nothing about you. Find me draws your position on your own screen and sends it nowhere.</p>
 <h4>Source</h4><p>Code, data notes and the roadmap: <a href="https://github.com/RobotWhiteBread/STARCITY" target="_blank" rel="noopener noreferrer">github.com/RobotWhiteBread/STARCITY</a>. Map data © OpenStreetMap contributors (ODbL).</p>`}
-function setGuide(on,tab){const g=$('guide');g.style.display=on?'block':'none';$('bGuide').classList.toggle('on',on);if(!on)return;const i=tab||0;for(const b of $('gtabs').children)b.classList.toggle('on',+b.dataset.t===i);$('gbody').innerHTML=guideHTML(i);$('gbody').scrollTop=0}
-$('bGuide').onclick=()=>setGuide($('guide').style.display!=='block');$('gx').onclick=()=>setGuide(false);
-$('guide').addEventListener('click',e=>{if(e.target===$('guide'))setGuide(false)});
-$('gtabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setGuide(true,+b.dataset.t)});
-$('gbody').addEventListener('click',e=>{const b=e.target.closest('.go');if(!b)return;setGuide(false);lastInput=performance.now();TRY[+b.dataset.go][2]()});
-addEventListener('keydown',e=>{if(e.key==='Escape'&&$('guide').style.display==='block')setGuide(false)});
+let sheet=null;
+function openSheet(d,tab){sheet=d;const i=tab||0;$('guide').style.display='block';$('gtitle').innerHTML=d.title;const t=$('gtabs');t.textContent='';t.style.display=d.tabs.length>1?'flex':'none';
+  d.tabs.forEach((n,k)=>{const b=document.createElement('button');b.className='btn'+(k===i?' on':'');b.dataset.t=k;b.textContent=n;t.appendChild(b)});$('gbody').innerHTML=d.html(i);$('gbody').scrollTop=0;$('bGuide').classList.toggle('on',d===GUIDE)}
+function closeSheet(){$('guide').style.display='none';$('bGuide').classList.remove('on');sheet=null}
+const GUIDE={title:'STAR<i>CITY</i> guide',tabs:['What it does','Explore','The data'],html:guideHTML,click:e=>{const b=e.target.closest('.go');if(!b)return;closeSheet();lastInput=performance.now();TRY[+b.dataset.go][2]()}};
+function setGuide(on,tab){if(!on){closeSheet();return}openSheet(GUIDE,tab)}
+$('bGuide').onclick=()=>setGuide(sheet!==GUIDE);$('gx').onclick=closeSheet;
+$('guide').addEventListener('click',e=>{if(e.target===$('guide'))closeSheet()});
+$('gtabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&sheet)openSheet(sheet,+b.dataset.t)});
+$('gbody').addEventListener('click',e=>{if(sheet&&sheet.click)sheet.click(e)});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet)closeSheet()});
 // Traffic heat wave. This is an estimate, not a live feed: how busy a road is comes from its type, and how busy the hour is
 // comes from a typical weekday curve. Measured counts and live closures are meant to replace it.
-let trafOn=false,traf=null;
+let trafOn=false,traf=null,trafH=1;
 const TPROF=[[5,.22],[6,.5],[7,.86],[7.75,.95],[8.5,.8],[9.5,.6],[11,.64],[12,.74],[13,.72],[14.5,.76],[15.5,.86],[16.5,.97],[17.25,1],[18,.84],[19,.6],[20,.46],[21,.38],[22.5,.28]];
 const WPROF=[[5,.1],[8,.25],[10,.5],[12,.68],[14,.72],[16,.68],[18,.58],[20,.42],[22.5,.26]];
 const fmtTime=t=>{const hh=Math.floor(t),mm=Math.round((t-hh)*60),h12=((hh+11)%12)+1;return h12+':'+String(mm===60?0:mm).padStart(2,'0')+(hh<12?' AM':' PM')};
 function trafLevel(h){const wk=liveOn&&/Sat|Sun/.test(new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'short'}).format(new Date())),T=wk?WPROF:TPROF;if(h<=T[0][0])return T[0][1];
   for(let i=1;i<T.length;i++)if(h<=T[i][0]){const a=T[i-1],b=T[i];return a[1]+(b[1]-a[1])*(h-a[0])/(b[0]-a[0])}return T[T.length-1][1]}
-function buildTraffic(){const rn=S.r_n,rc=S.r_c,rf=S.r_f,xy=S.r_xy,VOL=[1,.8,.62,.42,.22],P=[],A=[],I=[],C=LM.capitol;let o=0,nv=0,miles=0;
-  for(let i=0;i<rn.length;i++){const n=rn[i],c=rc[i];if(c<=4&&!(rf[i]&8)&&n>1){let vol=VOL[c];if(c>=2&&(rf[i]&2))vol*=.8;let sl=0,px=0,pz=0;
-      for(let k=0;k<n;k++){const x=xy[o+2*k]*Qm,z=-xy[o+2*k+1]*Qm;if(k)sl+=Math.hypot(x-px,z-pz);px=x;pz=z;const y=hAt(x,z)+1.2+((rf[i]&1)?6:0),dc=Math.hypot(x-C[0],z-C[1]);
-        P.push(x,y,z,x,y,z);A.push(0,vol,dc,sl,1,vol,dc,sl);if(k){const b=nv+2*k;I.push(b-2,b-1,b,b,b-1,b+1)}}
-      nv+=2*n;miles+=sl}o+=2*n}
+function buildTraffic(){const P=[],A=[],I=[],C=LM.capitol;let nv=0,miles=0;const AD=DL.get('adt');
+  const seg=(n,at,vol,lift)=>{let sl=0,px=0,pz=0;for(let k=0;k<n;k++){const [x,z]=at(k);if(k)sl+=Math.hypot(x-px,z-pz);px=x;pz=z;const y=hAt(x,z)+1.2+lift,dc=Math.hypot(x-C[0],z-C[1]);P.push(x,y,z,x,y,z);A.push(0,vol,dc,sl,1,vol,dc,sl);if(k){const b=nv+2*k;I.push(b-2,b-1,b,b,b-1,b+1)}}nv+=2*n;miles+=sl};
+  if(AD){ // the city's and the state's own average daily traffic for each street segment
+    const get=fget(AD,AD.fields.find(f=>f.k==='adt'));for(let i=0;i<AD.N.length;i++){const o=AD.lo[i];seg(AD.N[i],k=>[AD.X[o+2*k],AD.X[o+2*k+1]],Math.min(1,Math.pow(get(i)/40000,.62)),0)}traf={counts:true}}
+  else{const rn=S.r_n,rc=S.r_c,rf=S.r_f,xy=S.r_xy,VOL=[1,.8,.62,.42,.22];let o=0;for(let i=0;i<rn.length;i++){const n=rn[i],c=rc[i];if(c<=4&&!(rf[i]&8)&&n>1){let vol=VOL[c];if(c>=2&&(rf[i]&2))vol*=.8;const o0=o;seg(n,k=>[xy[o0+2*k]*Qm,-xy[o0+2*k+1]*Qm],vol,(rf[i]&1)?6:0)}o+=2*n}traf={counts:false}}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('a',new THREE.Float32BufferAttribute(A,4));g.setIndex(I);
-  const m=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{uT:{value:0},uLevel:{value:1},uH:{value:60},uDir:{value:1}},
-    vertexShader:'attribute vec4 a;uniform float uT,uLevel,uH,uDir;varying float vTop,vHeat,vW;void main(){float w=.5+.5*sin(a.z*.0045-uDir*uT*1.7+a.w*.002);float heat=a.y*uLevel;vec3 p=position;p.y+=a.x*uH*heat*(.5+.5*w);vTop=a.x;vHeat=heat;vW=w;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
-    fragmentShader:'varying float vTop,vHeat,vW;void main(){vec3 c1=vec3(.16,.82,.36),c2=vec3(1.,.86,.1),c3=vec3(1.,.42,.05),c4=vec3(.93,.05,.2);float t=clamp(vHeat,0.,1.);vec3 col=t<.33?mix(c1,c2,t/.33):(t<.66?mix(c2,c3,(t-.33)/.33):mix(c3,c4,(t-.66)/.34));gl_FragColor=vec4(col,mix(.85,.1,vTop)*(.62+.38*vW));}'});
-  const mesh=new THREE.Mesh(g,m);mesh.frustumCulled=false;mesh.renderOrder=3;scene.add(mesh);traf={mesh,m,miles:miles/1609.344}}
-function stepTraffic(dt,now){if(!trafOn||!traf)return;const u=traf.m.uniforms,d=camera.position.distanceTo(controls.target);u.uT.value=(now%1e6)/1000;u.uLevel.value=trafLevel(curHour);u.uH.value=Math.min(650,Math.max(16,d*.036));u.uDir.value=curHour<12.5?-1:1;ambient=true}
+  const m=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{uT:{value:0},uLevel:{value:1},uH:{value:60},uDir:{value:1},uA:{value:1}},
+    vertexShader:'attribute vec4 a;uniform float uT,uLevel,uH,uDir;varying float vTop,vHeat,vW;void main(){float w=.5+.5*sin(a.z*.0045-uDir*uT*1.7+a.w*.002);float heat=a.y*uLevel;vec3 p=position;p.y+=a.x*uH*heat*(.55+.45*w);vTop=a.x;vHeat=heat;vW=w;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
+    fragmentShader:'uniform float uA;varying float vTop,vHeat,vW;void main(){vec3 c1=vec3(.16,.82,.36),c2=vec3(1.,.86,.1),c3=vec3(1.,.42,.05),c4=vec3(.93,.05,.2);float t=clamp(vHeat,0.,1.);vec3 col=t<.33?mix(c1,c2,t/.33):(t<.66?mix(c2,c3,(t-.33)/.33):mix(c3,c4,(t-.66)/.34));gl_FragColor=vec4(col,mix(.58,.03,pow(vTop,.75))*(.55+.45*vW)*uA);}'});
+  const mesh=new THREE.Mesh(g,m);mesh.frustumCulled=false;mesh.renderOrder=3;scene.add(mesh);traf.mesh=mesh;traf.m=m;traf.miles=miles/1609.344}
+function stepTraffic(dt,now){if(!trafOn||!traf)return;const u=traf.m.uniforms,d=camera.position.distanceTo(controls.target);u.uT.value=(now%1e6)/1000;u.uLevel.value=trafLevel(curHour);u.uH.value=Math.min(2600,Math.max(3,d*.085))*trafH*dlHS;u.uA.value=Math.min(1.4,dlAL);u.uDir.value=curHour<12.5?-1:1;ambient=true}
 function trafCard(){const lv=trafLevel(curHour),word=lv>.9?'rush hour':lv>.7?'busy':lv>.5?'moderate':'light';
-  showCard('Traffic heat wave (estimate)',`Taller, redder walls mean more traffic. At ${fmtTime(curHour)} the pattern is ${word}. This is an estimate, not live traffic: each road's height comes from its type, from interstate down to collector street, and from a typical weekday hour by hour. Drag the time slider to watch the morning and evening rush rise and fall. The ripple runs toward downtown before noon and away from it after. ${Math.round(traf.miles)} miles of road are drawn. Measured city counts and live closures are the next step.`)}
+  showCard(traf.counts?'Traffic heat wave':'Traffic heat wave (estimate)',`Taller, redder walls mean more traffic. At ${fmtTime(curHour)} the pattern is ${word}. `+(traf.counts?`How tall each street stands comes from measured counts: the city's and the state's average daily traffic for each segment. How it rises and falls through the day is a typical weekday curve, not a live reading.`:`This is an estimate, not live traffic: each road's height comes from its type and a typical weekday hour by hour.`)+` Drag the time slider to watch the morning and evening rush. The ripple runs toward downtown before noon and away from it after. ${Math.round(traf.miles).toLocaleString('en-US')} miles of street are drawn. The walls follow your zoom, so the picture holds as you move in and out. Use the bar to make them taller or shorter. For the count on any one street, turn on Traffic counts in Layers.`);cardRange('Height',Math.round(trafH*50),v=>{trafH=Math.max(.2,v/50)})}
 function setTraffic(on){trafOn=on;$('bTraf').classList.toggle('on',on);if(on&&!traf)buildTraffic();if(traf)traf.mesh.visible=on;if(on){lastInput=performance.now();trafCard()}else hideCard();dirty=true}
 $('bTraf').onclick=()=>setTraffic(!trafOn);
 // Bird's eye reset: back to the whole city from above, at the current time of day, out of any mode that moves the camera
-function birdsEye(){if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}setLive(true);flyTo(camTo(-1300,-900,17500,-10,50),1800)}
+function birdsEye(){resetAll();resetMenu();if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}setLive(true);flyTo(camTo(-1300,-900,17500,-10,50),1800)}
 $('bHome').onclick=birdsEye;addEventListener('keydown',e=>{if(e.target.tagName!=='INPUT'&&(e.key==='Home'||e.key==='0'))birdsEye()});
-$('bZin').onclick=()=>zoomBy(.6);$('bZout').onclick=()=>zoomBy(1.65);$('b2D').onclick=()=>set2D(!flat);
+$('b2D').onclick=()=>set2D(!flat);
 // Find me: a blue dot where your device says you are. The position never leaves the device.
 function placeMe(x,z,acc){if(!LM.me){const g=new THREE.Group(),dot=new THREE.Mesh(new THREE.SphereGeometry(5,20,14),new THREE.MeshBasicMaterial({color:0x2f7bff,fog:false})),halo=new THREE.Mesh(new THREE.SphereGeometry(7.2,20,14),new THREE.MeshBasicMaterial({color:0xffffff,fog:false,side:THREE.BackSide}));
     const ring=new THREE.Mesh(new THREE.CircleGeometry(1,48),new THREE.MeshBasicMaterial({color:0x2f7bff,transparent:true,opacity:.22,depthWrite:false,fog:false}));ring.rotation.x=-Math.PI/2;ring.position.y=1.5;g.add(ring,halo,dot);g.userData={dot,halo,ring};g.userData.info=['You are here','Your device reported this spot. It stays on your device and is not sent anywhere.'];scene.add(g);pickables.push(g);LM.me=g}
@@ -1530,7 +1664,7 @@ $('bShare').onclick=async()=>{const h=viewHash();try{history.replaceState(null,'
 $('bMore').onclick=()=>{const m=$('tools').classList.toggle('min');$('bMore').textContent=m?'More ▾':'Less ▴';$('bMore').classList.toggle('on',!m)};
 $('bBirds').onclick=()=>{birdsOn=!birdsOn;$('bBirds').classList.toggle('on',birdsOn);lastInput=performance.now();nextFlock=0;if(birdsOn){loadSightings().then(()=>{if(birdsOn&&$('ch').textContent.startsWith('Birds over'))birdCard()});birdCard()}else hideCard();dirty=true};
 $('bPride').onclick=()=>setPride(!prideOn);
-$('cR').oninput=e=>{LM.prideI=+e.target.value/100;lastInput=performance.now();dirty=true};
+$('cR').oninput=e=>{if(rangeFn)rangeFn(+e.target.value);lastInput=performance.now();dirty=true};
 // ---------- UI
 $('bNow').onclick=()=>setLive(!liveOn);
 $('bBus').onclick=e=>{busOn=!busOn;e.target.classList.toggle('on',busOn);updateBuses()};
@@ -1580,6 +1714,7 @@ $('bTrails').onclick=e=>setTrails(!trailsOn);
 function setTrails(on){if(!on&&rideMode)setRideMode(false);trailsOn=on;$('bTrails').classList.toggle('on',on);for(const l of LM.trailLines||[])l.visible=on;$('legend').style.display=on?'flex':'none';if(!on&&rideWay>=0){if(ride)stopRide();hideCard()}layoutCard();dirty=true}
 $('sunR').oninput=e=>{if(liveOn){liveOn=false;$('bNow').classList.remove('on')}curHour=+e.target.value;applyWx();updateBuses();if(trafOn&&$('card').style.display==='block'&&$('ch').textContent.startsWith('Traffic'))trafCard()};
 
+/*LAYERS*/
 // ---------- loop
 let dirty=true,lastF=0,fAvg=20,fN=0,perfStep=0;
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();for(const l of LM.trailLines||[])l.material.resolution.set(w,h);for(const m of LM.lineMats)m.resolution.set(w,h);layoutCard();dirty=true}
@@ -1587,30 +1722,33 @@ addEventListener('resize',resize);controls.addEventListener('change',()=>dirty=t
 function frame(now){requestAnimationFrame(frame);
   {const dtp=Math.min(60,now-(frame.pt||now));frame.pt=now;if(panV){if(pan||fly||walk.on||ride)panV=null;else{shiftView(panV.x*dtp,panV.z*dtp);const k=Math.exp(-dtp/290);panV.x*=k;panV.z*=k;if(Math.hypot(panV.x,panV.z)*1000<camera.position.distanceTo(controls.target)*.03)panV=null}}
    else if(!fly&&!walk.on&&!ride){const t=controls.target;if(Math.abs(t.x)>8700||Math.abs(t.z)>8700)shiftView(0,0)}}
-  if(prevR){const c=now-prevT;if(c<5000)frCost=frCost*.75+c*.25}prevT=now;prevR=false;stepFly(now);if(ride)stepRide(now);if(walk.on){stepWalk(now);if(walk.mx||walk.mz||Object.values(walk.keys).some(v=>v))dirty=true}else if(controls.update())dirty=true;
+  if(prevR){const c=now-prevT;if(c<5000)frCost=frCost*.75+c*.25}prevT=now;prevR=false;stepFly(now);if(ride)stepRide(now);frameMore(now);if(walk.on){stepWalk(now);if(walk.mx||walk.mz||wkGo||Object.values(walk.keys).some(v=>v))dirty=true}else if(controls.update())dirty=true;
   {const dtw=Math.min(.1,(now-(frame.t||now))/1000);frame.t=now;if(wxOn||liveOn){wetCheck(false);if(precip)stepPrecip(dtw)}if(wxOn){stepWind(dtw,now);stepStorm(dtw,now)}stepLife(dtw,now+simOff)}
   if(!fly&&!walk.on){const t=controls.target,gy=hAt(t.x,t.z);if(t.y<gy-.5||t.y>gy+160){const d=(gy-t.y)*.25;t.y+=d;camera.position.y+=d;dirty=true}}
-  if(!walk.on){const cy=hAt(camera.position.x,camera.position.z)+6;if(camera.position.y<cy){camera.position.y=cy;dirty=true}}
+  if(!walk.on){const cy=hAt(camera.position.x,camera.position.z)+(ride?1.5:6);if(camera.position.y<cy){camera.position.y=cy;dirty=true}}
   const user=dirty;if(!dirty){if(!ambient||!ambOK||now-lastAmb<Math.max(ambMin,frCost*2.6))return}lastAmb=now;dirty=false;ambient=false;prevR=true;
   camera.near=walk.on?.4:Math.max(2,(camera.position.y-hAt(camera.position.x,camera.position.z))*.02);camera.far=60000;camera.updateProjectionMatrix();
   {const dtf=now-lastF;lastF=now;const both=user&&lastUser;lastUser=user;if(dtf<250&&both){fAvg=fAvg*.9+dtf*.1;if(++fN>45&&fAvg>48&&perfStep<3){perfStep++;fN=0;fAvg=30;if(perfStep===1)renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.25));else if(perfStep===2){shadowsOn=false;$('bShadow').classList.remove('on');shadowDirty=true}else renderer.setPixelRatio(1);resize()}}}
   if(LM.devSign){const g=LM.devSign;g.rotation.y=Math.atan2(camera.position.x-g.position.x,camera.position.z-g.position.z)}
   if(LM.pins)for(const g of LM.pins)if(g.visible)g.scale.setScalar(Math.max(1,camera.position.distanceTo(g.position)/650));
   if(LM.me&&LM.me.visible){const k=Math.max(1,camera.position.distanceTo(LM.me.position)/520);LM.me.userData.dot.scale.setScalar(k);LM.me.userData.halo.scale.setScalar(k);LM.me.userData.dot.position.y=LM.me.userData.halo.position.y=9*k}
-  updateShadow();renderer.render(scene,camera);if(!user||(lblTick++&1)===0||fly)updateLabels();else dirty=true;}
+  dlFrame();updateShadow();renderer.render(scene,camera);codeHud(now);if(!user||(lblTick++&1)===0||fly)updateLabels();else dirty=true;}
 (async()=>{
   resize();await build();
+  try{if($('d2').textContent.trim().length>100){const d2=await unpackEl('d2');H2=d2.head;S2=d2.S;dlInit();bizWire()}}catch(e){console.warn('second data pack',e);H2=null;S2=null}
+  if(!H2)for(const id of ['bLay','bBiz'])$(id).style.display='none';
+  $('bPulse').onclick=pulseCard;$('bCode').onclick=()=>setCode(codeOn?0:1);$('camx').onclick=closeCam;
   setupBus();setupBirds();setupZoo();setupDogs();setupPride();setupVB();const list=chips();
   if(H.tmeters){const mi=m=>Math.round(m/1609.344),tm=H.tmeters;
     $('legend').innerHTML=`<b>${mi(tm[0]+tm[1]+tm[2])} mi of bike trails</b><span><i style="background:#ff2a8a"></i>paved ${mi(tm[0])}</span><span><i style="background:#ff8a00"></i>crushed rock ${mi(tm[1])}</span><span><i style="background:#8a4dff"></i>dirt ${mi(tm[2])}</span><span><i style="background:#00b3a4"></i>on-street ${mi(tm[3]+tm[4])}</span>`;
     setTrails(true)}
-  layoutCard();
+  layoutCard();moreInit();
   $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees`;
   const start=camTo(-1300,-900,17500,-10,50);camera.position.copy(start.p);controls.target.copy(start.t);controls.update();
   setTime(+$('sunR').value);updateBuses();
   if(location.protocol.startsWith('http')){loadWeather();loadWater();loadSightings()}
   requestAnimationFrame(frame);
-  window.__ready=true;window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__wake=()=>{lastInput=performance.now()};window.__amb=v=>{ambOK=v;return v};window.__sim=(sec,step)=>{step=step||.05;let t=(frame.t||performance.now())+simOff;for(let q=0;q<sec;q+=step){t+=step*1000;simOff+=step*1000;lastInput=performance.now();stepLife(step,t)}dirty=true;return 1};window.__vb=setVB;window.__guide=setGuide;window.__pen=()=>zoo&&zoo.pen?[Math.round(zoo.pen.px),Math.round(zoo.pen.pz)]:null;window.__tl=name=>{const ti=H.tnames.indexOf(name),q=(H.tlabels||[]).find(l=>l[0]===ti);return q?[q[1],-q[2]]:null};window.__share=()=>({n:birdShare.length,src:shareSrc,top:birdShare.slice(0,3).map(q=>q.c+' '+pct(q.p/birdShare.tot))});window.__chips=()=>list.map(l=>l[0]);window.__prideR=v=>{if(v!==undefined)LM.prideR=v;return Math.round(LM.prideR||0)};window.__bikers=()=>bikers&&!bikers.none?{n:bikers.list.length,vis:bikers.m.visible,paths:new Set(bikers.list.map(q=>q.T)).size}:null;window.__traf=setTraffic;window.__sight=()=>({n:sightings.length,fail:sightFail,flocks:flocks.filter(f=>f.sg).map(f=>f.lb.t+' | '+f.lb.sub)});window.__loadSight=()=>{sightT=0;return loadSightings().then(()=>sightings.length)};window.__view=()=>{const v=viewAngles(),t=controls.target;return {x:Math.round(t.x),z:Math.round(t.z),d:Math.round(v.d),az:Math.round(v.az),el:Math.round(v.el),pan:!!pan,panV:!!panV}};window.__zoom=zoomBy;window.__g=(x,y)=>{const h=groundAt(x,y);return h?[Math.round(h.x),Math.round(h.z)]:null};window.__2d=set2D;window.__roofed=()=>LM.roofed;window.__lm=()=>({dev:LM.dev,statue:LM.cookStatue,zoo:H.zoo,dogs:(H.dogparks||[]).map(q=>q[3]),pid:S.b_p1?S.b_p1.length:0});window.__link=()=>[...$('clinks').children].map(a=>a.textContent+' -> '+a.href).join(' | ')||null;window.__perf=()=>({frCost:+frCost.toFixed(1),lblScale,perfStep});window.__pride=setPride;window.__life=()=>({flocks:flocks.map(f=>f.b[0]),birds:birdMesh?birdMesh.count:0,eaten:zoo?zoo.eaten:-1,lettuce:zoo?zoo.let.length:-1,dogs:dogs?dogs.list.length:0,sites:dogs?dogs.sites.length:0,month:birdMonth(),dev:devI});window.__wx=setWx;window.__demo=setDemo;window.__wxs=()=>({wx,alerts:alerts.length,wet:ovl?ovl.wet:null,radar:!!(ovl&&ovl.radar),precip,thunder,wind:windV?+windV.ms.toFixed(1):0,funnels:funnels.length,fail:wxFail,bolt:!!bolt,rain:!!(LM.rainL&&LM.rainL.visible),snow:!!(pPts&&pPts.visible)});window.__bg=()=>{const g=bikeGraph();return {nodes:g.NV,arcs:g.na,bikeEdges:g.nE,mi:+(g.total/1609.344).toFixed(1),islands:g.islands,linkMi:+(g.linkLen/1609.344).toFixed(1),links:g.links.length,bridges:g.nb,dead:g.dead,ms:g.ms}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9,false),b=bgNearest(x1,z1,1e9,false);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9,true);R.cov=new Uint8Array(g.nE);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0,unL=0;for(let e=0;e<g.nE;e++)if(!R.cov[e]){un++;unL+=g.eLen[e]}const mi=m=>+(m/1609.344).toFixed(1);return {legs,routeMi:mi(R.L),coveredMi:mi(R.cv[R.cv.length-1]),totalMi:mi(g.total),uncoveredEdges:un,uncoveredFt:Math.round(unL*3.281),newMi:mi(R.sm[0]),retraceMi:mi(R.sm[1]),linkMi:mi(R.sm[2]),bridgeMi:mi(R.sm[3]),turns:R.turns,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;
+  window.__ready=true;window.__x={setVotes,dmShow,dmCard,civicStack,civArm,setNative,openSheet,closeSheet,NUMS,NILS,HUSK,TAXS,reTour,setWalk,walkTap,walkToB,setFlights,setCreatures,setVB,councilCard,demoCard,setDemo,setWx,capitolMore,wxDetail,rollOpen,rollClose,huskOpen,hkParse,hkAfter,HK,DM,CR,FLT,CIV,ROLL,labels,walk,LM,numStats,vbTally,resetAll,dlSet,setTraffic,flyTo,camTo,showB,bByName,bAt,streetNear,setTime,pick,H,S,DL,pickables,placeStorms,updateLabels,TR,treeCard,treePick,treeNear,rideRoute,bgNearest,bikeGraph,setRideMode,stopRide,get ride(){return ride},get sheet(){return sheet}};window.__dl=(id,on)=>{dlSet(id,on);return dlOn.map(L=>L.id)};window.__dls=()=>[...DL.values()].map(L=>[L.id,L.def.k,L.n,L.on]);window.__biz=setBiz;window.__bizf=o=>{Object.assign(bizF,o);bizApply();bizRender();return [bizL.shown,bizL.local]};window.__code=setCode;window.__pulse=pulseCard;window.__around=aroundCard;window.__sheet=(n,t)=>openSheet(n==='tax'?TAXS:n==='lay'?LAYS:GUIDE,t);window.__paint=paintBuildings;window.__showB=showB;window.__reset=birdsEye;window.__solo=t=>dlTop&&dlSolo(dlTop,t);window.__hs=(h,a)=>{dlHS=h;if(a!==undefined)dlAL=a;dirty=true};window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__wake=()=>{lastInput=performance.now()};window.__amb=v=>{ambOK=v;return v};window.__sim=(sec,step)=>{step=step||.05;let t=(frame.t||performance.now())+simOff;for(let q=0;q<sec;q+=step){t+=step*1000;simOff+=step*1000;lastInput=performance.now();stepLife(step,t)}dirty=true;return 1};window.__vb=setVB;window.__guide=setGuide;window.__pen=()=>zoo&&zoo.pen?[Math.round(zoo.pen.px),Math.round(zoo.pen.pz)]:null;window.__tl=name=>{const ti=H.tnames.indexOf(name),q=(H.tlabels||[]).find(l=>l[0]===ti);return q?[q[1],-q[2]]:null};window.__share=()=>({n:birdShare.length,src:shareSrc,top:birdShare.slice(0,3).map(q=>q.c+' '+pct(q.p/birdShare.tot))});window.__chips=()=>list.map(l=>l[0]);window.__prideR=v=>{if(v!==undefined)LM.prideR=v;return Math.round(LM.prideR||0)};window.__bikers=()=>bikers&&!bikers.none?{n:bikers.list.length,vis:bikers.m.visible,paths:new Set(bikers.list.map(q=>q.T)).size}:null;window.__traf=setTraffic;window.__sight=()=>({n:sightings.length,fail:sightFail,flocks:flocks.filter(f=>f.sg).map(f=>f.lb.t+' | '+f.lb.sub)});window.__loadSight=()=>{sightT=0;return loadSightings().then(()=>sightings.length)};window.__view=()=>{const v=viewAngles(),t=controls.target;return {x:Math.round(t.x),z:Math.round(t.z),d:Math.round(v.d),az:Math.round(v.az),el:Math.round(v.el),pan:!!pan,panV:!!panV}};window.__zoom=zoomBy;window.__g=(x,y)=>{const h=groundAt(x,y);return h?[Math.round(h.x),Math.round(h.z)]:null};window.__2d=set2D;window.__roofed=()=>LM.roofed;window.__lm=()=>({dev:LM.dev,statue:LM.cookStatue,zoo:H.zoo,dogs:(H.dogparks||[]).map(q=>q[3]),pid:S.b_p1?S.b_p1.length:0});window.__link=()=>[...$('clinks').children].map(a=>a.textContent+' -> '+a.href).join(' | ')||null;window.__perf=()=>({frCost:+frCost.toFixed(1),lblScale,perfStep});window.__pride=setPride;window.__life=()=>({flocks:flocks.map(f=>f.b[0]),birds:birdMesh?birdMesh.count:0,eaten:zoo?zoo.eaten:-1,lettuce:zoo?zoo.let.length:-1,dogs:dogs?dogs.list.length:0,sites:dogs?dogs.sites.length:0,month:birdMonth(),dev:devI});window.__wx=setWx;window.__demo=setDemo;window.__wxs=()=>({wx,alerts:alerts.length,wet:ovl?ovl.wet:null,radar:!!(ovl&&ovl.radar),precip,thunder,wind:windV?+windV.ms.toFixed(1):0,funnels:funnels.length,fail:wxFail,bolt:!!bolt,rain:!!(LM.rainL&&LM.rainL.visible),snow:!!(pPts&&pPts.visible)});window.__bg=()=>{const g=bikeGraph();return {nodes:g.NV,arcs:g.na,bikeEdges:g.nE,mi:+(g.total/1609.344).toFixed(1),islands:g.islands,linkMi:+(g.linkLen/1609.344).toFixed(1),links:g.links.length,bridges:g.nb,dead:g.dead,ms:g.ms}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9,false),b=bgNearest(x1,z1,1e9,false);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9,true);R.cov=new Uint8Array(g.nE);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0,unL=0;for(let e=0;e<g.nE;e++)if(!R.cov[e]){un++;unL+=g.eLen[e]}const mi=m=>+(m/1609.344).toFixed(1);return {legs,routeMi:mi(R.L),coveredMi:mi(R.cv[R.cv.length-1]),totalMi:mi(g.total),uncoveredEdges:un,uncoveredFt:Math.round(unL*3.281),newMi:mi(R.sm[0]),retraceMi:mi(R.sm[1]),linkMi:mi(R.sm[2]),bridgeMi:mi(R.sm[3]),turns:R.turns,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;
   const ld=$('load');if(ld){ld.style.opacity=0;setTimeout(()=>ld.remove(),700)}
   const want=list.find(l=>'#'+l[1].slug===location.hash);let shared=null;{const m=/^#v=(-?\d+),(-?\d+),(\d+),(-?\d+),(-?\d+)$/.exec(location.hash||'');if(m){const q=m.slice(1).map(Number);if(Math.abs(q[0])<=8700&&Math.abs(q[1])<=8700)shared=camTo(q[0],q[1],Math.min(24000,Math.max(45,q[2])),q[3],Math.min(89,Math.max(4,q[4])))}}
   setTimeout(()=>flyTo(shared||(want||list[1])[1],shared?2600:4200),900);

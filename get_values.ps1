@@ -1,13 +1,10 @@
-# STARCITY step 4
-# 1. The CURRENT city building footprints. (The first pull took layer 0 of the city service,
-#    which turned out to be the 2007 survey. Layers 7 and 8 are 2024 and 2026.)
-# 2. The city's public tree inventory (species and trunk diameter).
-# 3. Building facts per parcel: number of floors, year built, structure type.
-#    Owner names, mailing addresses and property values are NOT requested.
-# 4. A few small city layers: FEMA flood zones, levees, trails, historic sites, traffic signals.
+# STARCITY step 8: assessed values per parcel, for a 3D value layer.
+# Public county assessor figures only. Owner names, mailing addresses and buyer or seller names are
+# never requested: the script reads the layer's field list and keeps only value, sale price and date,
+# size and zoning fields, plus the parcel number.
 $dir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ua  = "STARCITY-map/1.0 (personal project)"
-$geo = "geometry=-96.73%2C40.70%2C-96.55%2C40.84&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects"
+$geo = "geometry=-96.745%2C40.69%2C-96.535%2C40.85&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects"
 $srv = "https://gis.lincoln.ne.gov/public/rest/services"
 
 function Get-Pages($name, $layerUrl, $fields, $format, $geom, $step) {
@@ -17,7 +14,7 @@ function Get-Pages($name, $layerUrl, $fields, $format, $geom, $step) {
   for ($p = 0; $p -lt 400; $p++) {
     $out = Join-Path $odir ("{0}_{1:D3}.json" -f $name, $p)
     $url = "$layerUrl/query?where=1%3D1&$geo&outFields=$fields&returnGeometry=$geom&outSR=4326&resultOffset=$off&resultRecordCount=$step&f=$format"
-    & curl.exe -sS -A $ua -m 180 -o $out $url
+    & curl.exe -sS -A $ua -m 180 --connect-timeout 20 -o $out $url
     $txt = ""
     if (Test-Path $out) { $txt = [System.IO.File]::ReadAllText($out) }
     if (($txt.Length -lt 4000) -and ($txt -match '"error"\s*:')) {
@@ -39,16 +36,16 @@ function Get-Pages($name, $layerUrl, $fields, $format, $geom, $step) {
 }
 
 
-# STARCITY: assessed values per parcel, for a 3D value layer. Public county assessor figures only.
-# Owner names and mailing addresses are never requested: the script reads the layer's field list and
-# keeps only value, sale, size and zoning fields.
 $layer = "$srv/Assessor/TaxParcels/MapServer/0"
 $vdir = Join-Path $dir "values"; New-Item -ItemType Directory -Force -Path $vdir | Out-Null
-& curl.exe -sS -A $ua -m 60 -o (Join-Path $vdir "fields.json") "${layer}?f=json"
+& curl.exe -sS -A $ua -m 60 --connect-timeout 20 -o (Join-Path $vdir "fields.json") "${layer}?f=json"
 $meta = Get-Content (Join-Path $vdir "fields.json") -Raw | ConvertFrom-Json
-$want = $meta.fields | Where-Object { $_.name -match 'VAL|ASSES|APPR|LAND|IMPR|SALE|ACRE|SQFT|ZON' -and $_.name -notmatch 'OWN|NAME|MAIL|ADDR|CARE' } | ForEach-Object { $_.name }
+$want = $meta.fields | Where-Object { $_.name -match 'VAL|ASSES|APPR|LAND|IMPR|SALE|ACRE|SQFT|ZON' -and $_.name -notmatch 'OWN|NAME|MAIL|ADDR|CARE|GRANT|BUYER|SELLER|DEED|PAYER|PERSON|CONTACT|PHONE|EMAIL' } | ForEach-Object { $_.name }
 Write-Host ("Value fields found: " + ($want -join ", "))
 if (-not $want) { Write-Host "No value fields in this layer. Send Claude values\fields.json."; exit }
 $fields = (@("PARCELID") + $want) -join "%2C"
 $n = Get-Pages "values" $layer $fields "json" "false" 5000
 Write-Host ("values: {0} parcels saved in the values folder" -f $n)
+$zip = Join-Path $dir "values.zip"
+if (Test-Path $zip) { Remove-Item $zip -Force }
+try { Compress-Archive -Path (Join-Path $vdir "*") -DestinationPath $zip -ErrorAction Stop; Write-Host ("values.zip: {0:N0} bytes" -f (Get-Item $zip).Length) } catch { Write-Host "could not zip the values folder" -ForegroundColor Yellow }

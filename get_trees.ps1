@@ -1,41 +1,46 @@
-# STARCITY step 5 (optional): the city's public tree inventory (species and trunk diameter).
-# The first attempt, in get_city2.ps1, produced no files. This version asks for smaller pages,
-# retries each page, and prints what the server answered so a failure can be diagnosed.
+# STARCITY step 12: the city's public tree inventory (Lincoln Parks and Recreation, Community Forestry).
+# One record for every tree the city manages: kind, species, trunk diameter, where it stands and the city's tree ID.
+# Staff names, notes, addresses and edit history are never requested: the pull below names the fields it wants.
+# Pages are read in order of the city's record number, 2,000 at a time. Results land in the "trees" folder
+# next to this script and in trees.zip.
 $dir  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ua   = "STARCITY-map/1.0 (personal project)"
 $lay  = "https://gis.lincoln.ne.gov/public/rest/services/Parks/Trees/MapServer/0"
 $odir = Join-Path $dir "trees"
 New-Item -ItemType Directory -Force -Path $odir | Out-Null
-$geo    = "geometry=-96.73%2C40.70%2C-96.55%2C40.84&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects"
-$fields = "CommonName%2CScientificName%2CDBH%2CLifeCycle%2CSiteLocation"
+$fields = "OBJECTID,TreeID,TreeType,CommonName,ScientificName,LifeCycle,DBH,SiteLocation,ForestryDistrict,ParkUnit,MultiTrunk,ProgramType,ReplacementCost"
 
-Write-Host "Counting trees in the map area..."
-$cnt = & curl.exe -sS -A $ua -m 120 "$lay/query?where=1%3D1&$geo&returnCountOnly=true&f=json"
-Write-Host "  server says: $cnt"
+$cnt = & curl.exe -sS -A $ua -m 120 "$lay/query?where=1%3D1&returnCountOnly=true&f=json"
+Write-Host "Trees on the city's list: $cnt"
 
-$step = 1000; $off = 0; $total = 0
-for ($p = 0; $p -lt 600; $p++) {
+$last = 0; $total = 0; $step = 2000; $pages = 0
+for ($p = 0; $p -lt 400; $p++) {
   $out = Join-Path $odir ("trees_{0:D3}.json" -f $p)
-  $url = "$lay/query?where=1%3D1&$geo&outFields=$fields&returnGeometry=true&outSR=4326&orderByFields=OBJECTID&resultOffset=$off&resultRecordCount=$step&f=geojson"
+  $url = "$lay/query?where=OBJECTID%3E$last&outFields=$fields&returnGeometry=true&outSR=4326&geometryPrecision=6&orderByFields=OBJECTID&resultRecordCount=$step&f=json"
   $ok = $false; $txt = ""
-  for ($try = 1; ($try -le 3) -and (-not $ok); $try++) {
-    $code = & curl.exe -sS -A $ua -m 300 -o $out -w "%{http_code}" $url
+  for ($try = 1; ($try -le 4) -and (-not $ok); $try++) {
+    $code = & curl.exe -sS -A $ua -m 300 --connect-timeout 30 -o $out -w "%{http_code}" $url
     $txt = ""
     if (Test-Path $out) { $txt = [System.IO.File]::ReadAllText($out) }
     if (($code -eq "200") -and ($txt -match '"features"')) { $ok = $true }
     else {
-      Write-Host ("  page {0} try {1}: HTTP {2}, {3} bytes: {4}" -f $p, $try, $code, $txt.Length, $txt.Substring(0, [Math]::Min(160, $txt.Length))) -ForegroundColor Yellow
-      Start-Sleep -Seconds (3 * $try)
+      Write-Host ("  page {0} try {1}: HTTP {2}, {3} bytes: {4}" -f $p, $try, $code, $txt.Length, $txt.Substring(0, [Math]::Min(200, $txt.Length)))
+      Start-Sleep -Seconds (4 * $try)
     }
   }
-  if (-not $ok) { Write-Host "  giving up on this page" -ForegroundColor Red; break }
-  $n = ([regex]::Matches($txt, '"type"\s*:\s*"Feature"')).Count
-  $total += $n
-  Write-Host ("  page {0}: {1} trees (total {2})" -f $p, $n, $total)
+  if (-not $ok) { Write-Host "  giving up on this page"; break }
+  $ids = [regex]::Matches($txt, '"OBJECTID"\s*:\s*(\d+)')
+  $n = $ids.Count
   if ($n -eq 0) { break }
+  $last = [int]$ids[$n - 1].Groups[1].Value
+  $total += $n; $pages++
+  Write-Host ("  page {0}: {1} trees (total {2}, through record {3})" -f $p, $n, $total, $last)
   $more = $txt -match 'exceededTransferLimit"\s*:\s*true'
   if (($n -lt $step) -and (-not $more)) { break }
-  $off += $n
-  Start-Sleep -Milliseconds 300
+  Start-Sleep -Milliseconds 200
 }
-Write-Host ("Finished: {0} trees saved in {1}" -f $total, $odir)
+Write-Host ("Finished: {0} trees in {1} pages, saved in {2}" -f $total, $pages, $odir)
+try {
+  Compress-Archive -Path (Join-Path $odir "trees_*.json") -DestinationPath (Join-Path $dir "trees.zip") -Force
+  Write-Host ("trees.zip: {0:N0} bytes" -f (Get-Item (Join-Path $dir "trees.zip")).Length)
+} catch { Write-Host ("Could not make trees.zip: " + $_.Exception.Message) }

@@ -1,0 +1,189 @@
+14PG|14th & Avery Parking Garage|City Campus
+17PG|17th & R Parking Garage|City Campus
+18R|18th & R Parking Garage|City Campus
+18S|18th & S Support Building|City Campus
+19PG|19th and Vine Parking Garage|City Campus
+501|501 Building|City Campus
+2222|Vine Street Apartments West|City Campus
+ACB|Agricultural Communications Building|East Campus
+ADMN|Canfield Administration Building North|City Campus
+ADMS|Canfield Administration Building South|City Campus
+AGH|Agricultural Hall|East Campus
+AHFS|Agronomy & Horticulture/Forestry Shops|East Campus
+AHG1|Agronomy & Horticulture Greenhouse 1|East Campus
+AHG2|Agronomy & Horticulture Greenhouse 2|East Campus
+AHG3|Agronomy & Horticulture Greenhouse 3|East Campus
+AHG4|Agronomy & Horticulture Greenhouse 4|East Campus
+AHPH|Agronomy & Horticulture Physiology Building|East Campus
+AHTL|Agronomy & Horticulture Outstate Testing Laboratory|East Campus
+ALEX|Alexander Building|City Campus
+ANDN|Andersen Hall|City Campus
+ANDR|Andrews Hall|City Campus
+ANSC|Animal Science Complex|East Campus
+ARCH|Architecture Hall|City Campus
+ARCL|Architecture Hall Link|City Campus
+ARCW|Architecture Hall West|City Campus
+ARH|Abel Hall|City Campus
+ASFS|Abel-Sandoz Food Service Building|City Campus
+ASWC|Abel-Sandoz Welcome Center|City Campus
+AVH|Avery Hall|City Campus
+BDL|Bio-Fiber Development Laboratory|East Campus
+BEAD|Beadle Center|City Campus
+BEL|Behlen Laboratory|City Campus
+BENH|Benton Hall|City Campus
+BESY|Bessey Hall|City Campus
+BIC|Breslow Ice Center|Off Campus
+BIOG|Bioscience Greenhouses|City Campus
+BKC|Barkley Memorial Center|East Campus
+BL|Brace Laboratory|City Campus
+BSC|Business Services Complex|City Campus
+BURN|Burnett Hall|City Campus
+BUSG|Bus Garage|City Campus
+CCUP|Utility Plant, City Campus|City Campus
+CDL|Ruth Staples Laboratory|East Campus
+CEMA|Johnny Carson Center for Emerging Media Arts|City Campus
+CHA|Chase Hall|East Campus
+CHC|UNL Children's Center|City Campus
+COL|Coliseum|City Campus
+COOK|Cook Pavilion|City Campus
+CORT|The Courtyards|City Campus
+CPEH|Carolyn Pope Edwards Hall|City Campus
+CREC|Sapp Recreation Facility|City Campus
+CRES|Campus Renewable Energy System Building|Innovation Campus
+CSA|Conservation & Survey Annex|East Campus
+CTES|City Thermal Energy Storage|City Campus
+DENT|College of Dentistry|East Campus
+DEV|Devaney Sports Center|City Campus
+DF|Documents Facility|City Campus
+DINS|Dinsdale Family Learning Commons|East Campus
+DTC|Sid and Hazel Dillon Tennis Center|City Campus
+ECUP|Utility Plant, East Campus|East Campus
+EGR2|Entomology Greenhouse 2|East Campus
+EGR3|Entomology Greenhouse 3|East Campus
+ENTO|Entomology Hall|East Campus
+ERC|Engineering Research Center|City Campus
+ESST|Eastside Suites|City Campus
+ETES|East Thermal Energy Storage|East Campus
+FAIR|Fairfield Hall|City Campus
+FCB|Fluid Cooler Building|City Campus
+FFAB|Fleming Fields Annex Building|East Campus
+FIB|Facilities Implement Building|City Campus
+FIC|Food Innovation Center|Innovation Campus
+FMP|Facilities Management & Planning|City Campus
+FMS|Facilities Management Shops|City Campus
+FOOD|Food Industry Complex|East Campus
+FORL|Forage Research Laboratory - USDA|East Campus
+FORS|Forestry Hall|East Campus
+FRC|Family Resource Center|East Campus
+FYH|Filley Hall|East Campus
+GAUN|Jackie Gaughan Multicultural Center|City Campus
+GNHS|Gwendolyn A. Newkirk Human Sciences Building|East Campus
+HAH|Hamilton Hall|City Campus
+HARH|Hardin Hall|East Campus
+HAYB|Haymarket Park Baseball Stadium Complex|Off Campus
+HAYS|Haymarket Park Softball Stadium Complex|Off Campus
+HCC|Hawks Championship Center|City Campus
+HCCN|University Health Center and College of Nursing|City Campus
+HDC|Harper Dining Center|City Campus
+HENZ|Henzlik Hall|City Campus
+HEWP|Hewit Place|Off Campus
+HLH|Howard L. Hawks Hall|City Campus
+HRH|Harper Hall|City Campus
+HUSK|Husker Hall|City Campus
+ICBX|Ice Box|Innovation Campus
+ICC|Innovation Commons Conference Center|Innovation Campus
+ICG|Greenhouse Innovation Center|Innovation Campus
+INSB|Insectary Building|East Campus
+IQM|International Quilt Museum|East Campus
+ITSA|ITS Annex|City Campus
+JH|Theodore Jorgensen Hall|City Campus
+KAUF|Kauffman Academic Residential Center|City Campus
+KCR|Kiesselbach Crops Research Laboratory|East Campus
+KEIM|Keim Hall|East Campus
+KH|Kiewit Hall|City Campus
+KNOL|The Robert E. Knoll Residential Center|City Campus
+KRH|Kimball Recital Hall|City Campus
+LAW|McCollum Hall|East Campus
+LDR|Library Depository Retrieval Facility|East Campus
+LEV|Leverton Hall|East Campus
+LIB|Landscape Implement Building|City Campus
+LIED|Lied Center for Performing Arts|City Campus
+LLN|Love Library North & Link|City Campus
+LLS|Love Library South|City Campus
+LML|Loeffel Meat Laboratory|East Campus
+LPH|Louise Pound Hall|City Campus
+LRH|Love Memorial Hall|East Campus
+LTM|Larsen Tractor Museum|East Campus
+M&N|Pershing Military & Naval Science Building|City Campus
+MANT|Manter Hall|City Campus
+MBH|Baker Hall|East Campus
+MMF|Materials Management Facility|East Campus
+MOLR|Morrison Center|East Campus
+MORR|Morrill Hall|City Campus
+MRC|Massengale Residential Center|East Campus
+MSTD|Cornhuskers Athletic Complex|City Campus
+MUEL|Mueller Tower|City Campus
+MUSH|Mussehl Hall|East Campus
+NAC|National Agroforestry Center - USDA|East Campus
+NECH|Nebraska Champions Club|City Campus
+NEMA|NEMA Building|City Campus
+NEU|Nebraska East Union|East Campus
+NH|Nebraska Hall|City Campus
+NRC|Neihardt Center|City Campus
+NRRA|Natural Resources Research Annex|East Campus
+NSA2|Nebraska Statewide Arboretum Greenhouse 2|East Campus
+NSAG|Nebraska Statewide Arboretum Greenhouse|East Campus
+NU|Nebraska Union|City Campus
+NVDC|Nebraska Veterinary Diagnostic Center|East Campus
+OAC|Outdoor Adventures Center|City Campus
+OLC|Osborne Legacy Complex|City Campus
+OLDH|Oldfather Hall|City Campus
+OTC|Outdoor Track Complex|Innovation Campus
+OTHM|Othmer Hall|City Campus
+PBA|Pinnacle Bank Arena|Off Campus
+PLSH|Plant Sciences Hall|East Campus
+PPG|Plant Pathology Greenhouse|East Campus
+PSTG|Plant Science Teaching Greenhouse|East Campus
+RH|Richards Hall|City Campus
+RISE|The Rise Building|Innovation Campus
+RRB|Recycling and Refuse Building|City Campus
+RVB|Mary Riepma Ross Media Arts Center-Van Brunt Visitors Center|City Campus
+RWC|Recreation and Wellness Center|East Campus
+SCAR|The Scarlet Hotel|Innovation Campus
+SCRH|Schramm Hall|City Campus
+SDPG|Stadium Drive Parking Garage|City Campus
+SEC|Scott Engineering Center|City Campus
+SEH|Seaton Hall|City Campus
+SELD|Selleck Quad Building D|City Campus
+SHEL|Sheldon Museum of Art|City Campus
+SHOR|Schorr Center|City Campus
+SMRH|Smith Hall|City Campus
+SPL|Splinter Laboratories|East Campus
+SSL|Stewart Seed Laboratory|East Campus
+STE|Stadium East|City Campus
+STNO|Stadium North|City Campus
+STSO|Stadium South|City Campus
+STW|Stadium West|City Campus
+SZRH|Sandoz Hall|City Campus
+TEAC|Teachers College Hall|City Campus
+TELC|Terry M. Carpenter Telecommunications Center|East Campus
+TEMP|Temple Building|City Campus
+TGE|Teaching Greenhouse East|East Campus
+TGW|Teaching Greenhouse West|East Campus
+TRAN|Transportation Services|City Campus
+UNFCU|University of Nebraska Federal Credit Union|Off Campus
+UNST|University Suites|City Campus
+USDP|USDA Physiology Building - USDA|East Campus
+UST|U Street Apartments|City Campus
+VARH|Varner Hall|Off Campus
+VBS|Veterinary Medicine and Biomedical Sciences Hall|East Campus
+VCSL|Veterinary Clinical Skills Laboratory|East Campus
+VILL|The Village|City Campus
+WAB|Woods Art Building|City Campus
+WAT|Watson Building|City Campus
+WCDC|Willa S. Cather Dining Complex|City Campus
+WELC|Welpton Courtroom Building|East Campus
+WHIT|Prem S. Paul Research Center at Whittier School|City Campus
+WICK|Wick Alumni Center|City Campus
+WL|Water Sciences Laboratory|East Campus
+WMB|Westbrook Music Building|City Campus

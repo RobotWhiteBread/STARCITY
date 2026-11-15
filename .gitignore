@@ -34,3 +34,11 @@ src/node_modules/
 __pycache__/
 places.json
 values/
+gis/
+votes/
+*.log
+*_done.txt
+src/data2.z
+src/data2.b64
+src/data.b64
+src/data.z

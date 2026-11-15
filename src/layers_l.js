@@ -1,0 +1,63 @@
+
+// =====================================================================================================
+// City trees: every tree on the city's own list, drawn where it stands and sized by its trunk, and
+// carrying its record the way a building carries its parcel: kind, species, trunk diameter, the park
+// or street it stands on, and the city's tree ID. The list is the Parks and Recreation (Community
+// Forestry) inventory. Only the trees near where you are looking are drawn, so a phone can keep up.
+// =====================================================================================================
+const TR={n:0,X:null,cs:null,mA:null,mB:null,la:null,lb:null,nA:0,nB:0,key:'',con:null,gone:0};
+const CONIFER=/^(pine|spruce|fir|juniper|cedar|arborvitae|hemlock|larch|baldcypress|bald cypress|douglas|yew|redwood|cypress|falsecypress)/i;
+// how tall to draw a tree with a trunk this many inches across (10 when the list gives no size)
+function treeH(i){const d=S2.tr_d[i]||10;return TR.con[TR.kk[i]]?Math.min(25,4+d*.6):Math.min(24,4.5+d*.5)}
+function treeNear(x,z,r){const G=TR.G,C=TR.C,c0=Math.floor((x+8192)/C),r0=Math.floor((z+8192)/C),X=TR.X;let best=-1,bd=r*r;
+  for(let a=Math.max(0,r0-1);a<=Math.min(G-1,r0+1);a++)for(let b=Math.max(0,c0-1);b<=Math.min(G-1,c0+1);b++){const k=a*G+b;for(let i=TR.cs[k];i<TR.cs[k+1];i++){const dx=X[2*i]-x,dz=X[2*i+1]-z,d=dx*dx+dz*dz;if(d<bd){bd=d;best=i}}}return best}
+function treesInit(){if(!S2||!S2.tr_c||!H2.trees||!LM.treeMesh)return;const T=H2.trees,n=T.n,G=T.ng,C=T.cell,X=new Float32Array(n*2),cs=new Uint32Array(G*G+1),kk=new Uint8Array(n);
+  // the list comes cell by cell, each tree stored as its place inside its 128 m cell: rebuild where every tree stands
+  {let i=0;for(let k=0;k<G*G;k++){cs[k]=i;const x0=(k%G)*C-8192,z0=Math.floor(k/G)*C-8192;for(let j=S2.tr_c[k];j>0;j--,i++){X[2*i]=x0+S2.tr_x[i]*.5;X[2*i+1]=z0+S2.tr_z[i]*.5;kk[i]=T.names[S2.tr_n[i]][2]}}cs[G*G]=i}
+  TR.n=n;TR.X=X;TR.cs=cs;TR.kk=kk;TR.con=T.kinds.map(k=>CONIFER.test(k));TR.C=C;TR.G=G;
+  // the map's stand-in trees step aside wherever the city has a real record
+  {const m=LM.treeMesh,zero=new THREE.Matrix4().makeScale(0,0,0),pts=LM.treePts||[];let gone=0;for(let i=0;i<pts.length;i++){if(treeNear(pts[i][0],pts[i][1],pts[i][2]?20:8)>=0){m.setMatrixAt(i,zero);gone++}}m.instanceMatrix.needsUpdate=true;TR.gone=gone}
+  // two shapes: the map's round-crowned tree for broadleaf kinds, and stacked cones for conifers
+  const P=[],I=[],col=[],ring=(y,r,nn)=>{const b=P.length/3;for(let i=0;i<nn;i++){const a=i/nn*6.2832;P.push(Math.cos(a)*r,y,Math.sin(a)*r)}return b};
+  {const a=ring(0,.07,5),b=ring(.2,.06,5);for(let i=0;i<5;i++){const j=(i+1)%5;I.push(a+i,b+i,a+j,a+j,b+i,b+j)}for(let i=0;i<10;i++)col.push(.1,.06,.035)}
+  for(const [y0,r0,y1] of [[.13,.36,.56],[.4,.27,.8],[.66,.18,1.04]]){const b=ring(y0,r0,7),top=P.length/3;P.push(0,y1,0);for(let i=0;i<7;i++){I.push(b+i,top,b+(i+1)%7);col.push(.035+.03*y0,.13+.07*y0,.06+.03*y0)}col.push(.07,.2,.09)}
+  const gB=new THREE.BufferGeometry();gB.setAttribute('position',new THREE.Float32BufferAttribute(P,3));gB.setAttribute('color',new THREE.Float32BufferAttribute(col,3));gB.setIndex(I);
+  const cap=mobile?9000:30000,mat=new THREE.MeshLambertMaterial({vertexColors:true,flatShading:true});TR.mA=new THREE.InstancedMesh(LM.treeMesh.geometry,mat,cap);TR.mB=new THREE.InstancedMesh(gB,mat,Math.round(cap*.35));TR.la=new Uint32Array(cap);TR.lb=new Uint32Array(Math.round(cap*.35));
+  const cc=new THREE.Color(1,1,1);for(const m of [TR.mA,TR.mB]){m.setColorAt(0,cc);m.count=0;m.frustumCulled=false;m.castShadow=true;scene.add(m)}
+  // the same list as a layer: every tree a bar as tall as its trunk is wide, colored by kind
+  const cnt=new Map();for(let i=0;i<n;i++){const k=TR.kk[i];cnt.set(k,(cnt.get(k)||0)+1)}const top=[...cnt].filter(e=>T.kinds[e[0]]&&T.kinds[e[0]]!=='Not identified').sort((a,b)=>b[1]-a[1]).slice(0,11),gi=new Map(top.map((e,i)=>[e[0],i])),GR=top.map(e=>T.kinds[e[0]]).concat('Other kinds'),tg=new Uint8Array(n);
+  for(let i=0;i<n;i++){const g=gi.get(TR.kk[i]);tg[i]=g===undefined?GR.length-1:g}S2.tr_g=tg;TR.top=top.map(e=>[T.kinds[e[0]],e[1]]);
+  dlAdd({id:'trees',t:'City trees',g:'Places',k:'pt',n,src:'City of Lincoln Parks and Recreation, Community Forestry tree inventory',asof:T.asof,card:(L,i)=>treeCard(i),
+    note:`Every tree on the city's own list that stands on this map: ${n.toLocaleString('en-US')} of the ${T.active.toLocaleString('en-US')} the city lists as living. Most are street trees and park trees. Each bar is as tall as the trunk is wide, and the color is the kind of tree. The most common: ${TR.top.slice(0,5).map(e=>e[0].toLowerCase()+' '+e[1].toLocaleString('en-US')).join(', ')}. Zoom in close and the trees themselves are drawn where they stand: tap one for its record.`,
+    f:[{k:'grp',l:'Kind',t:'c',d:GR,s:'tr_g'},{k:'dbh',l:'Trunk diameter',t:'n',u:'in',s:'tr_d'}],st:{h:'dbh',hcap:40,c:'grp',pal:'auto',r:.42,bar:1}},{X})}
+const lTC=new THREE.Color();
+function treePut(m,slot,i){const x=TR.X[2*i],z=TR.X[2*i+1],h=treeH(i),w=h*(TR.con[TR.kk[i]]?.52:.8)*(.88+.24*rnd(i*7+3));lP.set(x,hAt(x,z),z);lQ.setFromAxisAngle(lUp,rnd(i)*6.28);lS.set(w,h,w);lM.compose(lP,lQ,lS);m.setMatrixAt(slot,lM);
+  const g=rnd(TR.kk[i]*13+5),v=rnd(i*5+4);lTC.setRGB(.74+.4*g,.84+.22*v,.66+.34*g);m.setColorAt(slot,lTC)}
+function treesFrame(){if(!TR.mA)return;const t=controls.target,d=camera.position.distanceTo(t);
+  if(!walk.on&&d>4300||walk.sky){if(TR.key!=='off'){TR.key='off';TR.mA.count=0;TR.mB.count=0;TR.nA=TR.nB=0;shadowDirty=true;dirty=true}return}
+  const R=walk.on?460:Math.min(2400,Math.max(280,d*1.15)),cx=walk.on?camera.position.x:t.x,cz=walk.on?camera.position.z:t.z,st=R*.24,key=Math.round(cx/st)+','+Math.round(cz/st)+','+Math.round(Math.log(R)*4);if(key===TR.key)return;TR.key=key;
+  // nearest grid cells first, until the budget is spent
+  const G=TR.G,C=TR.C,c0=Math.floor((cx+8192)/C),r0=Math.floor((cz+8192)/C),rc=Math.ceil(R/C),cells=[];
+  for(let r=Math.max(0,r0-rc);r<=Math.min(G-1,r0+rc);r++)for(let c=Math.max(0,c0-rc);c<=Math.min(G-1,c0+rc);c++){const dx=(c+.5)*C-8192-cx,dz=(r+.5)*C-8192-cz,dd=dx*dx+dz*dz;if(dd<(R+C)*(R+C))cells.push([dd,r*G+c])}
+  cells.sort((a,b)=>a[0]-b[0]);let nA=0,nB=0;const capA=TR.la.length,capB=TR.lb.length,kk=TR.kk;
+  for(const q of cells){for(let i=TR.cs[q[1]];i<TR.cs[q[1]+1];i++){if(TR.con[kk[i]]){if(nB<capB){treePut(TR.mB,nB,i);TR.lb[nB++]=i}}else if(nA<capA){treePut(TR.mA,nA,i);TR.la[nA++]=i}}if(nA>=capA&&nB>=capB)break}
+  TR.nA=nA;TR.nB=nB;for(const [m,k] of [[TR.mA,nA],[TR.mB,nB]]){m.count=k;m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true}shadowDirty=true;dirty=true}
+// a tap on a tree: the nearest crown the tap passes through, if nothing solid is in front of it
+function treePick(maxT){if(!TR.mA||!(TR.nA+TR.nB))return false;const o=ray.ray.origin,d=ray.ray.direction,X=TR.X;let best=-1,bt=maxT;
+  const test=i=>{const x=X[2*i],z=X[2*i+1],hh=treeH(i),rx=x-o.x,ry=hAt(x,z)+hh*.6-o.y,rz=z-o.z,t=rx*d.x+ry*d.y+rz*d.z;if(t<=0||t>=bt)return;const px=rx-d.x*t,py=ry-d.y*t,pz=rz-d.z*t,rr=Math.max(hh*.4,t*(mobile?.011:.006));if(px*px+py*py+pz*pz<rr*rr){bt=t;best=i}};
+  for(let k=0;k<TR.nA;k++)test(TR.la[k]);for(let k=0;k<TR.nB;k++)test(TR.lb[k]);if(best<0)return false;treeCard(best);return true}
+const TSITE={'Street':'a street tree, in the strip along the street that the city looks after','Park':'a park tree','Private':'listed by the city as standing on private ground','Golf Course':'on a city golf course','Boundary':'on the edge of city ground','Median':'in a street median','Other - Public':'on other public ground','Trail':'along a trail'};
+const treeId=i=>{const v=S2.tr_i0[i]|S2.tr_i1[i]<<8|S2.tr_i2[i]<<16;return v?'T'+String(v).padStart(6,'0'):''};
+function treeCard(i){const T=H2.trees,nm=T.names[S2.tr_n[i]]||['',''],kind=T.kinds[TR.kk[i]]||'',d=S2.tr_d[i],s=S2.tr_s[i],site=T.sites[s&15],dist=T.dist[(s>>4)&7],park=T.parks[S2.tr_p[i]],id=treeId(i),x=TR.X[2*i],z=TR.X[2*i+1],p=[];
+  const title=nm[0]||(kind&&kind!=='Not identified'?kind:'City tree');if(nm[1])p.push(nm[1]);if(kind&&kind!=='Not identified'&&kind.toLowerCase()!==title.toLowerCase())p.push('kind: '+kind.toLowerCase());
+  p.push(d?`trunk ${d} in across at chest height, about ${Math.round(d*Math.PI)} in around`:'no trunk size on the list');if(s&128)p.push('more than one trunk');
+  if(TSITE[site])p.push(TSITE[site]+(park&&site!=='Street'?', in '+park:''));else if(park)p.push('in '+park);
+  const st=streetNear(x,z,70);if(st&&st.name)p.push('nearest street: '+st.name);if(dist)p.push('Community Forestry district '+dist);if(id)p.push('city tree ID '+id);
+  const links=[{href:`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${(H.lat0-z/KYm).toFixed(6)},${(H.lon0+x/KXm).toFixed(6)}`,label:'Street View ↗'}];if(id)links.unshift({label:'Read the city\'s record now',fn:b=>treeLive(i,b)});
+  let body=p.join(' · ');body=body.charAt(0).toUpperCase()+body.slice(1);
+  showCard(title,body+`. One of ${T.n.toLocaleString('en-US')} trees on the city's own list that stand on this map, as of ${T.asof}. It is drawn at the size its trunk suggests, not measured for height.`,undefined,{label:'All city trees as a layer',fn:()=>dlSet('trees',true)},links)}
+// the rest of the city's record for one tree, read from the city's server only when asked for
+async function treeLive(i,btn){const id=treeId(i);if(!hosted()){btn.textContent='Loads on the website copy';return}btn.textContent='Asking the city…';btn.disabled=true;
+  try{const r=await fetch(CITYSRV+'/Parks/Trees/MapServer/0/query?where='+encodeURIComponent("TreeID='"+id+"'")+'&outFields=TreeID,CommonName,LifeCycle,DBH,SiteLocation,Address,ParkUnit,ProgramType,EditedDate&returnGeometry=false&f=json'),j=await r.json(),a=j.features&&j.features[0]&&j.features[0].attributes;
+    if(!a){btn.textContent='Not on the city\'s list now';return}const q=[];if(a.Address&&String(a.Address).trim())q.push('listed at '+nice(String(a.Address).trim()).replace(/\b[a-z]/g,m=>m.toUpperCase()));if(a.LifeCycle)q.push('status '+String(a.LifeCycle).toLowerCase());if(a.DBH)q.push('trunk '+a.DBH+' in');if(a.ProgramType&&a.ProgramType!=='N/A')q.push('planting program: '+a.ProgramType);if(a.EditedDate)q.push('record last changed '+dayStr(a.EditedDate));
+    btn.style.display='none';$('cp').textContent+=' The city\'s record, read just now: '+q.join(' · ')+'.'}catch(e){btn.disabled=false;btn.textContent='Could not reach the city. Try again'}}

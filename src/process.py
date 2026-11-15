@@ -1,6 +1,6 @@
 import os,re
 import json,glob,math,struct,zlib,sys,array,collections,base64
-D=os.environ.get('STARCITY_DATA','../')   # folder that holds the downloads
+D='/mnt/user-data/uploads/STARCITY/'
 LAT0,LON0=40.77,-96.64
 KX=111320*math.cos(math.radians(LAT0));KY=111000.0
 Q=0.25;LIM=32000
