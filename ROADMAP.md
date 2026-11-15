@@ -19,6 +19,7 @@ The goal: the most accessible and most informative citizen map any city has. Eve
 | 0.9.1 | Now and Reset at the top with a row of reasons to be here, bird's eye that always shows the weather and the hour's traffic, bus stops with next departures and tall route tags, the whole Lincoln bird list by month, the night sky with planets and satellites, real estate as a switch with value bands past $1 million, new sales, charts and a compare-everything table, the redlining lines as an overlay, look around to the horizon, animals asleep at night, a data console, fall color, a browser for every layer on the city's map server, larger text and high contrast, a place-based safety card, and an open invitation to contribute |
 | 0.9.2 | The City Council in depth, boxes that close back to their options, a Reset that clears everything, one way out of every close-up view, data heights that fit the screen, lit minor streets, and the any-city build | shipped |
 | 0.9.3 | The Sower's wardrobe, and info boxes that step aside when you move the map | shipped |
+| 0.9.4 | The phone screen: one thing at a time, folded furniture, thumb-sized controls | shipped |
 
 ## Next
 

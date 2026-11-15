@@ -20,6 +20,10 @@ This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DA
 
 ## What is in it
 
+### New in 0.9.4
+
+- **The phone screen shows the city, not the furniture.** The title folds to one line until tapped. The key, the clock and the place chips start folded. A card's choices run in one scrolling row instead of five stacked ones, and a card is capped at about a third of the screen. The running total steps aside while a card is up and returns when the card does. A layer's height and see-through sliders sit behind its own info button. Every control is at least 42 pixels tall.
+
 ### New in 0.9.3
 
 - **The Sower has a wardrobe.** The figure on the Capitol dome can be dressed six ways: as cast in bronze, Husker scarlet with the N on his chest, a cowboy hat and a bandana, a sequin gown and a tiara, a number 1 volleyball jersey with a ball in his raised hand, or a winter coat and earmuffs. Your choice is kept on your own device. It is a costume on the map's own simple figure, not on Lee Lawrie's statue, and the card says so.
