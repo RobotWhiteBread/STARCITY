@@ -20,6 +20,12 @@ This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DA
 
 ## What is in it
 
+### New in 0.9.6
+
+- **Tell us it's wrong, from the card itself.** Every card has a flag beside its close button. It opens a correction already filled in with what the card said and a link back to the exact view, so nobody has to explain where they were. This is the shortest path from "that number is off" to a fix.
+- **An About card inside the map**, not only in this file: who built it, that it is not official and not affiliated with the city, the county, the state or the university, what counts as an estimate, and what is collected about you, which is nothing.
+- **The invented things say so louder.** Anything that is a joke rather than a record now carries a green FOR FUN tag at the top of its card instead of a sentence buried at the end.
+
 ### New in 0.9.5
 
 - **Every name the Devaney Center carries, on its roof at once.** Three signs stacked: Bob Devaney Sports Center at the bottom with the year it opened and the year it was named, John Cook Arena above it, and DBK Universe on top, which is this map's own name for the era and says so on the sign. Readable from either side.

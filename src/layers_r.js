@@ -148,3 +148,14 @@ function sqPoke(i){const Q=CR.sq;if(!Q||!Q.list[i])return false;const q=Q.list[i
   showCard('Sasquatch','He has seen you. He is waving. In a moment he will be behind a tree and you will not find him again, which is the whole point of Sasquatch. For fun: there is no evidence of Sasquatch in Lancaster County, only stories.',undefined,
     {label:'Follow him',fn:()=>{flyTo(camTo(q.x,q.z,120,200,18),1600)}});
   dirty=true;return true}
+
+// ---- who made this, what it is not, and how to say it is wrong
+function aboutCard(){menuCard('about',()=>showCard('About this map',
+  'STARCITY is a 3D map of Lincoln built by one resident from the city’s, the county’s and the state’s own public records. It is not official, it is not affiliated with the City of Lincoln, Lancaster County, the State of Nebraska or the University of Nebraska, and nothing in it is a public record. '
+  +'Every number says where it came from and when it was read. Anything worked out rather than recorded is called an estimate on its own card, and the property tax figures are estimates from value and levy, never anyone’s bill. Anything invented carries a green tag at the top of its own card. '
+  +'Nothing about you is collected: no account, no cookie, no profile. Find me draws your position on your own screen and sends it nowhere. No owner names or mailing addresses are stored anywhere in the map. '
+  +'It is free and open source under the MIT license, and corrections from anyone, about anything, are the fastest way it gets better. The flag at the top of any card reports what that card says.',
+  undefined,{label:'Something here is wrong',fn:()=>$('cflag').click()},
+  [{href:'https://github.com/RobotWhiteBread/STARCITY','label':'The code and the data plan ↗'},
+   {href:'https://github.com/RobotWhiteBread/STARCITY/blob/main/CONTRIBUTING.md',label:'Add to the map ↗'},
+   {label:'Where every number comes from',fn:()=>openSheet(GUIDE,2)}]))}

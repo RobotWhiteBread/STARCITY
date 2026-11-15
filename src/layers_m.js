@@ -24,7 +24,7 @@ const INTENT=[
  ['safe','Safety','Weather warnings as the Weather Service issues them, where water goes in a flood, where help is, where crashes have happened, and how to use the state\'s offender registry the way it is meant to be used.',
   [['Weather alerts',()=>wxDetail()],LY('flood100','Floodplain'),LY('fire','Fire stations'),LY('medical','Hospitals'),LY('crashes','Crash reports, 2019'),['The registry and the law',()=>safeCard()]]],
  ['data','All city data','Everything here comes from public sources, and each card says which. Browse the city\'s own map server for any layer it publishes, see where every number on this map came from, or read the code.',
-  [['Compare everything here',()=>openSheet(CMPS,0)],['Data feeds, live',()=>setFeeds(true)],['Browse all city data',()=>cityData()],['Layers on this map',()=>openSheet(LAYS,0)],['Where every number comes from',()=>openSheet(GUIDE,2)],['Make this for your city',()=>openSheet(FORKS,0)]]]];
+  [['Compare everything here',()=>openSheet(CMPS,0)],['Data feeds, live',()=>setFeeds(true)],['Browse all city data',()=>cityData()],['Layers on this map',()=>openSheet(LAYS,0)],['Where every number comes from',()=>openSheet(GUIDE,2)],['About this map',()=>aboutCard()]]]];
 function intentCard(k,again){const I=INTENT.find(q=>q[0]===k);if(!I)return;if(!again)sgUse(k);SG.topic=k;sgDraw(true);menuCard('i:'+k,()=>showCard(I[1],I[2],undefined,undefined,I[3].map(([label,fn])=>({label,fn:()=>{lastInput=performance.now();fn()}}))),!again)}
 // the chips: what is live or timely first, then the reasons people come, most used first on this device
 function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date.now(),wd=n.dow<5;
