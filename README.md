@@ -16,14 +16,19 @@ Type any place, ZIP code or GPS point and it is built in your browser from OpenS
 
 You can also download `index.html` and open it in any browser, though the live feeds load only from the website copy.
 
-This is release 0.9.7. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
+This is release 0.9.8. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
 
 ## What is in it
+
+### New in 0.9.8
+
+- **A correction to the correction.** 0.9.7 changed the 92,003 at Volleyball Day in Nebraska from a world record to an American record. That was wrong, and it is back. ESPN, the NCAA, NCAA.com and Nebraska Athletics all record it as the world record for attendance at a women's sporting event: it broke the 91,648 at Barcelona against Wolfsburg in the 2022 Champions League, which was the recognised mark. The board now carries that progression instead, along with the 90,185 American record it also passed at the 1999 World Cup final at the Rose Bowl.
+- **Two more records on the board**, which is now seventeen: the 91,585 who watched Nebraska beat Miami at football in 2014, this stadium's record before Volleyball Day, and the 17,675 at Creighton in 2025, the NCAA regular season indoor record.
 
 ### New in 0.9.7
 
 - **Every stadium record on the roof board.** The board under the Devaney signs now turns through all fifteen crowd and venue records instead of three, reading from the same list the records card reads, so the board and the card can never disagree. New on it: the 15,405 against Creighton at Pinnacle Bank Arena on Sept 16 2026, the largest indoor home crowd in program history; the 13,870 against UCLA in 2009 it passed; the 10,497 that reopened the renovated John Cook Arena on Sept 10 2026; the reseat from 8,309 seats to more than 10,000; the 91,585 Memorial Stadium record from 2014; and the 15,038 for basketball in 1981, still the most for anything in that building.
-- **A correction we owed you.** The map called the 92,003 at Volleyball Day in Nebraska a world record. It is the American record for a women's sporting event. The only larger crowd reported anywhere is the 1971 World Cup final in Mexico City, estimated at about 110,000, and the board now carries that number too rather than leaving the comparison out. Fixed on the rooftop board, the stadium videoboard, the stadium card, the map label, the chip and the records panel.
+- **A correction that was itself wrong**, and is reversed in 0.9.8 above. Left here on purpose, because a changelog that quietly deletes its mistakes is not worth reading.
 
 ### New in 0.9.6
 
