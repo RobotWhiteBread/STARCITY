@@ -20,6 +20,7 @@ The goal: the most accessible and most informative citizen map any city has. Eve
 | 0.9.2 | The City Council in depth, boxes that close back to their options, a Reset that clears everything, one way out of every close-up view, data heights that fit the screen, lit minor streets, and the any-city build | shipped |
 | 0.9.3 | The Sower's wardrobe, and info boxes that step aside when you move the map | shipped |
 | 0.9.4 | The phone screen: one thing at a time, folded furniture, thumb-sized controls | shipped |
+| 0.9.5 | The Devaney Center's three names stacked on the roof with a live board under them, and a Sasquatch who hides when you get close |
 
 ## Next
 

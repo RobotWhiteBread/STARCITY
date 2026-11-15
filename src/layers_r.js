@@ -91,3 +91,60 @@ function sowerCard(){const S=LM.sower;if(!S){showCard('The Sower','The Capitol d
     SWEAR.filter(w=>w[0]!==S.wear).map(w=>({label:w[1],fn:()=>sowerWear(w[0])}))))}
 function sowerInit(){if(!LM.sower)return;let k='bronze';try{k=localStorage.getItem('sc_sower')||'bronze'}catch(e){}
   if(k!=='bronze')sowerWear(k,true)}
+
+// ---- the board on the Devaney roof: what is true about this team at this moment
+function devBillLines(){
+  const out=[],S=(()=>{try{return vbSeason()}catch(e){return null}})();
+  // a match in progress comes first and stays first
+  try{const ev=(HK.ev.vb||[]).find(e=>e.st==='in');
+    if(ev)out.push(['LIVE AT THE DEVANEY CENTER','NEBRASKA '+ev.my+' – '+ev.opp.toUpperCase()+' '+ev.th,'#7d0a1d','#fff4d6'])}catch(e){}
+  if(S&&S.ev.length){
+    const w=S.ev.filter(e=>e[4]).length,l=S.ev.length-w;
+    let sw=0,sl=0,run=0;for(const e of S.ev){sw+=+e[2];sl+=+e[3]}
+    for(let i=S.ev.length-1;i>=0;i--){if(S.ev[i][4])run++;else break}
+    out.push([S.live?'THIS SEASON, READ LIVE':'THIS SEASON',w+'–'+l,'#0d0f14','#ffd34d']);
+    if(sw||sl)out.push(['SETS WON AND LOST',sw+' – '+sl,'#0d0f14','#ffd34d']);
+    if(run>1)out.push(['WINS IN A ROW',String(run),'#7d0a1d','#fff4d6']);
+    const last=S.ev[S.ev.length-1];
+    if(last)out.push([(last[4]?'BEAT':'LOST TO')+' '+String(last[1]).toUpperCase(),last[2]+'–'+last[3],'#0d0f14','#ffd34d']);
+  }
+  // the next one on the schedule
+  try{const now=Date.now(),nx=(HK.ev.vb||[]).filter(e=>e.st==='pre'&&e.t>now-9e5).sort((a,b)=>a.t-b.t)[0];
+    if(nx)out.push(['NEXT'+(nx.ha==='home'?' AT HOME':' AWAY'),String(nx.opp).toUpperCase()+' · '+clock(nx.t),'#0d0f14','#ffd34d'])}catch(e){}
+  out.push(['STRAIGHT SELLOUTS SINCE 2001','350+','#7d0a1d','#fff4d6']);
+  out.push(['VOLLEYBALL DAY IN NEBRASKA, AUG 30 2023','92,003','#0d0f14','#ffd34d']);
+  out.push(['NEBRASKA VOLLEYBALL','CENTER OF THE VOLLEYBALL UNIVERSE','#7d0a1d','#fff4d6']);
+  return out}
+function devBillTurn(i){if(!LM.devBill)return;const L=devBillLines();if(!L.length)return;const q=L[((i%L.length)+L.length)%L.length];LM.devBill(q[0],q[1],q[2],q[3])}
+
+// ---- Sasquatch: he roams the woods and parks, bolts for cover when anyone comes close,
+// and if you manage to tap him he waves before he goes. Returns true while he is out of sight.
+function sqCover(q){ // the nearest tree to duck behind, or a far corner of his patch
+  const T=LM.treePts;let bx=null,bd=1e18;
+  if(T){const n=T.length,step=Math.max(1,Math.floor(n/900));
+    for(let k=0;k<n;k+=step){const p=T[k],dx=p[0]-q.x,dz=p[1]-q.z,d=dx*dx+dz*dz;if(d<bd&&d>36){bd=d;bx=p}}}
+  if(bx&&bd<90*90)return [bx[0],bx[1]];
+  if(bx){const d=Math.sqrt(bd),f=Math.min(1,70/d);return [q.x+(bx[0]-q.x)*f,q.z+(bx[1]-q.z)*f]}
+  const p=polyRand(q.w.r,q.w.bx,20);return p?[p[0],p[1]]:[q.x,q.z]}
+function sqAway(q){ // a spot in his patch as far from the camera as a few tries can find
+  let best=null,bd=-1;for(let k=0;k<6;k++){const p=polyRand(q.w.r,q.w.bx,20);if(!p)continue;
+    const d=(p[0]-camera.position.x)**2+(p[1]-camera.position.z)**2;if(d>bd){bd=d;best=p}}
+  return best?[best[0],best[1]]:[q.x,q.z]}
+function sqMode(q,dt,now){
+  const cd=Math.hypot(camera.position.x-q.x,camera.position.z-q.z),reach=Math.hypot(q.tx-q.x,q.tz-q.z);
+  if(q.mode==='hide'){q.t-=dt;if(q.t<=0){const p=sqAway(q);q.x=p[0];q.z=p[1];q.tx=p[0];q.tz=p[1];q.mode='roam';q.spd=1.9;q.wait=.6}return true}
+  if(q.mode==='wave'){q.t-=dt;if(q.t<=0){const p=sqAway(q);q.tx=p[0];q.tz=p[1];q.mode='flee';q.spd=4.6;q.wait=0;q.t=3.4}return false}
+  if(q.mode==='flee'){q.t-=dt;if(reach<2.5||q.t<=0){q.mode='hide';q.t=5+Math.random()*7}return false}
+  if(q.mode==='spook'){q.t-=dt;if(reach<2.5||q.t<=0){q.mode='hide';q.t=6+Math.random()*9}return false}
+  // roaming: anyone inside about a hundred yards sends him for cover
+  if(cd<105&&!walk.on){const p=sqCover(q);q.tx=p[0];q.tz=p[1];q.mode='spook';q.spd=4.2;q.wait=0;q.t=2.8;
+    if(!SQ.told){SQ.told=true;hintShow('Something moved in the trees. Come closer and it will not wait around.',5200)}}
+  return false}
+const SQ={told:false};
+// a tap on him: he stops, turns, waves, and then he is gone
+function sqPoke(i){const Q=CR.sq;if(!Q||!Q.list[i])return false;const q=Q.list[i];
+  if(q.mode==='hide')return false;
+  q.mode='wave';q.t=1.8;q.wait=0;lastInput=performance.now();
+  showCard('Sasquatch','He has seen you. He is waving. In a moment he will be behind a tree and you will not find him again, which is the whole point of Sasquatch. For fun: there is no evidence of Sasquatch in Lancaster County, only stories.',undefined,
+    {label:'Follow him',fn:()=>{flyTo(camTo(q.x,q.z,120,200,18),1600)}});
+  dirty=true;return true}

@@ -20,6 +20,12 @@ This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DA
 
 ## What is in it
 
+### New in 0.9.5
+
+- **Every name the Devaney Center carries, on its roof at once.** Three signs stacked: Bob Devaney Sports Center at the bottom with the year it opened and the year it was named, John Cook Arena above it, and DBK Universe on top, which is this map's own name for the era and says so on the sign. Readable from either side.
+- **A live board under them.** The season record, sets won and lost, the current winning streak, the last result, the next match, the sellout streak and the 92,003 at Memorial Stadium, turning over every few seconds. On the website copy the record and the scores are read live from ESPN as the matches are played.
+- **Sasquatch has a nervous system.** He roams the big woods, parks and cemeteries, nine of them now rather than six. Come within about a hundred yards and he bolts for the nearest tree and is gone within three seconds. Reappears somewhere else a few seconds later. Tap him before he runs and he stops, turns to face you, waves, and then leaves anyway.
+
 ### New in 0.9.4
 
 - **The phone screen shows the city, not the furniture.** The title folds to one line until tapped. The key, the clock and the place chips start folded. A card's choices run in one scrolling row instead of five stacked ones, and a card is capped at about a third of the screen. The running total steps aside while a card is up and returns when the card does. A layer's height and see-through sliders sit behind its own info button. Every control is at least 42 pixels tall.

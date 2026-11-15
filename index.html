@@ -850,18 +850,46 @@ function landmarks(cap,std){
    for(const sx of [-1,1])for(let k=-3;k<=3;k++){const m=new THREE.Mesh(new THREE.BoxGeometry(2,3,9),fm);m.position.set(sx*(ax-9),56.5,k*19);fl.add(m)}
    const glowL=new THREE.PointLight(0xfff4e0,0,900,1.2);glowL.position.set(0,70,0);fl.add(glowL);fl.visible=false;s.add(fl);
    LM.game={crowd,fl,glowL}}
-  if(LM.dev){const D=LM.dev;const cv=document.createElement('canvas');cv.width=2048;cv.height=560;const c=cv.getContext('2d');const F='"Arial Black",Impact,"Helvetica Neue",Arial,sans-serif';
-    const line=(txt,y,fs,room)=>{c.font=`900 ${fs}px ${F}`;const tw=c.measureText(txt).width;if(tw>room){fs=Math.floor(fs*room/tw);c.font=`900 ${fs}px ${F}`}
-      c.textAlign='center';c.textBaseline='middle';c.lineJoin='round';c.lineWidth=Math.max(10,fs*.17);c.strokeStyle='#b00d28';c.strokeText(txt,cv.width/2,y);c.fillStyle='#ffffff';c.fillText(txt,cv.width/2,y)};
-    const ball=(bx,by,r)=>{c.beginPath();c.arc(bx,by,r,0,Math.PI*2);c.fillStyle='#ffffff';c.fill();c.lineWidth=r*.11;c.strokeStyle='#b00d28';c.stroke();
-      c.save();c.beginPath();c.arc(bx,by,r-5,0,Math.PI*2);c.clip();c.lineWidth=r*.08;for(let k=0;k<3;k++){const a=k*Math.PI*2/3+.5;c.beginPath();c.arc(bx+Math.cos(a)*r*1.05,by+Math.sin(a)*r*1.05,r*1.02,0,Math.PI*2);c.stroke()}c.restore()};
-    const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;
-    LM.devDraw=i=>{const m=VBMSG[i%VBMSG.length];c.clearRect(0,0,cv.width,cv.height);line(m[0],150,150,cv.width-2*330);line(m[1],392,250,cv.width-2*40);ball(165,150,112);ball(cv.width-165,150,112);tex.needsUpdate=true;dirty=true};LM.devDraw(0);
-    const len=Math.min(104,D.L*.66),hgt=len*cv.height/cv.width;const g=new THREE.Group();g.position.set(D.x,D.top+1.2+hgt/2,D.z);g.rotation.y=Math.atan2(-D.uz,D.ux);
-    const mat=new THREE.MeshBasicMaterial({map:tex,alphaTest:.4,fog:false});
-    const f1=new THREE.Mesh(new THREE.PlaneGeometry(len,hgt),mat);f1.position.z=.3;g.add(f1);LM.devSign=g;LM.devDim=[len,hgt];
-    const pm=new THREE.MeshLambertMaterial({color:0x3c4046});for(let k=0;k<7;k++){const p=new THREE.Mesh(new THREE.BoxGeometry(.6,hgt+1.2,.5),pm);p.position.set(-len/2+len*k/6,-.6,0);g.add(p)}
-    for(const yy of [-hgt/2,-hgt*.02,hgt/2]){const rail=new THREE.Mesh(new THREE.BoxGeometry(len,.4,.5),pm);rail.position.y=yy;g.add(rail)}
+  if(LM.dev){const D=LM.dev;const F='"Arial Black",Impact,"Helvetica Neue",Arial,sans-serif';
+    // ---- the three names the building carries, stacked on the roof, all readable at once.
+    // Bottom is the building, middle is the arena inside it, top is what this map calls the era. The card says which is official.
+    const NAMES=[['BOB DEVANEY SPORTS CENTER','OPENED 1976 \u00b7 NAMED 1978','#b00d28','#ffffff','#7d0a1d'],
+                 ['JOHN COOK ARENA','THE ARENA \u00b7 NAMED APRIL 11, 2025','#f7f4ec','#b00d28','#cfc7b4'],
+                 ['DBK UNIVERSE \u2605','THIS MAP\u2019S NAME FOR THE DBK ERA','#16120a','#e9b949','#4a3c18']];
+    const signTex=(title,sub,bg,ink,edge)=>{const w=2048,h=360,q=document.createElement('canvas');q.width=w;q.height=h;const x=q.getContext('2d');
+      x.fillStyle=bg;x.fillRect(0,0,w,h);x.fillStyle=edge;x.fillRect(0,0,w,14);x.fillRect(0,h-14,w,14);
+      let fs=186;x.font=`900 ${fs}px ${F}`;let tw=x.measureText(title).width;if(tw>w-150){fs=Math.floor(fs*(w-150)/tw);x.font=`900 ${fs}px ${F}`}
+      x.textAlign='center';x.textBaseline='middle';x.fillStyle=ink;x.fillText(title,w/2,h*.42);
+      x.font=`700 54px ${F}`;x.globalAlpha=.78;x.fillText(sub,w/2,h*.79);x.globalAlpha=1;
+      const t=new THREE.CanvasTexture(q);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t};
+    const len=Math.min(104,D.L*.66),PH=len*360/2048,GAP=PH*.22,BH=PH*1.25,hgt=NAMES.length*PH+BH+NAMES.length*GAP;
+    const g=new THREE.Group();g.position.set(D.x,D.top+1.2+hgt/2,D.z);g.rotation.y=Math.atan2(-D.uz,D.ux);
+    const pm=new THREE.MeshLambertMaterial({color:0x3c4046});
+    // ---- the board at the bottom: what is true about this team right now, read live when the website copy is open
+    {const w=2048,h=450,q=document.createElement('canvas');q.width=w;q.height=h;const x=q.getContext('2d');
+     const tex=new THREE.CanvasTexture(q);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;
+     LM.devBill=(sub,big,bg,ink)=>{x.fillStyle=bg||'#0d0f14';x.fillRect(0,0,w,h);
+       x.fillStyle=ink||'#ffd34d';x.globalAlpha=.16;for(let i=0;i<h;i+=6)x.fillRect(0,i,w,2);x.globalAlpha=1;
+       x.textAlign='center';x.textBaseline='middle';
+       x.font=`700 58px ${F}`;x.fillStyle=ink||'#ffd34d';x.globalAlpha=.8;x.fillText(sub,w/2,86);x.globalAlpha=1;
+       let fs=210;x.font=`900 ${fs}px ${F}`;let tw=x.measureText(big).width;if(tw>w-130){fs=Math.floor(fs*(w-130)/tw);x.font=`900 ${fs}px ${F}`}
+       x.fillStyle=ink||'#ffd34d';x.fillText(big,w/2,h*.63);
+       x.fillStyle=ink||'#ffd34d';x.globalAlpha=.5;x.fillRect(0,0,w,10);x.fillRect(0,h-10,w,10);x.globalAlpha=1;
+       tex.needsUpdate=true;dirty=true};
+     LM.devBill('NEBRASKA VOLLEYBALL','CENTER OF THE VOLLEYBALL UNIVERSE');
+     const m=new THREE.MeshBasicMaterial({map:tex,fog:false,side:THREE.DoubleSide});
+     const y=-hgt/2+BH/2;
+     const f=new THREE.Mesh(new THREE.PlaneGeometry(len,BH),m);f.position.set(0,y,.3);g.add(f);
+     const bb=new THREE.Mesh(new THREE.PlaneGeometry(len,BH),m);bb.position.set(0,y,-.3);bb.rotation.y=Math.PI;g.add(bb);
+     for(const yy of [y-BH/2,y+BH/2]){const rail=new THREE.Mesh(new THREE.BoxGeometry(len,.4,.8),pm);rail.position.y=yy;g.add(rail)}}
+    NAMES.forEach((N,k)=>{const wk=len*(k===0?1:k===1?.9:.78),hk=PH*(k===2?1.04:1);
+      const m=new THREE.MeshBasicMaterial({map:signTex(N[0],N[1],N[2],N[3],N[4]),fog:false,side:THREE.DoubleSide});
+      const y=-hgt/2+BH+GAP+PH/2+k*(PH+GAP);
+      const f=new THREE.Mesh(new THREE.PlaneGeometry(wk,hk),m);f.position.set(0,y,.3);g.add(f);
+      const b=new THREE.Mesh(new THREE.PlaneGeometry(wk,hk),m);b.position.set(0,y,-.3);b.rotation.y=Math.PI;g.add(b);
+      for(const yy of [y-hk/2,y+hk/2]){const rail=new THREE.Mesh(new THREE.BoxGeometry(wk,.34,.74),pm);rail.position.y=yy;g.add(rail)}});
+    for(let k=0;k<7;k++){const p=new THREE.Mesh(new THREE.BoxGeometry(.6,hgt+1.2,.5),pm);p.position.set(-len/2+len*k/6,0,0);g.add(p)}
+    LM.devSign=g;LM.devDim=[len,hgt];
     // a giant volleyball over the sign
     {const vb=new THREE.Mesh(new THREE.SphereGeometry(13,28,18),new THREE.MeshLambertMaterial({map:vbTexture(),emissive:0x331111}));vb.position.set(D.x,D.top+1.2+hgt+15,D.z);scene.add(vb);LM.devBall=vb;vb.userData.info=['Devaney Sports Center',VBREC];vb.userData.dev=true;pickables.push(vb)}
     // the John Cook statue: a bronze figure on a plinth, north of the building (the real one is on the north side; this exact spot is a guess)
@@ -1199,6 +1227,7 @@ function ridePick(){const gp=groundPoint();if(!gp)return;const v=bgNearest(gp.x,
 function pick(x,y){if(performance.now()-rideStopT<500)return;menuAt=0;ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,camera);if(rideMode){ridePick();return}if(pickMore(x,y))return;if(!codeOn&&dlPick(x,y,true))return;const hit=ray.intersectObjects(pickables,true)[0];if(!codeOn&&treePick(hit?hit.distance:1e9))return;if(!hit){if(!codeOn&&dlPick(x,y,false))return;if(!pickTrail())hideCard();return}
   let o=hit.object;while(o&&!o.userData.info&&!o.userData.ids&&!o.userData.bus&&!o.userData.card)o=o.parent;if(!o)return;if(o.userData.card){o.userData.card(hit);return}
   let title,body;
+  if(o.userData.sq&&hit.instanceId!==undefined&&sqPoke(hit.instanceId))return;
   if(o.userData.bus){const st=busState[hit.instanceId];if(!st)return;if(BX.ok){busCard(st);return}title='StarTran route '+st.short+(st.long?' · '+st.long:'');body='Scheduled position from the published timetable, not a live GPS reading.'}
   else if(o.userData.dev){devCard(0);rollOpen('vb');return}
   else if(o.userData.info){[title,body]=o.userData.info}
@@ -1666,8 +1695,9 @@ function stepPride(dt,now){if(!prideOn||!LM.spr)return;ambient=true;
   S.pts.geometry.attributes.position.needsUpdate=true;S.pts.geometry.attributes.color.needsUpdate=true;
   const H2=LM.hearts.geometry.attributes.position,A=H2.array;for(let i=1;i<A.length;i+=3){A[i]+=dt*(7+((i*7)%5));if(A[i]>C0.y+110)A[i]=C0.y-125}H2.needsUpdate=true;ambient=true}
 let devT=0,devI=0;
-function stepDev(dt,now){if(!LM.devSign||!LM.devDraw)return;const t=controls.target,g=LM.devSign,d2=(t.x-g.position.x)**2+(t.z-g.position.z)**2;if(d2>2600*2600)return;
-  if(now-devT>3400){devT=now;devI++;LM.devDraw(devI)}if(LM.devBall&&d2<1600*1600){LM.devBall.rotation.y+=dt*.5;ambient=true}}
+function stepDev(dt,now){if(!LM.devSign)return;const t=controls.target,g=LM.devSign,d2=(t.x-g.position.x)**2+(t.z-g.position.z)**2;if(d2>2600*2600)return;
+  if(LM.devBill&&now-devT>4200){devT=now;devI++;devBillTurn(devI)}
+  if(LM.devBall&&d2<1600*1600){LM.devBall.rotation.y+=dt*.5;ambient=true}}
 let bikers=null;
 function setupBikers(){const TR=LM.trails||[],best=new Map();for(let w=0;w<TR.length;w++){const T=TR[w];if(T.tc>=3||T.tn===65535||T.d.length<4)continue;const q=best.get(T.tn);if(q===undefined||TR[q].len<T.len)best.set(T.tn,w)}
   // each named trail becomes one continuous path, so riders travel its whole length and turn around at the ends
@@ -1734,7 +1764,7 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
  ['Make this for your city','Type any place, ZIP code or GPS point and see it in 3D from open map data. The code is free to copy.',()=>openSheet(FORKS,0)],
  ['Dress the Sower','The figure on the Capitol dome, in Husker scarlet, a cowboy hat, a sequin gown or a winter coat. For fun.',()=>{sowerFly();setTimeout(sowerCard,2100)}]];
 function guideHTML(i){const c=H.counts||{},n=v=>(v||0).toLocaleString(),org=c.org||[0,0,0];
-  if(i===0)return `<h4>What this is</h4>${COUNTH}<p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account. This is release 0.9.4.</p>
+  if(i===0)return `<h4>What this is</h4>${COUNTH}<p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account. This is release 0.9.5.</p>
 <h4>Getting around</h4><ul><li><b>Phone:</b> drag to move, pinch to zoom, twist two fingers to turn, slide two fingers up or down to tilt, double tap to zoom in, tap with two fingers to zoom out.</li><li><b>Computer:</b> drag to move, scroll to zoom, right-drag or Shift-drag to turn and tilt. Arrow keys, + and -, Q and E work too.</li><li><b>The round buttons</b> on the right: drag the compass to turn the map or tap it for north up, + and - zoom (hold to keep going), and the last one tilts.</li><li><b>Street names</b> come in by size: main roads from far out, every street as you move in close.</li><li><b>Tap anything</b> for a card that says what it is and how sure the map is about it. Buildings lead with their assessed value and a tax estimate. Trees on the city list give their kind, trunk size and city tree ID.</li><li>The <b>slider</b> at the bottom sets the time of day. The <b>ribbon</b> under it jumps to places.</li></ul>
 <h4>The buttons</h4><ul><li><b>Search</b> streets, addresses, buildings, parks and trails. <b>Tour</b> flies a short loop.</li><li><b>Find me</b> puts a blue dot where you are. It stays on your device.</li><li><b>Bike ride</b> rides trails and bike streets. <b>Trails</b> shows or hides them.</li><li><b>Weather</b> shows wind, rain, snow, lightning and warnings. The line under the title is the weather right now: tap it for alerts and the forecast.</li><li><b>Huskers</b> has live scores. <b>Democracy</b> shows how Lincoln has voted, who represents any spot, and what City Hall is deciding. <b>Real estate</b> is a switch. On, building cards lead with assessed value and a tax estimate, and value bars, new sales, taxes by district, the statistics and a compare-everything table are one tap away. Off, the map is about the place and a card offers its value only when you ask.</li><li><b>Walk</b> puts you on the street with a joystick. Tap a spot to walk there, or a building for its card.</li><li><b>Now</b> and <b>Reset</b> sit at the top of the screen. Now sets the map to this moment and says what is going on in Lincoln. Reset brings you back to the whole city from above with everything switched back, whenever you get lost. Under them is a row of reasons you may be here: tap one for a short list of where to go.</li><li><b>Menu</b> folds the buttons away for a clear view, and the small button at the bottom left does the same for the key, the time slider and the places ribbon. Tap again to bring them back.</li><li><b>More</b> holds Now (the real time of day), 2D view, North up, Share view, Buses, Game day, Labels, Shadows, Birds, Pride, Volleyballs, Traffic, the Real estate tour, Native Lincoln, Play in Lincoln, Flights and Creatures.</li></ul>
 <h4>Real, estimated, or just for fun</h4><p>Buildings, streets, trails, terrain, weather, scores, assessed values, election results and city records are real data. Some heights, all roof shapes, every property tax figure and the hour-by-hour traffic curve are estimates. The giraffes, penguins, dogs, cyclists, rainbows, volleyballs, lake monsters, Sasquatch, the East Campus cattle and combine, the birds circling the Capitol and the example planes are just for fun. Each card says which is which.</p>`;
@@ -2466,9 +2496,10 @@ function creaturesInit(){const lakes=[];for(const w of LM.waters||[]){const a=po
   fm.userData.info=['Jumping fish','Fish jump in the lakes and ponds near where you are looking. An animation for fun, not a fish count.'];scene.add(fm);pickables.push(fm);CR.fish={m:fm,N:NF,st:Array.from({length:NF},()=>({w:Math.random()*4,t:0,x:0,z:0,a:0,on:false}))};
   // Sasquatch, in two poses so he strides
   const F=0x3b2a1e,F2=0x4c3828,pose=s=>boxes([[.42,1.15,.42,-.26,.58,s*.34,F],[.42,1.15,.42,.26,.58,-s*.34,F],[1.05,1.25,.62,0,1.75,0,F],[.82,.5,.5,0,2.05,-.08,F2],[.34,1.35,.34,-.72,1.7,-s*.38,F],[.34,1.35,.34,.72,1.7,s*.38,F],[.56,.56,.56,0,2.68,-.04,F],[.42,.12,.1,0,2.74,-.33,0x1c130d]]);
-  const woods=(LM.woods||[]).filter(w=>w[1]==='wood').map(w=>({r:w[0],a:polyArea(w[0]),bx:polyBox(w[0])})).filter(w=>w.a>70000).sort((p,q)=>q.a-p.a).slice(0,mobile?4:6),sqA=new THREE.InstancedMesh(pose(1),mat,Math.max(1,woods.length)),sqB=new THREE.InstancedMesh(pose(-1),mat,Math.max(1,woods.length));
-  for(const m of [sqA,sqB]){m.count=woods.length;m.frustumCulled=false;m.userData.info=['Sasquatch','Tall, hairy, mid-stride and never quite in focus. One wanders each of the biggest woods on the map, most of them in Wilderness Park. Just for fun: there is no evidence of Sasquatch in Lancaster County, only stories.'];scene.add(m);pickables.push(m)}
-  CR.sq={A:sqA,B:sqB,list:woods.map(w=>{const p=polyRand(w.r,w.bx,40)||[(w.bx[0]+w.bx[1])/2,(w.bx[2]+w.bx[3])/2];return {w,x:p[0],z:p[1],tx:p[0],tz:p[1],h:0,wait:1,ph:0,lb:{t:'Sasquatch?',x:p[0],y:0,z:p[1],k:3,pri:380,near:0,far:1900}}})};
+  const poseW=boxes([[.42,1.15,.42,-.26,.58,.2,F],[.42,1.15,.42,.26,.58,-.2,F],[1.05,1.25,.62,0,1.75,0,F],[.82,.5,.5,0,2.05,-.08,F2],[.34,1.35,.34,-.72,1.7,-.3,F],[.34,1.2,.34,.82,2.5,0,F],[.3,.3,.3,.9,3.12,0,F],[.56,.56,.56,0,2.68,-.04,F],[.42,.12,.1,0,2.74,-.33,0x1c130d]]);
+  const woods=(LM.woods||[]).filter(w=>w[1]==='wood'||w[1]==='park'||w[1]==='cemetery').map(w=>({r:w[0],a:polyArea(w[0]),bx:polyBox(w[0])})).filter(w=>w.a>40000).sort((p,q)=>q.a-p.a).slice(0,mobile?5:9),sqA=new THREE.InstancedMesh(pose(1),mat,Math.max(1,woods.length)),sqB=new THREE.InstancedMesh(pose(-1),mat,Math.max(1,woods.length)),sqW=new THREE.InstancedMesh(poseW,mat,Math.max(1,woods.length));
+  for(const m of [sqA,sqB,sqW]){m.count=woods.length;m.frustumCulled=false;m.userData.sq=true;m.userData.info=['Sasquatch','Tall, hairy, mid-stride and never quite in focus. One wanders each of the biggest woods and parks on the map. Come too close and he bolts behind a tree. Just for fun: there is no evidence of Sasquatch in Lancaster County, only stories.'];scene.add(m);pickables.push(m)}
+  CR.sq={A:sqA,B:sqB,W:sqW,list:woods.map(w=>{const p=polyRand(w.r,w.bx,40)||[(w.bx[0]+w.bx[1])/2,(w.bx[2]+w.bx[3])/2];return {w,x:p[0],z:p[1],tx:p[0],tz:p[1],h:0,wait:1,ph:0,mode:'roam',spd:1.9,t:0,lb:{t:'Sasquatch?',x:p[0],y:0,z:p[1],k:3,pri:380,near:0,far:1900}}})};
   farmInit(mat);capitolExtras(mat)}
 function stepCreatures(dt,now){if(!CR.on||!CR.nesM)return;const SLP=sleepy(),t=controls.target,sc=(x,z,ref,mx)=>Math.min(mx,Math.max(1,camDist(x,hAt(x,z),z)/ref));
   CR.nes.forEach((n,i)=>{const L=n.cum[n.cum.length-1];n.s=(n.s+(SLP?0:2.6)*dt)%L;if(SLP){n.dive=0;n.next=6}else n.next-=dt;if(n.next<0){n.dive=n.dive?0:1;n.next=n.dive?5:14+Math.random()*16}n.d=(n.d||0)+((n.dive?1:0)-(n.d||0))*Math.min(1,dt*1.2);
@@ -2479,14 +2510,21 @@ function stepCreatures(dt,now){if(!CR.on||!CR.nesM)return;const SLP=sleepy(),t=c
     F.st.forEach((f,i)=>{if(SLP){f.on=false;const l=near.length?near[i%near.length]:null;if(l&&i<near.length*2){if(f.bl!==l){const p=polyRand(l.r,l.bx);if(p){f.sx=p[0];f.sz=p[1];f.bl=l}}if(f.bl===l){const s=sc(f.sx,f.sz,150,13),y=hAt(f.sx,f.sz);bedAt(f.sx,y+.03,f.sz,.55*s,i*1.7,0x9fd0ff);lP.set(f.sx,y+.48*s,f.sz);lE.set(0,i*1.7,1.5708,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);F.m.setMatrixAt(i,lM);return}}lM.makeScale(0,0,0);F.m.setMatrixAt(i,lM);return}if(!f.on){f.w-=dt;if(f.w<0&&near.length&&!SLP){const l=near[(Math.random()*near.length)|0],p=polyRand(l.r,l.bx);if(p){f.x=p[0];f.z=p[1];f.a=Math.random()*6.283;f.t=0;f.on=true}else f.w=1}if(!f.on){lM.makeScale(0,0,0);F.m.setMatrixAt(i,lM);return}}
       f.t+=dt/.95;const u=Math.min(1,f.t),s=sc(f.x,f.z,150,13),x=f.x+Math.sin(f.a)*u*2.4*s,z=f.z+Math.cos(f.a)*u*2.4*s;lP.set(x,hAt(f.x,f.z)+(4*u*(1-u)*2.1-.2)*s,z);lE.set((u-.5)*2.2,f.a+Math.PI,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);F.m.setMatrixAt(i,lM);if(u>=1){f.on=false;f.w=.6+Math.random()*5}});
     F.m.instanceMatrix.needsUpdate=true;if(SLP)near.slice(0,3).forEach((l,i)=>sleepZ(l.cx,l.cz,7,'Fish and waterfowl asleep',now,i+3))}
-  const Q=CR.sq;Q.list.forEach((q,i)=>{const dx=q.tx-q.x,dz=q.tz-q.z,d=Math.hypot(dx,dz),s=sc(q.x,q.z,120,13)*1.25;let walking=false;
-    if(SLP){const y=hAt(q.x,q.z);bedAt(q.x,y,q.z,1.5*s,q.h,0xcfe6b8);lP.set(q.x,y+.75*s,q.z);lE.set(-1.5,q.h,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);Q.A.setMatrixAt(i,lM);lM.makeScale(0,0,0);Q.B.setMatrixAt(i,lM);sleepZ(q.x,q.z,6*s,'Sasquatch, asleep in the woods',now,i+6);return}
-    if(q.wait>0)q.wait-=dt;else if(d>1){const st=Math.min(d,1.7*Math.sqrt(s)*dt);q.x+=dx/d*st;q.z+=dz/d*st;let dh=Math.atan2(-dx,-dz)-q.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));q.h+=dh*Math.min(1,dt*4);q.ph+=st/s*1.5;walking=true}
-    else{const p=polyRand(q.w.r,q.w.bx,20);if(p){q.tx=p[0];q.tz=p[1]}q.wait=Math.random()<.4?2+Math.random()*4:0}
-    const A=!walking||Math.sin(q.ph)>0;lP.set(q.x,hAt(q.x,q.z)+(walking?Math.abs(Math.sin(q.ph))*.08*s:0),q.z);lQ.setFromAxisAngle(lUp,q.h);lS.setScalar(s);lM.compose(lP,lQ,lS);Q.A.setMatrixAt(i,lM);Q.B.setMatrixAt(i,lM);
-    lM.makeScale(0,0,0);(A?Q.B:Q.A).setMatrixAt(i,lM);q.lb.x=q.x;q.lb.z=q.z;q.lb.y=hAt(q.x,q.z)+4.2*s;lifeLabels.push(q.lb)});
-  Q.A.instanceMatrix.needsUpdate=true;Q.B.instanceMatrix.needsUpdate=true;stepFarm(dt,now,sc);stepCapitol(dt,now,sc);ambient=true}
-function setCreatures(on){CR.on=on;$('bCre').classList.toggle('on',on);for(const m of [CR.nesM,CR.fish&&CR.fish.m,CR.sq&&CR.sq.A,CR.sq&&CR.sq.B,CR.cowM,CR.comb,CR.crop,CR.stub,CR.cone,CR.capB&&CR.capB[0],CR.capB&&CR.capB[1]])if(m)m.visible=on;dirty=true}
+  const Q=CR.sq;const sqHide=i=>{lM.makeScale(0,0,0);Q.A.setMatrixAt(i,lM);Q.B.setMatrixAt(i,lM);Q.W.setMatrixAt(i,lM)};
+  Q.list.forEach((q,i)=>{const s=sc(q.x,q.z,120,13)*1.25;let walking=false;
+    if(!SLP&&sqMode(q,dt,now)){sqHide(i);return}
+    const dx=q.tx-q.x,dz=q.tz-q.z,d=Math.hypot(dx,dz);
+    if(SLP){const y=hAt(q.x,q.z);bedAt(q.x,y,q.z,1.5*s,q.h,0xcfe6b8);lP.set(q.x,y+.75*s,q.z);lE.set(-1.5,q.h,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);Q.A.setMatrixAt(i,lM);lM.makeScale(0,0,0);Q.B.setMatrixAt(i,lM);Q.W.setMatrixAt(i,lM);sleepZ(q.x,q.z,6*s,'Sasquatch, asleep in the woods',now,i+6);return}
+    if(q.mode==='wave'){q.h=Math.atan2(camera.position.x-q.x,camera.position.z-q.z)}
+    else if(q.wait>0)q.wait-=dt;else if(d>1){const st=Math.min(d,(q.spd||1.9)*Math.sqrt(s)*dt);q.x+=dx/d*st;q.z+=dz/d*st;let dh=Math.atan2(-dx,-dz)-q.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));q.h+=dh*Math.min(1,dt*4);q.ph+=st/s*1.5;walking=true}
+    else if(q.mode==='roam'){const p=polyRand(q.w.r,q.w.bx,20);if(p){q.tx=p[0];q.tz=p[1]}q.wait=Math.random()<.3?1.5+Math.random()*3:0}
+    const wv=q.mode==='wave',A=!walking||Math.sin(q.ph)>0;
+    lP.set(q.x,hAt(q.x,q.z)+(walking?Math.abs(Math.sin(q.ph))*.08*s:0),q.z);lQ.setFromAxisAngle(lUp,q.h+(wv?Math.sin(now*.013)*.16:0));lS.setScalar(s);lM.compose(lP,lQ,lS);
+    Q.A.setMatrixAt(i,lM);Q.B.setMatrixAt(i,lM);Q.W.setMatrixAt(i,lM);lM.makeScale(0,0,0);
+    if(wv){Q.A.setMatrixAt(i,lM);Q.B.setMatrixAt(i,lM)}else{Q.W.setMatrixAt(i,lM);(A?Q.B:Q.A).setMatrixAt(i,lM)}
+    q.lb.t=wv?'Sasquatch!':q.mode==='flee'?'Sasquatch, leaving':'Sasquatch?';q.lb.x=q.x;q.lb.z=q.z;q.lb.y=hAt(q.x,q.z)+4.2*s;lifeLabels.push(q.lb)});
+  Q.A.instanceMatrix.needsUpdate=true;Q.B.instanceMatrix.needsUpdate=true;Q.W.instanceMatrix.needsUpdate=true;stepFarm(dt,now,sc);stepCapitol(dt,now,sc);ambient=true}
+function setCreatures(on){CR.on=on;$('bCre').classList.toggle('on',on);for(const m of [CR.nesM,CR.fish&&CR.fish.m,CR.sq&&CR.sq.A,CR.sq&&CR.sq.B,CR.sq&&CR.sq.W,CR.cowM,CR.comb,CR.crop,CR.stub,CR.cone,CR.capB&&CR.capB[0],CR.capB&&CR.capB[1]])if(m)m.visible=on;dirty=true}
 // ---- East Campus: cattle by the Animal Science Complex, a combine working the research plots, ice cream at the Dairy Store
 function farmInit(mat){const an=bByName('Animal Science Complex'),ds=bByName('UNL Dairy Store');if(an<0)return;const ax=LM.bc[2*an],az=LM.bc[2*an+1];
   const fields=(LM.fields||[]).map(r=>({r,a:polyArea(r),bx:polyBox(r)})).map(f=>Object.assign(f,{cx:(f.bx[0]+f.bx[1])/2,cz:(f.bx[2]+f.bx[3])/2})).filter(f=>Math.hypot(f.cx-ax,f.cz-az)<1150&&f.a>7000);
@@ -3828,6 +3866,63 @@ function sowerCard(){const S=LM.sower;if(!S){showCard('The Sower','The Capitol d
 function sowerInit(){if(!LM.sower)return;let k='bronze';try{k=localStorage.getItem('sc_sower')||'bronze'}catch(e){}
   if(k!=='bronze')sowerWear(k,true)}
 
+// ---- the board on the Devaney roof: what is true about this team at this moment
+function devBillLines(){
+  const out=[],S=(()=>{try{return vbSeason()}catch(e){return null}})();
+  // a match in progress comes first and stays first
+  try{const ev=(HK.ev.vb||[]).find(e=>e.st==='in');
+    if(ev)out.push(['LIVE AT THE DEVANEY CENTER','NEBRASKA '+ev.my+' – '+ev.opp.toUpperCase()+' '+ev.th,'#7d0a1d','#fff4d6'])}catch(e){}
+  if(S&&S.ev.length){
+    const w=S.ev.filter(e=>e[4]).length,l=S.ev.length-w;
+    let sw=0,sl=0,run=0;for(const e of S.ev){sw+=+e[2];sl+=+e[3]}
+    for(let i=S.ev.length-1;i>=0;i--){if(S.ev[i][4])run++;else break}
+    out.push([S.live?'THIS SEASON, READ LIVE':'THIS SEASON',w+'–'+l,'#0d0f14','#ffd34d']);
+    if(sw||sl)out.push(['SETS WON AND LOST',sw+' – '+sl,'#0d0f14','#ffd34d']);
+    if(run>1)out.push(['WINS IN A ROW',String(run),'#7d0a1d','#fff4d6']);
+    const last=S.ev[S.ev.length-1];
+    if(last)out.push([(last[4]?'BEAT':'LOST TO')+' '+String(last[1]).toUpperCase(),last[2]+'–'+last[3],'#0d0f14','#ffd34d']);
+  }
+  // the next one on the schedule
+  try{const now=Date.now(),nx=(HK.ev.vb||[]).filter(e=>e.st==='pre'&&e.t>now-9e5).sort((a,b)=>a.t-b.t)[0];
+    if(nx)out.push(['NEXT'+(nx.ha==='home'?' AT HOME':' AWAY'),String(nx.opp).toUpperCase()+' · '+clock(nx.t),'#0d0f14','#ffd34d'])}catch(e){}
+  out.push(['STRAIGHT SELLOUTS SINCE 2001','350+','#7d0a1d','#fff4d6']);
+  out.push(['VOLLEYBALL DAY IN NEBRASKA, AUG 30 2023','92,003','#0d0f14','#ffd34d']);
+  out.push(['NEBRASKA VOLLEYBALL','CENTER OF THE VOLLEYBALL UNIVERSE','#7d0a1d','#fff4d6']);
+  return out}
+function devBillTurn(i){if(!LM.devBill)return;const L=devBillLines();if(!L.length)return;const q=L[((i%L.length)+L.length)%L.length];LM.devBill(q[0],q[1],q[2],q[3])}
+
+// ---- Sasquatch: he roams the woods and parks, bolts for cover when anyone comes close,
+// and if you manage to tap him he waves before he goes. Returns true while he is out of sight.
+function sqCover(q){ // the nearest tree to duck behind, or a far corner of his patch
+  const T=LM.treePts;let bx=null,bd=1e18;
+  if(T){const n=T.length,step=Math.max(1,Math.floor(n/900));
+    for(let k=0;k<n;k+=step){const p=T[k],dx=p[0]-q.x,dz=p[1]-q.z,d=dx*dx+dz*dz;if(d<bd&&d>36){bd=d;bx=p}}}
+  if(bx&&bd<90*90)return [bx[0],bx[1]];
+  if(bx){const d=Math.sqrt(bd),f=Math.min(1,70/d);return [q.x+(bx[0]-q.x)*f,q.z+(bx[1]-q.z)*f]}
+  const p=polyRand(q.w.r,q.w.bx,20);return p?[p[0],p[1]]:[q.x,q.z]}
+function sqAway(q){ // a spot in his patch as far from the camera as a few tries can find
+  let best=null,bd=-1;for(let k=0;k<6;k++){const p=polyRand(q.w.r,q.w.bx,20);if(!p)continue;
+    const d=(p[0]-camera.position.x)**2+(p[1]-camera.position.z)**2;if(d>bd){bd=d;best=p}}
+  return best?[best[0],best[1]]:[q.x,q.z]}
+function sqMode(q,dt,now){
+  const cd=Math.hypot(camera.position.x-q.x,camera.position.z-q.z),reach=Math.hypot(q.tx-q.x,q.tz-q.z);
+  if(q.mode==='hide'){q.t-=dt;if(q.t<=0){const p=sqAway(q);q.x=p[0];q.z=p[1];q.tx=p[0];q.tz=p[1];q.mode='roam';q.spd=1.9;q.wait=.6}return true}
+  if(q.mode==='wave'){q.t-=dt;if(q.t<=0){const p=sqAway(q);q.tx=p[0];q.tz=p[1];q.mode='flee';q.spd=4.6;q.wait=0;q.t=3.4}return false}
+  if(q.mode==='flee'){q.t-=dt;if(reach<2.5||q.t<=0){q.mode='hide';q.t=5+Math.random()*7}return false}
+  if(q.mode==='spook'){q.t-=dt;if(reach<2.5||q.t<=0){q.mode='hide';q.t=6+Math.random()*9}return false}
+  // roaming: anyone inside about a hundred yards sends him for cover
+  if(cd<105&&!walk.on){const p=sqCover(q);q.tx=p[0];q.tz=p[1];q.mode='spook';q.spd=4.2;q.wait=0;q.t=2.8;
+    if(!SQ.told){SQ.told=true;hintShow('Something moved in the trees. Come closer and it will not wait around.',5200)}}
+  return false}
+const SQ={told:false};
+// a tap on him: he stops, turns, waves, and then he is gone
+function sqPoke(i){const Q=CR.sq;if(!Q||!Q.list[i])return false;const q=Q.list[i];
+  if(q.mode==='hide')return false;
+  q.mode='wave';q.t=1.8;q.wait=0;lastInput=performance.now();
+  showCard('Sasquatch','He has seen you. He is waving. In a moment he will be behind a tree and you will not find him again, which is the whole point of Sasquatch. For fun: there is no evidence of Sasquatch in Lancaster County, only stories.',undefined,
+    {label:'Follow him',fn:()=>{flyTo(camTo(q.x,q.z,120,200,18),1600)}});
+  dirty=true;return true}
+
 
 // ---------- loop
 let dirty=true,lastF=0,fAvg=20,fN=0,perfStep=0;
@@ -3862,7 +3957,7 @@ function frame(now){requestAnimationFrame(frame);
   setTime(+$('sunR').value);updateBuses();
   if(location.protocol.startsWith('http')){loadWeather();loadWater();loadSightings()}
   requestAnimationFrame(frame);
-  window.__ready=true;window.__x={setVotes,dmShow,dmCard,civicStack,civArm,setNative,openSheet,closeSheet,NUMS,NILS,HUSK,TAXS,reTour,setWalk,walkTap,walkToB,setFlights,setCreatures,setVB,councilCard,demoCard,setDemo,setWx,capitolMore,wxDetail,rollOpen,rollClose,huskOpen,hkParse,hkAfter,HK,DM,CR,FLT,CIV,ROLL,labels,walk,LM,numStats,vbTally,resetAll,dlSet,setTraffic,flyTo,camTo,showB,bByName,bAt,streetNear,setTime,pick,H,S,DL,pickables,placeStorms,updateLabels,TR,treeCard,treePick,treeNear,rideRoute,bgNearest,bikeGraph,setRideMode,stopRide,get ride(){return ride},get sheet(){return sheet},setSky,NSKY,skyCard,skyTap,skyShift,devFest,FEST,festLabels,busNear,stopCard,busCard,BX,BUSS,stopNext,busState,BIRDSS,birdPool,birdYear,birdLook,intentCard,sgList,sgDraw,nowTap,safeCard,cityData,cdLoad,CD,CITYD,describeView,accSet,ACC,VBS,vbSeason,rollData,setFall,fallAmt,setLive,pulseCard,CORE,coreSet,trayDraw,CMPS,CMP,cmpDraw,cmpCorr,sleepy,SLEEP,roostPick,RE,setRE,reCard,rentCard,FEED,setFeeds,feedText,CHS,chartsFor,BED,get fly(){return !!fly},get tour(){return tour},SALESS,saleRows,setLook,LOOK,showB:showB,trayItems,panOut,get trafOn(){return trafOn},get wxOn(){return wxOn},get liveOn(){return liveOn},get flocks(){return flocks},councilOpen,COUNCILS,FORKS,viewExit,MENUS,SG,CC,ccPipe,sowerWear,sowerCard,sowerFly,SWEAR,cardReopen,get sower(){return LM.sower}};window.__dl=(id,on)=>{dlSet(id,on);return dlOn.map(L=>L.id)};window.__dls=()=>[...DL.values()].map(L=>[L.id,L.def.k,L.n,L.on]);window.__biz=setBiz;window.__bizf=o=>{Object.assign(bizF,o);bizApply();bizRender();return [bizL.shown,bizL.local]};window.__code=setCode;window.__pulse=pulseCard;window.__around=aroundCard;window.__sheet=(n,t)=>openSheet(n==='tax'?TAXS:n==='lay'?LAYS:GUIDE,t);window.__paint=paintBuildings;window.__showB=showB;window.__reset=birdsEye;window.__solo=t=>dlTop&&dlSolo(dlTop,t);window.__hs=(h,a)=>{dlHS=h;if(a!==undefined)dlAL=a;dirty=true};window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__wake=()=>{lastInput=performance.now()};window.__amb=v=>{ambOK=v;return v};window.__sim=(sec,step)=>{step=step||.05;let t=(frame.t||performance.now())+simOff;for(let q=0;q<sec;q+=step){t+=step*1000;simOff+=step*1000;lastInput=performance.now();stepLife(step,t)}dirty=true;return 1};window.__vb=setVB;window.__guide=setGuide;window.__pen=()=>zoo&&zoo.pen?[Math.round(zoo.pen.px),Math.round(zoo.pen.pz)]:null;window.__tl=name=>{const ti=H.tnames.indexOf(name),q=(H.tlabels||[]).find(l=>l[0]===ti);return q?[q[1],-q[2]]:null};window.__share=()=>({n:birdShare.length,src:shareSrc,top:birdShare.slice(0,3).map(q=>q.c+' '+pct(q.p/birdShare.tot))});window.__chips=()=>list.map(l=>l[0]);window.__prideR=v=>{if(v!==undefined)LM.prideR=v;return Math.round(LM.prideR||0)};window.__bikers=()=>bikers&&!bikers.none?{n:bikers.list.length,vis:bikers.m.visible,paths:new Set(bikers.list.map(q=>q.T)).size}:null;window.__traf=setTraffic;window.__sight=()=>({n:sightings.length,fail:sightFail,flocks:flocks.filter(f=>f.sg).map(f=>f.lb.t+' | '+f.lb.sub)});window.__loadSight=()=>{sightT=0;return loadSightings().then(()=>sightings.length)};window.__view=()=>{const v=viewAngles(),t=controls.target;return {x:Math.round(t.x),z:Math.round(t.z),d:Math.round(v.d),az:Math.round(v.az),el:Math.round(v.el),pan:!!pan,panV:!!panV}};window.__zoom=zoomBy;window.__g=(x,y)=>{const h=groundAt(x,y);return h?[Math.round(h.x),Math.round(h.z)]:null};window.__2d=set2D;window.__roofed=()=>LM.roofed;window.__lm=()=>({dev:LM.dev,statue:LM.cookStatue,zoo:H.zoo,dogs:(H.dogparks||[]).map(q=>q[3]),pid:S.b_p1?S.b_p1.length:0});window.__link=()=>[...$('clinks').children].map(a=>a.textContent+' -> '+a.href).join(' | ')||null;window.__perf=()=>({frCost:+frCost.toFixed(1),lblScale,perfStep});window.__pride=setPride;window.__life=()=>({flocks:flocks.map(f=>f.b[0]),birds:birdMesh?birdMesh.count:0,eaten:zoo?zoo.eaten:-1,lettuce:zoo?zoo.let.length:-1,dogs:dogs?dogs.list.length:0,sites:dogs?dogs.sites.length:0,month:birdMonth(),dev:devI});window.__wx=setWx;window.__demo=setDemo;window.__wxs=()=>({wx,alerts:alerts.length,wet:ovl?ovl.wet:null,radar:!!(ovl&&ovl.radar),precip,thunder,wind:windV?+windV.ms.toFixed(1):0,funnels:funnels.length,fail:wxFail,bolt:!!bolt,rain:!!(LM.rainL&&LM.rainL.visible),snow:!!(pPts&&pPts.visible)});window.__bg=()=>{const g=bikeGraph();return {nodes:g.NV,arcs:g.na,bikeEdges:g.nE,mi:+(g.total/1609.344).toFixed(1),islands:g.islands,linkMi:+(g.linkLen/1609.344).toFixed(1),links:g.links.length,bridges:g.nb,dead:g.dead,ms:g.ms}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9,false),b=bgNearest(x1,z1,1e9,false);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9,true);R.cov=new Uint8Array(g.nE);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0,unL=0;for(let e=0;e<g.nE;e++)if(!R.cov[e]){un++;unL+=g.eLen[e]}const mi=m=>+(m/1609.344).toFixed(1);return {legs,routeMi:mi(R.L),coveredMi:mi(R.cv[R.cv.length-1]),totalMi:mi(g.total),uncoveredEdges:un,uncoveredFt:Math.round(unL*3.281),newMi:mi(R.sm[0]),retraceMi:mi(R.sm[1]),linkMi:mi(R.sm[2]),bridgeMi:mi(R.sm[3]),turns:R.turns,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;window.__fog=()=>!!scene.fog;window.__cback=()=>$('cback').style.display;
+  window.__ready=true;window.__x={setVotes,dmShow,dmCard,civicStack,civArm,setNative,openSheet,closeSheet,NUMS,NILS,HUSK,TAXS,reTour,setWalk,walkTap,walkToB,setFlights,setCreatures,setVB,councilCard,demoCard,setDemo,setWx,capitolMore,wxDetail,rollOpen,rollClose,huskOpen,hkParse,hkAfter,HK,DM,CR,FLT,CIV,ROLL,labels,walk,LM,numStats,vbTally,resetAll,dlSet,setTraffic,flyTo,camTo,showB,bByName,bAt,streetNear,setTime,pick,H,S,DL,pickables,placeStorms,updateLabels,TR,treeCard,treePick,treeNear,rideRoute,bgNearest,bikeGraph,setRideMode,stopRide,get ride(){return ride},get sheet(){return sheet},setSky,NSKY,skyCard,skyTap,skyShift,devFest,FEST,festLabels,busNear,stopCard,busCard,BX,BUSS,stopNext,busState,BIRDSS,birdPool,birdYear,birdLook,intentCard,sgList,sgDraw,nowTap,safeCard,cityData,cdLoad,CD,CITYD,describeView,accSet,ACC,VBS,vbSeason,rollData,setFall,fallAmt,setLive,pulseCard,CORE,coreSet,trayDraw,CMPS,CMP,cmpDraw,cmpCorr,sleepy,SLEEP,roostPick,RE,setRE,reCard,rentCard,FEED,setFeeds,feedText,CHS,chartsFor,BED,get fly(){return !!fly},get tour(){return tour},SALESS,saleRows,setLook,LOOK,showB:showB,trayItems,panOut,get trafOn(){return trafOn},get wxOn(){return wxOn},get liveOn(){return liveOn},get flocks(){return flocks}};window.__dl=(id,on)=>{dlSet(id,on);return dlOn.map(L=>L.id)};window.__dls=()=>[...DL.values()].map(L=>[L.id,L.def.k,L.n,L.on]);window.__biz=setBiz;window.__bizf=o=>{Object.assign(bizF,o);bizApply();bizRender();return [bizL.shown,bizL.local]};window.__code=setCode;window.__pulse=pulseCard;window.__around=aroundCard;window.__sheet=(n,t)=>openSheet(n==='tax'?TAXS:n==='lay'?LAYS:GUIDE,t);window.__paint=paintBuildings;window.__showB=showB;window.__reset=birdsEye;window.__solo=t=>dlTop&&dlSolo(dlTop,t);window.__hs=(h,a)=>{dlHS=h;if(a!==undefined)dlAL=a;dirty=true};window.__dbg={renderer,sun,scene,camera,controls};window.__go=(i)=>{fly=null;const d=list[i][1];camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__time=h=>{$('sunR').value=h;$('sunR').oninput({target:$('sunR')})};window.__live=setLive;window.__trail=name=>{const ti=H.tnames.indexOf(name);const w=LM.trails.findIndex(T=>T.tn===ti&&T.tc<3);if(w>=0){showTrail(w);return w}return -1};window.__ride=()=>ride?{s:ride.s,L:ride.L,v:ride.v}:null;window.__tap=(x,y)=>pick(x,y);window.__cam=(tx,tz,dist,az,el,ty)=>{fly=null;const d=camTo(tx,tz,dist,az,el,ty||0);camera.position.copy(d.p);controls.target.copy(d.t);controls.update();shadowDirty=true;dirty=true};window.__info=()=>{let v=0;scene.traverse(o=>{if(o.geometry&&o.geometry.attributes.position)v+=o.geometry.attributes.position.count*(o.isInstancedMesh?1:1)});return {verts:v,tris:renderer.info.render.triangles,calls:renderer.info.render.calls}};window.__wake=()=>{lastInput=performance.now()};window.__amb=v=>{ambOK=v;return v};window.__sim=(sec,step)=>{step=step||.05;let t=(frame.t||performance.now())+simOff;for(let q=0;q<sec;q+=step){t+=step*1000;simOff+=step*1000;lastInput=performance.now();stepLife(step,t)}dirty=true;return 1};window.__vb=setVB;window.__guide=setGuide;window.__pen=()=>zoo&&zoo.pen?[Math.round(zoo.pen.px),Math.round(zoo.pen.pz)]:null;window.__tl=name=>{const ti=H.tnames.indexOf(name),q=(H.tlabels||[]).find(l=>l[0]===ti);return q?[q[1],-q[2]]:null};window.__share=()=>({n:birdShare.length,src:shareSrc,top:birdShare.slice(0,3).map(q=>q.c+' '+pct(q.p/birdShare.tot))});window.__chips=()=>list.map(l=>l[0]);window.__prideR=v=>{if(v!==undefined)LM.prideR=v;return Math.round(LM.prideR||0)};window.__bikers=()=>bikers&&!bikers.none?{n:bikers.list.length,vis:bikers.m.visible,paths:new Set(bikers.list.map(q=>q.T)).size}:null;window.__traf=setTraffic;window.__sight=()=>({n:sightings.length,fail:sightFail,flocks:flocks.filter(f=>f.sg).map(f=>f.lb.t+' | '+f.lb.sub)});window.__loadSight=()=>{sightT=0;return loadSightings().then(()=>sightings.length)};window.__view=()=>{const v=viewAngles(),t=controls.target;return {x:Math.round(t.x),z:Math.round(t.z),d:Math.round(v.d),az:Math.round(v.az),el:Math.round(v.el),pan:!!pan,panV:!!panV}};window.__zoom=zoomBy;window.__g=(x,y)=>{const h=groundAt(x,y);return h?[Math.round(h.x),Math.round(h.z)]:null};window.__2d=set2D;window.__roofed=()=>LM.roofed;window.__lm=()=>({dev:LM.dev,statue:LM.cookStatue,zoo:H.zoo,dogs:(H.dogparks||[]).map(q=>q[3]),pid:S.b_p1?S.b_p1.length:0});window.__link=()=>[...$('clinks').children].map(a=>a.textContent+' -> '+a.href).join(' | ')||null;window.__perf=()=>({frCost:+frCost.toFixed(1),lblScale,perfStep});window.__pride=setPride;window.__life=()=>({flocks:flocks.map(f=>f.b[0]),birds:birdMesh?birdMesh.count:0,eaten:zoo?zoo.eaten:-1,lettuce:zoo?zoo.let.length:-1,dogs:dogs?dogs.list.length:0,sites:dogs?dogs.sites.length:0,month:birdMonth(),dev:devI});window.__wx=setWx;window.__demo=setDemo;window.__wxs=()=>({wx,alerts:alerts.length,wet:ovl?ovl.wet:null,radar:!!(ovl&&ovl.radar),precip,thunder,wind:windV?+windV.ms.toFixed(1):0,funnels:funnels.length,fail:wxFail,bolt:!!bolt,rain:!!(LM.rainL&&LM.rainL.visible),snow:!!(pPts&&pPts.visible)});window.__bg=()=>{const g=bikeGraph();return {nodes:g.NV,arcs:g.na,bikeEdges:g.nE,mi:+(g.total/1609.344).toFixed(1),islands:g.islands,linkMi:+(g.linkLen/1609.344).toFixed(1),links:g.links.length,bridges:g.nb,dead:g.dead,ms:g.ms}};window.__rideMode=setRideMode;window.__route=(x0,z0,x1,z1)=>{bikeGraph();const a=bgNearest(x0,z0,1e9,false),b=bgNearest(x1,z1,1e9,false);setPin(0,a);setPin(1,b);rideRoute(a,b);return $('cp').textContent};window.__allSim=()=>{const g=bikeGraph();const t0=performance.now();const R=newRide('all');R.u=bgNearest(controls.target.x,controls.target.z,1e9,true);R.cov=new Uint8Array(g.nE);let legs=0;for(;;){const P=allNext(R);if(!P)break;appendLeg(R,P);legs++}let un=0,unL=0;for(let e=0;e<g.nE;e++)if(!R.cov[e]){un++;unL+=g.eLen[e]}const mi=m=>+(m/1609.344).toFixed(1);return {legs,routeMi:mi(R.L),coveredMi:mi(R.cv[R.cv.length-1]),totalMi:mi(g.total),uncoveredEdges:un,uncoveredFt:Math.round(unL*3.281),newMi:mi(R.sm[0]),retraceMi:mi(R.sm[1]),linkMi:mi(R.sm[2]),bridgeMi:mi(R.sm[3]),turns:R.turns,ms:Math.round(performance.now()-t0),pts:R.pts.length/2}};window.__card=()=>$('card').style.display==='block'?$('ch').textContent+' | '+$('cp').textContent:null;window.__bus=()=>busState.length;window.__walk=setWalk;window.__w=walk;
   const ld=$('load');if(ld){ld.style.opacity=0;setTimeout(()=>ld.remove(),700)}
   const want=list.find(l=>'#'+l[1].slug===location.hash);let shared=null;{const m=/^#v=(-?\d+),(-?\d+),(\d+),(-?\d+),(-?\d+)$/.exec(location.hash||'');if(m){const q=m.slice(1).map(Number);if(Math.abs(q[0])<=8700&&Math.abs(q[1])<=8700)shared=camTo(q[0],q[1],Math.min(24000,Math.max(45,q[2])),q[3],Math.min(89,Math.max(4,q[4])))}}
   setTimeout(()=>flyTo(shared||(want||list[1])[1],shared?2600:4200),900);
