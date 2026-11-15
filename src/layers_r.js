@@ -111,8 +111,9 @@ function devBillLines(){
   // the next one on the schedule
   try{const now=Date.now(),nx=(HK.ev.vb||[]).filter(e=>e.st==='pre'&&e.t>now-9e5).sort((a,b)=>a.t-b.t)[0];
     if(nx)out.push(['NEXT'+(nx.ha==='home'?' AT HOME':' AWAY'),String(nx.opp).toUpperCase()+' · '+clock(nx.t),'#0d0f14','#ffd34d'])}catch(e){}
-  out.push(['STRAIGHT SELLOUTS SINCE 2001','350+','#7d0a1d','#fff4d6']);
-  out.push(['VOLLEYBALL DAY IN NEBRASKA, AUG 30 2023','92,003','#0d0f14','#ffd34d']);
+  // every crowd and venue record, read from the same list the records panel reads, so the board and the
+  // card can never disagree. VBMSG.slice(6) is the crowds; the colors alternate so the board visibly turns.
+  try{VBMSG.slice(6).forEach((m,k)=>out.push([m[0],m[1],k%2?'#7d0a1d':'#0d0f14',k%2?'#fff4d6':'#ffd34d']))}catch(e){}
   out.push(['NEBRASKA VOLLEYBALL','CENTER OF THE VOLLEYBALL UNIVERSE','#7d0a1d','#fff4d6']);
   return out}
 function devBillTurn(i){if(!LM.devBill)return;const L=devBillLines();if(!L.length)return;const q=L[((i%L.length)+L.length)%L.length];LM.devBill(q[0],q[1],q[2],q[3])}
