@@ -16,9 +16,15 @@ Type any place, ZIP code or GPS point and it is built in your browser from OpenS
 
 You can also download `index.html` and open it in any browser, though the live feeds load only from the website copy.
 
-This is release 0.9.8. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
+This is release 0.9.9. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
 
 ## What is in it
+
+### New in 0.9.9
+
+- **Knobs for tilt and turn.** Until now the only way to set the tilt or the heading was to press a small button and drag it by a few pixels, which is hard on a phone and impossible without a mouse. There is a new knob button in the view cluster that opens two sliders, one for tilt from 4 to 89 degrees and one for turn with the compass point named, plus North up and Straight down. They show the live angle, they follow the view when you move it any other way, and because they are ordinary sliders they work with the arrow keys and announce themselves to a screen reader.
+- **The compass and tilt buttons answer the keyboard too.** Enter does what a tap does, arrows nudge by five degrees of tilt or ten of turn. Neither one needs a steady hand any more.
+- **A focus ring on every control**, not just the handful that had one, so a keyboard user can always see where they are.
 
 ### New in 0.9.8
 

@@ -37,14 +37,48 @@ function navInit(){controls.touches={ONE:-1,TWO:-1}; // touch is handled here, s
   navDrag($('bCmp'),(dx,dy,v)=>{if(ride){ride.yo=ride.yo0+dx*.012;dirty=true;return}if(walk.on){walk.yaw=walk.yaw0!==undefined?walk.yaw0+dx*.008:walk.yaw;dirty=true;return}const t=controls.target;setView(t.x,t.z,v.d,v.az+dx*.5,v.el)},()=>{if(ride){ride.yo=0;ride.hm=1;ride.zm=1;dirty=true}else $('bNorth').click()});
   $('bCmp').addEventListener('pointerdown',()=>{walk.yaw0=walk.yaw});
   navDrag($('bTilt'),(dx,dy,v)=>{if(ride){ride.hm=Math.min(4,Math.max(.2,ride.hm0*Math.exp(dy*.012)));dirty=true;return}if(walk.on)return;const t=controls.target;setView(t.x,t.z,v.d,v.az,Math.max(4,Math.min(89,v.el+dy*.4)))},()=>{if(ride){ride.hm=(ride.hm||1)<.6?1:.3;dirty=true}else if(!walk.on)set2D(!flat)});
+  knobInit();
   $('nav').classList.remove('mob');
   // a short reminder of how to move, the first time
   let seen=false;try{seen=localStorage.getItem('sc_hint')==='1'}catch(e){}
   if(!seen){const h=$('hint');h.textContent=mobile?'Drag to move · pinch to zoom · twist to turn · slide two fingers up or down to tilt':'Drag to move · scroll to zoom · right-drag or Shift-drag to turn and tilt · double-click to zoom in';
     setTimeout(()=>{h.style.display='block';setTimeout(()=>{h.style.display='none'},9000)},2500);try{localStorage.setItem('sc_hint','1')}catch(e){}}}
+
+// ---- view knobs: a slider each for tilt and turn, for anyone who cannot drag
+// a button by a few pixels, which is everyone on a phone and every keyboard user.
+let knobBusy=0,knobT=-999,knobZ=-999;
+function knobHead(az){return ((az%360)+360)%360}
+function knobFace(h){return ['N','NE','E','SE','S','SW','W','NW'][Math.round(h/45)%8]}
+function knobApply(el,h){if(walk.on||ride)return;const v=viewAngles(),t=controls.target;
+  setView(t.x,t.z,v.d,h===undefined?v.az:h,el===undefined?v.el:el)}
+function knobShow(on){const k=$('knobs');k.hidden=!on;$('bKnob').setAttribute('aria-pressed',on?'true':'false');
+  if(on){knobSync(true);$('kTilt').focus()}}
+function knobSync(force){const v=viewAngles(),el=Math.round(Math.max(4,Math.min(89,v.el))),h=Math.round(knobHead(v.az));
+  if(force||Math.abs(el-knobT)>=1){knobT=el;if(knobBusy!==1)$('kTilt').value=el;$('kTiltV').textContent=el+'°'}
+  if(force||Math.abs(h-knobZ)>=1){knobZ=h;if(knobBusy!==2)$('kTurn').value=h;$('kTurnV').textContent=knobFace(h)+' '+h+'°'}}
+function knobInit(){
+  $('bKnob').onclick=()=>knobShow($('knobs').hidden);
+  const ti=$('kTilt'),tu=$('kTurn');
+  ti.addEventListener('input',()=>{knobBusy=1;lastInput=performance.now();stopTour();fly=null;panV=null;
+    const el=+ti.value;$('kTiltV').textContent=el+'°';knobApply(el,undefined)});
+  tu.addEventListener('input',()=>{knobBusy=2;lastInput=performance.now();stopTour();fly=null;panV=null;
+    const h=+tu.value;$('kTurnV').textContent=knobFace(h)+' '+h+'°';knobApply(undefined,h)});
+  for(const el of [ti,tu])for(const ev of ['pointerup','pointercancel','blur','change'])el.addEventListener(ev,()=>{knobBusy=0});
+  $('kNorth').onclick=()=>{const v=viewAngles(),t=controls.target;setView(t.x,t.z,v.d,0,v.el);knobSync(true)};
+  $('kFlat').onclick=()=>{const v=viewAngles(),t=controls.target;setView(t.x,t.z,v.d,v.az,89);knobSync(true)};
+  // the two drag buttons answer the keyboard too: Enter does what a tap does,
+  // arrows nudge, so neither one needs a steady hand.
+  $('bTilt').addEventListener('keydown',e=>{if(walk.on||ride)return;const v=viewAngles();
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();set2D(v.el<80)}
+    else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();knobApply(Math.max(4,Math.min(89,v.el+(e.key==='ArrowUp'?5:-5))),undefined);knobSync(true)}});
+  $('bCmp').addEventListener('keydown',e=>{if(walk.on||ride)return;const v=viewAngles(),t=controls.target;
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();setView(t.x,t.z,v.d,0,v.el);knobSync(true)}
+    else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();setView(t.x,t.z,v.d,v.az+(e.key==='ArrowRight'?10:-10),v.el);knobSync(true)}});
+}
 function navFrame(now,dt){if(navHold&&now-navT>260&&ride){ride.zm=Math.min(4,Math.max(.12,(ride.zm||1)*Math.exp(navHold*1.5*dt)));lastInput=now;dirty=true}
   else if(navHold&&now-navT>260&&!walk.on){const v=viewAngles(),t=controls.target;setView(t.x,t.z,Math.min(24000,Math.max(40,v.d*Math.exp(navHold*1.7*dt))),v.az,v.el);lastInput=now}
   const az=walk.on?walk.yaw*180/Math.PI:viewAngles().az;if(Math.abs(az-navCmp)>.4){navCmp=az;$('cmpN').style.transform='rotate('+az.toFixed(1)+'deg)'}
+  if(!$('knobs').hidden)knobSync(false);
   const fl=!walk.on&&viewAngles().el>80;if(fl!==navFrame.fl){navFrame.fl=fl;$('bTilt').textContent=fl?'3D':'2D'}}
 // ---- street names: the big roads from far away, every street as you come in close, each written along its street
 function streetLabels(){const RD=LM.road,out=[];if(!RD||!RD.rsn||!H.snl)return out;const by=new Map();
