@@ -16,9 +16,16 @@ Type any place, ZIP code or GPS point and it is built in your browser from OpenS
 
 You can also download `index.html` and open it in any browser, though the live feeds load only from the website copy.
 
-This is release 0.9.10. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
+This is release 0.9.11. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
 
 ## What is in it
+
+### New in 0.9.11
+
+- **A calmer first view.** Place names were clamped top and bottom but not left and right, so near an edge they drew as half words: "of the State is Watchfulness", "t Mary's Catholic School", "IBERGH'S". A name that would hang off the side is now nudged back in, and one too wide for the screen is dropped, because a fragment reads as clutter rather than information. Street names are left alone, since they run along their own street.
+- **The buttons block labels now.** The title, the menu, the compass column and the bottom bar are fed into the same collision list the labels already use, so a place name never draws behind a control. On a phone that quietly removed most of the crowding at the top of the first view.
+- **One label per name.** The same school was being drawn twice.
+- **The phone menu no longer slides sideways.** Setting overflow-y to auto makes overflow-x compute to auto as well, which gave the menu a horizontal scroll it should never have had. Pinned to hidden.
 
 ### New in 0.9.10
 

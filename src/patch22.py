@@ -37,7 +37,7 @@ PHONE = """
   /* the button grid reaches 39 buttons with More open, which is taller than a phone
      and taller still inside an in-app browser. Cap it to the screen and let it scroll
      rather than running off the bottom with no way to reach the rest. */
-  #tools{max-height:calc(100vh - 112px);max-height:calc(100dvh - 112px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:4px}
+  #tools{max-height:calc(100vh - 112px);max-height:calc(100dvh - 112px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:4px}
   #tools.shut{max-height:none;overflow:visible}
   #bMenu{position:sticky;top:0;z-index:2}
   #clinks{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-top:8px;scrollbar-width:none}
