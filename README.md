@@ -16,9 +16,14 @@ Type any place, ZIP code or GPS point and it is built in your browser from OpenS
 
 You can also download `index.html` and open it in any browser, though the live feeds load only from the website copy.
 
-This is release 0.9.9. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
+This is release 0.9.10. `CONTRIBUTING.md` is an open invitation to add to it. `DATA_PLAN.md` lists every source, what is kept from it, when it was last pulled and how it is refreshed. `ROADMAP.md` says what is next.
 
 ## What is in it
+
+### New in 0.9.10
+
+- **The phone menu scrolls.** With More open the button grid runs to 39 buttons, about 950 pixels of them, which is taller than a phone screen and taller still inside an in-app browser. There was no scroll, so the last ten buttons could not be reached at all: Play in Lincoln, Flights, Creatures, Compare, Data feeds, Night sky, Describe view, Text size, High contrast and Code view. Four of those are the accessibility controls. The grid is now capped to the screen and scrolls, with the Menu button pinned at the top.
+- **Sasquatch stays out of the lake.** A park boundary can take in open water, and Holmes Park's does, so his random walk could put him out in the middle of Holmes Lake. He now picks his spots from tree positions, checks them against all 57 lake outlines, and checks the straight line he would walk as well, so he no longer wades across a bay to get somewhere. Twelve simulated minutes of walking, nine of him, zero sightings on water, down from ten.
 
 ### New in 0.9.9
 

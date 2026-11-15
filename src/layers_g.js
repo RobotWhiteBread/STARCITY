@@ -7,6 +7,36 @@
 // =====================================================================================================
 const polyArea=r=>{let a=0;for(let i=0;i<r.length;i++){const p=r[i],q=r[(i+1)%r.length];a+=p[0]*q[1]-q[0]*p[1]}return Math.abs(a)/2};
 const polyBox=r=>{let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of r){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}return [x0,x1,z0,z1]};
+// A park polygon can take in a lake: Holmes Park's does, and a random point inside it
+// put Sasquatch out on the water. Trees only stand on land, so his spots are tree spots.
+function sqPts(w){if(w.pts&&w.pts.length)return w.pts;
+  const T=LM.treePts,out=[];
+  if(T&&T.length){const n=T.length,step=Math.max(1,Math.floor(n/2500));
+    for(let k=0;k<n;k+=step){const p=T[k],x=p[0],z=p[1];
+      if(x<w.bx[0]||x>w.bx[1]||z<w.bx[2]||z>w.bx[3])continue;
+      if(pinR(x,z,w.r)&&!sqWet(x,z))out.push([x,z])}}
+  w.pts=out;return out}
+// and a straight check against the 57 lake rings, because a bank tree can sit a
+// couple of yards from open water and he should not be paddling.
+function sqWet(x,z){const L=CR.lakes;if(!L||!L.length)return false;
+  for(let k=0;k<L.length;k++){const b=L[k].bx;
+    if(x<b[0]||x>b[1]||z<b[2]||z>b[3])continue;
+    if(pinR(x,z,L[k].r))return true}
+  return false}
+// he walks a straight line to his target, so the line has to stay dry as well as the spot
+function sqDry(fx,fz,x,z){if(sqWet(x,z))return false;
+  if(fx===undefined)return true;
+  for(let k=1;k<7;k++){const t=k/7;if(sqWet(fx+(x-fx)*t,fz+(z-fz)*t))return false}
+  return true}
+function sqSpot(w,fx,fz){const P=sqPts(w);
+  if(P.length){for(let k=0;k<14;k++){const p=P[(Math.random()*P.length)|0],
+      a=Math.random()*6.283,r=2+Math.random()*6, // a step off the trunk, not inside it
+      x=p[0]+Math.cos(a)*r,z=p[1]+Math.sin(a)*r;
+      if(sqDry(fx,fz,x,z))return [x,z]}
+    // nowhere dry to walk to: stay put rather than wade
+    if(fx!==undefined)return [fx,fz]}
+  for(let k=0;k<12;k++){const p=polyRand(w.r,w.bx,6);if(p&&sqDry(fx,fz,p[0],p[1]))return p}
+  return fx!==undefined?[fx,fz]:null}
 function polyRand(r,bx,tries=14){for(let k=0;k<tries;k++){const x=bx[0]+Math.random()*(bx[1]-bx[0]),z=bx[2]+Math.random()*(bx[3]-bx[2]);if(pinR(x,z,r))return [x,z]}return null}
 const camDist=(x,y,z)=>Math.hypot(camera.position.x-x,camera.position.y-y,camera.position.z-z);
 function bByName(n){if(!bByName.m){const m=new Map(),bi=S.b_info;for(let b=0;b<bi.length;b++)if(bi[b]&&!m.has(H.infos[bi[b]]))m.set(H.infos[bi[b]],b);bByName.m=m}const b=bByName.m.get(n);return b===undefined?-1:b}
@@ -70,7 +100,7 @@ function creaturesInit(){const lakes=[];for(const w of LM.waters||[]){const a=po
   const poseW=boxes([[.42,1.15,.42,-.26,.58,.2,F],[.42,1.15,.42,.26,.58,-.2,F],[1.05,1.25,.62,0,1.75,0,F],[.82,.5,.5,0,2.05,-.08,F2],[.34,1.35,.34,-.72,1.7,-.3,F],[.34,1.2,.34,.82,2.5,0,F],[.3,.3,.3,.9,3.12,0,F],[.56,.56,.56,0,2.68,-.04,F],[.42,.12,.1,0,2.74,-.33,0x1c130d]]);
   const woods=(LM.woods||[]).filter(w=>w[1]==='wood'||w[1]==='park'||w[1]==='cemetery').map(w=>({r:w[0],a:polyArea(w[0]),bx:polyBox(w[0])})).filter(w=>w.a>40000).sort((p,q)=>q.a-p.a).slice(0,mobile?5:9),sqA=new THREE.InstancedMesh(pose(1),mat,Math.max(1,woods.length)),sqB=new THREE.InstancedMesh(pose(-1),mat,Math.max(1,woods.length)),sqW=new THREE.InstancedMesh(poseW,mat,Math.max(1,woods.length));
   for(const m of [sqA,sqB,sqW]){m.count=woods.length;m.frustumCulled=false;m.userData.sq=true;m.userData.info=['Sasquatch','Tall, hairy, mid-stride and never quite in focus. One wanders each of the biggest woods and parks on the map. Come too close and he bolts behind a tree. Just for fun: there is no evidence of Sasquatch in Lancaster County, only stories.'];scene.add(m);pickables.push(m)}
-  CR.sq={A:sqA,B:sqB,W:sqW,list:woods.map(w=>{const p=polyRand(w.r,w.bx,40)||[(w.bx[0]+w.bx[1])/2,(w.bx[2]+w.bx[3])/2];return {w,x:p[0],z:p[1],tx:p[0],tz:p[1],h:0,wait:1,ph:0,mode:'roam',spd:1.9,t:0,lb:{t:'Sasquatch?',x:p[0],y:0,z:p[1],k:3,pri:380,near:0,far:1900}}})};
+  CR.sq={A:sqA,B:sqB,W:sqW,list:woods.map(w=>{const p=sqSpot(w)||[(w.bx[0]+w.bx[1])/2,(w.bx[2]+w.bx[3])/2];return {w,x:p[0],z:p[1],tx:p[0],tz:p[1],h:0,wait:1,ph:0,mode:'roam',spd:1.9,t:0,lb:{t:'Sasquatch?',x:p[0],y:0,z:p[1],k:3,pri:380,near:0,far:1900}}})};
   farmInit(mat);capitolExtras(mat)}
 function stepCreatures(dt,now){if(!CR.on||!CR.nesM)return;const SLP=sleepy(),t=controls.target,sc=(x,z,ref,mx)=>Math.min(mx,Math.max(1,camDist(x,hAt(x,z),z)/ref));
   CR.nes.forEach((n,i)=>{const L=n.cum[n.cum.length-1];n.s=(n.s+(SLP?0:2.6)*dt)%L;if(SLP){n.dive=0;n.next=6}else n.next-=dt;if(n.next<0){n.dive=n.dive?0:1;n.next=n.dive?5:14+Math.random()*16}n.d=(n.d||0)+((n.dive?1:0)-(n.d||0))*Math.min(1,dt*1.2);
@@ -88,7 +118,7 @@ function stepCreatures(dt,now){if(!CR.on||!CR.nesM)return;const SLP=sleepy(),t=c
     if(SLP){const y=hAt(q.x,q.z);bedAt(q.x,y,q.z,1.5*s,q.h,0xcfe6b8);lP.set(q.x,y+.75*s,q.z);lE.set(-1.5,q.h,0,'YXZ');lQ.setFromEuler(lE);lS.setScalar(s);lM.compose(lP,lQ,lS);Q.A.setMatrixAt(i,lM);lM.makeScale(0,0,0);Q.B.setMatrixAt(i,lM);Q.W.setMatrixAt(i,lM);sleepZ(q.x,q.z,6*s,'Sasquatch, asleep in the woods',now,i+6);return}
     if(q.mode==='wave'){q.h=Math.atan2(camera.position.x-q.x,camera.position.z-q.z)}
     else if(q.wait>0)q.wait-=dt;else if(d>1){const st=Math.min(d,(q.spd||1.9)*Math.sqrt(s)*dt);q.x+=dx/d*st;q.z+=dz/d*st;let dh=Math.atan2(-dx,-dz)-q.h;dh=Math.atan2(Math.sin(dh),Math.cos(dh));q.h+=dh*Math.min(1,dt*4);q.ph+=st/s*1.5;walking=true}
-    else if(q.mode==='roam'){const p=polyRand(q.w.r,q.w.bx,20);if(p){q.tx=p[0];q.tz=p[1]}q.wait=Math.random()<.3?1.5+Math.random()*3:0}
+    else if(q.mode==='roam'){const p=sqSpot(q.w,q.x,q.z);if(p){q.tx=p[0];q.tz=p[1]}q.wait=Math.random()<.3?1.5+Math.random()*3:0}
     const wv=q.mode==='wave',A=!walking||Math.sin(q.ph)>0;
     lP.set(q.x,hAt(q.x,q.z)+(walking?Math.abs(Math.sin(q.ph))*.08*s:0),q.z);lQ.setFromAxisAngle(lUp,q.h+(wv?Math.sin(now*.013)*.16:0));lS.setScalar(s);lM.compose(lP,lQ,lS);
     Q.A.setMatrixAt(i,lM);Q.B.setMatrixAt(i,lM);Q.W.setMatrixAt(i,lM);lM.makeScale(0,0,0);

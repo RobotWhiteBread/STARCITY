@@ -126,9 +126,9 @@ function sqCover(q){ // the nearest tree to duck behind, or a far corner of his 
     for(let k=0;k<n;k+=step){const p=T[k],dx=p[0]-q.x,dz=p[1]-q.z,d=dx*dx+dz*dz;if(d<bd&&d>36){bd=d;bx=p}}}
   if(bx&&bd<90*90)return [bx[0],bx[1]];
   if(bx){const d=Math.sqrt(bd),f=Math.min(1,70/d);return [q.x+(bx[0]-q.x)*f,q.z+(bx[1]-q.z)*f]}
-  const p=polyRand(q.w.r,q.w.bx,20);return p?[p[0],p[1]]:[q.x,q.z]}
+  const p=sqSpot(q.w,q.x,q.z);return p?[p[0],p[1]]:[q.x,q.z]}
 function sqAway(q){ // a spot in his patch as far from the camera as a few tries can find
-  let best=null,bd=-1;for(let k=0;k<6;k++){const p=polyRand(q.w.r,q.w.bx,20);if(!p)continue;
+  let best=null,bd=-1;for(let k=0;k<6;k++){const p=sqSpot(q.w,q.x,q.z);if(!p)continue;
     const d=(p[0]-camera.position.x)**2+(p[1]-camera.position.z)**2;if(d>bd){bd=d;best=p}}
   return best?[best[0],best[1]]:[q.x,q.z]}
 function sqMode(q,dt,now){
