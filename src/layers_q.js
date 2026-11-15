@@ -1,7 +1,7 @@
 // ---- 0.9.2: boxes that close go back to their options, a way back from close-up views, the City Council in depth, and this map for any city
 
 // A card that is a list of options. Anything opened from it comes back to it when its box is closed, and what was switched on stays on.
-function menuCard(tag,show,root){if(root)MENUS.length=0;const i=MENUS.findIndex(m=>m.tag===tag);if(i>=0)MENUS.length=i;MENUS.push({tag,show});show();cardTag=tag}
+function menuCard(tag,show,root){if(root)MENUS.length=0;const i=MENUS.findIndex(m=>m.tag===tag);if(i>=0)MENUS.length=i;MENUS.push({tag,show});show();cardTag=tag;if(cardLast)cardLast[5]=tag}
 const deepView=()=>walk.on||!!ride||rideMode||gameOn||!!tour;
 function menuTop(skip){const m=MENUS[MENUS.length-1];if(m)return m;if(SG.topic&&skip!=='i:'+SG.topic)return {tag:'i:'+SG.topic,show:()=>intentCard(SG.topic,true)};return null}
 function menuShowTop(skip){const m=menuTop(skip);if(!m)return false;m.show();if(MENUS.length)cardTag=MENUS[MENUS.length-1].tag;return true}

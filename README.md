@@ -20,6 +20,11 @@ This is release 0.9.2. `CONTRIBUTING.md` is an open invitation to add to it. `DA
 
 ## What is in it
 
+### New in 0.9.3
+
+- **The Sower has a wardrobe.** The figure on the Capitol dome can be dressed six ways: as cast in bronze, Husker scarlet with the N on his chest, a cowboy hat and a bandana, a sequin gown and a tiara, a number 1 volleyball jersey with a ball in his raised hand, or a winter coat and earmuffs. Your choice is kept on your own device. It is a costume on the map's own simple figure, not on Lee Lawrie's statue, and the card says so.
+- **Info boxes get out of the way.** A card introduces what you just turned on, then hides itself as soon as you start moving the map, so the 3D data is never behind a box. A small **ⓘ What is this** button brings it back.
+
 ### New in 0.9.2
 
 - **The City Council, in depth.** Five tabs: who sits on it and what voters changed on November 3, 2026; the next meetings from the city's own calendar, with the recordings read live from LNKTV; how an ordinance becomes law in three Mondays and how a resolution differs; how to speak, sign up and get five minutes; and where every open planning request stands, read live from the Planning Department and placed on the ground where it would happen.
