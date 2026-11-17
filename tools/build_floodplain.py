@@ -319,7 +319,13 @@ if __name__ == "__main__":
     src, dst = sys.argv[1], sys.argv[2]
     with open(src, encoding="utf-8") as f:
         md = f.read()
-    body = convert(md, [chart_claims(), chart_land()])
+    charts = [] if len(sys.argv) > 3 and sys.argv[3] == "nocharts" else [chart_claims(), chart_land()]
+    body = convert(md, charts)
+    title = sys.argv[4] if len(sys.argv) > 4 else "Lincoln Floodplain Exposure and Flood Loss"
+    sub = sys.argv[5] if len(sys.argv) > 5 else "Salt Creek watershed, Lancaster County, Nebraska &#183; November 16, 2026"
+    page = (SHELL.replace("__BODY__", body)
+            .replace("Lincoln Floodplain Exposure and Flood Loss", title)
+            .replace("Salt Creek watershed, Lancaster County, Nebraska &#183; November 16, 2026", sub))
     with open(dst, "w", encoding="utf-8") as f:
-        f.write(SHELL.replace("__BODY__", body))
+        f.write(page)
     print(f"wrote {dst}")
