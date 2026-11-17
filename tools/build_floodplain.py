@@ -8,12 +8,24 @@ import html
 import re
 import sys
 
-C_TEXT = "#e9e4d6"
-C_DIM = "#a8a294"
-C_ACCENT = "#ffd34d"
-C_MUTED = "#7d7768"
-C_GRID = "#242a33"
-C_AXIS = "#4a5160"
+THEMES = {
+    "dark":  dict(text="#e9e4d6", dim="#a8a294", accent="#ffd34d",
+                  muted="#7d7768", grid="#242a33", axis="#4a5160"),
+    "light": dict(text="#1a1d23", dim="#5c6270", accent="#2563a8",
+                  muted="#9aa0a8", grid="#e4e7ec", axis="#aab0b8"),
+}
+C_TEXT = C_DIM = C_ACCENT = C_MUTED = C_GRID = C_AXIS = ""
+
+
+def apply_theme(name):
+    """Set the chart palette. Charts read these at call time."""
+    global C_TEXT, C_DIM, C_ACCENT, C_MUTED, C_GRID, C_AXIS
+    t = THEMES[name]
+    C_TEXT, C_DIM, C_ACCENT = t["text"], t["dim"], t["accent"]
+    C_MUTED, C_GRID, C_AXIS = t["muted"], t["grid"], t["axis"]
+
+
+apply_theme("dark")
 
 # ---------------------------------------------------------------- chart one
 
@@ -27,11 +39,13 @@ CLAIMS = [
     (2016, 6, 0, 2), (2018, 1, 0, 1), (2019, 0, 0, 1), (2020, 1, 0, 0),
     (2021, 2, 0, 0), (2023, 0, 0, 1), (2024, 1, 0, 0), (2026, 7, 4, 2),
 ]
-SERIES = [
-    ("Rainfall or snowmelt", C_ACCENT, 1.0),
-    ("Stream or lake overflow", C_MUTED, 1.0),
-    ("Other or uncoded", C_MUTED, 0.45),
-]
+def series():
+    """Resolved at call time so a theme switch reaches the bars."""
+    return [
+        ("Rainfall or snowmelt", C_ACCENT, 1.0),
+        ("Stream or lake overflow", C_MUTED, 1.0),
+        ("Other or uncoded", C_MUTED, 0.45),
+    ]
 
 
 def chart_claims():
@@ -65,7 +79,7 @@ def chart_claims():
                  f"fill='{C_DIM}'>{t}</text>")
     o.append("</g>")
 
-    for idx, (name, colour, op) in enumerate(SERIES):
+    for idx, (name, colour, op) in enumerate(series()):
         o.append(f"<g data-series='{html.escape(name)}'>")
         for row in CLAIMS:
             yr = row[0]
@@ -86,7 +100,7 @@ def chart_claims():
     for t in range(1980, 2026, 5):
         o.append(f"<text x='{px(t)+bw/2:.1f}' y='348' text-anchor='middle' "
                  f"font-size='11' fill='{C_DIM}'>{t}</text>")
-    for i, (name, colour, op) in enumerate(SERIES):
+    for i, (name, colour, op) in enumerate(series()):
         x = left + (0, 145, 305)[i]
         o.append(f"<rect x='{x}' y='364' width='10' height='10' fill='{colour}' "
                  f"fill-opacity='{op}'/>")
@@ -155,6 +169,7 @@ def inline(s):
     s = html.escape(s, quote=False)
     s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", s)
+    s = re.sub(r"\*([^*\n]+)\*", r"<em>\1</em>", s)
     s = re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)",
                r'<a href="\2" rel="noopener">\1</a>', s)
     return s
@@ -315,17 +330,60 @@ Source and data scripts at <a href="https://github.com/RobotWhiteBread/STARCITY"
 </html>
 """
 
+LIGHT_CSS = """
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1a1d23;
+ font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:11.5pt;line-height:1.55}
+a{color:#1a4f8a}
+nav.bar{display:none}
+main{max-width:none;margin:0;padding:0}
+h1{font-size:21pt;line-height:1.2;margin:0 0 .12em;letter-spacing:-.01em}
+.sub{color:#5c6270;font-size:11pt;margin:0 0 1.6em}
+h2{font-size:14.5pt;line-height:1.28;margin:1.7em 0 .5em;padding-top:.8em;
+ border-top:1px solid #d8dce2;break-after:avoid;page-break-after:avoid}
+h3{font-size:11.8pt;margin:1.4em 0 .35em;color:#1a4f8a;font-weight:600;
+ break-after:avoid;page-break-after:avoid}
+p,li{color:#24282f}
+strong{color:#000;font-weight:600}
+code{background:#f2f4f7;border:1px solid #dde1e7;border-radius:3px;
+ padding:.05em .3em;font-size:.85em;color:#2d3340;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+ul,ol{padding-left:1.2em}
+li{margin:.3em 0}
+.tw{margin:1em 0;border:1px solid #dde1e7;border-radius:5px;overflow:hidden;
+ break-inside:avoid;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}
+th,td{text-align:left;padding:6px 9px;border-bottom:1px solid #e8ebef;vertical-align:top}
+th{background:#f2f4f7;color:#1a1d23;font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+.chart{margin:1.2em 0;break-inside:avoid;page-break-inside:avoid}
+.chart svg{width:100%;height:auto;display:block}
+figcaption{color:#6b7280;font-size:8.5pt;margin-top:.4em;line-height:1.4}
+footer{margin-top:1.8em;padding-top:.8em;color:#6b7280;font-size:8.5pt;
+ border-top:1px solid #d8dce2}
+@page{margin:16mm 15mm}
+"""
+
 if __name__ == "__main__":
     src, dst = sys.argv[1], sys.argv[2]
     with open(src, encoding="utf-8") as f:
         md = f.read()
-    charts = [] if len(sys.argv) > 3 and sys.argv[3] == "nocharts" else [chart_claims(), chart_land()]
+    flags = set(sys.argv[3].split("+")) if len(sys.argv) > 3 else set()
+    if "light" in flags:
+        apply_theme("light")
+    charts = [] if "nocharts" in flags else [chart_claims(), chart_land()]
     body = convert(md, charts)
     title = sys.argv[4] if len(sys.argv) > 4 else "Lincoln Floodplain Exposure and Flood Loss"
     sub = sys.argv[5] if len(sys.argv) > 5 else "Salt Creek watershed, Lancaster County, Nebraska &#183; November 16, 2026"
-    page = (SHELL.replace("__BODY__", body)
-            .replace("Lincoln Floodplain Exposure and Flood Loss", title)
-            .replace("Salt Creek watershed, Lancaster County, Nebraska &#183; November 16, 2026", sub))
+    shell = SHELL
+    if "light" in flags:
+        shell = re.sub(r"<style>.*?</style>", "<style>" + LIGHT_CSS + "</style>",
+                       shell, flags=re.S)
+    shell = (shell.replace("Lincoln Floodplain Exposure and Flood Loss", title)
+                  .replace("Salt Creek watershed, Lancaster County, Nebraska &#183; November 16, 2026", sub))
+    page = shell.replace("__BODY__", body)
     with open(dst, "w", encoding="utf-8") as f:
         f.write(page)
     print(f"wrote {dst}")

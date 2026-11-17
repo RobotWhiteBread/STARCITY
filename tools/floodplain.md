@@ -1,7 +1,5 @@
 # Lincoln Floodplain Exposure and Flood Loss
 
-Salt Creek watershed, Lancaster County, Nebraska · Nov 16, 2026
-
 ## Summary
 
 Lincoln's realized flood losses are mostly rainfall-driven and fall disproportionately outside the regulated floodplain, while the regulatory and insurance apparatus is riverine and SFHA-centric. Five findings support that, each reproducible from the queries in the Method section.
