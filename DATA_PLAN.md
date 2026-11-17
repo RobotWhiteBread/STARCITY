@@ -148,3 +148,38 @@ The levy table is the one hand step: each November the Department of Revenue pos
 | Live arrivals and departures at Lincoln Airport | No open feed. The airport's own board would need to be shared, or a small relay run. |
 | Value and tax history for one property | Not in the open data. The assessor publishes the current year. |
 | Lincoln's own residency rule for the offender registry | Two searches found only other Nebraska towns and the state statute, so no zones are drawn and the safety card says so. |
+
+## 0.9.14: a full audit of every data set
+
+Every data set the map uses was checked on 17 November 2026, both the files
+saved to disk and the layers read live, against the record counts the source
+services report. 80 saved data sets were counted.
+
+**Completeness.** Every multi-page download on disk ends on a partial page,
+which is what a download that ran to the end looks like. A download cut short
+ends on a full page. Both parcel downloads match their bounding boxes to the
+record: 76,440 for the smaller box and 86,995 for the larger one, against
+122,748 parcels countywide. The two differ only because they asked for
+different areas.
+
+**Empty is sometimes correct.** Four data sets hold no records because the
+city publishes none: Garages, Surface Lots, Historic Site Surveys and Trail
+Closures all return zero from the source. Nothing is missing.
+
+**One download failed silently.** `gis/floodprone` holds no records while the
+service holds 86. The script reported success. The layer covers about 72 acres
+in one southeast neighbourhood, so little is lost, but the failure was not
+visible at the time and that is the problem worth fixing.
+
+**One live layer was short.** The map asks every live service for a fixed
+area, the box from -96.745, 40.69 to -96.535, 40.85. Inside that box the 0.2
+percent floodplain holds 2,430 shapes, and the map asked for at most 2,000, so
+430 were never fetched. The service will not return more than 2,000 in one
+reply, so asking for a larger number could not have fixed it. The map now asks
+in pages until the service runs out, which was checked against the service:
+five pages, 4,060 distinct shapes, no repeats. Where the map stops on purpose,
+the card now says the view holds more.
+
+No other live layer was near its limit. The development case layers, new
+sales, permits and sweeper tracks all filter by status and date before they
+ask, which leaves between 0 and 314 records each.
