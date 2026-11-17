@@ -166,10 +166,12 @@ different areas.
 city publishes none: Garages, Surface Lots, Historic Site Surveys and Trail
 Closures all return zero from the source. Nothing is missing.
 
-**One download failed silently.** `gis/floodprone` holds no records while the
-service holds 86. The script reported success. The layer covers about 72 acres
-in one southeast neighbourhood, so little is lost, but the failure was not
-visible at the time and that is the problem worth fixing.
+**One download failed silently, and has been repaired.** `gis/floodprone` held
+no records while the service holds 86. The script reported success. It was
+downloaded again on 17 November 2026 and now matches the service exactly, 86
+shapes and 2,794 points. The layer covers about 72 acres in one southeast
+neighborhood, so little was lost, but the failure was invisible at the time and
+that is the problem worth fixing.
 
 **One live layer was short.** The map asks every live service for a fixed
 area, the box from -96.745, 40.69 to -96.535, 40.85. Inside that box the 0.2
