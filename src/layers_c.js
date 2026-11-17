@@ -20,8 +20,18 @@ function dlFromGeo(L,feats){const k=L.def.k,lv=L.def.live,X=[],N=[],RC=[],RN=[],
 async function dlLive(L,quiet){if(L.loading)return;const lv=L.def.live;L.loading=true;if(!quiet)showCard(L.def.t,'Reading this layer live from '+lv.from+'…');
   try{if(!hosted())throw new Error('offline');let feats;
     if(lv.load)feats=await lv.load();
-    else{const url=lv.url+'/query?where='+encodeURIComponent(lv.where||'1=1')+(lv.box===false?'':'&'+MAPBOX)+'&outFields='+encodeURIComponent(lv.fields.map(f=>f[0]).filter((v,i,a)=>a.indexOf(v)===i).join(','))+'&returnGeometry=true&outSR=4326&geometryPrecision=6'+(lv.off?'&maxAllowableOffset='+lv.off:'')+'&resultRecordCount='+(lv.max||2000)+'&f=geojson';
-      const r=await fetch(url);if(!r.ok)throw new Error('http');const j=await r.json();if(j.error)throw new Error('server');feats=j.features||[]}
+    else{const base=lv.url+'/query?where='+encodeURIComponent(lv.where||'1=1')+(lv.box===false?'':'&'+MAPBOX)+'&outFields='+encodeURIComponent(lv.fields.map(f=>f[0]).filter((v,i,a)=>a.indexOf(v)===i).join(','))+'&returnGeometry=true&outSR=4326&geometryPrecision=6'+(lv.off?'&maxAllowableOffset='+lv.off:'');
+      const cap=lv.max||2000,page=Math.min(lv.page||1000,cap);feats=[];L.more=false;let sig0=null;
+      for(let off=0;off<cap;off+=page){const want=Math.min(page,cap-off);
+        const r=await fetch(base+'&resultRecordCount='+want+'&resultOffset='+off+'&f=geojson');
+        if(!r.ok)throw new Error('http');const j=await r.json();if(j.error)throw new Error('server');
+        const got=j.features||[];if(!got.length)break;
+        const sig=JSON.stringify(got[0].properties)+'|'+got[0].geometry.coordinates.flat(9).slice(0,4).join(',');
+        if(off>0&&sig===sig0)break;
+        if(off===0)sig0=sig;
+        for(const g of got)feats.push(g);
+        if(got.length<want)break;
+        if(off+want>=cap)L.more=true}}
     dlFromGeo(L,feats);L.loaded=true;L.loading=false;L.def.asof='live';L.def.n=L.n;L.readAt=Date.now();
     if(!L.n){if(!quiet)showCard(L.def.t,(lv.empty||'Nothing is listed in this layer right now.')+' Read live from '+lv.from+' just now.');return}dlSet(L.id,true,quiet);if(sheet===LAYS)openSheet(LAYS)}
   catch(e){L.loading=false;if(!quiet)showCard(L.def.t,'This layer is read live from '+lv.from+' and could not be reached just now. Live layers load on the website copy of the map (the GitHub Pages link), not inside the Claude app.')}}
@@ -40,7 +50,7 @@ const LIVEL=[
  {id:'flood100',t:'Floodplain, 1% yearly chance',g:'Environment',k:'pg',st:{h:14,col:0x2f7bff,a:.5},note:'FEMA\'s mapped floodplain: land with at least a 1 in 100 chance of flooding in any year.',src:'FEMA flood maps as kept by Lincoln Transportation and Utilities, Watershed Management',
   live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/LTUWatershed/FEMAFlood/MapServer/1',off:.00006,max:2000,fields:[['FLD_ZONE','FEMA zone','s'],['FLOODWAY','Floodway','s'],['FLD_Z_DESC','What it means','s']]},link:FPLINK},
  {id:'flood500',t:'Floodplain, 0.2% yearly chance',g:'Environment',k:'pg',st:{h:10,col:0x7fb2ff,a:.42},note:'The wider area with at least a 1 in 500 chance of flooding in any year.',src:'FEMA flood maps as kept by Lincoln Transportation and Utilities, Watershed Management',
-  live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/LTUWatershed/FEMAFlood/MapServer/0',off:.00006,max:2000,fields:[['FLD_ZONE','FEMA zone','s'],['FLD_Z_DESC','What it means','s']]},link:FPLINK},
+  live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/LTUWatershed/FEMAFlood/MapServer/0',off:.00006,max:5000,fields:[['FLD_ZONE','FEMA zone','s'],['FLD_Z_DESC','What it means','s']]},link:FPLINK},
  {id:'levee',t:'Salt Creek levee crest',g:'Environment',k:'ln',st:{h:40,col:0xc98b2e,a:.9},note:'The top of the Salt Creek levee: 33.9 miles of earth embankment along the creek and its tributaries, built to hold back a 50-year flood. It is not FEMA-accredited, so the floodplain behind it is mapped as if the levee were not there. A 1 in 100 year flood is larger than it was designed to stop.',src:'Lower Platte South NRD levee system, as kept by Lincoln Transportation and Utilities, Watershed Management',link:FPLINK,
   live:{from:'the City of Lincoln GIS server',url:CITYSRV+'/LTUWatershed/Levees/MapServer/2',box:false,off:.00001,max:400,fields:[['LAYER','Mapped as','s'],['Shape_Length','Length','n','feet']]}},
  {id:'leveecrit',t:'Levee critical area',g:'Environment',k:'pg',st:{h:10,col:0xc98b2e,a:.26},note:'The protected strip along the Salt Creek levee: 500 feet on the land side and 300 feet on the stream side, about 1,451 acres in all. Digging, building and deep-rooted planting are restricted here, because anything that weakens the embankment or hides a problem puts everything behind it at risk.',src:'Lower Platte South NRD levee critical area, as kept by Lincoln Transportation and Utilities, Watershed Management',link:FPLINK,
