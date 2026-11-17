@@ -157,6 +157,7 @@ function aboutCard(){menuCard('about',()=>showCard('About this map',
   +'Nothing about you is collected: no account, no cookie, no profile. Find me draws your position on your own screen and sends it nowhere. No owner names or mailing addresses are stored anywhere in the map. '
   +'It is free and open source under the MIT license, and corrections from anyone, about anything, are the fastest way it gets better. The flag at the top of any card reports what that card says.',
   undefined,{label:'Something here is wrong',fn:()=>$('cflag').click()},
-  [{href:'https://github.com/RobotWhiteBread/STARCITY','label':'The code and the data plan ↗'},
+  [{href:'https://robotwhitebread.github.io/STARCITY/floodplain.html',label:'Floodplain report: what actually floods ↗'},
+   {href:'https://github.com/RobotWhiteBread/STARCITY','label':'The code and the data plan ↗'},
    {href:'https://github.com/RobotWhiteBread/STARCITY/blob/main/CONTRIBUTING.md',label:'Add to the map ↗'},
    {label:'Where every number comes from',fn:()=>openSheet(GUIDE,2)}]))}
