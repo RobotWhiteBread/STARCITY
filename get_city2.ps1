@@ -27,6 +27,20 @@ function Get-Pages($name, $layerUrl, $fields, $format, $geom, $step) {
     }
     if ($format -eq "geojson") { $n = ([regex]::Matches($txt, '"type"\s*:\s*"Feature"')).Count }
     else { $n = ([regex]::Matches($txt, '"attributes"\s*:')).Count }
+    # An empty page used to be read as "end of data", so one dropped request
+    # silently truncated the layer and left a file that still looked valid.
+    # Retry before believing it.
+    if (($n -eq 0) -and ($p -gt 0)) {
+      foreach ($try in 1..3) {
+        Write-Host ("  {0} page {1} came back empty, retry {2} of 3" -f $name, $p, $try) -ForegroundColor Yellow
+        Start-Sleep -Seconds (3 * $try)
+        & curl.exe -sS -A $ua -m 300 --connect-timeout 20 -o $out $url
+        if (Test-Path $out) { $txt = [System.IO.File]::ReadAllText($out) } else { $txt = "" }
+        if ($format -eq "geojson") { $n = ([regex]::Matches($txt, '"type"\s*:\s*"Feature"')).Count }
+        else { $n = ([regex]::Matches($txt, '"attributes"\s*:')).Count }
+        if ($n -gt 0) { break }
+      }
+    }
     $total += $n
     Write-Host ("  {0} page {1}: {2}" -f $name, $p, $n)
     if ($n -eq 0) { break }
@@ -45,7 +59,13 @@ function Get-Service($name, $svcUrl) {
   foreach ($l in $j.layers) {
     if ($l.subLayerIds) { continue }
     $t = Get-Pages ("{0}_{1}" -f $name, $l.id) ($svcUrl + "/" + $l.id) "*" "geojson" "true" 1000
-    Write-Host ("  {0} layer {1} ({2}): {3} features" -f $name, $l.id, $l.name, $t)
+    $c = & curl.exe -sS -A $ua -m 60 "$svcUrl/$($l.id)/query?where=1%3D1&$geo&returnCountOnly=true&f=json"
+    $want = -1; if ($c -match '"count"\s*:\s*(\d+)') { $want = [int]$Matches[1] }
+    if (($want -ge 0) -and ($t -ne $want)) {
+      Write-Host ("  {0} layer {1} ({2}): SHORT, got {3} of {4}" -f $name, $l.id, $l.name, $t, $want) -ForegroundColor Red
+    } else {
+      Write-Host ("  {0} layer {1} ({2}): {3} features" -f $name, $l.id, $l.name, $t)
+    }
   }
 }
 
