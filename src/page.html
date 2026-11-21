@@ -1910,7 +1910,7 @@ function chips(){const dv=H.blabels.find(b=>b[0]==='Devaney Sports Center'),pb=H
   return list}
 let gameOn=false;
 $('bGame').onclick=e=>{gameOn=!gameOn;e.target.classList.toggle('on',gameOn);const g=LM.game;g.crowd.visible=gameOn;g.fl.visible=gameOn;g.glowL.intensity=gameOn?320:0;
-  if(gameOn){stopTour();if(liveOn)setLive(false);$('sunR').value=19.4;setTime(19.4);updateBuses();flyTo(camTo(LM.stadium[0],LM.stadium[1],430,118,36,12),2600)}dirty=true};
+  if(gameOn){stopTour();if(liveOn)setLive(false);$('sunR').value=19.4;setTime(19.4);updateBuses();flyTo(camTo(LM.stadium[0],LM.stadium[1],430,118,36,12),2600);if(hosted()){hkLoad(true);setTimeout(()=>{if(gameOn&&!sheet)huskOpen(0)},3200)}}dirty=true};
 $('bWalk').onclick=()=>setWalk(!walk.on);
 $('bNorth').onclick=()=>{if(walk.on){walk.yaw=0;dirty=true;return}stopTour();const t=controls.target,d=camera.position.distanceTo(t);const el=Math.asin(Math.min(1,Math.max(.05,(camera.position.y-t.y)/d)));
   flyTo({t:t.clone(),p:new THREE.Vector3(t.x,t.y+d*Math.sin(el),t.z+d*Math.cos(el))},900)};
