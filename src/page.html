@@ -1818,7 +1818,22 @@ function stepCat(dt,now){if(!cam9){if(!LM.capitol)return;setupCat();if(!cam9)ret
   else{st='chill';x=B.ax;z=B.az;yaw=-Math.PI/2+.12*Math.sin(now*.0006);pitch=-.32}
   B.x=x;B.z=z;B.m.position.set(x,hAt(x,z)+y+(st==='chill'?.04*sc:0),z);B.m.rotation.set(pitch,yaw,0,'YXZ');B.m.scale.setScalar(sc);
   const L=CATSAY[st==='walk'?'chill':st];if(st!==B.st||now>B.qt){B.st=st;B.say=(B.say+1)%L.length;B.qt=now+3800}B.lb.t=L[B.say%L.length];B.lb.x=x;B.lb.z=z;B.lb.y=hAt(x,z)+y+1.5*sc;lifeLabels.push(B.lb);ambient=true}
-function stepLife(dt,now){lifeLabels.length=0;if(!(performance.now()-lastInput<120000||ride||tour||fly)){for(const f of flocks)lifeLabels.push(f.lb);return}stepBirds(dt,now);stepZoo(dt,now);stepDogs(dt,now);stepPride(dt,now);stepDev(dt,now);stepVB(dt,now);stepTraffic(dt,now);stepBikers(dt,now);stepTrains(dt,now);stepSci(dt,now);stepCat(dt,now);stepMore(dt,now)}
+// Husker soccer at Hibner: two sides of eleven chasing a ball on the real pitch. A scrimmage that never ends, for fun.
+let soc=null;const SOCSAY=['Go Big Red!','Man on!','Switch it!','Goal!','Keeper!','Send it wide','Good ball!','Shoot!'];
+function setupSoc(){const cx=(-96.69961-H.lon0)*KXm,cz=-(40.83794-H.lat0)*KYm,HL=50,HW=32,N=22;
+  const geo=boxes([[.16,.75,.2,-.13,.38,0,0x1c1c20],[.16,.75,.2,.13,.38,0,0x1c1c20],[.52,.72,.28,0,1.12,0,0xffffff],[.13,.6,.15,-.33,1.14,0,0xffffff],[.13,.6,.15,.33,1.14,0,0xffffff],[.28,.28,.28,0,1.66,0,0xd9a882],[.3,.12,.34,0,1.8,-.04,0x4a3526]]);
+  const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({vertexColors:true}),N),col=new THREE.Color();m.frustumCulled=false;const FORM=[[0,-.92],[-.6,-.6],[-.2,-.62],[.2,-.62],[.6,-.6],[-.5,-.25],[0,-.3],[.5,-.25],[-.4,.1],[0,.2],[.4,.1]],list=[];
+  for(let i=0;i<N;i++){const t=i<11?0:1,f=FORM[i%11],sgn=t?-1:1;list.push({t,bx:cx+f[0]*HW,bz:cz+f[1]*HL*sgn,x:cx+f[0]*HW,z:cz+f[1]*HL*sgn,keeper:i%11===0});lM.identity();m.setMatrixAt(i,lM);m.setColorAt(i,col.set(i%11===0?(t?0x2f6fb5:0xf2c200):(t?0xe9ecef:0xd00000)))}
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(.24,10,8),new THREE.MeshLambertMaterial({color:0xffffff}));scene.add(ball);
+  m.userData.info=['Husker soccer','Nebraska women\'s soccer plays at Barbara Hibner Stadium. The players here are in a scrimmage that never ends, red against white. They are part of the map, for fun. Scores for the real team are under Huskers.'];scene.add(m);pickables.push(m);
+  soc={m,list,ball,cx,cz,HL,HW,bx:cx,bz:cz,tx:cx,tz:cz,nt:0,say:0,lb:{t:'',sub:'Husker soccer · Hibner Stadium',x:cx,y:0,z:cz,k:3,pri:900,near:0,far:2400}}}
+function stepSoc(dt,now){if(!soc){if(!H.lon0)return;setupSoc()}const B=soc,t=controls.target,d=camera.position.distanceTo(t);if(Math.hypot(t.x-B.cx,t.z-B.cz)>900||d>2200)return;const sc=Math.min(9,Math.max(1.3,d/95));
+  if(now>B.nt){B.tx=B.cx+(Math.random()*2-1)*B.HW*.9;B.tz=B.cz+(Math.random()*2-1)*B.HL*.95;B.nt=now+1800+Math.random()*2600;if(Math.random()<.35)B.say=(B.say+1+((Math.random()*3)|0))%SOCSAY.length}
+  const k=Math.min(1,dt*1.6);B.bx+=(B.tx-B.bx)*k;B.bz+=(B.tz-B.bz)*k;B.ball.position.set(B.bx,hAt(B.bx,B.bz)+.3*sc,B.bz);B.ball.scale.setScalar(sc);
+  for(let i=0;i<B.list.length;i++){const q=B.list[i],pull=q.keeper?.08:.42,gx=q.bx+(B.bx-q.bx)*pull,gz=q.bz+(B.bz-q.bz)*pull,dx=gx-q.x,dz=gz-q.z,dd=Math.hypot(dx,dz),v=Math.min(dd,(q.keeper?3:6.2)*dt);if(dd>.05){q.x+=dx/dd*v;q.z+=dz/dd*v}
+    lP.set(q.x,hAt(q.x,q.z)+(dd>1?Math.abs(Math.sin(now*.013+i))*.14*sc:0),q.z);lQ.setFromAxisAngle(lUp,Math.atan2(B.bx-q.x,B.bz-q.z));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM)}
+  B.lb.t=SOCSAY[B.say];B.lb.y=hAt(B.cx,B.cz)+6*sc+10;lifeLabels.push(B.lb);B.m.instanceMatrix.needsUpdate=true;ambient=true}
+function stepLife(dt,now){lifeLabels.length=0;if(!(performance.now()-lastInput<120000||ride||tour||fly)){for(const f of flocks)lifeLabels.push(f.lb);return}stepBirds(dt,now);stepZoo(dt,now);stepDogs(dt,now);stepPride(dt,now);stepDev(dt,now);stepVB(dt,now);stepTraffic(dt,now);stepBikers(dt,now);stepTrains(dt,now);stepSci(dt,now);stepCat(dt,now);stepSoc(dt,now);stepMore(dt,now)}
 $('bVB').onclick=()=>setVB(!vbOn);
 // fold the button grid (top right) and the key, slider and places ribbon (bottom) out of the way, and bring them back
 $('bMenu').onclick=()=>{const shut=$('tools').classList.toggle('shut');$('bMenu').textContent=shut?'Menu ▾':'Menu ▴';$('bMenu').setAttribute('aria-expanded',!shut)};
