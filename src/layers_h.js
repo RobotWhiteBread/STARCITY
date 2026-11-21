@@ -43,8 +43,8 @@ function aaWallInit(){const p=LM.dev;if(!p)return;const cv=document.createElemen
   const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;const W=88,Hh=W*1152/2048,g=new THREE.Group();
   for(const ry of [0,Math.PI]){const m=new THREE.Mesh(new THREE.PlaneGeometry(W,Hh),new THREE.MeshBasicMaterial({map:tex,fog:false}));m.rotation.y=ry;m.position.z=ry?-.6:.6;g.add(m)}
   const back=new THREE.Mesh(new THREE.BoxGeometry(W+4,Hh+4,1),new THREE.MeshLambertMaterial({color:0x2a2c30}));g.add(back);for(const sx of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(2.4,10,2.4),new THREE.MeshLambertMaterial({color:0x2a2c30}));post.position.set(sx*W*.36,-Hh/2-5,0);g.add(post)}
-  // it stands in the parking lot east of the arena, side on, so it never sits between you and the building
-  const x=p.x+345,z=p.z-20;g.position.set(x,hAt(x,z)+10+Hh/2,z);g.rotation.y=-Math.PI/2;
+  // it stands on the grass by the east parking lot, clear of the road, and turns to face you the way the Devaney sign does
+  const x=p.x+292,z=p.z-162;g.position.set(x,hAt(x,z)+10+Hh/2,z);g.rotation.y=-Math.PI/2;
   g.userData.card=()=>aaCard();scene.add(g);pickables.push(g);LM.aaWall=g;labels.push({t:'All-American Wall',sub:VBAA.length+' Husker volleyball All-Americans',x,y:hAt(x,z)+Hh+22,z,k:3,pri:960,near:0,far:2200})}
 function aaCard(){showCard('The All-American Wall',VBAA.length+' Nebraska volleyball players have been named All-Americans, more selections than any other program in the country. Each name is followed by the seasons she was honored: '+VBAA.map(q=>q[0]+' ('+q[1]+')').join(', ')+'. The years cover AVCA first, second and third teams from 1983 through 2025, and Terri Kanouse, named by the AIAW in 1980. This wall exists on this map only.',undefined,{label:'Roll the records',fn:()=>rollOpen('vb')},[{href:'https://en.wikipedia.org/wiki/Nebraska_Cornhuskers_women%27s_volleyball_honors_and_awards',label:'The full honors list ↗'},{href:'https://huskers.com/sports/volleyball/roster',label:'This season\'s roster ↗'}])}
 function hkAfter(){huskLabels.length=0;if(vbStar.i>=0)huskLabels.push(vbStar);const live=[],byV=new Map();
