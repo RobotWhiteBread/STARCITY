@@ -87,16 +87,28 @@ documentation does not cover it because it does not discuss CDNs at all.
 
 ## 7. Caching
 
-Cloudflare caches HTML conservatively by default, which means `index.html`, the
-10 MB file, may not be cached at the edge and you keep paying GitHub's bandwidth
-for it. Create a Cache Rule:
+Cloudflare does not cache HTML by default, so without a rule the 10 MB
+`index.html` passes straight through to GitHub on every visit.
 
-- Match: hostname equals `starcitylincoln.org`
-- Setting: Eligible for cache, Edge TTL 1 day
+Caching, Cache Rules, Create rule, and pick the **Cache everything** template.
+Deploy it as is. Do not set an Edge TTL: with it blank Cloudflare follows
+GitHub's own `cache-control`, which is ten minutes. That still absorbs nearly
+all traffic under load, and a pushed update goes live within ten minutes with
+no purge.
 
-Verify it is working by loading the map and checking the response headers for
-`cf-cache-status: HIT`. `MISS` on the first load is expected; `DYNAMIC` on every
-load means the rule is not matching.
+Deploy only that one template. The page offers three, and "Bypass cache for
+everything" placed after "Cache everything" overrides it, leaving nothing
+cached.
+
+Verify with the response headers: `server: cloudflare` and
+`cf-cache-status: HIT` on a second load. `MISS` on the first load is expected.
+
+Status, 21 November 2026: live. Map, both reports and the PDF all verified
+`HIT` through Cloudflare on https://starcitylincoln.org.
+
+One thing to know about pushes: GitHub wrote `CNAME` to `gh-pages` when the
+domain was saved. That file now lives on every branch. Never delete it, and
+never force-push a branch that lacks it, or the custom domain drops.
 
 ## 8. Afterwards
 
