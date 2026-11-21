@@ -9,12 +9,12 @@ const TR={n:0,X:null,cs:null,mA:null,mB:null,la:null,lb:null,nA:0,nB:0,key:'',co
 const CONIFER=/^(pine|spruce|fir|juniper|cedar|arborvitae|hemlock|larch|baldcypress|bald cypress|douglas|yew|redwood|cypress|falsecypress)/i;
 // how tall to draw a tree with a trunk this many inches across (10 when the list gives no size)
 function treeH(i){const d=S2.tr_d[i]||10;return TR.con[TR.kk[i]]?Math.min(25,4+d*.6):Math.min(24,4.5+d*.5)}
-function treeNear(x,z,r){const G=TR.G,C=TR.C,c0=Math.floor((x+8192)/C),r0=Math.floor((z+8192)/C),X=TR.X;let best=-1,bd=r*r;
+function treeNear(x,z,r){const G=TR.G,C=TR.C,c0=Math.floor((x+(TR.H||8192))/C),r0=Math.floor((z+(TR.H||8192))/C),X=TR.X;let best=-1,bd=r*r;
   for(let a=Math.max(0,r0-1);a<=Math.min(G-1,r0+1);a++)for(let b=Math.max(0,c0-1);b<=Math.min(G-1,c0+1);b++){const k=a*G+b;for(let i=TR.cs[k];i<TR.cs[k+1];i++){const dx=X[2*i]-x,dz=X[2*i+1]-z,d=dx*dx+dz*dz;if(d<bd){bd=d;best=i}}}return best}
-function treesInit(){if(!S2||!S2.tr_c||!H2.trees||!LM.treeMesh)return;const T=H2.trees,n=T.n,G=T.ng,C=T.cell,X=new Float32Array(n*2),cs=new Uint32Array(G*G+1),kk=new Uint8Array(n);
+function treesInit(){if(!S2||!S2.tr_c||!H2.trees||!LM.treeMesh)return;const T=H2.trees,n=T.n,G=T.ng,C=T.cell,TH=T.half||8192,X=new Float32Array(n*2),cs=new Uint32Array(G*G+1),kk=new Uint8Array(n);
   // the list comes cell by cell, each tree stored as its place inside its 128 m cell: rebuild where every tree stands
-  {let i=0;for(let k=0;k<G*G;k++){cs[k]=i;const x0=(k%G)*C-8192,z0=Math.floor(k/G)*C-8192;for(let j=S2.tr_c[k];j>0;j--,i++){X[2*i]=x0+S2.tr_x[i]*.5;X[2*i+1]=z0+S2.tr_z[i]*.5;kk[i]=T.names[S2.tr_n[i]][2]}}cs[G*G]=i}
-  TR.n=n;TR.X=X;TR.cs=cs;TR.kk=kk;TR.con=T.kinds.map(k=>CONIFER.test(k));TR.C=C;TR.G=G;
+  {let i=0;for(let k=0;k<G*G;k++){cs[k]=i;const x0=(k%G)*C-TH,z0=Math.floor(k/G)*C-TH;for(let j=S2.tr_c[k];j>0;j--,i++){X[2*i]=x0+S2.tr_x[i]*.5;X[2*i+1]=z0+S2.tr_z[i]*.5;kk[i]=T.names[S2.tr_n[i]][2]}}cs[G*G]=i}
+  TR.n=n;TR.X=X;TR.cs=cs;TR.kk=kk;TR.con=T.kinds.map(k=>CONIFER.test(k));TR.C=C;TR.G=G;TR.H=TH;
   // the map's stand-in trees step aside wherever the city has a real record
   {const m=LM.treeMesh,zero=new THREE.Matrix4().makeScale(0,0,0),pts=LM.treePts||[];let gone=0;for(let i=0;i<pts.length;i++){if(treeNear(pts[i][0],pts[i][1],pts[i][2]?20:8)>=0){m.setMatrixAt(i,zero);gone++}}m.instanceMatrix.needsUpdate=true;TR.gone=gone}
   // two shapes: the map's round-crowned tree for broadleaf kinds, and stacked cones for conifers
@@ -56,8 +56,8 @@ function treesFrame(){if(!TR.mA)return;const t=controls.target,d=camera.position
   if(!walk.on&&d>4300||walk.sky){if(TR.key!=='off'){TR.key='off';TR.mA.count=0;TR.mB.count=0;TR.nA=TR.nB=0;shadowDirty=true;dirty=true}return}
   const R=walk.on?460:Math.min(2400,Math.max(280,d*1.15)),cx=walk.on?camera.position.x:t.x,cz=walk.on?camera.position.z:t.z,st=R*.24,key=Math.round(cx/st)+','+Math.round(cz/st)+','+Math.round(Math.log(R)*4);if(key===TR.key)return;TR.key=key;
   // nearest grid cells first, until the budget is spent
-  const G=TR.G,C=TR.C,c0=Math.floor((cx+8192)/C),r0=Math.floor((cz+8192)/C),rc=Math.ceil(R/C),cells=[];
-  for(let r=Math.max(0,r0-rc);r<=Math.min(G-1,r0+rc);r++)for(let c=Math.max(0,c0-rc);c<=Math.min(G-1,c0+rc);c++){const dx=(c+.5)*C-8192-cx,dz=(r+.5)*C-8192-cz,dd=dx*dx+dz*dz;if(dd<(R+C)*(R+C))cells.push([dd,r*G+c])}
+  const G=TR.G,C=TR.C,c0=Math.floor((cx+(TR.H||8192))/C),r0=Math.floor((cz+(TR.H||8192))/C),rc=Math.ceil(R/C),cells=[];
+  for(let r=Math.max(0,r0-rc);r<=Math.min(G-1,r0+rc);r++)for(let c=Math.max(0,c0-rc);c<=Math.min(G-1,c0+rc);c++){const dx=(c+.5)*C-(TR.H||8192)-cx,dz=(r+.5)*C-(TR.H||8192)-cz,dd=dx*dx+dz*dz;if(dd<(R+C)*(R+C))cells.push([dd,r*G+c])}
   cells.sort((a,b)=>a[0]-b[0]);let nA=0,nB=0;const capA=TR.la.length,capB=TR.lb.length,kk=TR.kk;
   for(const q of cells){for(let i=TR.cs[q[1]];i<TR.cs[q[1]+1];i++){if(TR.con[kk[i]]){if(nB<capB){treePut(TR.mB,nB,i);TR.lb[nB++]=i}}else if(nA<capA){treePut(TR.mA,nA,i);TR.la[nA++]=i}}if(nA>=capA&&nB>=capB)break}
   TR.nA=nA;TR.nB=nB;for(const [m,k] of [[TR.mA,nA],[TR.mB,nB]]){m.count=k;m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true}shadowDirty=true;dirty=true}

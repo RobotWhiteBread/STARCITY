@@ -47,22 +47,25 @@ function aaWallInit(){const p=LM.dev;if(!p)return;const cv=document.createElemen
   const x=p.x+292,z=p.z-162;g.position.set(x,hAt(x,z)+10+Hh/2,z);g.rotation.y=-Math.PI/2;
   g.userData.card=()=>aaCard();scene.add(g);pickables.push(g);LM.aaWall=g;labels.push({t:'All-American Wall',sub:VBAA.length+' Husker volleyball All-Americans',x,y:hAt(x,z)+Hh+22,z,k:3,pri:960,near:0,far:2200})}
 // A roadside sign of the kind that used to stand outside motels: a bulb-lit arrow over a letter board with clip-on letters.
-function motelSignInit(){const p=LM.dev;if(!p)return;const cv=document.createElement('canvas');cv.width=640;cv.height=900;const q=cv.getContext('2d');
-  // the arrow, pointing down toward the arena
-  q.save();q.translate(320,205);q.rotate(-.1);q.beginPath();q.moveTo(-270,-120);q.lineTo(120,-120);q.lineTo(120,-175);q.lineTo(285,-20);q.lineTo(120,135);q.lineTo(120,80);q.lineTo(-270,80);q.closePath();q.fillStyle='#e23b2e';q.fill();q.lineWidth=10;q.strokeStyle='#fbe9b0';q.stroke();
-  q.fillStyle='#ffe27a';const B=[[-250,-100],[-190,-100],[-130,-100],[-70,-100],[-10,-100],[50,-100],[105,-100],[140,-150],[185,-108],[228,-66],[262,-22],[228,24],[185,68],[140,112],[105,62],[50,62],[-10,62],[-70,62],[-130,62],[-190,62],[-250,62],[-252,-20]];for(const [x,y] of B){q.beginPath();q.arc(x,y,9,0,6.283);q.fill()}
-  q.fillStyle='#fff7e0';q.textAlign='center';q.font='italic 800 78px Georgia,serif';q.fillText('Volleyball',-70,10);q.restore();
-  // the oval
-  q.beginPath();q.ellipse(320,395,215,58,0,0,6.283);q.fillStyle='#1f8f8a';q.fill();q.lineWidth=8;q.strokeStyle='#fbe9b0';q.stroke();q.fillStyle='#fff7e0';q.font='800 40px system-ui,Arial,sans-serif';q.fillText('SELLOUTS NIGHTLY',320,409);
-  // the letter board, with its rails and letters that never sit quite straight
-  q.fillStyle='#f4f1e6';q.fillRect(40,480,560,330);q.lineWidth=10;q.strokeStyle='#2a2c30';q.strokeRect(40,480,560,330);q.strokeStyle='#c9c4b4';q.lineWidth=3;for(const y of [585,690])  {q.beginPath();q.moveTo(48,y+8);q.lineTo(592,y+8);q.stroke()}
+function motelCanvas(dir){const cv=document.createElement('canvas');cv.width=640;cv.height=900;const q=cv.getContext('2d');
+  // the arrow points at the arena; dir is 1 when the arena is to the right of the sign on screen, -1 when it is to the left
+  q.save();q.translate(320,205);q.scale(dir,1);q.rotate(.06);q.beginPath();q.moveTo(-270,-120);q.lineTo(120,-120);q.lineTo(120,-175);q.lineTo(285,-20);q.lineTo(120,135);q.lineTo(120,80);q.lineTo(-270,80);q.closePath();q.fillStyle='#e23b2e';q.fill();q.lineWidth=10;q.strokeStyle='#fbe9b0';q.stroke();
+  q.fillStyle='#ffe27a';const B=[[-250,-100],[-190,-100],[-130,-100],[-70,-100],[-10,-100],[50,-100],[105,-100],[140,-150],[185,-108],[228,-66],[262,-22],[228,24],[185,68],[140,112],[105,62],[50,62],[-10,62],[-70,62],[-130,62],[-190,62],[-250,62],[-252,-20]];for(const [x,y] of B){q.beginPath();q.arc(x,y,9,0,6.283);q.fill()}q.restore();
+  q.save();q.translate(320+dir*-40,215);q.rotate(.06*dir);q.fillStyle='#fff7e0';q.textAlign='center';q.font='italic 800 78px Georgia,serif';q.fillText('Volleyball',0,10);q.restore();
+  q.beginPath();q.ellipse(320,395,215,58,0,0,6.283);q.fillStyle='#1f8f8a';q.fill();q.lineWidth=8;q.strokeStyle='#fbe9b0';q.stroke();q.fillStyle='#fff7e0';q.textAlign='center';q.font='800 40px system-ui,Arial,sans-serif';q.fillText('SELLOUTS NIGHTLY',320,409);
+  q.fillStyle='#f4f1e6';q.fillRect(40,480,560,330);q.lineWidth=10;q.strokeStyle='#2a2c30';q.strokeRect(40,480,560,330);q.strokeStyle='#c9c4b4';q.lineWidth=3;for(const y of [585,690]){q.beginPath();q.moveTo(48,y+8);q.lineTo(592,y+8);q.stroke()}
   const L=['CENTER OF THE','VOLLEYBALL','UNIVERSE'];q.fillStyle='#16171a';q.font='800 62px "Arial Narrow",Arial,sans-serif';
-  for(let r=0;r<3;r++){const t=L[r],w=44,x0=320-(t.length-1)*w/2;for(let i=0;i<t.length;i++){const k=(r*17+i*7)%11;q.save();q.translate(x0+i*w+(k===3?4:0),558+r*105+(k===5?5:k===8?-4:0));q.rotate((k-5)*.012+(k===2?.09:0));q.fillText(t[i]==='E'&&r===2&&i===5?'3':t[i],0,0);q.restore()}}
+  for(let r=0;r<3;r++){const t=L[r],w=44,x0=320-(t.length-1)*w/2;for(let i=0;i<t.length;i++){const k=(r*17+i*7)%11;q.save();q.translate(x0+i*w+(k===3?4:0),558+r*105+(k===5?5:k===8?-4:0));q.rotate((k-5)*.012+(k===2?.09:0));q.fillText(t[i],0,0);q.restore()}}
   q.fillStyle='#e23b2e';q.font='700 26px system-ui,Arial,sans-serif';q.fillText('★ FREE PARKING FOR CHAMPIONS ★',320,850);
-  const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;const Hh=30,W=Hh*640/900,g=new THREE.Group();
-  const m=new THREE.Mesh(new THREE.PlaneGeometry(W,Hh),new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.05,side:THREE.DoubleSide,fog:false}));m.position.y=14+Hh/2;g.add(m);
+  const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;return tex}
+// A roadside sign of the kind that used to stand outside motels: a bulb-lit arrow over a letter board with clip-on letters.
+function motelSignInit(){const p=LM.dev;if(!p)return;const R=motelCanvas(1),Lt=motelCanvas(-1),Hh=30,W=Hh*640/900,g=new THREE.Group();
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(W,Hh),new THREE.MeshBasicMaterial({map:R,transparent:true,alphaTest:.05,side:THREE.DoubleSide,fog:false}));m.position.y=14+Hh/2;g.add(m);
   for(const sx of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.9,17,.9),new THREE.MeshLambertMaterial({color:0x3a3d42}));post.position.set(sx*W*.3,8.5,-.6);g.add(post)}
-  const x=p.x+62,z=p.z+128;g.position.set(x,hAt(x,z),z);g.userData.info=['Center of the Volleyball Universe','A roadside sign in the old motel style, with a bulb-lit arrow and clip-on letters. It exists on this map only. The title is one fans give the Devaney Center, home of the most-attended program in college volleyball.'];scene.add(g);pickables.push(g);LM.vbMotel=g}
+  const x=p.x+62,z=p.z+128;g.position.set(x,hAt(x,z),z);g.userData.info=['Center of the Volleyball Universe','A roadside sign in the old motel style, with a bulb-lit arrow and clip-on letters. It exists on this map only. The title is one fans give the Devaney Center, home of the most-attended program in college volleyball.'];g.userData.tex=[R,Lt];g.userData.dir=1;g.userData.panel=m;scene.add(g);pickables.push(g);LM.vbMotel=g}
+// called each frame after the sign turns to face you: the arrow swaps sides so it always points at the arena
+function motelAim(){const g=LM.vbMotel,p=LM.dev;if(!g||!p)return;const rx=Math.cos(g.rotation.y),rz=-Math.sin(g.rotation.y),d=(p.x-g.position.x)*rx+(p.z-g.position.z)*rz,dir=d>=0?1:-1;
+  if(dir!==g.userData.dir){g.userData.dir=dir;const mt=g.userData.panel.material;mt.map=g.userData.tex[dir>0?0:1];mt.needsUpdate=true;dirty=true}}
 function aaCard(){showCard('The All-American Wall',VBAA.length+' Nebraska volleyball players have been named All-Americans, more selections than any other program in the country. Each name is followed by the seasons she was honored: '+VBAA.map(q=>q[0]+' ('+q[1]+')').join(', ')+'. The years cover AVCA first, second and third teams from 1983 through 2025, and Terri Kanouse, named by the AIAW in 1980. This wall exists on this map only.',undefined,{label:'Roll the records',fn:()=>rollOpen('vb')},[{href:'https://en.wikipedia.org/wiki/Nebraska_Cornhuskers_women%27s_volleyball_honors_and_awards',label:'The full honors list ↗'},{href:'https://huskers.com/sports/volleyball/roster',label:'This season\'s roster ↗'}])}
 function hkAfter(){huskLabels.length=0;if(vbStar.i>=0)huskLabels.push(vbStar);const live=[],byV=new Map();
   for(const s of HK.sp.slice(1)){const ev=HK.ev[s[0]];if(!ev)continue;const on=ev.find(e=>e.st==='in'),nx=ev.find(e=>e.st==='pre'&&e.t>Date.now()-36e5);if(on)live.push([s,on]);

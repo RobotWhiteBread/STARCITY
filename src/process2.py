@@ -1034,9 +1034,9 @@ try:
     parks = [''] + sorted({nz(a.get('ParkUnit')) for p, a in TR} - {''}); pix = {k: i for i, k in enumerate(parks)}
     # Packed small: the map is cut into 128 m cells, each tree is stored as its place inside its cell to the nearest half meter,
     # and trees are listed cell by cell. The page rebuilds every position from the count of trees in each cell.
-    CELL = 128.0; NG = int(16384 // CELL)
+    CELL = 128.0; TH = 16384.0; NG = int(2 * TH // CELL)
     def cell_of(p):
-        x = p[0] + 8192.0; z = -p[1] + 8192.0
+        x = p[0] + TH; z = -p[1] + TH
         c = int(max(0, min(NG - 1, x // CELL))); r = int(max(0, min(NG - 1, z // CELL)))
         return r * NG + c, int(max(0, min(255, round((x - c * CELL) / 0.5)))), int(max(0, min(255, round((z - r * CELL) / 0.5))))
     TR = [(cell_of(p), a) for p, a in TR]; TR.sort(key=lambda t: t[0])
@@ -1051,7 +1051,7 @@ try:
     assert max(cnt) < 65536
     sec('tr_c', 'H', cnt); sec('tr_x', 'B', lx); sec('tr_z', 'B', lz); sec('tr_n', 'H', tn); sec('tr_d', 'B', td); sec('tr_s', 'B', ts); sec('tr_p', 'B' if len(parks) < 256 else 'H', tp)
     sec('tr_i0', 'B', i0); sec('tr_i1', 'B', i1); sec('tr_i2', 'B', i2)
-    HEAD['trees'] = dict(n=len(TR), cell=CELL, ng=NG, kinds=kinds, names=names, sites=SITES, dist=DIST, parks=parks, listed=listed, active=active, life=life, asof=TODAY)
+    HEAD['trees'] = dict(n=len(TR), cell=CELL, ng=NG, half=TH, kinds=kinds, names=names, sites=SITES, dist=DIST, parks=parks, listed=listed, active=active, life=life, asof=TODAY)
     log('trees: listed', listed, 'active', active, 'on the map', len(TR), 'kinds', len(kinds), 'names', len(names), 'parks', len(parks), 'with a trunk size', sum(1 for v in td if v), 'with an id', sum(1 for a, b, c in zip(i0, i1, i2) if a or b or c), 'most in one cell', max(cnt))
     log('trees: top kinds', Counter(kind_of(a) for c, a in TR).most_common(8), 'biggest trunks', sorted(td)[-5:])
 except Exception as e:
