@@ -1,8 +1,8 @@
 # Extract Lincoln-area Microsoft footprints + terrain grid. Outputs ms.json and terrain.json
 import zipfile,re,json,math,glob,sys
 from PIL import Image
-D='/mnt/user-data/uploads/STARCITY/'
-S,N,W,E=40.70,40.84,-96.73,-96.55
+D='/home/claude/wd/'
+S,N,W,E=40.69,40.92,-96.81,-96.535
 pat=re.compile(rb'\[(-?\d+\.\d+),(-?\d+\.\d+)\]')
 out=[]
 z=zipfile.ZipFile(D+'Nebraska.geojson.zip')
@@ -38,7 +38,7 @@ def elev(lat,lon):
         return sum(v)/len(v) if v else None
     return v[0]*(1-tx)*(1-ty)+v[1]*tx*(1-ty)+v[2]*(1-tx)*ty+v[3]*tx*ty
 LAT0,LON0=40.77,-96.64;KX=111320*math.cos(math.radians(LAT0));KY=111000.0
-G=401;HALF=8400.0
+G=641;HALF=16400.0
 grid=[]
 for j in range(G):          # j: north index (south->north)
     nn=-HALF+2*HALF*j/(G-1)
@@ -46,6 +46,26 @@ for j in range(G):          # j: north index (south->north)
         x=-HALF+2*HALF*i/(G-1)
         grid.append(elev(LAT0+nn/KY,LON0+x/KX))
 good=[v for v in grid if v is not None];mn=min(good);mx=max(good)
+# cells outside the downloaded tiles take the nearest covered value along the row, then the column, so the edge is flat and not a cliff
+for j in range(G):
+    row=grid[j*G:(j+1)*G];last=None
+    for i in range(G):
+        if row[i] is None: row[i]=last
+        else: last=row[i]
+    last=None
+    for i in range(G-1,-1,-1):
+        if row[i] is None: row[i]=last
+        else: last=row[i]
+    grid[j*G:(j+1)*G]=row
+for i in range(G):
+    last=None
+    for j in range(G):
+        if grid[j*G+i] is None: grid[j*G+i]=last
+        else: last=grid[j*G+i]
+    last=None
+    for j in range(G-1,-1,-1):
+        if grid[j*G+i] is None: grid[j*G+i]=last
+        else: last=grid[j*G+i]
 grid=[v if v is not None else mn for v in grid]
 print('elev range',mn,mx,file=sys.stderr)
 json.dump(dict(g=G,half=HALF,min=mn,max=mx,d=[int(round((v-mn)*10)) for v in grid]),open('terrain.json','w'))

@@ -508,7 +508,7 @@ async function build(){
   await prog(.08,'Laying out the land…');
   // ===== ground
   const G=new MeshB(600000);
-  {const c=hex(0xbfc5a0);const ax=[-60000,-30000,-15000];for(let v=-8400;v<=8400.1;v+=140)ax.push(v);ax.push(15000,30000,60000);const n=ax.length;
+  {const c=hex(0xbfc5a0);const ax=[-90000,-45000,-24000];for(let v=-16400;v<=16400.1;v+=200)ax.push(v);ax.push(24000,45000,90000);const n=ax.length;
    for(let j=0;j<n;j++)for(let i=0;i<n;i++)G.v(ax[i],hAt(ax[i],ax[j]),ax[j],...c);
    for(let j=0;j<n-1;j++)for(let i=0;i<n-1;i++){const a=j*n+i;G.t(a,a+n,a+1);G.t(a+1,a+n,a+n+1)}}
   const emitTri=(A,B,C,col)=>{const st=[A,B,C];while(st.length){const c3=st.pop(),b3=st.pop(),a3=st.pop();
@@ -607,7 +607,7 @@ async function build(){
   const ground=new THREE.Mesh(G.geo(true),matG);ground.renderOrder=-10;ground.frustumCulled=false;ground.receiveShadow=true;scene.add(ground);LM.ground=ground;
   await prog(.46,'Raising '+H.counts.buildings.toLocaleString()+' buildings…');
   // ===== buildings
-  const NG=7,CS=16400/NG;const chunks=[];for(let i=0;i<NG*NG;i++)chunks.push({m:new MeshB(20000),start:[],ids:[]});
+  const NG=14,CS=32400/NG;const chunks=[];for(let i=0;i<NG*NG;i++)chunks.push({m:new MeshB(20000),start:[],ids:[]});
   const WALL1=[0xe8e0d0,0xd9cbb5,0xc9b79c,0xe3d9c6,0xbfc5c9,0xd6c6a8,0xa9b3ab,0xe9e4d8,0xb79f86,0xa0624c,0x8f9aa3,0xd8d3b0].map(hex);
   const ROOF1=[0x5d5148,0x6b625c,0x4e4a48,0x7a5c4a,0x55585c,0x6e4f44,0x3f4347,0x80766a].map(hex);
   const WALLC=[0xd9d4c8,0xcfc8ba,0xc6c9cc,0xd5c7b0,0xb99079,0xbdb5a6].map(hex);
@@ -617,11 +617,11 @@ async function build(){
   const br=S.b_rings,brs=S.b_rs,bxy=S.b_xy,bh=S.b_h,bmh=S.b_minh,btc=S.b_tc,brf=S.b_roof;
   const pipB=(x,z,r)=>{let c=false;for(let i=0,j=r.length-1;i<r.length;j=i++){const a=r[i],q=r[j];if((a[1]>z)!==(q[1]>z)&&x<(q[0]-a[0])*(z-a[1])/(q[1]-a[1])+a[0])c=!c}return c};
   const CHIM=[0x8a5a48,0x9a6b56,0x77706a,0xa58a78].map(hex),PENT=[0x8f9296,0xa4a29c,0x7d8388].map(hex);
-  const OC=3,ON=Math.ceil(16400/OC),occ=new Uint8Array(Math.ceil(ON*ON/8));
-  LM.occ=(x,z)=>{const i=Math.floor((x+8200)/OC),j=Math.floor((z+8200)/OC);if(i<0||j<0||i>=ON||j>=ON)return 0;const k=j*ON+i;return (occ[k>>3]>>(k&7))&1};
+  const OC=4,ON=Math.ceil(32400/OC),occ=new Uint8Array(Math.ceil(ON*ON/8));
+  LM.occ=(x,z)=>{const i=Math.floor((x+16200)/OC),j=Math.floor((z+16200)/OC);if(i<0||j<0||i>=ON||j>=ON)return 0;const k=j*ON+i;return (occ[k>>3]>>(k&7))&1};
   const occFill=o=>{let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of o){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}
-    const i0=Math.max(0,Math.floor((x0+8200)/OC)),i1=Math.min(ON-1,Math.floor((x1+8200)/OC)),j0=Math.max(0,Math.floor((z0+8200)/OC)),j1=Math.min(ON-1,Math.floor((z1+8200)/OC)),n=o.length;
-    for(let j=j0;j<=j1;j++){const zc=(j+.5)*OC-8200;for(let i=i0;i<=i1;i++){const xc=(i+.5)*OC-8200;let c=false;for(let a=0,b2=n-1;a<n;b2=a++){const pa=o[a],pb=o[b2];if((pa[1]>zc)!==(pb[1]>zc)&&xc<(pb[0]-pa[0])*(zc-pa[1])/(pb[1]-pa[1])+pa[0])c=!c}if(c){const k=j*ON+i;occ[k>>3]|=1<<(k&7)}}}};
+    const i0=Math.max(0,Math.floor((x0+16200)/OC)),i1=Math.min(ON-1,Math.floor((x1+16200)/OC)),j0=Math.max(0,Math.floor((z0+16200)/OC)),j1=Math.min(ON-1,Math.floor((z1+16200)/OC)),n=o.length;
+    for(let j=j0;j<=j1;j++){const zc=(j+.5)*OC-16200;for(let i=i0;i<=i1;i++){const xc=(i+.5)*OC-16200;let c=false;for(let a=0,b2=n-1;a<n;b2=a++){const pa=o[a],pb=o[b2];if((pa[1]>zc)!==(pb[1]>zc)&&xc<(pb[0]-pa[0])*(zc-pa[1])/(pb[1]-pa[1])+pa[0])c=!c}if(c){const k=j*ON+i;occ[k>>3]|=1<<(k&7)}}}};
   let ri=0,xi=0;const NB=br.length;LM.bc=new Float32Array(NB*2);const devInfo=H.infos.indexOf('Devaney Sports Center');let devA=0;
   for(let b=0;b<NB;b++){
     const rings=[];let cx=0,cz=0;
@@ -629,7 +629,7 @@ async function build(){
     const o=rings[0];for(const p of o){cx+=p[0];cz+=p[1]}cx/=o.length;cz/=o.length;LM.bc[2*b]=cx;LM.bc[2*b+1]=cz;occFill(o);
     if(Math.abs(cx-LM.capitol[0])<70&&Math.abs(cz-LM.capitol[1])<70)continue;
     if(Math.abs(cx-LM.stadium[0])<100&&Math.abs(cz-LM.stadium[1])<124)continue;
-    const gx=Math.min(NG-1,Math.max(0,Math.floor((cx+8200)/CS))),gz=Math.min(NG-1,Math.max(0,Math.floor((cz+8200)/CS)));
+    const gx=Math.min(NG-1,Math.max(0,Math.floor((cx+16200)/CS))),gz=Math.min(NG-1,Math.max(0,Math.floor((cz+16200)/CS)));
     const ch=chunks[gz*NG+gx],M=ch.m;ch.start.push(M.i.n);ch.ids.push(b);
     {let yb=1e9;for(const p of o){const e=hAt(p[0],p[1]);if(e<yb)yb=e}M.yo=yb}
     const h=bh[b]/10,mh=bmh[b]/10,tc=btc[b],rf=brf[b];const s1=rnd(b),s2=rnd(b+77777),s3=rnd(b+31337);
@@ -741,7 +741,7 @@ async function build(){
    let k=0;const cap=mobile?26000:48000;
    for(const [r,nm] of LM.woods){let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of r){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}
      const dens=nm==='wood'?1/260:1/2600;const n=Math.min(2500,Math.ceil((x1-x0)*(z1-z0)*dens));
-     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);const ed=Math.abs(x)>Math.abs(z)?Math.abs(x):Math.abs(z);if(ed<8360&&(ed<6500||rnd(k*3+2)<(8360-ed)/1860)&&pip(x,z,r)&&!wet(x,z)){if(LM.occ(x,z))roofed++;else pts.push([x,z,1])}}}
+     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);const ed=Math.abs(x)>Math.abs(z)?Math.abs(x):Math.abs(z);if(ed<16360&&(ed<14500||rnd(k*3+2)<(16360-ed)/1860)&&pip(x,z,r)&&!wet(x,z)){if(LM.occ(x,z))roofed++;else pts.push([x,z,1])}}}
    LM.roofed=roofed;
    const tg=new THREE.BufferGeometry();
    {const P=[],I=[];const ring=(y,r,n)=>{const b=P.length/3;for(let i=0;i<n;i++){const a=i/n*Math.PI*2;P.push(Math.cos(a)*r,y,Math.sin(a)*r)}return b};
@@ -1433,11 +1433,11 @@ function setPrecip(kind,heavy){precip=kind;if(!kind){if(pPts)pPts.visible=false;
 function stepPrecip(dt){if(!pPts||!precip)return;const snow=precip==='snow',U=pU,cnt=pPts.userData.cnt,t=controls.target,d=camera.position.distanceTo(t);
   // the falling volume grows with the view, so rain and snow read at any zoom
   const R=Math.min(7000,Math.max(260,d*.8)),Ht=Math.min(2400,Math.max(260,d*.6)),g0=hAt(t.x,t.z),fall=(snow?.035:.27)*dt,wk=snow?1.4:.8,dx=windV?windV.x*dt*wk/500:0,dz=windV?windV.z*dt*wk/500:0;
-  const rd=(wxOn&&ovl&&ovl.rd)?ovl.rd:null,W=rd?ovl.cv.width:0,k=W/16800,P=pPts.geometry.attributes.position.array,Q=LM.rainL.geometry.attributes.instanceStart.data.array;
+  const rd=(wxOn&&ovl&&ovl.rd)?ovl.rd:null,W=rd?ovl.cv.width:0,k=W/32800,P=pPts.geometry.attributes.position.array,Q=LM.rainL.geometry.attributes.instanceStart.data.array;
   const sl=Ht*.08,sx=windV?windV.x*.012*sl:0,sz=windV?windV.z*.012*sl:0;
   for(let i=0;i<cnt;i++){const o=3*i;let x=U[o]+dx,z=U[o+2]+dz,y=U[o+1]-fall*(.7+.6*((i*7)%13)/13);if(x>.5)x-=1;else if(x<-.5)x+=1;if(z>.5)z-=1;else if(z<-.5)z+=1;if(y<0)y+=1;U[o]=x;U[o+1]=y;U[o+2]=z;
     const wx_=t.x+x*2*R,wz_=t.z+z*2*R;let wy=g0+y*Ht;
-    if(rd){const ix=Math.floor((wx_+8400)*k),iy=Math.floor((wz_+8400)*k);if(ix<0||iy<0||ix>=W||iy>=W||rd[(iy*W+ix)*4+3]<=40)wy=-99999}
+    if(rd){const ix=Math.floor((wx_+16400)*k),iy=Math.floor((wz_+16400)*k);if(ix<0||iy<0||ix>=W||iy>=W||rd[(iy*W+ix)*4+3]<=40)wy=-99999}
     if(snow){P[o]=wx_;P[o+1]=wy;P[o+2]=wz_}else{const p=6*i;Q[p]=wx_;Q[p+1]=wy;Q[p+2]=wz_;Q[p+3]=wx_-sx;Q[p+4]=wy+sl;Q[p+5]=wz_-sz}}
   if(snow)pPts.geometry.attributes.position.needsUpdate=true;else LM.rainL.geometry.attributes.instanceStart.data.needsUpdate=true;
   dirty=true}
@@ -1482,17 +1482,17 @@ function placeStorms(){for(const f of funnels)scene.remove(f);funnels=[];wxLabel
 // one sheet draped over the ground carries the radar picture and the outlines of warned areas
 let ovl=null;
 function overlay(){if(ovl)return ovl;const cv=document.createElement('canvas');cv.width=cv.height=mobile?512:768;const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;
-  const geo=new THREE.PlaneGeometry(16800,16800,48,48);geo.rotateX(-Math.PI/2);const p=geo.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,hAt(p.getX(i),p.getZ(i))+3);
+  const geo=new THREE.PlaneGeometry(32800,32800,72,72);geo.rotateX(-Math.PI/2);const p=geo.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,hAt(p.getX(i),p.getZ(i))+3);
   const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,fog:false}));m.renderOrder=2;m.visible=false;scene.add(m);ovl={cv,tex,m,radar:null,rd:null,wet:null,rt:0};return ovl}
-function drawOverlay(){const o=overlay(),c=o.cv.getContext('2d'),W=o.cv.width,A=wxAlerts(),px=v=>(v+8400)/16800*W;c.clearRect(0,0,W,W);let any=false;
+function drawOverlay(){const o=overlay(),c=o.cv.getContext('2d'),W=o.cv.width,A=wxAlerts(),px=v=>(v+16400)/32800*W;c.clearRect(0,0,W,W);let any=false;
   if(wxOn&&o.radar){c.globalAlpha=.74;c.drawImage(o.radar,0,0,W,W);c.globalAlpha=1;any=true}
   if(wxOn)for(const a of A){const col=ACOL[a.event]||'#c070ff';for(const ring of a.polys){c.beginPath();ring.forEach((q,i)=>{const x=px((q[0]-H.lon0)*KXm),y=px(-(q[1]-H.lat0)*KYm);if(i)c.lineTo(x,y);else c.moveTo(x,y)});c.closePath();
       c.fillStyle=col;c.globalAlpha=.27;c.fill();c.globalAlpha=1;c.lineWidth=Math.max(4,W/105);c.strokeStyle=col;c.stroke();any=true}}
   o.tex.needsUpdate=true;o.m.visible=any;dirty=true}
 function setRadar(cv){const o=overlay();o.radar=cv;o.rd=null;o.wet=null;if(cv){try{const d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;let n=0;for(let i=3;i<d.length;i+=16)if(d[i]>40)n++;o.rd=d;o.wet=n/(d.length/16)}catch(e){}}o.rt=Date.now();drawOverlay();wetCheck(true)}
 // radar mosaic from the Iowa Environmental Mesonet's tile service (two tiles cover the whole map)
-async function loadRadar(){const o=overlay(),zm=10,n=1<<zm,W=o.cv.width,px=v=>(v+8400)/16800*W;
-  const lonA=H.lon0-8400/KXm,lonB=H.lon0+8400/KXm,latA=H.lat0-8400/KYm,latB=H.lat0+8400/KYm;
+async function loadRadar(){const o=overlay(),zm=10,n=1<<zm,W=o.cv.width,px=v=>(v+16400)/32800*W;
+  const lonA=H.lon0-16400/KXm,lonB=H.lon0+16400/KXm,latA=H.lat0-16400/KYm,latB=H.lat0+16400/KYm;
   const tx=lon=>Math.floor((lon+180)/360*n),ty=lat=>{const r=lat*Math.PI/180;return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n)},lonOf=x=>x/n*360-180,latOf=y=>Math.atan(Math.sinh(Math.PI*(1-2*y/n)))*180/Math.PI;
   const rc=document.createElement('canvas');rc.width=rc.height=W;const c=rc.getContext('2d');let ok=0;const jobs=[];
   for(let x=tx(lonA);x<=tx(lonB);x++)for(let y=ty(latB);y<=ty(latA);y++)jobs.push(new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';
@@ -1503,7 +1503,7 @@ async function loadRadar(){const o=overlay(),zm=10,n=1<<zm,W=o.cv.width,px=v=>(v
 function demoPoly(cx,cz,ang,len,w0,w1){const u=[Math.sin(ang),-Math.cos(ang)],v=[-u[1],u[0]],P=(a,b)=>[H.lon0+(cx+u[0]*a+v[0]*b)/KXm,H.lat0-(cz+u[1]*a+v[1]*b)/KYm];return [P(0,-w0),P(len,-w1),P(len+1500,0),P(len,w1),P(0,w0),P(0,-w0)]}
 function demoRadar(kind){const o=overlay(),W=o.cv.width,rc=document.createElement('canvas');rc.width=rc.height=W;const c=rc.getContext('2d');
   const blob=(x,y,r,cols)=>{const g=c.createRadialGradient(x,y,0,x,y,r);for(const q of cols)g.addColorStop(q[0],q[1]);c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,6.3);c.fill()};
-  if(kind==='storm'){const cx=(LM.capitol[0]+8400)/16800,cy=(LM.capitol[1]+8400)/16800;for(let i=0;i<9;i++){const x=W*(cx+.1*(i-4)+.03*Math.sin(i*1.7)),y=W*(cy-.1*(i-4)+.05*Math.sin(i*2.3));blob(x,y,W*(.1+.03*rnd(i+90)),[[0,'rgba(0,170,0,.8)'],[.7,'rgba(0,150,0,.55)'],[1,'rgba(0,150,0,0)']]);blob(x,y,W*.05,[[0,'rgba(255,235,0,.95)'],[1,'rgba(255,235,0,0)']]);if(i%2===0)blob(x,y,W*.022,[[0,'rgba(235,30,30,1)'],[1,'rgba(235,30,30,0)']])}}
+  if(kind==='storm'){const cx=(LM.capitol[0]+16400)/32800,cy=(LM.capitol[1]+16400)/32800;for(let i=0;i<9;i++){const x=W*(cx+.1*(i-4)+.03*Math.sin(i*1.7)),y=W*(cy-.1*(i-4)+.05*Math.sin(i*2.3));blob(x,y,W*(.1+.03*rnd(i+90)),[[0,'rgba(0,170,0,.8)'],[.7,'rgba(0,150,0,.55)'],[1,'rgba(0,150,0,0)']]);blob(x,y,W*.05,[[0,'rgba(255,235,0,.95)'],[1,'rgba(255,235,0,0)']]);if(i%2===0)blob(x,y,W*.022,[[0,'rgba(235,30,30,1)'],[1,'rgba(235,30,30,0)']])}}
   else{const snow=kind==='snow';for(let i=0;i<(snow?46:34);i++){const x=W*rnd(i*3+70),y=W*rnd(i*3+71),r=W*((snow?.09:.07)+.1*rnd(i*3+72));blob(x,y,r,snow?[[0,'rgba(70,130,255,.75)'],[.6,'rgba(130,185,255,.5)'],[1,'rgba(150,200,255,0)']]:[[0,'rgba(0,185,0,.8)'],[.65,'rgba(0,150,0,.5)'],[1,'rgba(0,150,0,0)']]);if(!snow&&i%4===0)blob(x,y,r*.35,[[0,'rgba(255,235,0,.9)'],[1,'rgba(255,235,0,0)']])}}
   return rc}
 function setDemo(i){const C=LM.capitol,soon=new Date(Date.now()+35*60000).toISOString(),here=(dx,dz)=>({lat:H.lat0-(C[1]+dz)/KYm,lon:H.lon0+(C[0]+dx)/KXm});
@@ -1527,7 +1527,7 @@ function setWx(on){if(on===wxOn)return;wxOn=on;$('bWx').classList.toggle('on',on
 async function loadWater(){if(gaugesLoaded)return;try{const r=await fetch('https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-continuous/items?f=json&bbox=-96.80,40.65,-96.50,40.90&parameter_code=00060&limit=50');if(!r.ok)throw 0;const j=await r.json();
     const tidy=n=>n.toLowerCase().replace(/,?\s*nebr?\.?$/,'').replace(/\bc\b\.?/g,'creek').replace(/\bnr\b/g,'near').replace(/\b[a-z]/g,m=>m.toUpperCase()).replace(/\b(At|Near|Of|To)\b/g,m=>m.toLowerCase());
     const grp=new THREE.Group();const mat=new THREE.MeshLambertMaterial({color:0x2f8fe0,emissive:0x0a2a50});
-    for(const f of j.features||[]){const c=f.geometry&&f.geometry.coordinates;if(!c)continue;const x=(c[0]-H.lon0)*KXm,z=-(c[1]-H.lat0)*KYm;if(Math.abs(x)>8000||Math.abs(z)>8000)continue;const v=parseFloat(f.properties.value);if(!isFinite(v))continue;
+    for(const f of j.features||[]){const c=f.geometry&&f.geometry.coordinates;if(!c)continue;const x=(c[0]-H.lon0)*KXm,z=-(c[1]-H.lat0)*KYm;if(Math.abs(x)>16000||Math.abs(z)>16000)continue;const v=parseFloat(f.properties.value);if(!isFinite(v))continue;
       const id=f.properties.monitoring_location_id;const name=tidy(H.sites[id]||id);(LM.gauges=LM.gauges||[]).push([name,v]);const y=hAt(x,z);const hgt=18+10*Math.log10(1+v);
       const pole=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,hgt,8),mat);pole.position.set(x,y+hgt/2,z);const ball=new THREE.Mesh(new THREE.SphereGeometry(4,12,8),mat);ball.position.set(x,y+hgt,z);
       const when=new Date(f.properties.time).toLocaleTimeString('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'2-digit'});
@@ -1576,7 +1576,7 @@ let sightings=[],sightT=0,sightFail=false,birdShare=[],shareSrc='';
 const pct=p=>p<.01?'under 1%':Math.round(p*100)+'%';const MON3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const seenOn=d=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(d||'');return m?`${MON3[+m[2]-1]} ${+m[3]}`:''};
 async function loadSightings(){if(!location.protocol.startsWith('http')||Date.now()-sightT<1800000)return;sightT=Date.now();const out=[],seen=new Set();
-  const add=(c,sci,lon,lat,d,src)=>{if(!sci||lon==null||lat==null)return;const x=(lon-H.lon0)*KXm,z=-(lat-H.lat0)*KYm;if(Math.abs(x)>8300||Math.abs(z)>8300)return;sci=sci.split(' ').slice(0,2).join(' ');const key=sci+'|'+Math.round(x/300)+'|'+Math.round(z/300);if(seen.has(key))return;seen.add(key);out.push({c:c||sci,s:sci,x,z,d:d||'',src})};
+  const add=(c,sci,lon,lat,d,src)=>{if(!sci||lon==null||lat==null)return;const x=(lon-H.lon0)*KXm,z=-(lat-H.lat0)*KYm;if(Math.abs(x)>16300||Math.abs(z)>16300)return;sci=sci.split(' ').slice(0,2).join(' ');const key=sci+'|'+Math.round(x/300)+'|'+Math.round(z/300);if(seen.has(key))return;seen.add(key);out.push({c:c||sci,s:sci,x,z,d:d||'',src})};
   let share=[];
   try{const r=await fetch('birds.json',{cache:'no-cache'});if(r.ok){const j=await r.json();for(const o of j.obs||[])add(o.c,o.s,o.lng,o.lat,o.d,j.source||'eBird');
       if(j.freq&&j.freq.length){share=j.freq.filter(q=>q.s&&q.p>0).map(q=>({c:q.c||q.s,s:q.s,p:+q.p}));shareSrc=`of recent ${j.source||'eBird'} checklists in Lancaster County`}}}catch(e){}
@@ -1868,7 +1868,7 @@ function trafCard(){const lv=trafLevel(curHour),word=lv>.9?'rush hour':lv>.7?'bu
 function setTraffic(on){trafOn=on;$('bTraf').classList.toggle('on',on);if(on&&!traf)buildTraffic();if(traf)traf.mesh.visible=on;if(on){lastInput=performance.now();trafCard()}else hideCard();dirty=true}
 $('bTraf').onclick=()=>setTraffic(!trafOn);
 // Bird's eye reset: back to the whole city from above, at the current time of day, out of any mode that moves the camera
-function birdsEye(){MENUS.length=0;menuAt=0;VIEW.keep=null;TRAY.mute=true;try{resetAll();resetMenu()}finally{TRAY.mute=false}coreReset();if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}setLive(true);flyTo(camTo(-1300,-900,17500,-10,50),1800)}
+function birdsEye(){MENUS.length=0;menuAt=0;VIEW.keep=null;TRAY.mute=true;try{resetAll();resetMenu()}finally{TRAY.mute=false}coreReset();if(walk.on)setWalk(false);if(ride)stopRide();stopTour();panV=null;if(flat){flat=null;$('b2D').classList.remove('on');$('b2D').textContent='2D view'}setLive(true);flyTo(camTo(-2400,-3200,24500,-10,52),1800)}
 $('bHome').onclick=birdsEye;addEventListener('keydown',e=>{if(e.target.tagName!=='INPUT'&&(e.key==='Home'||e.key==='0'))birdsEye()});
 $('b2D').onclick=()=>set2D(!flat);
 // Find me: a blue dot where your device says you are. The position never leaves the device.
@@ -1878,7 +1878,7 @@ function placeMe(x,z,acc){if(!LM.me){const g=new THREE.Group(),dot=new THREE.Mes
 $('bMe').onclick=()=>{const off='Your location is not available here. It works when the map is opened as a website, such as the GitHub Pages link, with location allowed for the page.';
   if(!navigator.geolocation){showCard('Find me',off);return}showCard('Find me','Asking your device where you are…');
   try{navigator.geolocation.getCurrentPosition(p=>{const x=(p.coords.longitude-H.lon0)*KXm,z=-(p.coords.latitude-H.lat0)*KYm,acc=p.coords.accuracy||30;
-      if(Math.abs(x)>8400||Math.abs(z)>8400){showCard('Find me','You are outside the area this map covers, which is the city of Lincoln, Nebraska.');return}
+      if(Math.abs(x)>16400||Math.abs(z)>16400){showCard('Find me','You are outside the area this map covers, which is the city of Lincoln, Nebraska.');return}
       placeMe(x,z,acc);$('bMe').classList.add('on');stopTour();flyTo(camTo(x,z,Math.max(280,Math.min(2500,acc*7)),200,42),2200);showCard('You are here',`The blue dot is within about ${Math.round(acc*3.281).toLocaleString()} ft of you. Your location stays on this device and is not sent anywhere.`)},
     err=>{showCard('Find me',err&&err.code===1?'Location permission was not given. Allow location for this page in your browser settings, then tap Find me again.':off)},{enableHighAccuracy:true,timeout:12000,maximumAge:30000})}catch(e){showCard('Find me',off)}};
 // Share view: a link that opens the map at exactly this view
@@ -1896,7 +1896,7 @@ $('bNow').onclick=()=>setLive(!liveOn);
 $('bBus').onclick=e=>{busOn=!busOn;e.target.classList.toggle('on',busOn);updateBuses()};
 function chips(){const dv=H.blabels.find(b=>b[0]==='Devaney Sports Center'),pb=H.blabels.find(b=>b[0]==='Pinnacle Bank Arena'),ll=H.blabels.find(b=>b[0]==='Don Love Memorial Library');
   const hl=H.plabels.find(p=>p[0]==='Holmes Lake'),sp=H.plabels.find(p=>p[0]==='SouthPointe Pavilions');
-  const list=[['Overview',camTo(-1300,-900,17500,-10,50)],['Capitol',camTo(LM.capitol[0],LM.capitol[1],430,205,22,45)],['Memorial Stadium',camTo(LM.stadium[0],LM.stadium[1]+10,440,14,27,16)]];
+  const list=[['Overview',camTo(-2400,-3200,24500,-10,52)],['Capitol',camTo(LM.capitol[0],LM.capitol[1],430,205,22,45)],['Memorial Stadium',camTo(LM.stadium[0],LM.stadium[1]+10,440,14,27,16)]];
   if(dv)list.push(['Devaney Center aka DBK Universe ⭐🚀🌽🏐',camTo(dv[1],-dv[2],480,150,28,8)]);
   if(pb)list.push(['Haymarket',camTo(pb[1]+120,-pb[2]+250,900,250,30,8)]);
   if(ll)list.push(['UNL City Campus',camTo(ll[1],-ll[2]-150,1000,180,36)]);
@@ -1970,8 +1970,8 @@ function frame(now){requestAnimationFrame(frame);
     $('legend').innerHTML=`<b>${mi(tm[0]+tm[1]+tm[2])} mi of bike trails</b><span><i style="background:#ff2a8a"></i>paved ${mi(tm[0])}</span><span><i style="background:#ff8a00"></i>crushed rock ${mi(tm[1])}</span><span><i style="background:#8a4dff"></i>dirt ${mi(tm[2])}</span><span><i style="background:#00b3a4"></i>on-street ${mi(tm[3]+tm[4])}</span>`;
     setTrails(true)}
   layoutCard();moreInit();
-  $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees · north of Adams St is coming`;
-  const start=camTo(-1300,-900,17500,-10,50);camera.position.copy(start.p);controls.target.copy(start.t);controls.update();
+  $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees `;
+  const start=camTo(-2400,-3200,24500,-10,52);camera.position.copy(start.p);controls.target.copy(start.t);controls.update();
   try{const n=lincolnNow();$('sunR').value=Math.max(5,Math.min(22.5,n.sec/3600));curHour=+$('sunR').value}catch(e){}
   setTime(+$('sunR').value);updateBuses();
   if(location.protocol.startsWith('http')){loadWeather();loadWater();loadSightings()}

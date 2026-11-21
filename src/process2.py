@@ -9,7 +9,7 @@ G = os.environ.get('STARCITY_GIS', '/home/claude/data/gis/')
 V = os.environ.get('STARCITY_VOTES', '/home/claude/data/votes/')
 LAT0, LON0 = 40.77, -96.64
 KX = 111320 * math.cos(math.radians(LAT0)); KY = 111000.0
-Q = 0.25; LIM = 8150.0
+Q = 0.5; LIM = 16150.0
 def P(lon, lat): return ((lon - LON0) * KX, (lat - LAT0) * KY)
 def log(*a): print(*a, file=sys.stderr)
 
@@ -263,7 +263,7 @@ ms = sorted((props(f) for f in feats('monsale')), key=lambda m: (m['Year'], m['M
 CITY['monthly'] = [[m['Year'], m['Month'], int(m['MedSalePrice'] or 0), int(m['SaleCount'] or 0)] for m in ms]
 
 # ---------------------------------------------------------------- hex grid: value, tax, homes, people, crashes
-R = 80.0; HW = 1.5 * R; HH = math.sqrt(3) * R; HALF = 8400.0
+R = 80.0; HW = 1.5 * R; HH = math.sqrt(3) * R; HALF = 16400.0
 NC = int(math.ceil(2 * HALF / HW)) + 1; NR = int(math.ceil(2 * HALF / HH)) + 1
 HEXAC = 1.5 * math.sqrt(3) * R * R / 4046.8564
 def hex_center(c, r): return (-HALF + c * HW, -HALF + (r + (0.5 if c & 1 else 0)) * HH)

@@ -1,9 +1,9 @@
 import os,re
 import json,glob,math,struct,zlib,sys,array,collections,base64
-D='/mnt/user-data/uploads/STARCITY/'
+D='/home/claude/wd/'
 LAT0,LON0=40.77,-96.64
 KX=111320*math.cos(math.radians(LAT0));KY=111000.0
-Q=0.25;LIM=32000
+Q=0.5;LIM=32000
 def proj(p): return ((p['lon']-LON0)*KX,(p['lat']-LAT0)*KY)
 def q(v): return int(round(v/Q))
 def load(pat):
@@ -104,6 +104,8 @@ def obb(r):
 def inb(r,lim=LIM): return all(abs(q(p[0]))<lim and abs(q(p[1]))<lim for p in r)
 
 # ---------------- buildings
+CHAINS={'U.S. Bank','Wells Fargo','Holiday Inn','Hyatt Place','Embassy Suites','Windstream','Aspen','Canopy','Latitude','Graduate','Telegraph','Hudl','Smithfield','Farmers Mutual','Saint Mary','Lincoln Post Office','Union Bank Place','Drury Plaza Hotel','Assurity Life'}
+BIGONLY={'Bryan','St. Elizabeth','CHI Health'}
 HOUSE={'house','detached','semidetached_house','residential','terrace','bungalow','cabin','farm','duplex','townhouse'}
 SMALL={'garage','shed','garages','carport','hut','greenhouse'}
 APT={'apartments','dormitory','hotel'}
@@ -170,8 +172,14 @@ for e in bl:
             elif 'building:levels' in t:
                 lv=float(t['building:levels'].split(';')[0]);h=lv*3.4+1.2 if lv>2 else lv*3.0+1.0;src=1
         except: h=None
+        # a hand height names one building. Chains and health systems have branches all over town that share the name,
+        # so those names only count downtown and on campus, or on a footprint big enough to be the building meant.
+        nearcore=(-7400<c[0]<-3000 and 2400<c[1]<7400)
         for k,v in CUR.items():
-            if k in name and (src==0 or (h or 0)<v*0.6): h=v;src=2;break
+            if k in name and (src==0 or (h or 0)<v*0.6):
+                if k in CHAINS and not nearcore: continue
+                if k in BIGONLY and abs(area(o))<2500: continue
+                h=v;src=2;break
         if h is None:
             if 'Garage' in name or 'Parking' in name or t.get('amenity')=='parking' or bt=='parking': h=14+4*seed
             elif tc==1: h=3.4+1.2*seed+(2.6 if a>135 and seed>0.45 else 0)
@@ -852,7 +860,7 @@ def lclass(t):
     return None
 WC={'river':0,'stream':1,'canal':1,'drain':2,'ditch':2}
 Lp=[];W=[];plabels=[];special_pts={}
-def clampr(r): return clean([(max(-8150,min(8150,p[0])),max(-8150,min(8150,p[1]))) for p in r])
+def clampr(r): return clean([(max(-16150,min(16150,p[0])),max(-16150,min(16150,p[1]))) for p in r])
 for e in ld:
     t=e.get('tags',{})
     if 'waterway' in t and e['type']=='way' and t['waterway'] in WC:
@@ -877,7 +885,7 @@ for e in ld:
         nm=t.get('name')
         if nm:
             a=abs(area(o));cc=centroid(o)
-            if abs(cc[0])<7900 and abs(cc[1])<7900:
+            if abs(cc[0])<15900 and abs(cc[1])<15900:
                 if c in ('park','golf','water','cemetery','wood','garden') and a>12000: plabels.append((nm,cc[0],cc[1],a,c))
                 special_pts[nm]=(cc[0],cc[1],a) if nm not in special_pts or special_pts[nm][2]<a else special_pts[nm]
 Lp.sort(key=lambda r:(r[0],-abs(area(r[1]))))
@@ -891,7 +899,7 @@ for e in ld+bl:
     for o,hs in rings_of(e):
         if len(o)<3: continue
         xs=[p_[0] for p_ in o];ys=[p_[1] for p_ in o];c_=centroid(o)
-        if abs(c_[0])>7900 or abs(c_[1])>7900: continue
+        if abs(c_[0])>15900 or abs(c_[1])>15900: continue
         DOGS.append([round(c_[0],1),round(c_[1],1),round(max(6.0,min(60.0,0.42*min(max(xs)-min(xs),max(ys)-min(ys)))),1),t.get('name','')])
 # A dog park drawn as a building (an indoor dog bar) would hide its dogs inside the walls,
 # so the play area moves to the nearest open spot beside the building.

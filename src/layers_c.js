@@ -10,7 +10,7 @@ const dayStr=ms=>ms?new Date(ms).toLocaleDateString('en-US',{timeZone:'America/C
 const nice=s=>String(s||'').replace(/_/g,' ').toLowerCase().replace(/^./,c=>c.toUpperCase());
 function dlIndex(L){const k=L.def.k;if(k==='ln'){L.lo=new Uint32Array(L.N.length);let o=0;for(let i=0;i<L.N.length;i++){L.lo[i]=o;o+=2*L.N[i]}}
   if(k==='pg'){const n=L.RC.length;L.ro=new Uint32Array(n);L.xo=new Uint32Array(n);let r=0,x=0;for(let i=0;i<n;i++){L.ro[i]=r;L.xo[i]=x;for(let q=0;q<L.RC[i];q++)x+=2*L.RN[r++]}}}
-function dlFromGeo(L,feats){const k=L.def.k,lv=L.def.live,X=[],N=[],RC=[],RN=[],recs=[];const pr=c=>[(c[0]-H.lon0)*KXm,-(c[1]-H.lat0)*KYm],inb=p=>Math.abs(p[0])<=8150&&Math.abs(p[1])<=8150,cl=p=>[Math.max(-8150,Math.min(8150,p[0])),Math.max(-8150,Math.min(8150,p[1]))];
+function dlFromGeo(L,feats){const k=L.def.k,lv=L.def.live,X=[],N=[],RC=[],RN=[],recs=[];const pr=c=>[(c[0]-H.lon0)*KXm,-(c[1]-H.lat0)*KYm],inb=p=>Math.abs(p[0])<=16150&&Math.abs(p[1])<=16150,cl=p=>[Math.max(-8150,Math.min(8150,p[0])),Math.max(-8150,Math.min(8150,p[1]))];
   for(const f of feats){const g=f.geometry,a=f.properties||{};if(!g)continue;if(lv.keep&&!lv.keep(a))continue;
     if(k==='pt'){const c=g.type==='Point'?g.coordinates:g.type==='MultiPoint'?g.coordinates[0]:null;if(!c)continue;const p=pr(c);if(!inb(p))continue;X.push(p[0],p[1]);recs.push(a)}
     else if(k==='ln'){const ls=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];for(const l of ls){const pts=l.map(pr).filter(inb);if(pts.length<2)continue;N.push(pts.length);for(const p of pts)X.push(p[0],p[1]);recs.push(a)}}
