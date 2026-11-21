@@ -2,72 +2,73 @@
 
 ## What this is
 
-Every change made to *Lincoln Floodplain Exposure and Flood Loss* since the copy you have. One correction affects how the work is reproduced and should be read first. No finding has been withdrawn.
+Every change made to the floodplain report since the copy you have. The first item is a correction to the spatial scope that moves most of the numbers, several of them by more than a factor of two, and it reverses the direction of two findings. Read that section before anything else in the report.
 
-## The correction that matters: the query envelope was stated wrong
+## The correction that matters: the analysis was never scoped to Lincoln
 
-The Method section named the wrong bounding box.
+The first release pulled flood polygons with a latitude and longitude envelope and reported figures derived from whatever that box returned.
 
-It said the flood polygons were pulled with an envelope of roughly -96.73 to -96.55 longitude and 40.70 to 40.84 latitude. The analysis actually ran against -96.745 to -96.535 longitude and 40.69 to 40.85 latitude.
+An ArcGIS envelope filter returns **whole features** that intersect the box. So a floodplain polygon running for miles along Salt Creek, clipping the corner of the box, contributed its entire area to a figure described as Lincoln's. At the same time, 868 of the layer's 1,593 polygons never touched the box and were dropped. The reported 28,051 acres was therefore neither the city's floodplain nor the county's. It was an artifact of the query.
 
-Those two boxes return different amounts of floodplain. The box as stated returns **525** polygons from the 1% layer and **1,653** from the 0.2% layer. The box actually used returns **725** and **2,430**, and those are the counts every figure in the report rests on. Anyone reproducing the work from the stated method would have got smaller numbers and reasonably concluded the report was wrong.
+Separately, the parcel join ran against a much smaller extent than the acreage implied, so exposure came out low while area came out high. The two errors pushed in opposite directions and the result looked plausible.
 
-The cause: this project pulls data two ways, a PowerShell download for the files kept on disk and a browser query for the analysis, and the two use different boxes. The Method section described the first while the analysis used the second.
+Every spatial figure has been recomputed, clipped to the City of Lincoln corporate limit, in an equal-area projection, against the complete layers.
 
-**What it changes in the findings: nothing.** Every acreage, parcel count and dollar figure came from the correct pull. Only the description of how it was done was wrong. The section now also states the two counts that box returns, so the provenance can be checked in a single query against the service.
+### The headline numbers
 
-## Corrected figures
+| | first release | corrected | |
+| --- | --- | --- | --- |
+| 1% floodplain, acres | 28,051 | 11,457 | overstated 2.4x |
+| 1% floodplain, parcels | 1,775 | 5,296 | understated 3.0x |
+| 1% floodplain, assessed value | $1,116.5M | $3,548.6M | understated 3.2x |
+| 0.2% band, acres | 2,322 | 3,115 | |
+| 0.2% band, assessed value | $1,199.9M | $2,948.9M | |
+| Combined parcels | 2,917 | 7,224 | understated 2.5x |
+| Combined assessed value | $1.92B | $4.47B | understated 2.3x |
+| Wholly inside either band | 731 | 4,457 | understated 6.1x |
+| Share of city assessed value | 5.1% | 12.19% | |
 
-### The levee asset counts were a subset
+One dollar in eight of Lincoln's assessed value sits in the mapped floodplain. The first release put it at one in twenty.
 
-Was 111 top-of-bank segments, 163 right-of-way lines and 47 drainage structures. It is 123 top-of-bank segments covering 33.9 miles, 226 right-of-way lines and 67 drainage structures. The earlier counts came from a bounding-box-limited pull; the service holds the whole system.
+### Two findings reverse
 
-### The 1950 flood figures could not be sourced
+**The floodplain is not mostly open farmland.** The first release said 95.2% of the floodplain parcel acreage was farm, park or vacant, and described Lincoln's floodplain as "overwhelmingly a working agricultural and open-space corridor." That was a county figure presented as a city one. Inside the corporate limit, agricultural land is **597 acres, 5.0% of the parcel acreage, holding 0.2% of the value**, against 23,415 acres and $170.1 million as published. Commercial Improved property is 31.7% of the acreage and carries **69.8% of the value**. Lincoln's floodplain is a commercial corridor.
 
-Was 11 inches in 6 hours, roughly 20,000 acres flooded and 9 deaths. Those specifics could not be traced to a source and were removed rather than left standing.
+**Base flood elevations are not missing across half the SFHA.** The first release said 42.7% of the SFHA was Zone A, with no base flood elevation determined. Inside the city it is **140 acres of 11,457, or 1.2%**. The 42.7% was again a county-weighted figure. Countywide, Zone A really is 56% of the layer. Lincoln's own floodplain is almost entirely studied in detail. This correction runs in the city's favour.
 
-It now uses the National Weather Service account: four major floods across south central and southeast Nebraska between May and July 1950, together taking 25 lives and causing $65 million in damage, roughly $1 billion in 2013 dollars. Also noted, since you would ask: **no digitized 1950 inundation footprint appears in the city or county GIS**, so a Lincoln-specific extent would have to be rebuilt from the USGS flood report.
+### One finding weakens
 
-### One claim was too strong
+The first release said the 0.2% band holds assessed value comparable to the SFHA on a twelfth of the land, a 13 to 1 ratio on value per acre, and said the finding survived a strict lower-bound test.
 
-Was "pluvial and stormwater exposure is unmapped." It is now "no model of where rainfall pools." See the new section below.
+Corrected, the land ratio is 3.7 to 1 and the value-per-acre ratio is **3.06 to 1**. On the strict wholly-inside test it **reverses to 0.91**, meaning the band carries slightly less value per mapped acre than the SFHA. The cause is visible in the parcel geometry: 55.8% of SFHA parcels lie wholly inside it against only 18.4% for the band, so the loose measure credits the band with the full value of properties that are mostly outside it. The report now states both measures and says plainly that the strong version does not hold.
 
-### The paging defect was described imprecisely
+### A trap worth passing on
 
-It was framed as a record count disagreeing with a paged total. The real defect is that the service returns at most 2,000 records per reply and gives no sign that more exist, so a single query against an area holding 2,430 returns 2,000 and looks like it worked.
+`Planning/LincolnLimits/MapServer/3` returns 70 nested features, every one labelled `Lincoln`. The largest, 289.8 square miles, is the extraterritorial jurisdiction, which reaches three miles past the corporate limit. The city itself is the next one down at 106.7 square miles. Taking the largest, or unioning all 70, silently substitutes the ETJ for the city.
 
-## New material
+Related: these layers publish in Web Mercator, which inflates area by roughly three quarters at Lincoln's latitude. Any `Shape_Area` sum taken at face value is wrong by that much, and the `MinimumCorridor` layer carries no area field at all.
 
-### What Lincoln already maps that FEMA does not
+## Withdrawn pending recomputation
 
-Lincoln regulates a minimum flood corridor under Municipal Code 27.53.020: a buffer centered on the channel, 90 feet wide where 40 to 100 acres of land drain into the stream, widening as the drainage area grows. It covers **832 corridors and about 3,372 acres across 13 watersheds**, on creeks far below the size FEMA studies.
+Three passages rested on parcel fields not present in the corrected extract and are marked in the report rather than silently revised.
 
-Run against the 1% floodplain, **366 of those corridors, about 1,221 acres, fall entirely outside it.** A corridor that merely clips the floodplain counts as inside, so 1,221 acres is a floor rather than an estimate. Stevens Creek alone carries 349 corridors and 1,095 acres.
+- The pre-FIRM housing count, previously 466 of 973 residential structures, or 47.9%. The claim-side comparison in that section is unaffected and stands.
+- The minimum flood corridor overlay, previously 366 corridors and about 1,221 acres falling entirely outside the floodplain.
+- Land use detail by use code, including the public-use and floodway structure counts.
 
-This is the most consequential addition, and it is what forced the correction above. The rainfall gap is narrower than first stated. It is not that nothing is mapped beyond the FEMA floodplain; it is that what is mapped is a fixed-width buffer on small streams rather than a model of where water goes.
+## What is unchanged and reverified
 
-### Condition ratings for the levee drainage structures
+- The NFIP claim record: 275 claims, 138 paid, $2,630,621, with 165 coded rainfall accumulation and 47 stream overflow. The central finding that Lincoln's realized losses are mostly rainfall-driven is untouched by the spatial correction.
+- 81 of 275 claims from outside the SFHA against 109 of 929 policies.
+- 107 claims on 6 and 7 May 2015; 2015 carries 87% of all dollars ever paid.
+- 7 multiple-loss properties, 1 severe repetitive loss, 21 losses, none mitigated, 4 insured.
+- Levee drainage structures re-queried 21 November 2026: 7 Unacceptable, 45 Minimally Acceptable, 15 unrated, 67 total, and **no structure carries an Acceptable rating**. The value does not occur in the dataset.
+- Minimum flood corridor: 832 corridors, recomputed to about 3,500 acres against 3,372 published, a 3.4% difference attributable to simplification in the original pull.
 
-All 67 carry a station, length, barrel size, material, gate type, status and an inspection score in the city's own layer.
+## Earlier corrections, carried forward
 
-62 are listed active and 5 inactive. 34 are corrugated metal pipe, 18 reinforced concrete and 15 box culverts, and 34 carry a flap gate. On condition, 45 carry an MA grade at high, medium or low, 7 are rated **Unacceptable**, and 15 are unrated. **None of the 67 is rated Acceptable.** Inspection scores run from 0 to 79 with a median of 29.
-
-### The levee critical area, with dimensions
-
-1,451 acres, reaching 500 feet landside and 300 feet streamside.
-
-### Corroboration for the 2015 event
-
-The National Weather Service office in Omaha records that the 7 May 2015 flooding was largely contained within the levee system inside Lincoln, with parks and low-lying areas taking the water. That is the levee working in a storm well short of the 1% event.
-
-## What did not change
-
-The five summary findings stand as written: 165 of 275 claims coded as rainfall or snowmelt accumulation against 47 coded as stream overflow; 81 claims (29.5%) rated outside the SFHA against 109 of 929 policies (11.7%); the 0.2% band holding assessed value comparable to the SFHA on about a twelfth of the land; 2015 carrying 87% of all dollars ever paid; and 7 multiple-loss properties with none mitigated.
-
-The exposure brackets are unchanged, $249.6 million to $1,116.5 million for the 1% floodplain and $308 million to $1.92 billion for both bands combined.
-
-The limits are unchanged and worth restating. This is an exposure inventory, not a risk assessment. There are no first-floor elevations and no depth grid, so nothing here says which structures take water. 42.7% of the SFHA acreage is Zone A with no base flood elevation determined. And the levee mapping treatment is still unconfirmed against the Flood Insurance Study hydraulics narrative, which remains the single question that most changes how the rest should be read.
-
-## Sources added
-
-The National Weather Service pages for significant Nebraska floods and for the 7 May 2015 event, both linked in the report's Sources section.
+- **The query envelope was stated wrong.** The Method section named a box that was not the one used. Both boxes are now moot, since the analysis is clipped to the corporate limit.
+- **The levee asset counts were a subset.** Was 111 top-of-bank segments, 163 right-of-way lines and 47 drainage structures; corrected to 123 segments covering 33.9 miles, 226 right-of-way lines and 67 drainage structures.
+- **The 1950 flood figures could not be sourced.** Specifics of 11 inches in 6 hours, 20,000 acres and 9 deaths were removed and replaced with the National Weather Service account: four major floods across south central and southeast Nebraska between May and July 1950, together taking 25 lives and causing $65 million in damage, roughly $1 billion in 2013 dollars.
+- **The vintage figures were wrong.** A reported median year built of 1914 and a pre-1920 share of 61.9% contradicted the decade histogram published beside them. Recomputed to a median of 1972 and a pre-1920 share of 30.0%. All vintage claims were then capped at the pre and post-1971 split, because the year-built field is heavily defaulted to round years.
+- **A duplicate byline.** The page shell and the markdown both emitted it, in two different date formats, so no check caught it. Fixed.

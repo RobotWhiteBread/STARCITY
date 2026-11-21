@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Addendum · STARCITY</title>
+<meta name="description" content="Where Lincoln, Nebraska actually takes flood damage: 275 NFIP claims, the 1% and 0.2% floodplains joined to every parcel, and what city council, city staff and residents should focus on. Built from City of Lincoln GIS and OpenFEMA data.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Addendum">
+<meta property="og:description" content="Most of Lincoln's flood claims are rainfall, not Salt Creek, and nearly a third come from outside the mapped floodplain. A technical report built from public data.">
+<meta property="og:url" content="https://robotwhitebread.github.io/STARCITY/floodplain.html">
+<meta property="og:image" content="https://robotwhitebread.github.io/STARCITY/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#0d0f14;color:#e9e4d6;
+ font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:17px;line-height:1.62;-webkit-text-size-adjust:100%}
+a{color:#ffd34d}
+a:hover{color:#ffe9a8}
+.bar{border-bottom:1px solid #242a33;background:#090c11;position:sticky;top:0;z-index:5}
+.bar div{max-width:860px;margin:0 auto;padding:11px 22px;display:flex;gap:14px;
+ align-items:baseline;font-size:14px}
+.bar a{text-decoration:none;font-weight:600;letter-spacing:.06em}
+.bar span{color:#8c8676}
+main{max-width:860px;margin:0 auto;padding:30px 22px 90px}
+h1{font-size:2.05rem;line-height:1.2;margin:.4em 0 .15em;letter-spacing:-.01em}
+.sub{color:#a8a294;font-size:1rem;margin:0 0 2.2em}
+h2{font-size:1.42rem;line-height:1.28;margin:2.3em 0 .55em;
+ padding-top:1.1em;border-top:1px solid #242a33;letter-spacing:-.005em}
+h3{font-size:1.08rem;margin:1.9em 0 .4em;color:#ffe9a8;font-weight:600}
+p,li{color:#d9d4c8}
+strong{color:#fff4d6;font-weight:600}
+code{background:#161b22;border:1px solid #242a33;border-radius:4px;
+ padding:.08em .36em;font-size:.86em;color:#ffe9a8;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+ul,ol{padding-left:1.3em}
+li{margin:.42em 0}
+.tw{overflow-x:auto;margin:1.3em 0;border:1px solid #242a33;border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:460px}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid #1c222b;
+ vertical-align:top}
+th{background:#131820;color:#ffe9a8;font-weight:600;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#10141a}
+.chart{margin:1.7em 0;padding:0}
+.chart svg{width:100%;height:auto;display:block}
+figcaption{color:#8c8676;font-size:.8rem;margin-top:.5em;line-height:1.45}
+footer{max-width:860px;margin:0 auto;padding:24px 22px 70px;color:#8c8676;
+ font-size:.84rem;border-top:1px solid #242a33}
+@media(max-width:620px){
+ body{font-size:16px}
+ h1{font-size:1.6rem}
+ h2{font-size:1.22rem}
+ main{padding:22px 16px 70px}
+ .bar div{padding:10px 16px}
+}
+</style>
+</head>
+<body>
+<nav class="bar"><div><a href="./">&#8592; STARCITY</a><span>Lincoln, Nebraska in 3D</span></div></nav>
+<main>
+<h1>Addendum</h1>
+<p class="sub">Lincoln Floodplain Exposure and Flood Loss &#183; revised 21 November 2026</p>
+<h2>What this is</h2>
+<p>Every change made to the floodplain report since the copy you have. The first item is a correction to the spatial scope that moves most of the numbers, several of them by more than a factor of two, and it reverses the direction of two findings. Read that section before anything else in the report.</p>
+<h2>The correction that matters: the analysis was never scoped to Lincoln</h2>
+<p>The first release pulled flood polygons with a latitude and longitude envelope and reported figures derived from whatever that box returned.</p>
+<p>An ArcGIS envelope filter returns <strong>whole features</strong> that intersect the box. So a floodplain polygon running for miles along Salt Creek, clipping the corner of the box, contributed its entire area to a figure described as Lincoln's. At the same time, 868 of the layer's 1,593 polygons never touched the box and were dropped. The reported 28,051 acres was therefore neither the city's floodplain nor the county's. It was an artifact of the query.</p>
+<p>Separately, the parcel join ran against a much smaller extent than the acreage implied, so exposure came out low while area came out high. The two errors pushed in opposite directions and the result looked plausible.</p>
+<p>Every spatial figure has been recomputed, clipped to the City of Lincoln corporate limit, in an equal-area projection, against the complete layers.</p>
+<h3>The headline numbers</h3>
+<div class='tw'><table><thead><tr><th></th><th>first release</th><th>corrected</th><th></th></tr></thead><tbody><tr><td>1% floodplain, acres</td><td>28,051</td><td>11,457</td><td>overstated 2.4x</td></tr><tr><td>1% floodplain, parcels</td><td>1,775</td><td>5,296</td><td>understated 3.0x</td></tr><tr><td>1% floodplain, assessed value</td><td>$1,116.5M</td><td>$3,548.6M</td><td>understated 3.2x</td></tr><tr><td>0.2% band, acres</td><td>2,322</td><td>3,115</td><td></td></tr><tr><td>0.2% band, assessed value</td><td>$1,199.9M</td><td>$2,948.9M</td><td></td></tr><tr><td>Combined parcels</td><td>2,917</td><td>7,224</td><td>understated 2.5x</td></tr><tr><td>Combined assessed value</td><td>$1.92B</td><td>$4.47B</td><td>understated 2.3x</td></tr><tr><td>Wholly inside either band</td><td>731</td><td>4,457</td><td>understated 6.1x</td></tr><tr><td>Share of city assessed value</td><td>5.1%</td><td>12.19%</td><td></td></tr></tbody></table></div>
+<p>One dollar in eight of Lincoln's assessed value sits in the mapped floodplain. The first release put it at one in twenty.</p>
+<h3>Two findings reverse</h3>
+<p><strong>The floodplain is not mostly open farmland.</strong> The first release said 95.2% of the floodplain parcel acreage was farm, park or vacant, and described Lincoln's floodplain as "overwhelmingly a working agricultural and open-space corridor." That was a county figure presented as a city one. Inside the corporate limit, agricultural land is <strong>597 acres, 5.0% of the parcel acreage, holding 0.2% of the value</strong>, against 23,415 acres and $170.1 million as published. Commercial Improved property is 31.7% of the acreage and carries <strong>69.8% of the value</strong>. Lincoln's floodplain is a commercial corridor.</p>
+<p><strong>Base flood elevations are not missing across half the SFHA.</strong> The first release said 42.7% of the SFHA was Zone A, with no base flood elevation determined. Inside the city it is <strong>140 acres of 11,457, or 1.2%</strong>. The 42.7% was again a county-weighted figure. Countywide, Zone A really is 56% of the layer. Lincoln's own floodplain is almost entirely studied in detail. This correction runs in the city's favour.</p>
+<h3>One finding weakens</h3>
+<p>The first release said the 0.2% band holds assessed value comparable to the SFHA on a twelfth of the land, a 13 to 1 ratio on value per acre, and said the finding survived a strict lower-bound test.</p>
+<p>Corrected, the land ratio is 3.7 to 1 and the value-per-acre ratio is <strong>3.06 to 1</strong>. On the strict wholly-inside test it <strong>reverses to 0.91</strong>, meaning the band carries slightly less value per mapped acre than the SFHA. The cause is visible in the parcel geometry: 55.8% of SFHA parcels lie wholly inside it against only 18.4% for the band, so the loose measure credits the band with the full value of properties that are mostly outside it. The report now states both measures and says plainly that the strong version does not hold.</p>
+<h3>A trap worth passing on</h3>
+<p><code>Planning/LincolnLimits/MapServer/3</code> returns 70 nested features, every one labelled <code>Lincoln</code>. The largest, 289.8 square miles, is the extraterritorial jurisdiction, which reaches three miles past the corporate limit. The city itself is the next one down at 106.7 square miles. Taking the largest, or unioning all 70, silently substitutes the ETJ for the city.</p>
+<p>Related: these layers publish in Web Mercator, which inflates area by roughly three quarters at Lincoln's latitude. Any <code>Shape_Area</code> sum taken at face value is wrong by that much, and the <code>MinimumCorridor</code> layer carries no area field at all.</p>
+<h2>Withdrawn pending recomputation</h2>
+<p>Three passages rested on parcel fields not present in the corrected extract and are marked in the report rather than silently revised.</p>
+<ul><li>The pre-FIRM housing count, previously 466 of 973 residential structures, or 47.9%. The claim-side comparison in that section is unaffected and stands.</li><li>The minimum flood corridor overlay, previously 366 corridors and about 1,221 acres falling entirely outside the floodplain.</li><li>Land use detail by use code, including the public-use and floodway structure counts.</li></ul>
+<h2>What is unchanged and reverified</h2>
+<ul><li>The NFIP claim record: 275 claims, 138 paid, $2,630,621, with 165 coded rainfall accumulation and 47 stream overflow. The central finding that Lincoln's realized losses are mostly rainfall-driven is untouched by the spatial correction.</li><li>81 of 275 claims from outside the SFHA against 109 of 929 policies.</li><li>107 claims on 6 and 7 May 2015; 2015 carries 87% of all dollars ever paid.</li><li>7 multiple-loss properties, 1 severe repetitive loss, 21 losses, none mitigated, 4 insured.</li><li>Levee drainage structures re-queried 21 November 2026: 7 Unacceptable, 45 Minimally Acceptable, 15 unrated, 67 total, and <strong>no structure carries an Acceptable rating</strong>. The value does not occur in the dataset.</li><li>Minimum flood corridor: 832 corridors, recomputed to about 3,500 acres against 3,372 published, a 3.4% difference attributable to simplification in the original pull.</li></ul>
+<h2>Earlier corrections, carried forward</h2>
+<ul><li><strong>The query envelope was stated wrong.</strong> The Method section named a box that was not the one used. Both boxes are now moot, since the analysis is clipped to the corporate limit.</li><li><strong>The levee asset counts were a subset.</strong> Was 111 top-of-bank segments, 163 right-of-way lines and 47 drainage structures; corrected to 123 segments covering 33.9 miles, 226 right-of-way lines and 67 drainage structures.</li><li><strong>The 1950 flood figures could not be sourced.</strong> Specifics of 11 inches in 6 hours, 20,000 acres and 9 deaths were removed and replaced with the National Weather Service account: four major floods across south central and southeast Nebraska between May and July 1950, together taking 25 lives and causing $65 million in damage, roughly $1 billion in 2013 dollars.</li><li><strong>The vintage figures were wrong.</strong> A reported median year built of 1914 and a pre-1920 share of 61.9% contradicted the decade histogram published beside them. Recomputed to a median of 1972 and a pre-1920 share of 30.0%. All vintage claims were then capped at the pre and post-1971 split, because the year-built field is heavily defaulted to round years.</li><li><strong>A duplicate byline.</strong> The page shell and the markdown both emitted it, in two different date formats, so no check caught it. Fixed.</li></ul>
+</main>
+<footer>
+Built from public data: City of Lincoln and Lancaster County GIS, and OpenFEMA.
+Part of <a href="./">STARCITY</a>, an open-source 3D map of Lincoln.
+Source and data scripts at <a href="https://github.com/RobotWhiteBread/STARCITY" rel="noopener">github.com/RobotWhiteBread/STARCITY</a>.
+</footer>
+</body>
+</html>
