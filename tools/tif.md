@@ -1,5 +1,7 @@
 # Lincoln's TIF Districts by the Numbers
 
+*Published November 21, 2026 by STARCITY, starcitylincoln.org. Data retrieved November 21, 2026 unless a section says otherwise.*
+
 ## Summary
 
 Tax increment financing lets a redevelopment project keep the property tax on the value it adds, usually for 15 years, to pay for public costs tied to the project. The tax on the value that was there before, the base, keeps going to the schools, the city, the county and the other taxing bodies. The tax on the new value, the excess, goes to the project's debt.
@@ -107,6 +109,25 @@ In all, 110 TIF-coded tax districts appear on parcels inside the city, covering 
 ## Method
 
 The source is the county's published TIF table (119 rows). Rows marked Active (89) are summed. Excess value times the recorded levy gives the tax on the excess. The cross-check sums 2026 assessed value by tax district code from the Lancaster County Assessor's parcel layer for parcels inside Lincoln's corporate limit. The 15-year term is the standard under Nebraska's Community Development Law. Some projects qualify for a longer term.
+
+## Sources
+
+Retrieved November 21, 2026.
+
+| Source | What was used | Link |
+| --- | --- | --- |
+| City of Lincoln GIS, hosted services | TIF district table (`TIF_Dasboard_Districts`): project name, type, status, base value, excess value, levy, tax year | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/hosted/rest/services/Hosted) |
+| Lancaster County Assessor, published by City of Lincoln and Lancaster County GIS | Tax parcels (`Assessor/TaxParcels/MapServer/0`): tax district code and 2026 assessed value, for the cross-check | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| State of Nebraska | Community Development Law, Neb. Rev. Stat. sections 18-2101 to 18-2157, which governs TIF | [nebraskalegislature.gov](https://nebraskalegislature.gov/laws/browse-chapters.php?chapter=18) |
+
+## Where to go from here
+
+| If you want to | Go to |
+| --- | --- |
+| Read a project's redevelopment agreement or ask when its TIF ends | City of Lincoln Urban Development Department, through [lincoln.ne.gov](https://www.lincoln.ne.gov/) |
+| See the state's annual TIF report for every Nebraska city | Nebraska Department of Revenue, Property Assessment Division, at [revenue.nebraska.gov](https://revenue.nebraska.gov/PAD) |
+| Look up the parcels in a district | [Lancaster County property records](https://orion.lancaster.ne.gov/) |
+| Rerun this study | The scripts are in the project repository under tools/analysis |
 
 ---
 

@@ -1,5 +1,7 @@
 # Where Lincoln's Property Value Lives
 
+*Published November 21, 2026 by STARCITY, starcitylincoln.org. Data retrieved November 21, 2026 unless a section says otherwise.*
+
 ## Summary
 
 Lincoln's 2026 assessment roll puts **$44.4 billion** of value on **102,700 parcels** inside the city limits. This paper asks a plain question of that roll: where is the value, and how much land does it take to hold it?
@@ -167,6 +169,27 @@ The county's own TIF layer records a consolidated levy of **$1.766448 per $100**
 ## Method
 
 Parcels are the Lancaster County Assessor's published layer with 2026 assessed values (field CNTASSDVAL), all 122,748 parcels in the county, pulled November 21, 2026. A parcel is counted as in Lincoln when a point inside it falls within the corporate limit (106.7 square miles; the larger extraterritorial jurisdiction polygon in the same layer is excluded). Areas are computed in an equal-area projection (EPSG:5070), not from a published area field. Neighborhood associations are the city's published boundaries. The scripts are in the project repository under tools/analysis.
+
+## Sources
+
+Retrieved November 21, 2026.
+
+| Source | What was used | Link |
+| --- | --- | --- |
+| Lancaster County Assessor, published by City of Lincoln and Lancaster County GIS | Tax parcels (`Assessor/TaxParcels/MapServer/0`): parcel shape, 2026 assessed value, class, assessor neighborhood code, tax district | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| City of Lincoln GIS | City limits (`Planning/LincolnLimits/MapServer/3`) | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| City of Lincoln GIS | Neighborhood associations (`UrbanDevelopment/NeighborhoodAssociations/MapServer/0`) | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| City of Lincoln GIS, hosted services | TIF district table (`TIF_Dasboard_Districts`), for the 2024 consolidated levy | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/hosted/rest/services/Hosted) |
+
+## Where to go from here
+
+| If you want to | Go to |
+| --- | --- |
+| Look up one property | [Lancaster County property records](https://orion.lancaster.ne.gov/) |
+| See levies by taxing body and how a bill is built | Lancaster County Treasurer and Assessor, through [lancaster.ne.gov](https://www.lancaster.ne.gov/) |
+| Follow annexation and zoning decisions | Lincoln-Lancaster County Planning Department, through [lincoln.ne.gov](https://www.lincoln.ne.gov/) |
+| See these values on the map | [starcitylincoln.org](index.html), under Real estate |
+| Rerun this study | The scripts are in the project repository under tools/analysis |
 
 ---
 

@@ -2,6 +2,8 @@
 
 ## Home sales, November 2025 to November 2026
 
+*Published November 21, 2026 by STARCITY, starcitylincoln.org. Data retrieved November 21, 2026 unless a section says otherwise.*
+
 ## Summary
 
 The county's sales file holds **3,340 valid residential sales** inside Lincoln's city limits for the twelve months ending in mid November 2026, worth **$1.21 billion** in total. Read as a whole they describe the market a buyer or seller walked into this year.
@@ -153,6 +155,25 @@ Near South has the lowest price per square foot in the table at $147, on a housi
 ## Method
 
 Sales are the Lancaster County Assessor's published sales layer, 3,761 records countywide dated November 23, 2025 through November 16, 2026. This paper uses the 3,430 located inside Lincoln's corporate limit, of which 3,340 are residential. Price per square foot, floor area, structure type and year built are the county's fields. Neighborhood was assigned by matching each sale's parcel number to the 2026 parcel layer and locating that parcel inside the city's neighborhood association boundaries. The assessment comparison uses the assessed value carried on each sale record. A fuller treatment of assessed value against sale price is in the companion paper on assessment equity.
+
+## Sources
+
+Retrieved November 21, 2026.
+
+| Source | What was used | Link |
+| --- | --- | --- |
+| Lancaster County Assessor, published by City of Lincoln and Lancaster County GIS | Property sales layer (`Assessor/PropertySales/MapServer/0`): sale price, date, price per square foot, floor area, structure type, year built | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| Lancaster County Assessor, same service | Tax parcels (`Assessor/TaxParcels/MapServer/0`), to place each sale and count the housing stock | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| City of Lincoln GIS | City limits and neighborhood association boundaries | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+
+## Where to go from here
+
+| If you want to | Go to |
+| --- | --- |
+| Look up a single sale or property | [Lancaster County property records](https://orion.lancaster.ne.gov/) |
+| See listings, days on market and asking prices | A licensed real estate agent or the local multiple listing service. Those are not public records |
+| See sales on the map | [starcitylincoln.org](index.html), under Real estate, then "New sales and where" |
+| Rerun this study | The scripts are in the project repository under tools/analysis |
 
 ---
 

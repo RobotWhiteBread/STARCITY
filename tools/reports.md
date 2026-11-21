@@ -12,4 +12,6 @@ Each paper below takes a public dataset the city or county already publishes and
 | **What sold in Lincoln** | 3,340 home sales in twelve months at a median of $320,000. Fewer than one in ten closed under $200,000. | [Web](sales.html) · [PDF](Lincoln-Home-Sales.pdf) |
 | **Lincoln's TIF districts by the numbers** | 89 active projects hold $1.29 billion of excess value, about $22.9 million a year in property tax at the 2024 levy. | [Web](tif.html) · [PDF](Lincoln-TIF.pdf) |
 
+All five were published November 21, 2026, from data retrieved that day, and each ends with its sources and where to go next.
+
 The map these came from is at [starcitylincoln.org](index.html).

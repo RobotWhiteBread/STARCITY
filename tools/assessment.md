@@ -1,5 +1,7 @@
 # Who Lincoln Over-Assesses, and Who It Does Not
 
+*Published November 21, 2026 by STARCITY, starcitylincoln.org. Data retrieved November 21, 2026 unless a section says otherwise.*
+
 ## Summary
 
 Lincoln's assessor passes the two headline tests its own profession sets, and fails the third. The third is the one about fairness between neighbours.
@@ -144,6 +146,27 @@ Both measures run further from standard than residential. A PRD of 1.261 is far 
 **If you are on the council or the board of equalization.** Three things follow. The PRD of 1.037 is a measurable failure against a professional standard and is the right question to put to the assessor's office. The COD of 22.1 on post-2010 construction names where the modelling is weakest. And commercial at a PRD of 1.261 is worse than residential on a sample thin enough that it should be measured properly rather than argued about.
 
 None of this requires new data collection. It is the county's own sales file, measured with the county's own profession's standard.
+
+## Sources
+
+Retrieved November 21, 2026.
+
+| Source | What was used | Link |
+| --- | --- | --- |
+| Lancaster County Assessor, published by City of Lincoln and Lancaster County GIS | Property sales layer (`Assessor/PropertySales/MapServer/0`): sale price, sale date, validity code, assessed value, structure type, year built, neighborhood group | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| City of Lincoln GIS | City limits (`Planning/LincolnLimits/MapServer/3`), used to keep sales inside the corporate limit | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| City of Lincoln GIS | 1930s Home Owners' Loan Corporation grade areas (`Planning/CompPlan2050/MapServer/5`) | [gis.lincoln.ne.gov](https://gis.lincoln.ne.gov/public/rest/services) |
+| International Association of Assessing Officers | Standard on Ratio Studies: the acceptable ranges for level, COD and PRD | [iaao.org](https://www.iaao.org/) |
+
+## Where to go from here
+
+| If you want to | Go to |
+| --- | --- |
+| Look up your own assessed value | [Lancaster County property records](https://orion.lancaster.ne.gov/) |
+| Protest a valuation | Lancaster County Board of Equalization, through the County Clerk at [lancaster.ne.gov](https://www.lancaster.ne.gov/). Nebraska's protest window is in June |
+| Ask how values are set | Lancaster County Assessor/Register of Deeds, through [lancaster.ne.gov](https://www.lancaster.ne.gov/) |
+| See the state's own measurement of the county | Nebraska Department of Revenue, Property Assessment Division, Reports and Opinions, at [revenue.nebraska.gov](https://revenue.nebraska.gov/PAD) |
+| Rerun this study | The scripts are in the project repository under tools/analysis |
 
 ---
 

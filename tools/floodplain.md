@@ -1,5 +1,7 @@
 # Lincoln Floodplain Exposure and Flood Loss
 
+*Published November 21, 2026 by STARCITY, starcitylincoln.org. Data retrieved November 21, 2026 unless a section says otherwise.*
+
 ## Summary
 
 Lincoln's realized flood losses are mostly rainfall-driven and fall disproportionately outside the regulated floodplain, while the regulatory and insurance apparatus is riverine and SFHA-centric. Five findings support that, each reproducible from the queries in the Method section.
@@ -29,9 +31,9 @@ NFIP claim, policy and repetitive-loss figures come from live queries run on 16 
 
 ### Spatial join semantics
 
-The parcel join is a true server-side polygon intersection, not a centroid test and not a ZIP code crosswalk. The 1% polygons' rings were merged into one multi-ring `esriGeometryPolygon` and posted as a spatial filter with `spatialRel=esriSpatialRelIntersects`. Every parcel returned therefore touches the floodplain somewhere, by any amount.
+The parcel join is a true polygon-on-polygon overlap, not a centroid test and not a ZIP code crosswalk. All 122,748 parcels in the county layer were downloaded with their geometry, and each parcel inside the corporate limit was intersected with the dissolved floodplain in an equal-area projection (EPSG:5070). A parcel counts as overlapping when more than one square metre of it lies in the floodplain.
 
-The same join was then re-run with `spatialRel=esriSpatialRelContains` to identify parcels lying wholly inside the floodplain. That second pass is what brackets the exposure figures, and it is the control that most parcel-count floodplain summaries omit.
+The same join also identifies parcels lying wholly inside the floodplain, meaning at least 99.9% of the parcel's area is covered. That second measure is what brackets the exposure figures, and it is the control that most parcel-count floodplain summaries omit.
 
 ### Extent: the City of Lincoln corporate limit
 
@@ -183,13 +185,13 @@ Anyone rebuilding this analysis from the same sources will hit these. Several ar
 | Sentinel construction dates | `originalConstructionDate` in the Lincoln claims file ranges from 1492 to 2013 | Screen the lower tail before computing any age statistic |
 | Elevation fields are nearly empty | Only 18 of 275 claims carry `elevationDifference`. Of those 18, 11 sit below base flood elevation, median -3 feet | Treat elevation analysis as unavailable at this scale; the 18 records are not a sample worth generalizing |
 | The 0.2% layer is incremental | Layer 0 is `0.2 PCT ANNUAL CHANCE FLOOD HAZARD`, FEMA's shaded Zone X band between the 1% and 0.2% lines, not a cumulative 0.2% extent | Never nest or sum the two layers; the 3,115 in-city acres sit beside the 11,457, not inside them |
-| A full page of results is not a complete result | The service returns at most 2,000 records per reply and gives no sign that more exist, so one query against a layer holding 4,060 returns 2,000 and looks like it worked. Separately, a page that times out returns empty, and a pager that treats empty as the end of the data truncates silently; one earlier pull returned 1,000 of 1,653 records that way | Page with `resultOffset` until a short page arrives, compare the total against `returnCountOnly` every time, and retry an empty page before believing it |
+| A full page of results is not a complete result | The service returns at most 2,000 records per reply and gives no sign that more exist, so one query against a layer holding 4,060 returns 2,000 and looks like it worked. Separately, a page that times out returns empty, and a pager that treats empty as the end of the data truncates silently | Page with `resultOffset` until a short page arrives, compare the total against `returnCountOnly` every time, and retry an empty page before believing it |
 
 ### One residual inconsistency, disclosed
 
 The join runs against a single dissolved union of the clipped flood polygons, so there is no chunk boundary for a parcel to straddle and no parcel is wrongly excluded from the wholly-inside count for sitting across two polygons.
 
-A parcel counts as overlapping when its intersection with the floodplain exceeds one square metre. That threshold excludes parcels which merely share a boundary line with a flood polygon, a common situation where mapping followed parcel lines. It removed 91 of 7,812 candidates.
+A parcel counts as overlapping when its intersection with the floodplain exceeds one square metre. That threshold excludes parcels which merely share a boundary line with a flood polygon, a common situation where mapping followed parcel lines. It removed 103 of 8,413 candidates.
 
 ## What these numbers are not
 
@@ -280,7 +282,7 @@ These are the items that need a policy choice or a budget line.
 These are operational and affect day-to-day administration.
 
 - **Reconcile floodplain acreage to a jurisdictional boundary.** Acreage computed on a coordinate rectangle, as here, will not match any figure the city, county or LPSNRD publishes. Agreeing on one boundary makes every future number comparable.
-- **Do not use the assessor year-built field for substantial improvement work.** Round decade years make up 30.9% of records carrying a date, and 1900 alone appears 137 times. Construction date drives substantial improvement and substantial damage determinations, and this field cannot carry that weight.
+- **Do not use the assessor year-built field for substantial improvement work.** Round decade years make up 33.5% of floodplain records carrying a date, and 1900 alone appears 370 times. Construction date drives substantial improvement and substantial damage determinations, and this field cannot carry that weight.
 - **Close the non-residential construction-date gap.** Roughly 270 improved non-residential parcels in the SFHA carry no construction date at all, including 137 Service and 136 Public Use records. Building-level records are needed before those parcels can be administered consistently.
 - **Recognize that Zone A permitting has no elevation to work against.** 11,976 acres, 42.7% of the mapped SFHA, is approximate study with no base flood elevation determined. Staff issuing permits there have no published BFE to apply.
 - **Build an elevation certificate repository.** Only 18 of 275 claims carry an elevation difference against BFE. Every certificate captured at permit time compounds in value, supports future mitigation applications, and earns CRS credit.
@@ -313,20 +315,32 @@ These are operational and affect day-to-day administration.
 
 - **Area method.** Areas are taken in EPSG:5070, an equal-area projection, with interior rings subtracted. Service `Shape_Area` values are not used: these layers publish in Web Mercator, which overstates area at this latitude by roughly three quarters.
 - **FEMA date provenance.** The Community Information System column order was verified against two controls before Lincoln's row was read: Omaha, with a blank initial FHBM and an initial FIRM of 08 May 1971, and Alda, carrying all three dates.
-- **Join reproducibility.** The parcel join was run twice, once counting any geometric intersection and once requiring more than one square metre of overlap. The two differed by 91 parcels out of 7,812, which is the set that shares a boundary line with a flood polygon without overlapping it. The stricter result is the one reported.
-- **Pagination integrity.** Paged record totals were checked against `returnCountOnly` for each layer. An earlier pull that had silently returned 1,000 of 1,653 records was found this way and corrected.
+- **Join reproducibility.** The parcel join was run twice, once counting any geometric intersection and once requiring more than one square metre of overlap. The two differed by 103 parcels out of 8,413, which is the set that shares a boundary line with a flood polygon without overlapping it. The stricter result is the one reported.
+- **Pagination integrity.** Paged record totals were checked against the server's own `returnCountOnly` figure for each layer. The parcel layer reported 122,748 records and 122,748 were received.
 
 ### Checks that constrained the findings
 
-- **Year-built distribution.** Round decade years account for 30.9% of records carrying a construction date, with 1900 appearing 137 times against 18 records across all of 1901 to 1909. Vintage claims are capped at a pre-FIRM or post-FIRM split and go no finer.
+- **Year-built distribution.** Round decade years account for 33.5% of floodplain records carrying a construction date, with 1900 appearing 370 times. Vintage claims are capped at a pre-FIRM or post-FIRM split and go no finer.
 - **Containment test.** 3,140 of 6,046 parcels lie wholly inside the 1% floodplain and 827 of 4,466 inside the 0.2% band, so every dollar figure is reported as a bracket rather than a point estimate.
 - **Elevation coverage.** Just 18 of 275 claims carry an elevation difference against base flood elevation, so no elevation or depth analysis was attempted at any scale.
 
 ### As of this report
 
-NFIP figures rest on live queries run on 16 November 2026; spatial figures on queries run 21 November 2026. The 0.2% band reflects all 4,060 of the service's polygons, of which 982 fall within the corporate limit after clipping. A subset drawn from a study envelope.
+NFIP figures rest on live queries run on 16 November 2026; spatial figures on queries run 21 November 2026. The 0.2% band reflects all 4,060 of the service's polygons, of which 982 fall within the corporate limit after clipping.
 
 Assessed values follow the current county assessment roll and are revised annually. The claims and policy extracts are point-in-time pulls from OpenFEMA and will shift as FEMA refreshes them.
+
+## Where to go from here
+
+| If you want to | Go to |
+| --- | --- |
+| Look up the flood zone for an address | [FEMA Flood Map Service Center](https://msc.fema.gov/portal/home) |
+| Ask about floodplain permits, the local flood standards or the Community Rating System | City of Lincoln Watershed Management, through [lincoln.ne.gov](https://www.lincoln.ne.gov/) |
+| Ask about the Salt Creek levee | [Lower Platte South Natural Resources District](https://www.lpsnrd.org/) |
+| Check a property's assessment record | [Lancaster County property records](https://orion.lancaster.ne.gov/) |
+| Buy or ask about flood insurance | [FloodSmart, the National Flood Insurance Program](https://www.floodsmart.gov/) |
+| Download the same data | The Sources table above lists every service used |
+| See it on the map | [starcitylincoln.org](index.html) |
 
 ---
 
