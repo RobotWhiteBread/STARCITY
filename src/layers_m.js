@@ -14,7 +14,7 @@ const INTENT=[
  ['now','Happening now','What is going on in Lincoln at this moment: the weather and any warnings, Husker scores, what City Hall is deciding, and streets that are closed.',
   [['Lincoln right now',()=>pulseCard()],['Husker scores',()=>huskOpen(0)],['Weather and alerts',()=>wxDetail()],LY('cases','Decisions in the works'),LY('closures','Road closures now'),LY('permits','Building permits this year')]],
  ['hall','City Hall and votes','Who represents any spot, how the council works, what is on its way to a vote, and how every precinct has voted since 2012.',
-  [['How the council works',()=>councilOpen(0)],['What is on its way to a vote',()=>councilOpen(4)],['Speak at a meeting',()=>councilOpen(3)],['Every district at one spot',()=>civArm()],['How Lincoln voted',()=>setVotes(true)],LY('polls','Polling places')]],
+  [['How the council works',()=>councilOpen(0)],['What is on its way to a vote',()=>councilOpen(4)],['Speak at a meeting',()=>councilOpen(3)],['NU Board of Regents',()=>regentsCard()],['Every district at one spot',()=>civArm()],['How Lincoln voted',()=>setVotes(true)],LY('polls','Polling places')]],
  ['money','Values and taxes','Every property\'s assessed value as a bar, a tax estimate for every tax district at the 2025 levy, recent sales, and the statistics for whatever part of the city is in view. Tax figures are estimates from value and levy, not bills.',
   [LY('pv','Every property as a value bar'),['Taxes by district',()=>openSheet(TAXS,0)],['The numbers for this view',()=>openSheet(NUMS,0)],['Compare everything here',()=>openSheet(CMPS,0)],['New sales and where',()=>openSheet(SALESS,0)],['Rents',()=>rentCard()],LY('redlines','1930s redlining lines'),['Switch real estate on',()=>setRE(true)]]],
  ['nature','Birds, trees and sky','Which birds are here this month and which are passing through, every tree on the city\'s list, floodplain and salt marsh, and tonight\'s sky over Lincoln with the planets and satellites that are up.',
@@ -37,7 +37,7 @@ function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date
   if(wd&&((h>=6.75&&h<9)||(h>=15.75&&h<18.25)))out.push({t:'Rush hour traffic',c:'ctx',fn:()=>setTraffic(true)});
   if(BX.ok&&n.dow<6&&h>=5.5&&h<21.5)out.push({t:'Next bus near here',c:'ctx',fn:()=>busNear()});
   {const s=skyBody('Sun',skyDay(nowMs));if(skyAltAz(s.ra,s.dec,nowMs).alt<-6&&S2&&S2.sky_ra)out.push({t:'Tonight\'s sky',c:'ctx',fn:()=>setSky(true)})}
-  {const c=ccChip();if(c)out.push({t:c,c:'ctx',fn:()=>councilOpen(1)})}
+  {const c=ccChip();if(c)out.push({t:c,c:'ctx',fn:()=>councilOpen(1)})}{const c=rgChip();if(c)out.push({t:c,c:'ctx',fn:()=>regentsCard()})}
   {const m=Math.floor(n.ymd/100)%100;if(H2&&H2.birdyear)out.push({t:[3,4,5,9,10].includes(m)?'Migration: who is passing through':'Birds here in '+MONTHS[m-1],c:'ctx',fn:()=>openSheet(BIRDSS,0)})}
   const rest=INTENT.map((I,i)=>({t:I[1],k:I[0],u:U[I[0]]||0,i,fn:()=>intentCard(I[0])})).sort((a,b)=>b.u-a.u||a.i-b.i);return out.slice(0,6).concat(rest)}
 // once a topic is chosen the row becomes that topic: every one of its views stays one tap away and its layers stack, with any other layer and the compare table at the end

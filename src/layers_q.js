@@ -108,6 +108,24 @@ const COUNCILS={title:'City <i>Council</i>',tabs:['Who','Meetings','How a law is
     if(Math.abs(x)<16150&&Math.abs(z)<16150)flyTo(camTo(x,z,Math.min(6000,Math.max(520,span*2.6)),200,44),2200);
     showCard(a.PROJECT_NAME||a.APPNUM||'Planning request',[(a.SUBTYPE||'Request')+(a.APPNUM?', case '+a.APPNUM:''),'Where it stands: '+String(a.STATUS).trim(),a.PC_HEARING?'Planning Commission hearing: '+dayStr(a.PC_HEARING):'',a.CC_ORDINANCE_?'Council ordinance '+a.CC_ORDINANCE_:'',a.CC_RESOLUTION_?'Council resolution '+a.CC_RESOLUTION_:'',a.SUBMITTAL_DATE?'Filed '+dayStr(a.SUBMITTAL_DATE):'',a.DESCRIPTION?String(a.DESCRIPTION).trim():'',Math.abs(x)<16150&&Math.abs(z)<16150?'':'This one lies outside the area the map covers.','Read live from the Planning Department'].filter(Boolean).join('. ')+'.',undefined,{label:'Back to the list',fn:()=>openSheet(COUNCILS,4)},[{href:CCU.agenda,label:'Council agendas ↗'}])}}};
 function councilOpen(tab){openSheet(COUNCILS,tab||0)}
+// ---- the University of Nebraska Board of Regents. Dates are the board's own meeting schedule and notices, read Nov 21, 2026.
+// [yyyymmdd, time, where, kind, what]. Agendas come out about a week before a regular meeting.
+const RGD=[[20260109,'3 p.m.','Varner Hall','special',''],[20260206,'9 a.m.','Varner Hall','regular',''],[20260424,'9 a.m.','Varner Hall','regular','moved from April 10'],[20260529,'9 a.m.','East Campus Union','emergency',''],
+ [20260618,'9 a.m.','Varner Hall','regular','the 2026-27 budget, with a tuition increase'],[20260629,'','Varner Hall','special','governance of Nebraska Medicine'],[20260813,'9 a.m.','Varner Hall','regular',''],[20260901,'1 p.m.','Varner Hall','special',''],
+ [20261009,'','UNK Regional Engagement Center, Kearney','regular',''],[20261120,'10:30 a.m.','Varner Hall','emergency','a memorandum of understanding with the Nebraska Medicine board to speed up Project Health, the planned UNMC teaching hospital in Omaha'],[20261204,'9 a.m.','Varner Hall','regular','']];
+const RGU={sched:'https://nebraska.edu/regents/meeting-schedule',agenda:'https://nebraska.edu/regents/agendas-minutes/',dec4:'https://nebraska.edu/news-and-events/events/2026/12/board-of-regents-meeting-december-4',live:'https://nebraska.edu'};
+const rgDay=y=>{const d=new Date(Date.UTC(Math.floor(y/10000),Math.floor(y/100)%100-1,y%100));return d.toLocaleDateString('en-US',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric',year:'numeric'})};
+let rgVH;function rgVarner(){if(rgVH!==undefined)return rgVH;rgVH=null;for(let b=0;b<S.b_info.length;b++)if(H.infos[S.b_info[b]]==='Varner Hall'){rgVH=[LM.bc[2*b],LM.bc[2*b+1]];break}return rgVH}
+function rgNext(){const t=lincolnNow().ymd;return RGD.find(m=>m[0]>=t)||null}
+function rgChip(){const m=rgNext();if(!m)return null;const d=Math.round((ymdMs(m[0])-ymdMs(lincolnNow().ymd))/864e5);if(d>2)return null;return 'NU Regents meet '+(d===0?'today':d===1?'tomorrow':rgDay(m[0]).split(',')[0])+(m[1]?' at '+m[1]:'')}
+function regentsCard(){const t=lincolnNow().ymd,nx=rgNext(),past=RGD.filter(m=>m[0]<t).slice(-3).reverse();
+  const line=m=>rgDay(m[0])+(m[1]?', '+m[1]:'')+', '+m[2]+(m[3]!=='regular'?' ('+m[3]+' meeting)':'')+(m[4]?': '+m[4]:'');
+  const body='The Board of Regents governs the University of Nebraska: UNL, UNO, UNK and UNMC. Eight voting regents are elected by district to six-year terms, and four student regents, one from each campus, sit without a vote. They pick the university president and approve the budget and tuition. As of the August 13, 2026 minutes the voting regents are Paul Kenney (chair), Jim Scheer (vice chair), Timothy Clare, Joel Makovicka, Robert Schafer, Jack Stark, Barbara Weitz and Kathy Wilmot. Newly elected regents take their seats in January. '
+   +(nx?'Next meeting: '+line(nx)+'. ':'')+'Meetings are open to the public and streamed live at nebraska.edu. Most are in the board room at Varner Hall, 3835 Holdrege Street, on the edge of East Campus. The agenda for a regular meeting is posted about a week before. Anyone may speak to the board on an item on the agenda, and there is a public comment time for other subjects. To comment remotely, contact the Office of the Corporation Secretary ahead of time (402-472-3906). '
+   +(past.length?'Recent meetings: '+past.map(line).join(' · ')+'. ':'')+'Source: the board\'s meeting schedule, agendas and minutes at nebraska.edu, read November 21, 2026. Dates can change, so check the board\'s page before you go.';
+  const vh=rgVarner();
+  showCard('University of Nebraska Board of Regents',body,undefined,vh?{label:'Show Varner Hall',fn:()=>{flyTo(camTo(vh[0],vh[1],420,200,30),2200)}}:undefined,
+   [{href:RGU.agenda,label:'Agendas and minutes ↗'},{href:RGU.sched,label:'Meeting schedule ↗'},{href:RGU.live,label:'Watch live ↗'}])}
 
 // ---- this map for any city: a link that builds a place from open map data, and the code to copy
 const FORKU='https://robotwhitebread.github.io/STARCITY/anycity/';
