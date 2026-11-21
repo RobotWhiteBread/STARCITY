@@ -4,7 +4,7 @@
 // buttons that are always on screen, street names that thin out as you pull back, and a Walk mode
 // with a joystick, tap-to-walk, walls you cannot pass through and the name of the street you are on.
 // =====================================================================================================
-function setView(tx,tz,d,az,el){const c=camTo(Math.max(-8700,Math.min(8700,tx)),Math.max(-8700,Math.min(8700,tz)),d,az,el);camera.position.copy(c.p);controls.target.copy(c.t);dirty=true}
+function setView(tx,tz,d,az,el){const c=camTo(clX(tx),clZ(tz),d,az,el);camera.position.copy(c.p);controls.target.copy(c.t);dirty=true}
 // ---- pinch to zoom on the spot under your fingers, twist to turn, slide two fingers up or down to tilt
 let g2=null;
 function g2Start(){const [a,b]=[...ptrs.values()],mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
