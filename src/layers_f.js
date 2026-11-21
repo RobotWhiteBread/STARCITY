@@ -10,8 +10,10 @@ let g2=null;
 function g2Start(){const [a,b]=[...ptrs.values()],mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
   if(ride||walk.on){g2={sp:ride?1:2,d0:Math.max(30,Math.hypot(b.x-a.x,b.y-a.y)),a0:Math.atan2(b.y-a.y,b.x-a.x),z0:ride?ride.zm||1:camera.fov,y0:ride?ride.yo||0:0,t:performance.now()};return}
   pan=null;panV=null;fly=null;if(tour)stopTour();
-  g2={d0:Math.max(30,Math.hypot(b.x-a.x,b.y-a.y)),a0:Math.atan2(b.y-a.y,b.x-a.x),mx,my,ya:a.y,yb:b.y,xa:a.x,xb:b.x,h:groundAt(mx,my),v:viewAngles(),mode:null,rot:false,t:performance.now()}}
-function g2Move(){if(!g2||ptrs.size<2)return;const [a,b]=[...ptrs.values()],dist=Math.max(30,Math.hypot(b.x-a.x,b.y-a.y)),ang=Math.atan2(b.y-a.y,b.x-a.x),mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dya=a.y-g2.ya,dyb=b.y-g2.yb;
+  const gh=groundAt(mx,my),vv=viewAngles();
+  // the pinch holds the ground under your fingers still, but only when that ground is near: far toward the horizon it would throw the map
+  g2={d0:Math.max(30,Math.hypot(b.x-a.x,b.y-a.y)),a0:Math.atan2(b.y-a.y,b.x-a.x),mx,my,ya:a.y,yb:b.y,xa:a.x,xb:b.x,h:(gh&&gh.t<vv.d*2)?gh:null,v:vv,mode:null,rot:false,t:performance.now()}}
+function g2Move(){if(!g2||ptrs.size<2)return;const [a,b]=[...ptrs.values()],dRaw=Math.max(30,Math.hypot(b.x-a.x,b.y-a.y)),dist=g2.sd=(g2.sd?g2.sd+(dRaw-g2.sd)*.55:dRaw),ang=Math.atan2(b.y-a.y,b.x-a.x),mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dya=a.y-g2.ya,dyb=b.y-g2.yb;
   let da=ang-g2.a0;da=Math.atan2(Math.sin(da),Math.cos(da));
   if(g2.sp){lastInput=performance.now();dirty=true;if(g2.sp===1){if(!ride){g2=null;return}ride.zm=Math.min(4,Math.max(.12,g2.z0*g2.d0/dist));ride.yo=g2.y0+da}else if(walk.on){camera.fov=Math.min(walk.sky?100:80,Math.max(walk.sky?10:22,g2.z0*g2.d0/dist));camera.updateProjectionMatrix()}return}
   if(!g2.mode){const spread=Math.abs(dist-g2.d0),twist=Math.abs(da)*g2.d0*.5,par=dya*dyb>0?Math.min(Math.abs(dya),Math.abs(dyb)):0,side=Math.max(Math.abs(a.x-g2.xa),Math.abs(b.x-g2.xb));
@@ -20,7 +22,7 @@ function g2Move(){if(!g2||ptrs.size<2)return;const [a,b]=[...ptrs.values()],dist
   if(g2.mode==='tilt')setView(t.x,t.z,g2.v.d,g2.v.az,Math.max(4,Math.min(89,g2.v.el+(dya+dyb)*.5*.24)));
   else{if(!g2.rot&&Math.abs(da)>.16){g2.rot=true;g2.a0+=Math.sign(da)*.16;da-=Math.sign(da)*.16} // a small twist while pinching is ignored
     setView(t.x,t.z,Math.min(24000,Math.max(40,g2.v.d*g2.d0/dist)),g2.v.az+(g2.rot?da*180/Math.PI:0),g2.v.el);
-    if(g2.h){const h=planeHit(mx,my,g2.h.y0);if(h)shiftView(g2.h.x-h.x,g2.h.z-h.z)}}
+    if(g2.h){const h=planeHit(mx,my,g2.h.y0);if(h){let sx=g2.h.x-h.x,sz=g2.h.z-h.z;const m=Math.hypot(sx,sz),lim=g2.v.d*.35;if(m>lim){sx*=lim/m;sz*=lim/m}shiftView(sx,sz)}}}
   lastInput=performance.now()}
 // ---- the buttons: compass (tap for north, drag to turn), zoom (tap or hold), tilt (tap for flat or tilted, drag to tilt)
 let navHold=0,navT=0,navCmp=1e9;
@@ -29,7 +31,8 @@ function navDrag(el,onMove,onTap){let s=null;el.addEventListener('pointerdown',e
   const end=e=>{if(!s)return;const m=s.m;s=null;if(!m&&e.type==='pointerup')onTap()};el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)}
 function navInit(){controls.touches={ONE:-1,TWO:-1}; // touch is handled here, so one map gesture never fights another
   canvas.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'&&ptrs.size===2)g2Start()});
-  canvas.addEventListener('pointermove',e=>{if(g2&&ptrs.size>=2)g2Move()});
+  // a phone sends each finger's movement separately, so the pinch is read once per frame, when both fingers have reported
+  canvas.addEventListener('pointermove',e=>{if(g2&&ptrs.size>=2&&!g2.raf)g2.raf=requestAnimationFrame(()=>{if(g2){g2.raf=0;g2Move()}})});
   const end=()=>{if(g2&&ptrs.size<2){if(!g2.sp&&!g2.mode&&performance.now()-g2.t<320)zoomBy(1.9);pd=null;lastTap=null;g2=null}};canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
   for(const [id,dir] of [['bZin',-1],['bZout',1]]){const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();navHold=dir;navT=performance.now();if(ride)return;stopTour();fly=null;panV=null});
     const up=e=>{if(!navHold)return;const quick=performance.now()-navT<260;navHold=0;if(quick&&e.type==='pointerup'){if(ride)ride.zm=Math.min(4,Math.max(.12,(ride.zm||1)*(dir<0?.6:1.65)));else zoomBy(dir<0?.55:1.8)}};b.addEventListener('pointerup',up);b.addEventListener('pointerleave',up);b.addEventListener('pointercancel',up);
