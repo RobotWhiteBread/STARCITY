@@ -1972,6 +1972,7 @@ function frame(now){requestAnimationFrame(frame);
   layoutCard();moreInit();
   $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees`;
   const start=camTo(-1300,-900,17500,-10,50);camera.position.copy(start.p);controls.target.copy(start.t);controls.update();
+  try{const n=lincolnNow();$('sunR').value=Math.max(5,Math.min(22.5,n.sec/3600));curHour=+$('sunR').value}catch(e){}
   setTime(+$('sunR').value);updateBuses();
   if(location.protocol.startsWith('http')){loadWeather();loadWater();loadSightings()}
   requestAnimationFrame(frame);

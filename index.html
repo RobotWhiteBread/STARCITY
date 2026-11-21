@@ -2763,15 +2763,15 @@ function hkParse(e,id){id=id||'158';const c=e.competitions&&e.competitions[0];if
     venue:(c.venue&&c.venue.fullName)||'',ls:(me.linescores||[]).map(l=>l.displayValue),lo:(op.linescores||[]).map(l=>l.displayValue),rk:rk(me),ork:rk(op)}}
 const hkSeason=s=>s[4].includes(lincolnNow().ymd/100%100|0);
 async function hkLoad(force){if(!hosted()||HK.busy||(!force&&Date.now()-HK.at<9e5))return;HK.busy=true;let any=false;
-  await Promise.all(HK.sp.slice(1).filter(hkSeason).map(async s=>{try{const j=await (await fetch(ESPN+s[2]+'/teams/'+hkId(s)+'/schedule')).json(),ev=(j.events||[]).map(e=>hkParse(e,hkId(s))).filter(Boolean).sort((a,b)=>a.t-b.t);if(!ev.length)return;
+  await Promise.all(HK.sp.slice(1).filter(hkSeason).map(async s=>{try{const j=await (await fetch(ESPN+s[2]+'/teams/'+hkId(s)+'/schedule')).json(),ev=(j.events||[]).map(e=>hkParse(e,hkId(s))).filter(Boolean).sort((a,b)=>a.t-b.t);if(!ev.length)return;const old=HK.ev[s[0]]||[];for(const e of ev){const o=old.find(q=>q.id===e.id);if(o&&e.my==null&&o.my!=null&&e.st!=='pre'){e.my=o.my;e.th=o.th;e.ls=o.ls;e.lo=o.lo;e.det=o.det||e.det}}
       HK.ev[s[0]]=ev;HK.rec[s[0]]=(j.team&&j.team.recordSummary)||hkRec(ev);any=true}catch(e){}}));
-  HK.busy=false;HK.at=Date.now();HK.ok=HK.ok||any;HK.fail=!any&&!HK.ok;hkAfter()}
+  HK.busy=false;HK.at=Date.now();HK.ok=HK.ok||any;HK.fail=!any&&!HK.ok;hkAfter();try{await Promise.race([hkTick(true),new Promise(r=>setTimeout(r,5000))])}catch(e){}hkAfter()}
 const hkRec=ev=>{const f=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null),w=f.filter(e=>e.win).length,d=f.filter(e=>e.tie).length;return w+'-'+(f.length-w-d)+(d?'-'+d:'')};
 const hkHot=e=>{const n=Date.now();return e.st==='in'||(e.st==='pre'&&e.t-n<12e5&&n-e.t<144e5)||(e.st==='post'&&n-e.t<144e5&&!e.sett)};
-async function hkTick(){if(!hosted()||document.hidden||!HK.ok)return;let ch=false;
-  for(const s of HK.sp.slice(1)){for(const e of (HK.ev[s[0]]||[]).filter(hkHot)){try{const j=await (await fetch(ESPN+s[2]+'/scoreboard/'+e.id)).json(),u=hkParse(j,hkId(s));if(u){const was=e.st;Object.assign(e,u);if(e.st==='post'&&e.done){e.sett=true;if(was!=='post')HK.rec[s[0]]=hkRec(HK.ev[s[0]])}ch=true}}catch(err){}}}
-  if(ch)hkAfter();if(Date.now()-HK.at>9e5)hkLoad()}
-function hkLine(e,s){const vb=s[0]==='vb',lead=`Nebraska ${e.my??0}, ${e.opp} ${e.th??0}`;if(e.st!=='in')return lead;return lead+' · '+(vb&&e.ls.length?`set ${e.ls.length}: ${e.ls[e.ls.length-1]}-${e.lo[e.lo.length-1]??0}`:e.det)}
+async function hkTick(first){if(!hosted()||(document.hidden&&!first)||!HK.ok)return;let ch=false;
+  for(const s of HK.sp.slice(1)){for(const e of (HK.ev[s[0]]||[]).filter(hkHot)){try{const j=await (await fetch(ESPN+s[2]+'/scoreboard/'+e.id,{signal:AbortSignal.timeout(7000)})).json(),u=hkParse(j,hkId(s));if(u){const was=e.st;Object.assign(e,u);if(e.st==='post'&&e.done){e.sett=true;if(was!=='post')HK.rec[s[0]]=hkRec(HK.ev[s[0]])}ch=true}}catch(err){}}}
+  if(first)return;if(ch)hkAfter();if(Date.now()-HK.at>9e5)hkLoad()}
+function hkLine(e,s){const vb=s[0]==='vb',lead=e.my==null?`Nebraska vs ${e.opp}, score on its way`:`Nebraska ${e.my}, ${e.opp} ${e.th??0}`;if(e.st!=='in'||e.my==null)return lead;return lead+' · '+(vb&&e.ls.length?`set ${e.ls.length}: ${e.ls[e.ls.length-1]}-${e.lo[e.lo.length-1]??0}`:e.det)}
 const hkWhen=t=>new Date(t).toLocaleString('en-US',{timeZone:'America/Chicago',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 function hkVenue(n){if(n==='Memorial Stadium')return {x:LM.stadium[0],z:LM.stadium[1],h:70};if(n==='Devaney Sports Center'&&LM.dev)return {x:LM.dev.x,z:LM.dev.z,h:60};const b=H.blabels.find(q=>q[0]===n);return b?{x:b[1],z:-b[2],h:b[4]+34}:null}
 // The seven who have been on the floor to start matches, taken from the Nov. 17, 2026 finale against Minnesota.
@@ -2796,6 +2796,7 @@ async function hkSum(k,id){const s=HK.sp.find(q=>q[0]===k);HK.sum[id]={busy:true
     HK.sum[id]={rows,stars,at:Date.now()}}catch(e){HK.sum[id]={err:true}}hkRefresh()}
 function hkGame(e,s,big){const k=s[0],su=HK.sum[e.id],fin=e.st==='post'&&e.done&&e.my!=null,rk=q=>q?'#'+q+' ':'';let h=`<div class="hkg${e.st==='in'?' live':''}">`;
   if(e.st==='pre')h+=`<b>${e.ha==='home'?'vs':'at'} ${rk(e.ork)}${esc(e.opp)}</b><small>${hkWhen(e.t)}${e.venue?' · '+esc(e.venue):''}</small>`;
+  else if(e.st==='in'&&e.my==null)h+=`<b><i>LIVE</i> Nebraska ${e.ha==='home'?'vs':'at'} ${esc(e.opp)}</b><small>${esc(e.det)} · reading the score…</small>`;
   else if(fin||e.st==='in'){h+=`<b>${e.st==='in'?'<i>LIVE</i> ':(e.win?'W ':e.tie?'D ':'L ')}Nebraska ${esc(e.my)}, ${esc(e.opp)} ${esc(e.th)}</b><small>${e.st==='in'?esc(e.det):new Date(e.t).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'})}${e.ha==='home'?' · home':' · away'}${e.venue&&big?' · '+esc(e.venue):''}</small>`;
     if(e.ls.length&&big)h+=`<small>${k==='vb'?'Sets':k==='fb'?'Quarters':k==='bsb'?'Innings':k==='wsoc'?'Halves':'Periods'}: ${e.ls.map((v,q)=>esc(v)+'-'+esc(e.lo[q]??'')).join(' · ')}</small>`;
     if(big&&k!=='vb'&&k!=='bsb'&&k!=='wsoc'){if(!su)h+=`<button class="btn" data-sum="${k}:${e.id}">Team stats</button>`;else if(su.busy)h+='<small>Reading the box score…</small>';else if(su.err||!su.rows.length)h+='<small>No box score is posted for this game.</small>';
@@ -2818,12 +2819,12 @@ function hkHTML(i){if(!hosted())return '<p>Scores are read live from ESPN\'s pub
 function hkOneScore(){const ev=HK.ev.fb;if(!ev)return null;const f=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null&&Math.abs(e.my-e.th)<=8);return [f.filter(e=>e.win).length,f.filter(e=>!e.win).length]}
 const HUSK={title:'Husker <i>scores</i>',tabs:HK.sp.map(s=>s[1]),html:hkHTML,click:e=>{const b=e.target.closest('[data-sum]');if(b){const [k,id]=b.dataset.sum.split(':');hkSum(k,id)}}};
 function huskOpen(tab){openSheet(HUSK,tab||0);hkLoad()}
-function huskInit(){$('bHusk').onclick=()=>{if(sheet===HUSK)closeSheet();else huskOpen(0)};$('liveB').onclick=()=>huskOpen(0);
+function huskInit(){window.__hk=HK;$('bHusk').onclick=()=>{if(sheet===HUSK)closeSheet();else huskOpen(0)};$('liveB').onclick=()=>huskOpen(0);
   // the arenas get a scarlet beacon, the way the stadium gets its own treatment
   const V=['Devaney Sports Center','Pinnacle Bank Arena'].map(hkVenue).filter(Boolean);if(V.length){const n=V.length,X=new Float32Array(n*2),Hh=new Float32Array(n).fill(SKY),C=new Float32Array(n*3),Ti=new Float32Array(n);V.forEach((p,i)=>{X[2*i]=p.x;X[2*i+1]=p.z;C.set(c3(0xe41c38),3*i)});
     HK.beacon=mkPillars(n,X,Hh,null,C,Ti);HK.beacon.material.uniforms.uA.value=.8;scene.add(HK.beacon)}
   vbStarTick();setInterval(vbStarTick,2400);
-  if(hosted()){setTimeout(()=>hkLoad(),6000);setInterval(hkTick,20000)}}
+  if(hosted()){setTimeout(()=>hkLoad(),1200);setInterval(hkTick,20000)}}
 function huskFrame(){if(!HK.beacon)return;const d=camera.position.distanceTo(controls.target),u=HK.beacon.material.uniforms;u.uR.value=Math.min(40,Math.max(3,d*.002));u.uHS.value=Math.min(4,Math.max(.25,d/3600))}
 function pbaCard(b){const m=HK.rec.mbb,w=HK.rec.wbb,links=[];bLinks(b,links);showCard('Pinnacle Bank Arena','Home court of Nebraska men\'s and women\'s basketball since 2013, with 15,500 seats in the West Haymarket. The men have ranked in the national top 25 for attendance every season here, and the women ranked 15th in the country in 2025-26. '
   +(m||w?`This season: men ${m||'not started'}, women ${w||'not started'}. `:'')+'In March 2026 the men won the first NCAA tournament game in school history here, then reached a first Sweet 16, finishing 28-7. The scarlet beacon marks the arena on the map. '+(RE.on?propLines(b)||'':''),undefined,{label:'Roll the records',fn:()=>rollOpen('bb')},[{label:'Husker scores',fn:()=>huskOpen(3)}].concat(links))}
@@ -4151,6 +4152,7 @@ function frame(now){requestAnimationFrame(frame);
   layoutCard();moreInit();
   $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees`;
   const start=camTo(-1300,-900,17500,-10,50);camera.position.copy(start.p);controls.target.copy(start.t);controls.update();
+  try{const n=lincolnNow();$('sunR').value=Math.max(5,Math.min(22.5,n.sec/3600));curHour=+$('sunR').value}catch(e){}
   setTime(+$('sunR').value);updateBuses();
   if(location.protocol.startsWith('http')){loadWeather();loadWater();loadSightings()}
   requestAnimationFrame(frame);
