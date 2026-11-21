@@ -4,6 +4,8 @@
 
 ## Summary
 
+**Scope note, November 21, 2026.** The sales in this paper come from the part of Lincoln shown on the STARCITY map, about two thirds of the city by area. Sales in the city's north and northwest edges, including the Highlands, Fallbrook and Air Park, are not yet included. A citywide update is in progress.
+
 The county's sales file holds **2,858 valid residential sales** in and around Lincoln for the twelve months ending in early November 2026, worth **$1.07 billion** in total. Read as a whole they describe the market a buyer or seller walked into this year.
 
 1. **The median home sold for $325,000**, at a median of **$249 per square foot**. The middle half of sales fell between $250,000 and $445,000.

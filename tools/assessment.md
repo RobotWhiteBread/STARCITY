@@ -2,6 +2,8 @@
 
 ## Summary
 
+**Scope note, November 21, 2026.** The sales in this paper come from the part of Lincoln shown on the STARCITY map, about two thirds of the city by area. Sales in the city's north and northwest edges, including the Highlands, Fallbrook and Air Park, are not yet included. A citywide update is in progress.
+
 Lincoln's assessor passes the two headline tests its own profession sets, and fails the third. The third is the one about fairness between neighbours.
 
 Across **2,858 valid residential sales in 2025 and 2026**, each carrying both a sale price and the assessed value in force, the assessment ratio behaves like this:

@@ -2,6 +2,8 @@
 
 ## Summary
 
+**Scope note, November 21, 2026.** The parcel counts and assessed values in this paper cover the part of Lincoln shown on the STARCITY map: about two thirds of the city by area (72 of 107 square miles). The city's north and northwest edges, including the Highlands, Fallbrook, Air Park and the airport area, are not yet counted, so citywide totals will be higher than the figures here. A citywide update is in progress.
+
 Lincoln's realized flood losses are mostly rainfall-driven and fall disproportionately outside the regulated floodplain, while the regulatory and insurance apparatus is riverine and SFHA-centric. Five findings support that, each reproducible from the queries in the Method section.
 
 1. **Most paid claims are not riverine.** Of 275 NFIP claims on record for the City of Lincoln, 165 (60%) carry cause-of-damage code 4, accumulation of rainfall or snowmelt. Only 47 (17%) are coded 2, overflow of a stream, river or lake. The effective FIRM maps riverine Salt Creek flooding.

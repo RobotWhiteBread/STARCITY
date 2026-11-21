@@ -2,6 +2,8 @@
 
 ## What this is
 
+**Scope note, November 21, 2026.** The parcel counts and assessed values in this paper cover the part of Lincoln shown on the STARCITY map: about two thirds of the city by area (72 of 107 square miles). The city's north and northwest edges, including the Highlands, Fallbrook, Air Park and the airport area, are not yet counted, so citywide totals will be higher than the figures here. A citywide update is in progress.
+
 Every change made to the floodplain report since the copy you have. The first item is a correction to the spatial scope that moves most of the numbers, several of them by more than a factor of two, and it reverses the direction of two findings. Read that section before anything else in the report.
 
 ## The correction that matters: the analysis was never scoped to Lincoln

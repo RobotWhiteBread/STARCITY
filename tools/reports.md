@@ -2,6 +2,8 @@
 
 ## Lincoln, measured from its own public data
 
+**Scope note, November 21, 2026.** Parcel and sales figures in these papers currently cover the part of Lincoln shown on the map, about two thirds of the city by area. The north and northwest edges of the city are not yet counted. A citywide update is in progress.
+
 Each paper below takes a public dataset the city or county already publishes and adds it up in a way that is hard to do by hand. Every one states its method and its limits. None names an owner or an address.
 
 | Paper | What it finds | Read |

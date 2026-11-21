@@ -2,6 +2,8 @@
 
 ## Summary
 
+**Scope note, November 21, 2026.** The TIF totals in this paper are from the county's full table and are not affected. The comparisons with the parcel roll use parcels from the part of Lincoln shown on the STARCITY map, about two thirds of the city by area, so the roll total of $36.7 billion and the shares based on it understate the whole city. A citywide update is in progress.
+
 Tax increment financing lets a redevelopment project keep the property tax on the value it adds, usually for 15 years, to pay for public costs tied to the project. The tax on the value that was there before, the base, keeps going to the schools, the city, the county and the other taxing bodies. The tax on the new value, the excess, goes to the project's debt.
 
 The county publishes a table of every TIF project in Lancaster County. This paper adds it up.

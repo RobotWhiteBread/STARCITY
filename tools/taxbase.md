@@ -2,6 +2,8 @@
 
 ## Summary
 
+**Scope note, November 21, 2026.** The parcel counts and assessed values in this paper cover the part of Lincoln shown on the STARCITY map: about two thirds of the city by area (72 of 107 square miles). The city's north and northwest edges, including the Highlands, Fallbrook, Air Park and the airport area, are not yet counted, so citywide totals will be higher than the figures here. A citywide update is in progress.
+
 Lincoln's 2026 assessment roll puts **$36.7 billion** of value on **84,726 parcels** inside the city limits. This paper asks a plain question of that roll: where is the value, and how much land does it take to hold it?
 
 1. **Houses carry the roll.** Improved residential parcels are 85% of the parcels and **63.5% of the value**, $23.3 billion. Improved commercial property is 7% of the parcels and 34.2% of the value.
