@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What Sold in Lincoln · STARCITY</title>
+<meta name="description" content="Where Lincoln, Nebraska actually takes flood damage: 275 NFIP claims, the 1% and 0.2% floodplains joined to every parcel, and what city council, city staff and residents should focus on. Built from City of Lincoln GIS and OpenFEMA data.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What Sold in Lincoln">
+<meta property="og:description" content="Most of Lincoln's flood claims are rainfall, not Salt Creek, and nearly a third come from outside the mapped floodplain. A technical report built from public data.">
+<meta property="og:url" content="https://robotwhitebread.github.io/STARCITY/floodplain.html">
+<meta property="og:image" content="https://robotwhitebread.github.io/STARCITY/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1a1d23;
+ font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:11.5pt;line-height:1.55}
+a{color:#1a4f8a}
+nav.bar{display:none}
+main{max-width:none;margin:0;padding:0}
+h1{font-size:21pt;line-height:1.2;margin:0 0 .12em;letter-spacing:-.01em}
+.sub{color:#5c6270;font-size:11pt;margin:0 0 1.6em}
+h2{font-size:14.5pt;line-height:1.28;margin:1.7em 0 .5em;padding-top:.8em;
+ border-top:1px solid #d8dce2;break-after:avoid;page-break-after:avoid}
+h3{font-size:11.8pt;margin:1.4em 0 .35em;color:#1a4f8a;font-weight:600;
+ break-after:avoid;page-break-after:avoid}
+p,li{color:#24282f}
+strong{color:#000;font-weight:600}
+code{background:#f2f4f7;border:1px solid #dde1e7;border-radius:3px;
+ padding:.05em .3em;font-size:.85em;color:#2d3340;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+ul,ol{padding-left:1.2em}
+li{margin:.3em 0}
+.tw{margin:1em 0;border:1px solid #dde1e7;border-radius:5px;overflow:hidden;
+ break-inside:avoid;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}
+th,td{text-align:left;padding:6px 9px;border-bottom:1px solid #e8ebef;vertical-align:top}
+th{background:#f2f4f7;color:#1a1d23;font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+.chart{margin:1.2em 0;break-inside:avoid;page-break-inside:avoid}
+.chart svg{width:100%;height:auto;display:block}
+figcaption{color:#6b7280;font-size:8.5pt;margin-top:.4em;line-height:1.4}
+footer{margin-top:1.8em;padding-top:.8em;color:#6b7280;font-size:8.5pt;
+ border-top:1px solid #d8dce2}
+@page{margin:16mm 15mm}
+</style>
+</head>
+<body>
+<nav class="bar"><div><a href="./">&#8592; STARCITY</a><span>Lincoln, Nebraska in 3D</span></div></nav>
+<main>
+<h1>What Sold in Lincoln</h1>
+<p class="sub">Lancaster County, Nebraska &#183; November 21, 2026</p>
+<h2>Home sales, November 2025 to November 2026</h2>
+<h2>Summary</h2>
+<p>The county's sales file holds <strong>2,858 valid residential sales</strong> in and around Lincoln for the twelve months ending in early November 2026, worth <strong>$1.07 billion</strong> in total. Read as a whole they describe the market a buyer or seller walked into this year.</p>
+<ol><li><strong>The median home sold for $325,000</strong>, at a median of <strong>$249 per square foot</strong>. The middle half of sales fell between $250,000 and $445,000.</li><li><strong>The entry level is thin.</strong> Fewer than one sale in ten (9.3%) closed under $200,000. Almost one in five (18.0%) closed at $500,000 or more.</li><li><strong>New construction is a large share of the market.</strong> 302 sales, more than one in ten, were homes built in 2025 or 2026, at a median of $496,490.</li><li><strong>Price per square foot is flat across size until the largest homes.</strong> Every size group under about 1,840 square feet sold for $250 to $259 a square foot. The largest fifth sold for $219.</li><li><strong>Homes sold for more than their assessment.</strong> 82% of sales closed above the assessed value, by a median of $25,600.</li></ol>
+<h2>Price bands</h2>
+<div class='tw'><table><thead><tr><th>Sale price</th><th>Sales</th><th>Share</th></tr></thead><tbody><tr><td>Under $150,000</td><td>76</td><td>2.7%</td></tr><tr><td>$150,000 to $199,999</td><td>191</td><td>6.7%</td></tr><tr><td>$200,000 to $249,999</td><td>424</td><td>14.8%</td></tr><tr><td>$250,000 to $299,999</td><td>515</td><td>18.0%</td></tr><tr><td>$300,000 to $399,999</td><td>718</td><td>25.1%</td></tr><tr><td>$400,000 to $499,999</td><td>421</td><td>14.7%</td></tr><tr><td>$500,000 to $749,999</td><td>393</td><td>13.8%</td></tr><tr><td>$750,000 and over</td><td>120</td><td>4.2%</td></tr></tbody></table></div>
+<p>One sale in ten closed at or below $200,000 and one in ten at or above $600,000.</p>
+<h2>Through the year</h2>
+<div class='tw'><table><thead><tr><th>Month</th><th>Sales</th><th>Median price</th><th>Median per sq ft</th></tr></thead><tbody><tr><td>December 2025</td><td>199</td><td>$306,000</td><td>$238</td></tr><tr><td>January 2026</td><td>187</td><td>$310,000</td><td>$225</td></tr><tr><td>February</td><td>203</td><td>$330,000</td><td>$253</td></tr><tr><td>March</td><td>270</td><td>$300,000</td><td>$240</td></tr><tr><td>April</td><td>285</td><td>$330,000</td><td>$253</td></tr><tr><td>May</td><td>337</td><td>$320,879</td><td>$253</td></tr><tr><td>June</td><td>356</td><td>$335,000</td><td>$257</td></tr><tr><td>July</td><td>308</td><td>$340,000</td><td>$255</td></tr><tr><td>August</td><td>263</td><td>$335,000</td><td>$259</td></tr><tr><td>September</td><td>243</td><td>$325,000</td><td>$251</td></tr></tbody></table></div>
+<p>Volume follows the usual curve, nearly doubling from January to a June peak. Price per square foot rose from the winter into spring and then held between $251 and $259 from April through September. November 2025 (100 sales) and October and November 2026 (107 sales) are left out of the table because the file holds only part of each month. Recent sales take weeks to be reviewed and posted.</p>
+<h2>By type of home</h2>
+<div class='tw'><table><thead><tr><th>Type</th><th>Sales</th><th>Median price</th><th>Median per sq ft</th><th>Median size (sq ft)</th><th>Median year built</th></tr></thead><tbody><tr><td>One story</td><td>1,202</td><td>$325,000</td><td>$278</td><td>1,289</td><td>1977</td></tr><tr><td>One story townhome, end unit</td><td>273</td><td>$370,000</td><td>$275</td><td>1,344</td><td>2019</td></tr><tr><td>Two story</td><td>271</td><td>$440,000</td><td>$205</td><td>2,076</td><td>1992</td></tr><tr><td>One and a half story</td><td>213</td><td>$285,000</td><td>$193</td><td>1,652</td><td>1945</td></tr><tr><td>Split foyer</td><td>143</td><td>$310,000</td><td>$259</td><td>1,196</td><td>1979</td></tr><tr><td>Bungalow</td><td>137</td><td>$200,000</td><td>$216</td><td>928</td><td>1920</td></tr><tr><td>Multi level</td><td>103</td><td>$350,000</td><td>$252</td><td>1,436</td><td>1976</td></tr><tr><td>Two story townhome, end unit</td><td>100</td><td>$299,925</td><td>$166</td><td>1,739</td><td>2014</td></tr><tr><td>High rise condominium</td><td>75</td><td>$180,000</td><td>$174</td><td>946</td><td>1986</td></tr></tbody></table></div>
+<p>Square footage here is the assessor's above-grade floor area. A one story house with a finished basement shows a high price per square foot because the basement is in the price and not in the area. That is why ranches lead this column and two story homes trail it.</p>
+<p>The one story townhome is the notable entry. 273 end units sold at a median of $370,000, with a median build year of 2019. It is the second most common thing sold in Lincoln.</p>
+<h2>By age</h2>
+<div class='tw'><table><thead><tr><th>Built</th><th>Sales</th><th>Median price</th><th>Median per sq ft</th><th>Median size (sq ft)</th></tr></thead><tbody><tr><td>1900s</td><td>91</td><td>$200,000</td><td>$158</td><td>1,272</td></tr><tr><td>1910s</td><td>112</td><td>$222,500</td><td>$170</td><td>1,351</td></tr><tr><td>1920s</td><td>165</td><td>$226,000</td><td>$200</td><td>1,192</td></tr><tr><td>1930s</td><td>44</td><td>$310,000</td><td>$210</td><td>1,467</td></tr><tr><td>1940s</td><td>76</td><td>$248,750</td><td>$234</td><td>999</td></tr><tr><td>1950s</td><td>324</td><td>$245,000</td><td>$237</td><td>1,015</td></tr><tr><td>1960s</td><td>253</td><td>$280,000</td><td>$247</td><td>1,107</td></tr><tr><td>1970s</td><td>326</td><td>$300,000</td><td>$247</td><td>1,207</td></tr><tr><td>1980s</td><td>216</td><td>$330,000</td><td>$235</td><td>1,305</td></tr><tr><td>1990s</td><td>221</td><td>$401,104</td><td>$242</td><td>1,587</td></tr><tr><td>2000s</td><td>270</td><td>$402,750</td><td>$263</td><td>1,652</td></tr><tr><td>2010s</td><td>224</td><td>$468,250</td><td>$290</td><td>1,687</td></tr><tr><td>2020s</td><td>508</td><td>$492,221</td><td>$317</td><td>1,633</td></tr></tbody></table></div>
+<p>Homes built since 2020 are the largest single group, 508 sales, and the most expensive by either measure. The affordable end of the market is the housing built before 1960: 812 sales with decade medians from $200,000 to $310,000. The 1950s alone supplied 324 sales at a median of $245,000, in houses with a median of 1,015 square feet above grade.</p>
+<h2>By size</h2>
+<div class='tw'><table><thead><tr><th>Size group (above-grade sq ft)</th><th>Median price</th><th>Median per sq ft</th></tr></thead><tbody><tr><td>Up to 1,025</td><td>$225,000</td><td>$256</td></tr><tr><td>1,025 to 1,253</td><td>$280,000</td><td>$250</td></tr><tr><td>1,253 to 1,533</td><td>$350,000</td><td>$257</td></tr><tr><td>1,533 to 1,838</td><td>$427,750</td><td>$259</td></tr><tr><td>Over 1,838</td><td>$499,900</td><td>$219</td></tr></tbody></table></div>
+<h2>By neighborhood</h2>
+<p>Neighborhood associations with at least 20 sales in the period. About 46% of sales fell outside any association boundary, mostly in the newer subdivisions at the city's edges, which have none.</p>
+<div class='tw'><table><thead><tr><th>Neighborhood association</th><th>Sales</th><th>Median price</th><th>Median per sq ft</th><th>Median year built</th></tr></thead><tbody><tr><td>Family Acres</td><td>149</td><td>$434,950</td><td>$264</td><td>2004</td></tr><tr><td>Country Club</td><td>75</td><td>$365,000</td><td>$208</td><td>1940</td></tr><tr><td>Colonial Hills</td><td>69</td><td>$350,000</td><td>$248</td><td>1978</td></tr><tr><td>Prescott Area</td><td>27</td><td>$326,000</td><td>$235</td><td>1966</td></tr><tr><td>Downtown</td><td>25</td><td>$316,500</td><td>$325</td><td>2003</td></tr><tr><td>Eastridge</td><td>20</td><td>$307,500</td><td>$221</td><td>1954</td></tr><tr><td>Maple Village/Wedgewood</td><td>23</td><td>$285,000</td><td>$253</td><td>1963</td></tr><tr><td>West A</td><td>32</td><td>$278,000</td><td>$264</td><td>1995</td></tr><tr><td>Meadowlane</td><td>64</td><td>$276,000</td><td>$250</td><td>1962</td></tr><tr><td>Bethany</td><td>97</td><td>$275,000</td><td>$236</td><td>1976</td></tr><tr><td>Indian Village</td><td>48</td><td>$267,500</td><td>$238</td><td>1944</td></tr><tr><td>Irvingdale</td><td>35</td><td>$259,900</td><td>$215</td><td>1925</td></tr><tr><td>East Campus</td><td>34</td><td>$253,000</td><td>$210</td><td>1948</td></tr><tr><td>Belmont</td><td>31</td><td>$250,000</td><td>$232</td><td>1965</td></tr><tr><td>40th &amp; A</td><td>63</td><td>$249,900</td><td>$227</td><td>1950</td></tr><tr><td>Riley/Culler</td><td>36</td><td>$248,500</td><td>$226</td><td>1960</td></tr><tr><td>Eden Park</td><td>57</td><td>$247,000</td><td>$231</td><td>1954</td></tr><tr><td>South 48th Street</td><td>23</td><td>$243,000</td><td>$250</td><td>1952</td></tr><tr><td>Witherbee</td><td>52</td><td>$242,500</td><td>$238</td><td>1950</td></tr><tr><td>College View</td><td>78</td><td>$241,250</td><td>$229</td><td>1961</td></tr><tr><td>Near South</td><td>61</td><td>$235,000</td><td>$146</td><td>1911</td></tr><tr><td>University Place</td><td>102</td><td>$235,000</td><td>$226</td><td>1952</td></tr><tr><td>Havelock</td><td>40</td><td>$232,500</td><td>$265</td><td>1954</td></tr><tr><td>Woods Park</td><td>37</td><td>$226,000</td><td>$185</td><td>1919</td></tr><tr><td>Clinton</td><td>43</td><td>$210,000</td><td>$170</td><td>1925</td></tr><tr><td>Hartley</td><td>36</td><td>$195,000</td><td>$172</td><td>1910</td></tr><tr><td>South Salt Creek</td><td>29</td><td>$189,990</td><td>$176</td><td>1918</td></tr></tbody></table></div>
+<p>Near South stands out at $146 a square foot, the lowest in the table by a wide margin, on a housing stock with a median build year of 1911. Its houses are large and old, and they sell for less per square foot than anything else in the city. Downtown sales are condominiums and lead the table per square foot.</p>
+<h2>Turnover</h2>
+<p>2,833 of the sales match a parcel inside the city limits, against 72,280 improved residential parcels. That is <strong>3.9% of the housing stock changing hands</strong> in valid sales over the period. The file counts only sales the county validated as arm's length, so the true count of deeds recorded is higher.</p>
+<h2>What these numbers are not</h2>
+<ul><li><strong>Not a forecast.</strong> This describes twelve months of closed sales.</li><li><strong>Not every sale.</strong> Every record carries the county's validity code 01. Family transfers, foreclosures and other sales the county set aside are not in the file.</li><li><strong>Not the listing market.</strong> Days on market, list prices and price cuts are not public record and are not here.</li><li><strong>Not a full last quarter.</strong> Sales from October and November 2026 are still being posted.</li><li><strong>Not about any one house.</strong> No addresses or owner names were used. Sales are grouped by type, age, size and neighborhood only.</li></ul>
+<h2>What to do with it</h2>
+<p><strong>If you are buying.</strong> The age and type tables show where the price points are. Under $250,000 the market is mostly houses built before 1960, bungalows and condominiums.</p>
+<p><strong>If you are selling or listing.</strong> Price per square foot by neighborhood and by type gives a first check on a list price. Remember that it is above-grade area.</p>
+<p><strong>If you are on the council.</strong> New construction is selling at a median near $496,000, and fewer than one sale in ten closes under $200,000. The supply of homes at entry prices is the existing older stock, which is a reason to care what happens to it.</p>
+<h2>Method</h2>
+<p>Sales are the Lancaster County Assessor's published sales layer, 2,933 records dated November 17, 2025 through November 5, 2026, of which 2,858 are residential. Price per square foot, floor area, structure type and year built are the county's fields. Neighborhood was assigned by matching each sale's parcel number to the 2026 parcel layer and locating that parcel inside the city's neighborhood association boundaries. The assessment comparison uses the assessed value carried on each sale record. A fuller treatment of assessed value against sale price is in the companion paper on assessment equity.</p>
+<hr>
+<p><strong>The STARCITY papers.</strong> <a href="floodplain.html">Floodplain exposure and flood loss</a> · <a href="assessment.html">Who Lincoln over-assesses</a> · <a href="taxbase.html">Where Lincoln's property value lives</a> · <a href="sales.html">What sold in Lincoln</a> · <a href="tif.html">Lincoln's TIF districts by the numbers</a> · <a href="index.html">The map</a></p>
+</main>
+<footer>
+Built from public data: City of Lincoln and Lancaster County GIS, and OpenFEMA.
+Part of <a href="./">STARCITY</a>, an open-source 3D map of Lincoln.
+Source and data scripts at <a href="https://github.com/RobotWhiteBread/STARCITY" rel="noopener">github.com/RobotWhiteBread/STARCITY</a>.
+</footer>
+</body>
+</html>

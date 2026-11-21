@@ -5,6 +5,7 @@ const MAPBOX='geometry=-96.745%2C40.69%2C-96.535%2C40.85&geometryType=esriGeomet
 const CITYSRV='https://gis.lincoln.ne.gov/public/rest/services',hosted=()=>/^https?:/.test(location.protocol);
 const FPLINK={href:'https://robotwhitebread.github.io/STARCITY/floodplain.html',label:'The floodplain report ↗'};
 const ASLINK={href:'https://robotwhitebread.github.io/STARCITY/assessment.html',label:'How Lincoln assesses property ↗'};
+const PAPERS={href:'https://starcitylincoln.org/reports.html',label:'Papers: value, sales, TIF ↗'};
 const dayStr=ms=>ms?new Date(ms).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric',year:'numeric'}):'';
 const nice=s=>String(s||'').replace(/_/g,' ').toLowerCase().replace(/^./,c=>c.toUpperCase());
 function dlIndex(L){const k=L.def.k;if(k==='ln'){L.lo=new Uint32Array(L.N.length);let o=0;for(let i=0;i<L.N.length;i++){L.lo[i]=o;o+=2*L.N[i]}}

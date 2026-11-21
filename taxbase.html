@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Where Lincoln's Property Value Lives · STARCITY</title>
+<meta name="description" content="Where Lincoln, Nebraska actually takes flood damage: 275 NFIP claims, the 1% and 0.2% floodplains joined to every parcel, and what city council, city staff and residents should focus on. Built from City of Lincoln GIS and OpenFEMA data.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where Lincoln's Property Value Lives">
+<meta property="og:description" content="Most of Lincoln's flood claims are rainfall, not Salt Creek, and nearly a third come from outside the mapped floodplain. A technical report built from public data.">
+<meta property="og:url" content="https://robotwhitebread.github.io/STARCITY/floodplain.html">
+<meta property="og:image" content="https://robotwhitebread.github.io/STARCITY/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1a1d23;
+ font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:11.5pt;line-height:1.55}
+a{color:#1a4f8a}
+nav.bar{display:none}
+main{max-width:none;margin:0;padding:0}
+h1{font-size:21pt;line-height:1.2;margin:0 0 .12em;letter-spacing:-.01em}
+.sub{color:#5c6270;font-size:11pt;margin:0 0 1.6em}
+h2{font-size:14.5pt;line-height:1.28;margin:1.7em 0 .5em;padding-top:.8em;
+ border-top:1px solid #d8dce2;break-after:avoid;page-break-after:avoid}
+h3{font-size:11.8pt;margin:1.4em 0 .35em;color:#1a4f8a;font-weight:600;
+ break-after:avoid;page-break-after:avoid}
+p,li{color:#24282f}
+strong{color:#000;font-weight:600}
+code{background:#f2f4f7;border:1px solid #dde1e7;border-radius:3px;
+ padding:.05em .3em;font-size:.85em;color:#2d3340;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+ul,ol{padding-left:1.2em}
+li{margin:.3em 0}
+.tw{margin:1em 0;border:1px solid #dde1e7;border-radius:5px;overflow:hidden;
+ break-inside:avoid;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}
+th,td{text-align:left;padding:6px 9px;border-bottom:1px solid #e8ebef;vertical-align:top}
+th{background:#f2f4f7;color:#1a1d23;font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+.chart{margin:1.2em 0;break-inside:avoid;page-break-inside:avoid}
+.chart svg{width:100%;height:auto;display:block}
+figcaption{color:#6b7280;font-size:8.5pt;margin-top:.4em;line-height:1.4}
+footer{margin-top:1.8em;padding-top:.8em;color:#6b7280;font-size:8.5pt;
+ border-top:1px solid #d8dce2}
+@page{margin:16mm 15mm}
+</style>
+</head>
+<body>
+<nav class="bar"><div><a href="./">&#8592; STARCITY</a><span>Lincoln, Nebraska in 3D</span></div></nav>
+<main>
+<h1>Where Lincoln's Property Value Lives</h1>
+<p class="sub">Lancaster County, Nebraska &#183; November 21, 2026</p>
+<h2>Summary</h2>
+<p>Lincoln's 2026 assessment roll puts <strong>$36.7 billion</strong> of value on <strong>84,726 parcels</strong> inside the city limits. This paper asks a plain question of that roll: where is the value, and how much land does it take to hold it?</p>
+<ol><li><strong>Houses carry the roll.</strong> Improved residential parcels are 85% of the parcels and <strong>63.5% of the value</strong>, $23.3 billion. Improved commercial property is 7% of the parcels and 34.2% of the value.</li><li><strong>Value is concentrated.</strong> The 100 most valuable parcels hold 10.3% of all assessed value. The top 1% of parcels (847) hold 24.2%. Half the city's value sits on 15.4% of its parcels.</li><li><strong>A tenth of the land holds two fifths of the value.</strong> Rank every acre by the value on it, and the top 10% of parcel land holds 40.3% of the city's assessed value. The bottom half holds 4.8%.</li><li><strong>Downtown is in a class of its own.</strong> The assessor's downtown commercial district is assessed at <strong>$6.9 million an acre</strong>. The large commercial districts on the east and south sides run $0.77 to $0.95 million an acre.</li><li><strong>Small lots out-produce large ones.</strong> The fifth of houses on the smallest lots are assessed at $3.8 million an acre. The fifth on the largest lots are assessed at $1.2 million an acre.</li></ol>
+<p>Every figure comes from the Lancaster County Assessor's published parcel layer, measured inside Lincoln's corporate limit.</p>
+<h2>The roll by class</h2>
+<div class='tw'><table><thead><tr><th>Class</th><th>Parcels</th><th>Assessed value</th><th>Share of value</th><th>Parcel acres</th><th>Share of land</th><th>Value per acre</th></tr></thead><tbody><tr><td>Residential, improved</td><td>72,280</td><td>$23.31 billion</td><td>63.5%</td><td>17,209</td><td>42.5%</td><td>$1.35 million</td></tr><tr><td>Commercial, improved</td><td>6,022</td><td>$12.54 billion</td><td>34.2%</td><td>9,931</td><td>24.5%</td><td>$1.26 million</td></tr><tr><td>Commercial, unimproved</td><td>2,065</td><td>$0.62 billion</td><td>1.7%</td><td>8,651</td><td>21.4%</td><td>$71,000</td></tr><tr><td>Residential, unimproved</td><td>4,129</td><td>$0.22 billion</td><td>0.6%</td><td>3,552</td><td>8.8%</td><td>$62,000</td></tr><tr><td>Agricultural</td><td>49</td><td>$0.01 billion</td><td>0.03%</td><td>910</td><td>2.2%</td><td>$11,000</td></tr><tr><td>Unclassified</td><td>180</td><td>none</td><td>none</td><td>252</td><td>0.6%</td><td>none</td></tr></tbody></table></div>
+<p>Two things stand out. Improved residential and improved commercial land are assessed at nearly the same value per acre across the city as a whole, $1.35 million against $1.26 million. And <strong>30% of the parcel land inside the city limits is unimproved</strong>, 12,203 acres, carrying 2.3% of the value. Some of that is floodplain, some is held for development, and some is parking and yards attached to a business next door.</p>
+<p>The median improved residential parcel is assessed at <strong>$278,500</strong>. The median improved commercial parcel is assessed at $639,300.</p>
+<h2>How concentrated the value is</h2>
+<div class='tw'><table><thead><tr><th>Group of parcels</th><th>Assessed value</th><th>Share of the city</th></tr></thead><tbody><tr><td>Top 10</td><td>$1.29 billion</td><td>3.5%</td></tr><tr><td>Top 100</td><td>$3.76 billion</td><td>10.3%</td></tr><tr><td>Top 1% (847)</td><td>$8.87 billion</td><td>24.2%</td></tr><tr><td>Top 5% (4,236)</td><td>$13.22 billion</td><td>36.0%</td></tr><tr><td>Top 10% (8,472)</td><td>$16.00 billion</td><td>43.6%</td></tr></tbody></table></div>
+<p>All ten of the most valuable parcels are improved commercial property. Six sit in the east, northeast and southeast commercial districts on sites of 10 to 44 acres. Three are downtown on sites of about two acres or less, and the tenth is in the central commercial district.</p>
+<h2>Value per acre</h2>
+<p>Total value tells you who is big. Value per acre tells you which land is working hardest, and it is the number that matters to a city budget, because streets, pipes and fire coverage are paid for by the acre and the mile.</p>
+<div class='tw'><table><thead><tr><th>Share of parcel land, ranked by value per acre</th><th>Share of assessed value held</th><th>Value per acre at the cutoff</th></tr></thead><tbody><tr><td>Top 1%</td><td>11.7%</td><td>$6.4 million</td></tr><tr><td>Top 5%</td><td>27.4%</td><td>$2.8 million</td></tr><tr><td>Top 10%</td><td>40.3%</td><td>$2.2 million</td></tr><tr><td>Top 25%</td><td>68.0%</td><td>$1.4 million</td></tr><tr><td>Top 50%</td><td>95.2%</td><td>$0.5 million</td></tr></tbody></table></div>
+<p>Laid on an 800 metre grid, the most valuable cell in the city is the heart of downtown: <strong>$659 million on 118 parcel acres, $5.6 million an acre</strong>. The median cell is assessed at $1.07 million an acre. The ten most valuable cells hold 10.0% of the city's value on 2.9% of its parcel land.</p>
+<h3>Commercial districts</h3>
+<p>The assessor groups commercial property into districts. Ranked by value per acre:</p>
+<div class='tw'><table><thead><tr><th>Assessor's commercial district</th><th>Parcels</th><th>Assessed value</th><th>Acres</th><th>Value per acre</th></tr></thead><tbody><tr><td>Downtown (DTCOM)</td><td>451</td><td>$1,227 million</td><td>177</td><td>$6.93 million</td></tr><tr><td>HHCOM</td><td>51</td><td>$61 million</td><td>12</td><td>$4.91 million</td></tr><tr><td>Haymarket (HYCOM)</td><td>132</td><td>$444 million</td><td>100</td><td>$4.46 million</td></tr><tr><td>DPCOM</td><td>230</td><td>$390 million</td><td>368</td><td>$1.06 million</td></tr><tr><td>East central (ECCOM)</td><td>1,100</td><td>$2,972 million</td><td>3,133</td><td>$0.95 million</td></tr><tr><td>South central (SCCOM)</td><td>1,044</td><td>$2,269 million</td><td>2,707</td><td>$0.84 million</td></tr><tr><td>Northeast (NECOM)</td><td>396</td><td>$593 million</td><td>767</td><td>$0.77 million</td></tr><tr><td>Southeast (SECOM)</td><td>1,054</td><td>$1,833 million</td><td>2,391</td><td>$0.77 million</td></tr><tr><td>Central (CNCOM)</td><td>2,110</td><td>$1,706 million</td><td>2,483</td><td>$0.69 million</td></tr><tr><td>North central (NCCOM)</td><td>698</td><td>$612 million</td><td>1,417</td><td>$0.43 million</td></tr><tr><td>West central (WCCOM)</td><td>426</td><td>$486 million</td><td>1,515</td><td>$0.32 million</td></tr><tr><td>Southwest (SWCOM)</td><td>142</td><td>$193 million</td><td>664</td><td>$0.29 million</td></tr><tr><td>Northwest (NWCOM)</td><td>156</td><td>$326 million</td><td>1,181</td><td>$0.28 million</td></tr></tbody></table></div>
+<p>Downtown and the Haymarket together hold $1.67 billion on 277 acres. The east central district holds more in total, $2.97 billion, and needs 3,133 acres to do it. The district names in plain words are read from the assessor's codes. Two codes are left as published because the layer does not spell them out.</p>
+<h3>Houses by lot size</h3>
+<p>Sorting the city's improved residential parcels by lot size and cutting them into five equal groups:</p>
+<div class='tw'><table><thead><tr><th>Lot size group</th><th>Lot size</th><th>Median value</th><th>Total value</th><th>Acres used</th><th>Value per acre</th></tr></thead><tbody><tr><td>Smallest fifth</td><td>under 0.13 acre</td><td>$243,900</td><td>$3.67 billion</td><td>974</td><td>$3.77 million</td></tr><tr><td>Second</td><td>0.13 to 0.16</td><td>$240,550</td><td>$3.72 billion</td><td>2,100</td><td>$1.77 million</td></tr><tr><td>Middle</td><td>0.16 to 0.19</td><td>$253,700</td><td>$4.00 billion</td><td>2,460</td><td>$1.63 million</td></tr><tr><td>Fourth</td><td>0.19 to 0.23</td><td>$319,400</td><td>$4.93 billion</td><td>2,976</td><td>$1.66 million</td></tr><tr><td>Largest fifth</td><td>over 0.23 acre</td><td>$405,800</td><td>$6.70 billion</td><td>5,788</td><td>$1.16 million</td></tr></tbody></table></div>
+<p>The houses on the largest lots are worth the most each, and their land is worth the least per acre. The largest-lot fifth uses six times the land of the smallest-lot fifth to hold less than twice the value. The smallest group includes townhomes and attached units on very small parcels, which is part of why its figure is so high. The pattern holds without them: every group below a quarter acre is assessed at $1.6 million an acre or more.</p>
+<h2>By neighborhood</h2>
+<p>Lincoln's 58 neighborhood associations cover about half the city's land, mostly the older core and the established subdivisions, and 61% of its parcels. The table lists every association with at least 20 single-family homes, ranked by median home value. Value per acre counts every parcel inside the association boundary, commercial included.</p>
+<div class='tw'><table><thead><tr><th>Neighborhood association</th><th>Homes</th><th>Median home value</th><th>All assessed value</th><th>Value per acre</th></tr></thead><tbody><tr><td>Capitol Beach</td><td>241</td><td>$616,400</td><td>$156 million</td><td>$0.32 million</td></tr><tr><td>Hillcrest Heights</td><td>47</td><td>$609,300</td><td>$39 million</td><td>$0.69 million</td></tr><tr><td>Amber Hills</td><td>83</td><td>$433,200</td><td>$62 million</td><td>$0.64 million</td></tr><tr><td>Crown Pointe</td><td>250</td><td>$418,650</td><td>$147 million</td><td>$1.85 million</td></tr><tr><td>Family Acres</td><td>4,154</td><td>$412,250</td><td>$2,483 million</td><td>$1.01 million</td></tr><tr><td>Porter Ridge</td><td>370</td><td>$356,950</td><td>$202 million</td><td>$1.94 million</td></tr><tr><td>Southern Hills</td><td>236</td><td>$349,750</td><td>$82 million</td><td>$1.48 million</td></tr><tr><td>Country Club</td><td>1,990</td><td>$346,900</td><td>$867 million</td><td>$1.45 million</td></tr><tr><td>Colonial Hills</td><td>1,500</td><td>$321,250</td><td>$672 million</td><td>$1.18 million</td></tr><tr><td>Taylor Park</td><td>212</td><td>$319,500</td><td>$74 million</td><td>$1.08 million</td></tr><tr><td>Watertower-Yankee Hill</td><td>252</td><td>$299,500</td><td>$124 million</td><td>$0.18 million</td></tr><tr><td>Prescott Area</td><td>938</td><td>$294,500</td><td>$312 million</td><td>$1.14 million</td></tr><tr><td>Eastridge</td><td>678</td><td>$292,150</td><td>$276 million</td><td>$1.14 million</td></tr><tr><td>Indian Hills</td><td>128</td><td>$287,750</td><td>$55 million</td><td>$0.97 million</td></tr><tr><td>Far South</td><td>223</td><td>$267,400</td><td>$92 million</td><td>$0.74 million</td></tr><tr><td>Maple Village/Wedgewood</td><td>444</td><td>$266,800</td><td>$152 million</td><td>$1.35 million</td></tr><tr><td>Bethany</td><td>3,130</td><td>$262,000</td><td>$1,034 million</td><td>$0.98 million</td></tr><tr><td>Landons</td><td>69</td><td>$261,900</td><td>$48 million</td><td>$0.88 million</td></tr><tr><td>Salt Valley View</td><td>266</td><td>$260,000</td><td>$79 million</td><td>$1.24 million</td></tr><tr><td>Meadowlane</td><td>1,898</td><td>$254,950</td><td>$655 million</td><td>$1.19 million</td></tr><tr><td>College View</td><td>2,224</td><td>$250,650</td><td>$823 million</td><td>$0.47 million</td></tr><tr><td>West A</td><td>1,289</td><td>$246,000</td><td>$566 million</td><td>$0.43 million</td></tr><tr><td>South 48th Street</td><td>744</td><td>$241,500</td><td>$615 million</td><td>$2.29 million</td></tr><tr><td>Indian Village</td><td>1,262</td><td>$237,750</td><td>$440 million</td><td>$1.45 million</td></tr><tr><td>Eden Park</td><td>1,458</td><td>$236,350</td><td>$487 million</td><td>$1.07 million</td></tr><tr><td>East Campus</td><td>857</td><td>$234,400</td><td>$282 million</td><td>$1.17 million</td></tr><tr><td>40th &amp; A</td><td>1,817</td><td>$232,600</td><td>$483 million</td><td>$1.09 million</td></tr><tr><td>Witherbee</td><td>1,365</td><td>$229,300</td><td>$365 million</td><td>$1.23 million</td></tr><tr><td>Near Oak Lake</td><td>145</td><td>$222,000</td><td>$45 million</td><td>$1.01 million</td></tr><tr><td>Havelock</td><td>1,487</td><td>$221,000</td><td>$422 million</td><td>$0.77 million</td></tr><tr><td>Irvingdale</td><td>953</td><td>$220,600</td><td>$485 million</td><td>$2.08 million</td></tr><tr><td>Riley/Culler</td><td>1,032</td><td>$217,900</td><td>$759 million</td><td>$1.19 million</td></tr><tr><td>Antelope Park</td><td>392</td><td>$210,900</td><td>$91 million</td><td>$1.40 million</td></tr><tr><td>Belmont</td><td>960</td><td>$210,850</td><td>$312 million</td><td>$0.78 million</td></tr><tr><td>University Place</td><td>3,021</td><td>$210,000</td><td>$1,083 million</td><td>$1.27 million</td></tr><tr><td>Near South</td><td>2,038</td><td>$205,300</td><td>$714 million</td><td>$1.76 million</td></tr><tr><td>Malone</td><td>381</td><td>$201,200</td><td>$288 million</td><td>$1.71 million</td></tr><tr><td>Woods Park</td><td>1,099</td><td>$197,600</td><td>$334 million</td><td>$1.00 million</td></tr><tr><td>Clinton</td><td>1,457</td><td>$182,500</td><td>$394 million</td><td>$0.96 million</td></tr><tr><td>Hartley</td><td>974</td><td>$181,100</td><td>$384 million</td><td>$0.92 million</td></tr><tr><td>Everett</td><td>535</td><td>$175,600</td><td>$212 million</td><td>$2.09 million</td></tr><tr><td>Capitol View</td><td>72</td><td>$172,150</td><td>$269 million</td><td>$2.12 million</td></tr><tr><td>North Bottoms</td><td>375</td><td>$170,800</td><td>$120 million</td><td>$0.61 million</td></tr><tr><td>South Salt Creek</td><td>1,051</td><td>$161,700</td><td>$570 million</td><td>$0.72 million</td></tr></tbody></table></div>
+<p>Three associations are almost entirely commercial and are left out of the table: the Haymarket ($7.9 million an acre), the Salt Creek Area ($4.5 million) and Downtown ($3.8 million).</p>
+<p>The older core neighborhoods have modest home values and high value per acre. Everett, Near South, Malone and Irvingdale all sit above $1.7 million an acre with median homes between $175,000 and $221,000. Tight lots and mixed uses do that.</p>
+<h2>What a median home pays</h2>
+<p>The county's own TIF layer records a consolidated levy of <strong>$1.766448 per $100</strong> of value for the Lincoln tax district in tax year 2024. Applied to the 2026 median improved residential value of $278,500, that is about <strong>$4,920 a year</strong> before the homestead exemption and state property tax credits. The 2026 levy will differ. This is a yardstick, not a bill.</p>
+<h2>What these numbers are not</h2>
+<ul><li><strong>Not the taxable base.</strong> The layer publishes assessed value and leaves taxable value blank. Some high-value parcels are exempt from tax, such as hospitals, churches and public property that carries an assessment. This paper measures where value sits, not who pays.</li><li><strong>Not the whole city by area.</strong> Parcels inside the corporate limit total 40,505 acres. The city covers 68,295. The rest is streets, parks, water and public land that is not on the roll as parcels.</li><li><strong>Not a statement about any owner.</strong> No owner names were used or stored. Parcels are described by class, district and size only.</li><li><strong>Not a judgment about how anyone should live.</strong> Value per acre measures what land contributes to the roll. It says nothing about whether a large yard is worth having.</li><li><strong>642 parcels carry no assessed value.</strong> They cover 2,311 acres and are counted in land totals.</li></ul>
+<h2>What to do with it</h2>
+<p><strong>If you are a realtor or appraiser.</strong> The neighborhood table is a quick reference for where a listing sits against its association's median, and the commercial table gives a value per acre benchmark for each district.</p>
+<p><strong>If you are on the council or the planning commission.</strong> Value per acre is the missing column in most annexation and rezoning discussions. Land in the city's new edges that comes onto the roll at $1.2 million an acre has to support the same lane-miles and pipe as older land that carries $1.7 million or more.</p>
+<p><strong>If you are a resident.</strong> Your neighborhood's line in the table shows what the ground under it contributes. The older neighborhoods of the core are carrying more per acre than their home prices suggest.</p>
+<h2>Method</h2>
+<p>Parcels are the Lancaster County Assessor's published layer with 2026 assessed values (field CNTASSDVAL), 86,989 distinct parcels countywide. A parcel is counted as in Lincoln when a point inside it falls within the corporate limit (106.7 square miles; the larger extraterritorial jurisdiction polygon in the same layer is excluded). Areas are computed in an equal-area projection (EPSG:5070), not from the published area field. Neighborhood associations are the city's published boundaries. The scripts are in the project repository under tools/analysis.</p>
+<hr>
+<p><strong>The STARCITY papers.</strong> <a href="floodplain.html">Floodplain exposure and flood loss</a> · <a href="assessment.html">Who Lincoln over-assesses</a> · <a href="taxbase.html">Where Lincoln's property value lives</a> · <a href="sales.html">What sold in Lincoln</a> · <a href="tif.html">Lincoln's TIF districts by the numbers</a> · <a href="index.html">The map</a></p>
+</main>
+<footer>
+Built from public data: City of Lincoln and Lancaster County GIS, and OpenFEMA.
+Part of <a href="./">STARCITY</a>, an open-source 3D map of Lincoln.
+Source and data scripts at <a href="https://github.com/RobotWhiteBread/STARCITY" rel="noopener">github.com/RobotWhiteBread/STARCITY</a>.
+</footer>
+</body>
+</html>
