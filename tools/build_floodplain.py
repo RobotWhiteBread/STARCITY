@@ -170,8 +170,11 @@ def inline(s):
     s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"\*([^*\n]+)\*", r"<em>\1</em>", s)
-    s = re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)",
+    s = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)",
                r'<a href="\2" rel="noopener">\1</a>', s)
+    # relative links to sibling pages, e.g. [text](assessment.html)
+    s = re.sub(r"\[([^\]]+)\]\(((?!https?://)[A-Za-z0-9._/-]+\.(?:html|pdf)(?:#[^)\s]*)?)\)",
+               r'<a href="\2">\1</a>', s)
     return s
 
 
@@ -243,6 +246,10 @@ def convert(md, charts):
                 i += 1
             out.append("<ul>" + "".join("<li>" + inline(x) + "</li>" for x in items)
                        + "</ul>")
+            continue
+        if re.fullmatch(r"-{3,}", ln.strip()):
+            out.append("<hr>")
+            i += 1
             continue
         para = [ln]
         i += 1
