@@ -4150,7 +4150,7 @@ function frame(now){requestAnimationFrame(frame);
     $('legend').innerHTML=`<b>${mi(tm[0]+tm[1]+tm[2])} mi of bike trails</b><span><i style="background:#ff2a8a"></i>paved ${mi(tm[0])}</span><span><i style="background:#ff8a00"></i>crushed rock ${mi(tm[1])}</span><span><i style="background:#8a4dff"></i>dirt ${mi(tm[2])}</span><span><i style="background:#00b3a4"></i>on-street ${mi(tm[3]+tm[4])}</span>`;
     setTrails(true)}
   layoutCard();moreInit();
-  $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees`;
+  $('stats').textContent=`Lincoln, Nebraska · ${H.counts.buildings.toLocaleString()} buildings · ${LM.ntrees.toLocaleString()} trees · north of Adams St is coming`;
   const start=camTo(-1300,-900,17500,-10,50);camera.position.copy(start.p);controls.target.copy(start.t);controls.update();
   try{const n=lincolnNow();$('sunR').value=Math.max(5,Math.min(22.5,n.sec/3600));curHour=+$('sunR').value}catch(e){}
   setTime(+$('sunR').value);updateBuses();
