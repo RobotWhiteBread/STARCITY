@@ -2020,6 +2020,7 @@ function frame(now){requestAnimationFrame(frame);
   {const dtf=now-lastF;lastF=now;const both=user&&lastUser;lastUser=user;if(dtf<250&&both){fAvg=fAvg*.9+dtf*.1;if(++fN>45&&fAvg>48&&perfStep<3){perfStep++;fN=0;fAvg=30;if(perfStep===1)renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.25));else if(perfStep===2){shadowsOn=false;$('bShadow').classList.remove('on');shadowDirty=true}else renderer.setPixelRatio(1);resize()}}}
   if(LM.devSign){const g=LM.devSign;g.rotation.y=Math.atan2(camera.position.x-g.position.x,camera.position.z-g.position.z)}
   if(LM.aaWall){const g=LM.aaWall;g.rotation.y=Math.atan2(camera.position.x-g.position.x,camera.position.z-g.position.z)}
+  if(LM.vbMotel){const g=LM.vbMotel;g.rotation.y=Math.atan2(camera.position.x-g.position.x,camera.position.z-g.position.z)}
   if(LM.pins)for(const g of LM.pins)if(g.visible)g.scale.setScalar(Math.max(1,camera.position.distanceTo(g.position)/650));
   if(LM.me&&LM.me.visible){const k=Math.max(1,camera.position.distanceTo(LM.me.position)/520);LM.me.userData.dot.scale.setScalar(k);LM.me.userData.halo.scale.setScalar(k);LM.me.userData.dot.position.y=LM.me.userData.halo.position.y=9*k}
   dlFrame();updateShadow();renderer.render(scene,camera);codeHud(now);if(!user||(lblTick++&1)===0||fly)updateLabels();else dirty=true;}

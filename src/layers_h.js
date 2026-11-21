@@ -46,6 +46,23 @@ function aaWallInit(){const p=LM.dev;if(!p)return;const cv=document.createElemen
   // it stands on the grass by the east parking lot, clear of the road, and turns to face you the way the Devaney sign does
   const x=p.x+292,z=p.z-162;g.position.set(x,hAt(x,z)+10+Hh/2,z);g.rotation.y=-Math.PI/2;
   g.userData.card=()=>aaCard();scene.add(g);pickables.push(g);LM.aaWall=g;labels.push({t:'All-American Wall',sub:VBAA.length+' Husker volleyball All-Americans',x,y:hAt(x,z)+Hh+22,z,k:3,pri:960,near:0,far:2200})}
+// A roadside sign of the kind that used to stand outside motels: a bulb-lit arrow over a letter board with clip-on letters.
+function motelSignInit(){const p=LM.dev;if(!p)return;const cv=document.createElement('canvas');cv.width=640;cv.height=900;const q=cv.getContext('2d');
+  // the arrow, pointing down toward the arena
+  q.save();q.translate(320,205);q.rotate(-.1);q.beginPath();q.moveTo(-270,-120);q.lineTo(120,-120);q.lineTo(120,-175);q.lineTo(285,-20);q.lineTo(120,135);q.lineTo(120,80);q.lineTo(-270,80);q.closePath();q.fillStyle='#e23b2e';q.fill();q.lineWidth=10;q.strokeStyle='#fbe9b0';q.stroke();
+  q.fillStyle='#ffe27a';const B=[[-250,-100],[-190,-100],[-130,-100],[-70,-100],[-10,-100],[50,-100],[105,-100],[140,-150],[185,-108],[228,-66],[262,-22],[228,24],[185,68],[140,112],[105,62],[50,62],[-10,62],[-70,62],[-130,62],[-190,62],[-250,62],[-252,-20]];for(const [x,y] of B){q.beginPath();q.arc(x,y,9,0,6.283);q.fill()}
+  q.fillStyle='#fff7e0';q.textAlign='center';q.font='italic 800 78px Georgia,serif';q.fillText('Volleyball',-70,10);q.restore();
+  // the oval
+  q.beginPath();q.ellipse(320,395,215,58,0,0,6.283);q.fillStyle='#1f8f8a';q.fill();q.lineWidth=8;q.strokeStyle='#fbe9b0';q.stroke();q.fillStyle='#fff7e0';q.font='800 40px system-ui,Arial,sans-serif';q.fillText('SELLOUTS NIGHTLY',320,409);
+  // the letter board, with its rails and letters that never sit quite straight
+  q.fillStyle='#f4f1e6';q.fillRect(40,480,560,330);q.lineWidth=10;q.strokeStyle='#2a2c30';q.strokeRect(40,480,560,330);q.strokeStyle='#c9c4b4';q.lineWidth=3;for(const y of [585,690])  {q.beginPath();q.moveTo(48,y+8);q.lineTo(592,y+8);q.stroke()}
+  const L=['CENTER OF THE','VOLLEYBALL','UNIVERSE'];q.fillStyle='#16171a';q.font='800 62px "Arial Narrow",Arial,sans-serif';
+  for(let r=0;r<3;r++){const t=L[r],w=44,x0=320-(t.length-1)*w/2;for(let i=0;i<t.length;i++){const k=(r*17+i*7)%11;q.save();q.translate(x0+i*w+(k===3?4:0),558+r*105+(k===5?5:k===8?-4:0));q.rotate((k-5)*.012+(k===2?.09:0));q.fillText(t[i]==='E'&&r===2&&i===5?'3':t[i],0,0);q.restore()}}
+  q.fillStyle='#e23b2e';q.font='700 26px system-ui,Arial,sans-serif';q.fillText('★ FREE PARKING FOR CHAMPIONS ★',320,850);
+  const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;const Hh=30,W=Hh*640/900,g=new THREE.Group();
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(W,Hh),new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.05,side:THREE.DoubleSide,fog:false}));m.position.y=14+Hh/2;g.add(m);
+  for(const sx of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.9,17,.9),new THREE.MeshLambertMaterial({color:0x3a3d42}));post.position.set(sx*W*.3,8.5,-.6);g.add(post)}
+  const x=p.x+62,z=p.z+128;g.position.set(x,hAt(x,z),z);g.userData.info=['Center of the Volleyball Universe','A roadside sign in the old motel style, with a bulb-lit arrow and clip-on letters. It exists on this map only. The title is one fans give the Devaney Center, home of the most-attended program in college volleyball.'];scene.add(g);pickables.push(g);LM.vbMotel=g}
 function aaCard(){showCard('The All-American Wall',VBAA.length+' Nebraska volleyball players have been named All-Americans, more selections than any other program in the country. Each name is followed by the seasons she was honored: '+VBAA.map(q=>q[0]+' ('+q[1]+')').join(', ')+'. The years cover AVCA first, second and third teams from 1983 through 2025, and Terri Kanouse, named by the AIAW in 1980. This wall exists on this map only.',undefined,{label:'Roll the records',fn:()=>rollOpen('vb')},[{href:'https://en.wikipedia.org/wiki/Nebraska_Cornhuskers_women%27s_volleyball_honors_and_awards',label:'The full honors list ↗'},{href:'https://huskers.com/sports/volleyball/roster',label:'This season\'s roster ↗'}])}
 function hkAfter(){huskLabels.length=0;if(vbStar.i>=0)huskLabels.push(vbStar);const live=[],byV=new Map();
   for(const s of HK.sp.slice(1)){const ev=HK.ev[s[0]];if(!ev)continue;const on=ev.find(e=>e.st==='in'),nx=ev.find(e=>e.st==='pre'&&e.t>Date.now()-36e5);if(on)live.push([s,on]);
@@ -91,7 +108,7 @@ function huskInit(){window.__hk=HK;$('bHusk').onclick=()=>{if(sheet===HUSK)close
   // the arenas get a scarlet beacon, the way the stadium gets its own treatment
   const V=['Devaney Sports Center','Pinnacle Bank Arena'].map(hkVenue).filter(Boolean);if(V.length){const n=V.length,X=new Float32Array(n*2),Hh=new Float32Array(n).fill(SKY),C=new Float32Array(n*3),Ti=new Float32Array(n);V.forEach((p,i)=>{X[2*i]=p.x;X[2*i+1]=p.z;C.set(c3(0xe41c38),3*i)});
     HK.beacon=mkPillars(n,X,Hh,null,C,Ti);HK.beacon.material.uniforms.uA.value=.8;scene.add(HK.beacon)}
-  vbStarTick();setInterval(vbStarTick,2400);try{aaWallInit()}catch(e){}
+  vbStarTick();setInterval(vbStarTick,2400);try{aaWallInit()}catch(e){}try{motelSignInit()}catch(e){}
   if(hosted()){setTimeout(()=>hkLoad(),1200);setInterval(hkTick,20000)}}
 function huskFrame(){if(!HK.beacon)return;const d=camera.position.distanceTo(controls.target),u=HK.beacon.material.uniforms;u.uR.value=Math.min(40,Math.max(3,d*.002));u.uHS.value=Math.min(4,Math.max(.25,d/3600))}
 function pbaCard(b){const m=HK.rec.mbb,w=HK.rec.wbb,links=[];bLinks(b,links);showCard('Pinnacle Bank Arena','Home court of Nebraska men\'s and women\'s basketball since 2013, with 15,500 seats in the West Haymarket. The men have ranked in the national top 25 for attendance every season here, and the women ranked 15th in the country in 2025-26. '
