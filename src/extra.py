@@ -24,7 +24,21 @@ Z=13;tiles={}
 for f in glob.glob(D+'terrain/13_*.png'):
     _,x,y=f.split('/')[-1][:-4].split('_');tiles[(int(x),int(y))]=Image.open(f).convert('RGB')
 xs=sorted({k[0] for k in tiles});ys=sorted({k[1] for k in tiles});print('tiles',len(tiles),xs,ys,file=sys.stderr)
+import numpy as np,os
+DEM=None
+if os.path.exists('/mnt/user-data/uploads/STARCITY/wide/dem_lincoln.npz'):
+    _z=np.load('/mnt/user-data/uploads/STARCITY/wide/dem_lincoln.npz');DEM=(_z['d'],float(_z['lon0']),float(_z['lat0']),float(_z['dx']),float(_z['dy']))
+    print('terrain from the USGS 3DEP 1/3 arc-second model',DEM[0].shape,file=sys.stderr)
 def elev(lat,lon):
+    # USGS 3DEP 1/3 arc-second (about 10 m, built from lidar) when it is on hand, else the terrarium tiles
+    if DEM is not None:
+        a,lo0,la0,dx,dy=DEM;fx=(lon-lo0)/dx-0.5;fy=(la0-lat)/dy-0.5
+        x0=int(math.floor(fx));y0=int(math.floor(fy))
+        if 0<=x0<a.shape[1]-1 and 0<=y0<a.shape[0]-1:
+            tx=fx-x0;ty=fy-y0;v=a[y0:y0+2,x0:x0+2]
+            if v.min()>-9000: return float(v[0,0]*(1-tx)*(1-ty)+v[0,1]*tx*(1-ty)+v[1,0]*(1-tx)*ty+v[1,1]*tx*ty)
+    return elev_tiles(lat,lon)
+def elev_tiles(lat,lon):
     n=2**Z;fx=(lon+180)/360*n;fy=(1-math.asinh(math.tan(math.radians(lat)))/math.pi)/2*n
     px=fx*256-0.5;py=fy*256-0.5
     x0=math.floor(px);y0=math.floor(py);tx=px-x0;ty=py-y0
@@ -38,7 +52,7 @@ def elev(lat,lon):
         return sum(v)/len(v) if v else None
     return v[0]*(1-tx)*(1-ty)+v[1]*tx*(1-ty)+v[2]*(1-tx)*ty+v[3]*tx*ty
 LAT0,LON0=40.77,-96.64;KX=111320*math.cos(math.radians(LAT0));KY=111000.0
-G=641;HALF=16400.0
+G=821;HALF=16400.0
 grid=[]
 for j in range(G):          # j: north index (south->north)
     nn=-HALF+2*HALF*j/(G-1)
