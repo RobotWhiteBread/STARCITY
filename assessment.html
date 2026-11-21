@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Who Lincoln Over-Assesses, and Who It Does Not · STARCITY</title>
+<meta name="description" content="Where Lincoln, Nebraska actually takes flood damage: 275 NFIP claims, the 1% and 0.2% floodplains joined to every parcel, and what city council, city staff and residents should focus on. Built from City of Lincoln GIS and OpenFEMA data.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Who Lincoln Over-Assesses, and Who It Does Not">
+<meta property="og:description" content="Most of Lincoln's flood claims are rainfall, not Salt Creek, and nearly a third come from outside the mapped floodplain. A technical report built from public data.">
+<meta property="og:url" content="https://robotwhitebread.github.io/STARCITY/floodplain.html">
+<meta property="og:image" content="https://robotwhitebread.github.io/STARCITY/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#0d0f14;color:#e9e4d6;
+ font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:17px;line-height:1.62;-webkit-text-size-adjust:100%}
+a{color:#ffd34d}
+a:hover{color:#ffe9a8}
+.bar{border-bottom:1px solid #242a33;background:#090c11;position:sticky;top:0;z-index:5}
+.bar div{max-width:860px;margin:0 auto;padding:11px 22px;display:flex;gap:14px;
+ align-items:baseline;font-size:14px}
+.bar a{text-decoration:none;font-weight:600;letter-spacing:.06em}
+.bar span{color:#8c8676}
+main{max-width:860px;margin:0 auto;padding:30px 22px 90px}
+h1{font-size:2.05rem;line-height:1.2;margin:.4em 0 .15em;letter-spacing:-.01em}
+.sub{color:#a8a294;font-size:1rem;margin:0 0 2.2em}
+h2{font-size:1.42rem;line-height:1.28;margin:2.3em 0 .55em;
+ padding-top:1.1em;border-top:1px solid #242a33;letter-spacing:-.005em}
+h3{font-size:1.08rem;margin:1.9em 0 .4em;color:#ffe9a8;font-weight:600}
+p,li{color:#d9d4c8}
+strong{color:#fff4d6;font-weight:600}
+code{background:#161b22;border:1px solid #242a33;border-radius:4px;
+ padding:.08em .36em;font-size:.86em;color:#ffe9a8;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+ul,ol{padding-left:1.3em}
+li{margin:.42em 0}
+.tw{overflow-x:auto;margin:1.3em 0;border:1px solid #242a33;border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:460px}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid #1c222b;
+ vertical-align:top}
+th{background:#131820;color:#ffe9a8;font-weight:600;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#10141a}
+.chart{margin:1.7em 0;padding:0}
+.chart svg{width:100%;height:auto;display:block}
+figcaption{color:#8c8676;font-size:.8rem;margin-top:.5em;line-height:1.45}
+footer{max-width:860px;margin:0 auto;padding:24px 22px 70px;color:#8c8676;
+ font-size:.84rem;border-top:1px solid #242a33}
+@media(max-width:620px){
+ body{font-size:16px}
+ h1{font-size:1.6rem}
+ h2{font-size:1.22rem}
+ main{padding:22px 16px 70px}
+ .bar div{padding:10px 16px}
+}
+</style>
+</head>
+<body>
+<nav class="bar"><div><a href="./">&#8592; STARCITY</a><span>Lincoln, Nebraska in 3D</span></div></nav>
+<main>
+<h1>Who Lincoln Over-Assesses, and Who It Does Not</h1>
+<p class="sub">Lancaster County Assessor sales ratio study &#183; 2,858 residential sales, 2025 to 2026</p>
+<h2>Summary</h2>
+<p>Lincoln's assessor passes the two headline tests its own profession sets, and fails the third. The third is the one about fairness between neighbours.</p>
+<p>Across <strong>2,858 valid residential sales in 2025 and 2026</strong>, each carrying both a sale price and the assessed value in force, the assessment ratio behaves like this:</p>
+<ol><li><strong>The level is sound.</strong> The median ratio is <strong>0.919</strong>, inside the International Association of Assessing Officers' acceptable range of 0.90 to 1.10.</li><li><strong>The consistency is sound.</strong> The coefficient of dispersion is <strong>13.1</strong>, inside the IAAO standard of 15 or less for older, mixed residential areas. Most of Lincoln is assessed consistently.</li><li><strong>The equity is not.</strong> The price-related differential is <strong>1.040</strong>, outside the IAAO standard of 0.98 to 1.03. A PRD above that range means the assessment is <strong>regressive</strong>: cheaper homes are assessed at a higher share of what they actually sell for than expensive ones.</li></ol>
+<p>What regressivity looks like in dollars, measured across sale price deciles:</p>
+<ul><li>Homes in the <strong>cheapest tenth</strong> of the market, median sale price <strong>$175,000</strong>, are assessed at <strong>98.9%</strong> of what they sell for.</li><li>Homes in the <strong>most expensive tenth</strong>, median sale price <strong>$712,500</strong>, are assessed at <strong>85.0%</strong>.</li></ul>
+<p>The tax rate is the same for both. So the owner of a $175,000 house pays property tax on essentially the whole value of their house, and the owner of a $712,500 house pays on about six sevenths of theirs.</p>
+<p><strong>This is not an accusation of misconduct.</strong> Regressivity is the most common failure mode in mass appraisal anywhere, because expensive homes are more varied and harder for a model to price than modest ones, and the error runs one way. It is still a real transfer, it is measurable, and it is fixable.</p>
+<h2>Method</h2>
+<p>This is a standard sales ratio study, the same instrument an assessment office is measured by.</p>
+<div class='tw'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Source</td><td>Lancaster County Assessor property sales, via Lincoln GIS</td></tr><tr><td>Records</td><td>2,933 sales, of which 2,858 residential and 74 commercial</td></tr><tr><td>Period</td><td>2025 and 2026</td></tr><tr><td>Validity</td><td>every record carries SaleValidityCode 01, the county's own arm's-length flag</td></tr><tr><td>Ratio</td><td>assessed value divided by sale price, per sale</td></tr></tbody></table></div>
+<p>Three measures, and what each is for:</p>
+<ul><li><strong>Median ratio.</strong> Is property assessed at roughly the right level overall. Nebraska requires residential property at 100% of actual value.</li><li><strong>Coefficient of dispersion (COD).</strong> Average absolute deviation from the median ratio, as a percentage of it. Measures consistency: are similar properties treated alike. Lower is better; 15 or less is the IAAO standard for older heterogeneous residential, 10 or less for newer homogeneous tracts.</li><li><strong>Price-related differential (PRD).</strong> Mean ratio divided by the value-weighted mean ratio. Measures vertical equity, meaning whether cheap and expensive property are treated alike. Above 1.03 is regressive, below 0.98 progressive.</li></ul>
+<h3>One caveat that governs how the level should be read</h3>
+<p>Nebraska's assessment date is 1 January. These sales happen through the following year. If the market rises during the year, later sales produce lower ratios automatically, with no error by the assessor. That means <strong>the 0.919 level should not be read as deliberate under-assessment</strong>, and it is why this report does not lead with it.</p>
+<p>It does not explain the gradient. Market movement affects cheap and expensive homes in the same period alike, so it cannot produce a 14 point spread between the bottom decile and the top. The gradient is the finding; the level is confounded and is reported rather than interpreted.</p>
+<h2>The gradient</h2>
+<div class='tw'><table><thead><tr><th>Sale price decile</th><th>Sales</th><th>Median sale price</th><th>Median ratio</th></tr></thead><tbody><tr><td>1, lowest</td><td>285</td><td>$175,000</td><td><strong>0.989</strong></td></tr><tr><td>2</td><td>285</td><td>$220,000</td><td>0.933</td></tr><tr><td>3</td><td>285</td><td>$250,000</td><td>0.929</td></tr><tr><td>4</td><td>285</td><td>$276,000</td><td>0.925</td></tr><tr><td>5</td><td>285</td><td>$307,500</td><td>0.919</td></tr><tr><td>6</td><td>285</td><td>$343,000</td><td>0.931</td></tr><tr><td>7</td><td>285</td><td>$385,000</td><td>0.907</td></tr><tr><td>8</td><td>285</td><td>$442,357</td><td>0.912</td></tr><tr><td>9</td><td>285</td><td>$525,000</td><td>0.904</td></tr><tr><td>10, highest</td><td>293</td><td>$712,500</td><td><strong>0.850</strong></td></tr></tbody></table></div>
+<p>The decline is not perfectly monotonic, deciles 6 and 8 tick up, which is what real data looks like. The direction across the range is unambiguous.</p>
+<h2>Where it shows up on the map</h2>
+<p>Neighborhood groups with at least 20 sales, sorted by median ratio.</p>
+<div class='tw'><table><thead><tr><th>Assessed furthest below sale price</th><th>Sales</th><th>Median ratio</th><th>Median sale price</th></tr></thead><tbody><tr><td>NC500</td><td>58</td><td>0.787</td><td>$483,250</td></tr><tr><td>NC100</td><td>55</td><td>0.812</td><td>$720,000</td></tr><tr><td>850</td><td>122</td><td>0.818</td><td>$454,732</td></tr><tr><td>CDCN</td><td>35</td><td>0.864</td><td>$253,000</td></tr><tr><td>NC600</td><td>170</td><td>0.883</td><td>$530,000</td></tr></tbody></table></div>
+<div class='tw'><table><thead><tr><th>Assessed closest to or above sale price</th><th>Sales</th><th>Median ratio</th><th>Median sale price</th></tr></thead><tbody><tr><td>L43</td><td>42</td><td>0.949</td><td>$222,500</td></tr><tr><td>M302</td><td>30</td><td>0.955</td><td>$245,000</td></tr><tr><td>856</td><td>46</td><td>0.964</td><td>$355,000</td></tr><tr><td>M304</td><td>49</td><td>0.988</td><td>$238,000</td></tr><tr><td>HR3</td><td>20</td><td><strong>1.051</strong></td><td>$141,500</td></tr></tbody></table></div>
+<p>HR3, with a median sale price of $141,500, is assessed at <strong>105.1% of what its houses actually sell for</strong>. NC100, with a median sale price of $720,000, is assessed at <strong>81.2%</strong>.</p>
+<p>That is the whole finding in two rows. The cheapest neighborhood in this table is taxed on more than its market value. The most expensive is taxed on four fifths of its.</p>
+<h2>What this is not</h2>
+<p>A question any reader will ask is whether this follows the old redlining lines. <strong>It does not</strong>, and that is worth stating plainly rather than leaving implied.</p>
+<div class='tw'><table><thead><tr><th>1930s HOLC grade</th><th>Sales</th><th>Median ratio</th><th>COD</th><th>Median sale price</th></tr></thead><tbody><tr><td>A, Best</td><td>310</td><td>0.921</td><td>10.1</td><td>$263,950</td></tr><tr><td>B, Still desirable</td><td>305</td><td>0.949</td><td>10.4</td><td>$225,000</td></tr><tr><td>C, Definitely declining</td><td>310</td><td>0.924</td><td>8.8</td><td>$225,000</td></tr><tr><td>D, Hazardous, redlined</td><td>10</td><td>0.907</td><td>9.6</td><td>$222,450</td></tr><tr><td>Outside any graded area</td><td>1,923</td><td>0.915</td><td>14.7</td><td>$384,504</td></tr></tbody></table></div>
+<p>The four graded grades sit within three points of each other, and all four are assessed <strong>more consistently</strong> than the rest of the city, with CODs between 8.8 and 10.4 against 14.7 outside. Grade D carries only 10 sales, too few to support any claim at all, and it is shown for completeness rather than as evidence.</p>
+<p>The regressivity lives in the newer, more expensive city, not in the historic core.</p>
+<h2>The newest housing is the least consistently assessed</h2>
+<div class='tw'><table><thead><tr><th>Decade built</th><th>Sales</th><th>Median ratio</th><th>COD</th><th>Median sale price</th></tr></thead><tbody><tr><td>1890 to 1909</td><td>92</td><td>0.926</td><td>12.3</td><td>$201,222</td></tr><tr><td>1910 to 1929</td><td>277</td><td>0.917</td><td>11.2</td><td>$225,000</td></tr><tr><td>1930 to 1949</td><td>120</td><td>0.925</td><td>10.1</td><td>$255,500</td></tr><tr><td>1950 to 1969</td><td>577</td><td>0.928</td><td>8.3</td><td>$262,600</td></tr><tr><td>1970 to 1989</td><td>542</td><td>0.920</td><td>8.2</td><td>$310,000</td></tr><tr><td>1990 to 2009</td><td>491</td><td>0.931</td><td>6.8</td><td>$401,104</td></tr><tr><td>2010 to 2029</td><td>732</td><td>0.900</td><td><strong>24.0</strong></td><td>$484,375</td></tr></tbody></table></div>
+<p>Ratios barely move across 120 years of construction, which is a credit to the office. Consistency does, and it collapses in the newest stock. A COD of <strong>24.0</strong> is well outside any IAAO standard, including the most lenient. Housing built since 2010 is both the largest group in this sample and by far the least evenly assessed, and it is where the expensive homes are.</p>
+<p>That points at a cause. Regressivity here is unlikely to be about old versus new neighborhoods. It is most likely about new construction being hard to model, and new construction being disproportionately expensive.</p>
+<h2>Commercial property is worse</h2>
+<p>Commercial sales are thin at 74 records, so this is a signal and not a conclusion.</p>
+<div class='tw'><table><thead><tr><th></th><th>Median ratio</th><th>COD</th><th>PRD</th></tr></thead><tbody><tr><td>Residential</td><td>0.919</td><td>13.1</td><td>1.040</td></tr><tr><td>Commercial</td><td><strong>0.850</strong></td><td>14.5</td><td><strong>1.091</strong></td></tr></tbody></table></div>
+<p>Both measures run further from standard than residential. A PRD of 1.091 is three times outside the IAAO range.</p>
+<h2>What these numbers are not</h2>
+<ul><li><strong>Not a claim about any individual property.</strong> A ratio study describes a population. A single house can sit anywhere in the distribution for entirely legitimate reasons.</li><li><strong>Not a measure of whether your taxes are too high.</strong> It measures whether your share is proportionate to your neighbour's. Total levy is set by budgets, not by the assessor.</li><li><strong>Not based on an assessment-date-matched sample.</strong> See the caveat above. The level is confounded by market movement; the gradient is not.</li><li><strong>Two years of sales.</strong> Neighborhood cells run from 20 to 170 sales. The citywide figures are solid, the neighborhood rows are indicative.</li><li><strong>Sales the county flagged valid.</strong> Every record carries code 01. No independent screen for distressed or related-party transactions was applied on top.</li></ul>
+<h2>What to do with it</h2>
+<p><strong>If you are a homeowner.</strong> Divide your assessed value by what you believe your house would sell for. If that number is meaningfully above 0.919 you are assessed above the city norm, and that is the basis of a protest to the County Board of Equalization. Nebraska's protest window is in June.</p>
+<p><strong>If you are a realtor.</strong> The ratio by neighborhood group is a pricing signal. A listing in a group assessed at 0.79 is carrying an assessed value that understates the market, and a buyer should expect the assessment to catch up. In a group assessed above 1.00 the opposite is true, and the tax line in the listing is overstated relative to value.</p>
+<p><strong>If you are on the council or the board of equalization.</strong> Three things follow. The PRD of 1.040 is a measurable failure against a professional standard and is the right question to put to the assessor's office. The COD of 24.0 on post-2010 construction names where the modelling is weakest. And commercial at a PRD of 1.091 is worse than residential on a sample thin enough that it should be measured properly rather than argued about.</p>
+<p>None of this requires new data collection. It is the county's own sales file, measured with the county's own profession's standard.</p>
+</main>
+<footer>
+Built from public data: City of Lincoln and Lancaster County GIS, and OpenFEMA.
+Part of <a href="./">STARCITY</a>, an open-source 3D map of Lincoln.
+Source and data scripts at <a href="https://github.com/RobotWhiteBread/STARCITY" rel="noopener">github.com/RobotWhiteBread/STARCITY</a>.
+</footer>
+</body>
+</html>

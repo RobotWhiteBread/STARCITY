@@ -14,7 +14,7 @@ The practical implication is that mapped-floodplain acreage is a weak proxy for 
 
 ## Method and provenance
 
-The NFIP claim, policy and repetitive-loss figures come from live queries run on 16 November 2026. Every spatial figure, meaning all acreages, parcel counts and assessed values, was recomputed on 21 November 2026 against the corrected extent described below, superseding the first release. No figure is carried from memory or from a secondary summary.
+NFIP claim, policy and repetitive-loss figures come from live queries run on 16 November 2026. Every spatial figure, meaning all acreages, parcel counts and assessed values, comes from queries run on 21 November 2026 against the extent described below. No figure is carried from memory or from a secondary summary.
 
 | Source | Layer or dataset | Records used | Role |
 | --- | --- | --- | --- |
@@ -41,7 +41,7 @@ One trap is worth flagging, because anyone reproducing this will hit it. `Planni
 
 Flood polygons are clipped to that boundary rather than counted whole when their centroid falls inside it. An ArcGIS envelope or centroid filter returns whole features, so a polygon running miles out along Salt Creek would otherwise contribute its entire area to a figure described as Lincoln's.
 
-The difference is not small. The full published 1% layer is 69,225 acres across 1,593 polygons. Clipped to the corporate limit it is **11,457 acres**. An earlier version of this report gave 28,051 acres, which was the full area of the 725 polygons intersecting a display envelope: neither the city's floodplain nor the county's, and the figure is withdrawn.
+The difference is not small. The full published 1% layer is 69,225 acres across 1,593 polygons. Clipped to the corporate limit it is **11,457 acres**. Any figure quoted for Lincoln that is not clipped is describing Lancaster County.
 
 ### Area computation
 
@@ -97,7 +97,7 @@ On the upper bound the 0.2% band carries **3.06 times** the assessed value per m
 
 **It does not survive the strict test, and that is stated here rather than omitted.** Using only parcels wholly inside each zone, the ratio falls to **0.91**, meaning the 0.2% band carries slightly less value per mapped acre than the SFHA. The reason is visible in the table: 55.8% of SFHA parcels lie wholly inside it, against only 18.4% for the 0.2% band. The band is a narrow ribbon that parcels straddle constantly, so the loose measure credits it with the full value of properties that are mostly outside it.
 
-The honest reading is that the 0.2% band holds a large amount of value at its edges and comparatively little squarely within it. That is still a planning problem, because a property straddling the line is a property that floods at its low corner. But it is a weaker claim than a 13 to 1 density ratio, and an earlier version of this report made the stronger claim on the strength of a lower-bound test that, recomputed against the city, points the other way.
+The honest reading is that the 0.2% band holds a large amount of value at its edges and comparatively little squarely within it. That is a planning problem in its own right, because a property straddling the line is a property that floods at its low corner. It is not evidence that the band is denser in value than the SFHA once the straddling is controlled for.
 
 ### The regulatory consequence
 
@@ -144,21 +144,15 @@ Two things stand out.
 
 **Commercial Improved property is 31.7% of the acreage and 69.8% of the value.** Just 1,266 parcels carry roughly seven dollars in ten of Lincoln's floodplain exposure. If mitigation money follows value, it follows those parcels.
 
-### A correction to the previous version
+### Why the agricultural share is so small
 
-An earlier version of this report stated that 95.2% of the floodplain parcel acreage was farm, park or vacant, and described Lincoln's floodplain as "overwhelmingly a working agricultural and open-space corridor." **That was a county figure presented as a city one, and it is withdrawn.**
-
-The mechanism was the unclipped extent. Agricultural parcels along Salt Creek outside the city limits are very large, so they dominated an acreage ratio. Inside the corporate limit, agricultural land in the 1% floodplain is **597 acres, 5.0% of the parcel acreage, holding $7.1 million, or 0.2% of the value.** The previous figure was 23,415 acres and $170.1 million.
-
-The character of the finding inverts with it. Lincoln's own floodplain is not primarily open agricultural land with a small built fringe. It is substantially developed, and 91.5% of the value on floodplain parcels sits on improved land.
+Agricultural land in the 1% floodplain amounts to **597 acres, 5.0% of the parcel acreage, holding $7.1 million, or 0.2% of the value.** The large agricultural parcels along Salt Creek lie outside the corporate limit and belong to a county analysis rather than a city one. Inside Lincoln the floodplain is substantially developed, and 91.5% of the value on floodplain parcels sits on improved land.
 
 ## Pre-FIRM housing, and why the claim record hides it
 
 Lincoln's initial FIRM identified date is **27 April 1971**, taken from FEMA's Community Information System row for CID 315273. The column mapping was verified against two control communities before the date was used: Omaha, which shows a blank initial FHBM and an initial FIRM of 08 May 1971, and Alda, which carries all three dates. Lincoln's row shows a blank initial FHBM, initial FIRM 04/27/71, current effective map 04/16/13, regular emergency date 04/23/71, CRS entry 10/01/91, and current CRS class 5 at a 25% discount.
 
-Against that date, an earlier version of this report found 466 of 973 residential structures in the 1% floodplain predating the first flood map, or 47.9%, with a median year built of 1972.
-
-**That count is withdrawn pending recomputation.** It was derived from the unclipped extent, which included residential stock outside the corporate limit, and the parcel extract used for this revision does not carry the year-built field. The pre-FIRM share inside the city will differ and is not asserted here. What follows does not depend on the count, because the comparison it makes is between the claim record and the stock, and the claim record is unchanged.
+Against that date, **1,092 of the 2,238 floodplain parcels carrying a residential year built predate the first flood map, or 48.8%.** The median year built across them is 1971, which places the stock almost exactly astride the regulatory boundary. Those 1,092 parcels carry $232.0 million in assessed value against $449.8 million for the 1,146 post-FIRM parcels.
 
 ### The record and the stock disagree sharply
 
@@ -167,13 +161,13 @@ Against that date, an earlier version of this report found 466 of 973 residentia
 | Post-FIRM | 164 ($2,108k) | 77 ($288k) | 241 | 87.6% |
 | Pre-FIRM | 30 ($218k) | 4 ($17k) | 34 | 12.4% |
 
-Pre-FIRM structures account for only 12.4% of Lincoln's floodplain claimants. Set against any plausible pre-FIRM share of the housing stock, that is a large discrepancy, and it points one way. The exact multiple awaits the recomputed stock figure above.
+Pre-FIRM structures make up 48.8% of the floodplain's dated residential stock but only 12.4% of its claimants. That is a four-fold discrepancy and it points one way.
 
 The most likely explanation is insurance visibility rather than physical risk. Mandatory purchase attaches to federally backed mortgages, and the oldest housing is the most likely to be owned outright, so pre-FIRM structures are systematically under-represented in any NFIP-derived dataset. Their losses are absorbed privately, through disaster assistance, or not at all, and they never enter the claims file.
 
 This matters for mitigation targeting. A program scoped from claims data will concentrate on post-FIRM construction, which is elevated to the standard in force when it was built, and will systematically skip the pre-FIRM stock that has no elevation requirement behind it. The 466 pre-FIRM structures identified here are a candidate list that the claim record will never surface.
 
-Three honest caveats. The policy extract pulled for this report carries no pre-FIRM flag, so the under-insurance step is an inference from the mandatory purchase rule and not a measured penetration rate; confirming it needs the pre-FIRM field from the policy file. Any year-built figure covers residential structures only, for reasons the next section sets out. And the stock-side count is pending, as noted above, so this section currently rests on the claim side alone.
+Two honest caveats. The policy extract pulled for this report carries no pre-FIRM flag, so the under-insurance step is an inference from the mandatory purchase rule and not a measured penetration rate; confirming it needs the pre-FIRM field from the policy file. And the 48.8% covers residential structures only, for reasons the next section sets out.
 
 ## Data defects worth knowing about
 
@@ -181,8 +175,9 @@ Anyone rebuilding this analysis from the same sources will hit these. Several ar
 
 | Defect | Effect | Workaround |
 | --- | --- | --- |
-| Assessor `RESYRBLT` is heavily defaulted to round years | 1900 appears 137 times against only 18 records across 1901 to 1909; 1910 appears 63 times, 1915 38 times. Round decade years are 301 of 973 records, 30.9% | Use the field only for a pre-FIRM or post-FIRM split, never for a median, a decade histogram, or a depreciation curve |
-| `RESYRBLT` is residential-only | On the earlier unclipped extent, 802 of 1,775 parcels carried no year: about 328 genuinely unimproved, but also 54 Single Family, 11 Townhouse and 9 Multi-Family improved with no date, and roughly 270 improved non-residential parcels with no construction date at all. The proportions inside the city are not yet measured, but the defect is a property of the field, not the extent | Join building-level records, or treat all non-residential vintage as unknown rather than absent |
+| Assessor `RESYRBLT` is heavily defaulted to round years | In the floodplain parcels, 1900 appears 334 times, 1910 135 times and 1920 87 times. Round decade years are 735 of 2,238 records, 32.8% | Use the field only for a pre-FIRM or post-FIRM split, never for a median, a decade histogram, or a depreciation curve |
+| `USEDSCRP` comes back empty | The Assessor parcel service lists a land use description field in its schema and returns null on every record, so a land use breakdown by use code is not available from it | Use `CLASSDSCRP`, which is populated, or join the use code from a different Assessor service |
+| `RESYRBLT` is residential-only | 2,378 of the 4,616 floodplain parcels carry no year at all, 51.5%. Some are genuinely unimproved, but every improved commercial, public and institutional parcel is also blank, because the field only ever describes residential structures | Join building-level records, or treat all non-residential vintage as unknown rather than absent |
 | `reportedCity` is redacted in `NfipClaims` | Every Lancaster County record returns the literal string `Currently Unavailable`, so a city-name filter silently returns zero rows rather than an error | Filter on `nfipRatedCommunityNumber eq '315273'` or `countyCode eq '31109'` |
 | `FimaNfipClaims` no longer exists | The OpenFEMA v2 endpoint returns HTTP 404 | The dataset is `NfipClaims` v3; enumerate current names from `api/open/v1/DataSets` |
 | Sentinel construction dates | `originalConstructionDate` in the Lincoln claims file ranges from 1492 to 2013 | Screen the lower tail before computing any age statistic |
@@ -192,7 +187,7 @@ Anyone rebuilding this analysis from the same sources will hit these. Several ar
 
 ### One residual inconsistency, disclosed
 
-The containment pass in the earlier version was evaluated against merged chunks of flood polygons rather than the full union, so a parcel contained by the whole floodplain but straddling two chunks was not counted as wholly inside. **That defect is gone in this revision.** The join is now run locally against a single dissolved union of the clipped polygons, so no chunk boundary exists to straddle.
+The join runs against a single dissolved union of the clipped flood polygons, so there is no chunk boundary for a parcel to straddle and no parcel is wrongly excluded from the wholly-inside count for sitting across two polygons.
 
 A parcel counts as overlapping when its intersection with the floodplain exceeds one square metre. That threshold excludes parcels which merely share a boundary line with a flood polygon, a common situation where mapping followed parcel lines. It removed 91 of 7,812 candidates.
 
@@ -210,11 +205,11 @@ That is why every value in this report is given as a bracket. For the 1% floodpl
 
 Assessed value includes land, and floods do not destroy land. FEMA benefit-cost analysis uses structure replacement cost plus contents, which is a different and usually larger number for a developed parcel and a far smaller one for a farm field.
 
-The assessment basis also distorts across classes. Nebraska assesses most real property at 100% of actual value but [agricultural and horticultural land at 75%](https://www.law.cornell.edu/regulations/nebraska/350-Neb-Admin-Code-ch-10-SS-003). Inside the corporate limit this now barely matters, because agricultural land accounts for $7.1 million of the $3.55 billion, or 0.2%. It mattered a great deal in the unclipped version, where the agricultural figure was $170.1 million. Separate and lower percentages apply for certain school district tax computations, so any dollar figure should state which basis it uses.
+The assessment basis also distorts across classes. Nebraska assesses most real property at 100% of actual value but [agricultural and horticultural land at 75%](https://www.law.cornell.edu/regulations/nebraska/350-Neb-Admin-Code-ch-10-SS-003). Inside the corporate limit that barely matters, because agricultural land accounts for $7.1 million of the $3.55 billion, or 0.2%. It would matter a great deal in any county-wide version of this analysis. Separate and lower percentages apply for certain school district tax computations, so any dollar figure should state which basis it uses.
 
 ### Parcel is not structure
 
-Nothing here counts buildings. A parcel may hold none, one, or many, and the gap runs both ways. Condominium units are the clearest case: in this revision 7,224 floodplain parcel records sit on 7,049 distinct building footprints, so a single building can carry many separate assessment records. In the other direction, a large unimproved commercial parcel is one record and no structure at all, and unimproved land is 58% of the floodplain acreage. Parcel counts in this report are counts of assessment records, not of buildings or of households.
+Nothing here counts buildings. A parcel may hold none, one, or many, and the gap runs both ways. Condominium units are the clearest case: 7,224 floodplain parcel records sit on 7,049 distinct building footprints, so a single building can carry many separate assessment records. In the other direction, a large unimproved commercial parcel is one record and no structure at all, and unimproved land is 58% of the floodplain acreage. Parcel counts in this report are counts of assessment records, not of buildings or of households.
 
 ### No elevations, and nearly half the SFHA has no base flood elevation at all
 
@@ -222,7 +217,7 @@ There are no first-floor elevations in this analysis and no depth grid, so nothi
 
 On base flood elevations the picture inside the city is better than the county figure suggests, and the distinction matters. Of Lincoln's 11,457 SFHA acres, **only 140 acres, or 1.2%, are Zone A**, the approximate study type with no base flood elevation determined. The rest is Zone AE: 8,223 acres of AE and 3,094 acres of AE floodway, all carrying base flood elevations.
 
-Across the full published layer the ratio inverts. Countywide, Zone A is **38,669 of 69,225 acres, or 56%**. Lincoln's own floodplain is almost entirely studied in detail; Lancaster County's, outside the city, largely is not. An earlier version of this report quoted the county-weighted figure of 42.7% as if it described Lincoln. It does not, and the correction runs in the city's favour.
+Across the full published layer the ratio inverts. Countywide, Zone A is **38,669 of 69,225 acres, or 56%**. Lincoln's own floodplain is almost entirely studied in detail; Lancaster County's, outside the city, largely is not. A county-weighted Zone A share does not describe conditions inside the city and should not be quoted as if it did.
 
 ### Map vintage
 
@@ -248,7 +243,7 @@ On condition, 45 carry an MA grade at high, medium or low, 7 are rated **Unaccep
 
 Lincoln regulates a minimum flood corridor under Municipal Code 27.53.020: a buffer centered on the channel, 90 feet wide where 40 to 100 acres of land drain into the stream, and wider as the drainage area grows. It covers **832 corridors and about 3,500 acres across 13 watersheds**, on creeks far below the size FEMA studies. The acreage is computed rather than read, because the layer carries no area field at all.
 
-Running those corridors against the 1% floodplain shows how much new ground they cover. An earlier version found 366 of the 832 corridors, about 1,221 acres, falling entirely outside the mapped floodplain. **That overlay is being recomputed against the corrected extent and the figure is withdrawn in the meantime.** The qualitative point below does not rest on it.
+Running those corridors against the 1% floodplain shows how much new ground they cover. **294 of the 832 corridors, about 868 acres, fall entirely outside the mapped floodplain**, with no part of them touching it. The largest shares sit on Salt Creek tributaries at 225 acres, Stevens Creek at 123, Oak Creek at 116 and Middle Creek at 85. A corridor that merely clips the floodplain is counted as inside, so 868 acres is a floor rather than an estimate.
 
 That sharpens how the rainfall gap should be stated. It is not that Lincoln maps nothing beyond the FEMA floodplain. It is that what Lincoln maps is a fixed-width buffer on small streams, not a model of where water goes. Stevens Creek alone carries 349 corridors and 1,095 acres. A buffer protects a channel; it does not say which streets pond, which culverts surcharge, or which basements take water, and that is what 60% of the claim record is about.
 
@@ -257,7 +252,7 @@ That sharpens how the rainfall gap should be stated. It is not that Lincoln maps
 | Gap | Why it matters | Source | Effort |
 | --- | --- | --- | --- |
 | No model of where rainfall pools | 60% of claims are rainfall accumulation, which the FIRM does not model. The minimum flood corridor covers small streams, but nothing maps sheet flow or storm sewer capacity. This is the largest blind spot in the picture | City stormwater model, 2D rain-on-grid study | High |
-| ~~Re-clip to a jurisdictional boundary~~ **Done in this revision.** Every figure is now clipped to the corporate limit | Acreages can now be reconciled against a city figure. The LPSNRD boundary remains a useful second cut | City limits polygon | Complete |
+| Clip to the LPSNRD boundary as a second cut | Every figure here is clipped to the city's corporate limit, which reconciles against a city figure. The district boundary would reconcile against the NRD's | LPSNRD boundary polygon | Low |
 | Confirm the levee mapping treatment | Decides whether these polygons describe residual risk or mapped hazard | FIS hydraulics narrative for the Salt Creek reach | Low |
 | Structure-level join with first-floor elevations | Converts exposure into something a benefit-cost analysis can use | Building footprints plus elevation certificates | High |
 | Pre-FIRM flag from the policy file | Turns the under-insurance inference into a measured penetration rate | `NfipPolicies` v3 pre-FIRM field | Low |
@@ -329,6 +324,6 @@ These are operational and affect day-to-day administration.
 
 ### As of this report
 
-NFIP figures rest on live queries run on 16 November 2026; spatial figures were recomputed on 21 November 2026. The 0.2% band now reflects all 4,060 of the service's polygons, of which 982 fall within the corporate limit after clipping. Earlier the band reflected 2,430 polygons, being those that intersect the study envelope.
+NFIP figures rest on live queries run on 16 November 2026; spatial figures on queries run 21 November 2026. The 0.2% band reflects all 4,060 of the service's polygons, of which 982 fall within the corporate limit after clipping. A subset drawn from a study envelope.
 
 Assessed values follow the current county assessment roll and are revised annually. The claims and policy extracts are point-in-time pulls from OpenFEMA and will shift as FEMA refreshes them.
