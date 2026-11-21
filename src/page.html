@@ -1802,12 +1802,13 @@ function setupSci(){const ec=H.blabels.find(b=>/East Union|Dinsdale|Thompson Lib
   const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({vertexColors:true}),N),col=new THREE.Color();m.frustumCulled=false;const list=[];
   for(let i=0;i<N;i++){const a=rnd(i*13+1)*6.283,r=60+320*rnd(i*13+2);list.push({ox:cx+Math.cos(a)*r,oz:cz+Math.sin(a)*r,rx:28+70*rnd(i*13+3),rz:22+60*rnd(i*13+4),ph:rnd(i*13+5)*6.283,w:(i%2?1:-1)*(.035+.03*rnd(i*13+6)),qi:(i*5)%SCISAY.length,qt:0,lb:{t:'',x:0,y:0,z:0,k:3,pri:440,near:0,far:2600}});lM.identity();m.setMatrixAt(i,lM);m.setColorAt(i,col.set(0xffffff))}
   m.userData.info=['Researchers','Scientists running between the plots, barns and labs of East Campus, shouting about their findings. They are part of the map, for fun. The research done here is real.'];scene.add(m);pickables.push(m);
-  sci={m,list,cx,cz,cloud:{t:'HETEROGENEITY! VARIANCE!',sub:'a voice from the plots',x:cx,y:0,z:cz,k:3,pri:900,near:0,far:4200},ct:0}}
-function stepSci(dt,now){if(!sci){if(!H.blabels)return;setupSci()}const B=sci,t=controls.target,d=camera.position.distanceTo(t);if(Math.hypot(t.x-B.cx,t.z-B.cz)>1500||d>3200)return;const sc=Math.min(12,Math.max(1.5,d/85));
+  const hh=H.blabels.find(b=>/^Hardin Hall/i.test(b[0])),hx=hh?hh[1]:cx,hz=hh?-hh[2]:cz,hy=hh?hh[4]:20;
+  sci={m,list,cx,cz,hx,hz,hy,cloud:{t:'HETEROGENEITY! VARIANCE!',sub:'a voice from Hardin Hall',x:hx,y:0,z:hz,k:3,pri:1200,near:0,far:4200},ct:0}}
+function stepSci(dt,now){if(!sci){if(!H.blabels)return;setupSci()}const B=sci,t=controls.target,d=camera.position.distanceTo(t);if(Math.hypot(t.x-B.cx,t.z-B.cz)>1800||d>3600)return;const sc=Math.min(12,Math.max(1.5,d/85));
   for(let i=0;i<B.list.length;i++){const q=B.list[i];q.ph+=q.w*dt*(3.4/Math.max(1,(q.rx+q.rz)/60));const x=q.ox+Math.cos(q.ph)*q.rx,z=q.oz+Math.sin(q.ph)*q.rz,y=hAt(x,z),dx=-Math.sin(q.ph)*q.rx*Math.sign(q.w),dz=Math.cos(q.ph)*q.rz*Math.sign(q.w);
     lP.set(x,y+Math.abs(Math.sin(now*.012+i))*.18*sc,z);lQ.setFromAxisAngle(lUp,Math.atan2(dx,dz));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM);
     if(now>q.qt){q.qi=(q.qi+1+(i%3))%SCISAY.length;q.qt=now+4200+((i*53)%3600)}if((now+i*1700)%9000<5200){q.lb.t=SCISAY[q.qi];q.lb.x=x;q.lb.z=z;q.lb.y=y+2.7*sc;lifeLabels.push(q.lb)}}
-  if(now%26000<5500){B.cloud.y=hAt(B.cx,B.cz)+70+10*Math.sin(now*.002);lifeLabels.push(B.cloud)}
+  if(now%20000<6500){B.cloud.y=hAt(B.hx,B.hz)+B.hy+38+6*Math.sin(now*.002);lifeLabels.push(B.cloud)}
   B.m.instanceMatrix.needsUpdate=true;ambient=true}
 // Cameron the Capitol cat (a real cat, salt and pepper gray): zoomies, pounces and tail chasing on the west lawn, then a long sit by the Lincoln statue. For fun.
 let cam9=null;
