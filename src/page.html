@@ -1282,7 +1282,7 @@ function pick(x,y){if(performance.now()-rideStopT<500)return;menuAt=0;ndc.set(x/
 function showB(b,force){if(codeOn){rawCard(b);return}const info=H.infos[S.b_info[b]];const tag=H.tags[S.b_tag[b]];const h=S.b_h[b]/10;const src=S.b_src[b];const rf=S.b_roof[b],tc=S.b_tc[b];
   const kinds={Residential:'Residential',Other:'Outbuilding',Commercial:'Commercial',Agricultural:'Agricultural',Industrial:'Industrial',yes:'Building',house:'House',detached:'Detached house',semidetached_house:'Duplex',garage:'Garage',garages:'Garages',shed:'Shed',apartments:'Apartments',roof:'Canopy',static_caravan:'Mobile home',retail:'Retail',commercial:'Commercial',industrial:'Industrial',university:'University building',office:'Office',church:'Church',school:'School',hotel:'Hotel',dormitory:'Residence hall',warehouse:'Warehouse',hospital:'Hospital',public:'Public building',stadium:'Stadium',residential:'Residential'};
   const kind=kinds[tag]||(tag.charAt(0).toUpperCase()+tag.slice(1).replace(/_/g,' '));
-  const parts=[];if(info==='Devaney Sports Center'){devCard(0);rollOpen('vb');return}if(info==='Pinnacle Bank Arena'&&S2){pbaCard(b);return}if(info)parts.push(kind);
+  const parts=[];if(info==='Devaney Sports Center'){devCard(0);rollOpen('vb');return}if(info==='Pinnacle Bank Arena'&&S2){pbaCard(b);rollOpen('bb');return}if(info)parts.push(kind);
   const st=S.b_st&&H.stypes?H.stypes[S.b_st[b]]:'';if(st)parts.push(st);
   const yr=S.b_yr?S.b_yr[b]:0;if(yr)parts.push('built '+yr);
   if(S.b_fl&&(S.b_fl[b]&1))parts.push("new in the city's 2026 footprint update");
@@ -1751,21 +1751,27 @@ function stepDev(dt,now){if(!LM.devSign)return;const t=controls.target,g=LM.devS
   if(LM.devBill&&now-devT>3200){devT=now;devI++;devBillTurn(devI)}
   if(LM.devBall&&d2<1600*1600){LM.devBall.rotation.y+=dt*.5;ambient=true}}
 let bikers=null;
+// ---- Wilderness Park runs on crushed rock, so the riders there talk like gravel riders
+const GRAVEL=['Send it','Spirit of gravel','It is not a race, it is an experience','Type 2 fun','I aired down for this','Chunk builds character','40 mil is plenty','Embrace the suck','The gravel chose me','Tire pressure is a lifestyle','Just one more gravel bike','Fuel is vibes and gummy bears','Nobody asked about my watts','Washboard is a state of mind','Lantern rouge energy','This is actually a gravel bike','Rutted but vibing','Pain cave, open daily'];
 function setupBikers(){const TR=LM.trails||[],best=new Map();for(let w=0;w<TR.length;w++){const T=TR[w];if(T.tc>=3||T.tn===65535||T.d.length<4)continue;const q=best.get(T.tn);if(q===undefined||TR[q].len<T.len)best.set(T.tn,w)}
   // each named trail becomes one continuous path, so riders travel its whole length and turn around at the ends
-  const paths=[];for(const w of best.values()){let pts;try{pts=trailPath(w)}catch(e){continue}const n=pts.length/2;if(n<2)continue;const c=new Float32Array(n);for(let k=1;k<n;k++)c[k]=c[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);if(c[n-1]>=300)paths.push({d:pts,cum:c,L:c[n-1]})}
+  const paths=[];for(const w of best.values()){let pts;try{pts=trailPath(w)}catch(e){continue}const n=pts.length/2;if(n<2)continue;const c=new Float32Array(n);for(let k=1;k<n;k++)c[k]=c[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);if(c[n-1]>=300)paths.push({d:pts,cum:c,L:c[n-1],tn:TR[w].tn})}
   if(!paths.length){bikers={none:true};return}const N=mobile?260:600,tot=paths.reduce((a,q)=>a+q.L,0),list=[];
   for(let i=0;i<N;i++){let r=Math.random()*tot,T=paths[0];for(const q of paths){if((r-=q.L)<=0){T=q;break}}list.push({T,L:T.L,s:Math.random()*T.L,dir:Math.random()<.5?1:-1,v:4.5+3.5*Math.random(),k:0})}
   // bike and rider: wheels, frame, bars, legs, jersey and helmet (the jersey and helmet take the rider's color)
   const geo=boxes([[.06,.62,.62,0,.34,-.52,0x18181a],[.06,.62,.62,0,.34,.52,0x18181a],[.07,.09,1.0,0,.62,0,0xffffff],[.07,.5,.07,0,.85,.2,0xffffff],[.44,.06,.07,0,.98,-.46,0x222222],[.12,.5,.14,-.1,.8,.12,0x232b36],[.12,.5,.14,.1,.8,.12,0x232b36],[.3,.56,.26,0,1.3,.06,0xffffff],[.2,.2,.22,0,1.7,-.08,0x3b2f27],[.25,.11,.28,0,1.83,-.08,0xffffff]]);
   const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({vertexColors:true}),N),col=new THREE.Color(),JER=[0xff3b30,0xffcc00,0x34c759,0x0a84ff,0xff9500,0xbf5af2,0xff2d92,0x30d5c8,0xffffff];m.frustumCulled=false;m.visible=false;
   for(let i=0;i<N;i++){lM.identity();m.setMatrixAt(i,lM);m.setColorAt(i,col.set(JER[i%JER.length]))}
-  m.userData.info=['Cyclists','Riders going up and down the trails while the Bike ride layer is on. They are part of the map, not real riders.'];scene.add(m);pickables.push(m);bikers={m,list}}
+  m.userData.info=['Cyclists','Riders going up and down the trails while the Bike ride layer is on. They are part of the map, not real riders. The ones in Wilderness Park are riding crushed rock, and they will tell you about it.'];scene.add(m);pickables.push(m);bikers={m,list}}
 function stepBikers(dt,now){if(!bikers){if(!rideMode)return;setupBikers()}const B=bikers;if(!B||B.none)return;if(!rideMode){if(B.m.visible){B.m.visible=false;dirty=true}return}if(!B.m.visible)B.m.visible=true;
   const d=camera.position.distanceTo(controls.target),sc=Math.min(40,Math.max(1.6,d/90)),sp=Math.max(1,sc*.3);
   for(let i=0;i<B.list.length;i++){const q=B.list[i],T=q.T,c=T.cum,n=c.length;q.s+=q.dir*q.v*sp*dt;if(q.s>=q.L){q.s=q.L;q.dir=-1}else if(q.s<=0){q.s=0;q.dir=1}
     let k=q.k;while(k<n-2&&c[k+1]<q.s)k++;while(k>0&&c[k]>q.s)k--;q.k=k;const u=(q.s-c[k])/Math.max(.01,c[k+1]-c[k]),D=T.d,x0=D[2*k],z0=D[2*k+1],x1=D[2*k+2],z1=D[2*k+3],x=x0+(x1-x0)*u,z=z0+(z1-z0)*u,y=hAt(x,z)+.7;
-    lP.set(x,y,z);lQ.setFromAxisAngle(lUp,Math.atan2(-(x1-x0)*q.dir,-(z1-z0)*q.dir));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM)}
+    lP.set(x,y,z);lQ.setFromAxisAngle(lUp,Math.atan2(-(x1-x0)*q.dir,-(z1-z0)*q.dir));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM);
+    if(q.wild===undefined){const nm=(T.tn!==65535&&H.tnames)?H.tnames[T.tn]:null;q.wild=!!(nm&&nm.indexOf('Wilderness Park')===0);
+      if(q.wild){q.lb={t:'',x:0,y:0,z:0,k:3,pri:430,near:0,far:2200};q.qi=(i*7)%GRAVEL.length;q.qt=now+i*700}}
+    if(q.wild&&d<2400){if(now>q.qt){q.qi=(q.qi+1)%GRAVEL.length;q.qt=now+5400+((i*37)%2800)}
+      q.lb.t=GRAVEL[q.qi];q.lb.x=x;q.lb.z=z;q.lb.y=y+2.6*sc;lifeLabels.push(q.lb)}}
   B.m.instanceMatrix.needsUpdate=true;ambient=true}
 function stepLife(dt,now){lifeLabels.length=0;if(!(performance.now()-lastInput<120000||ride||tour||fly)){for(const f of flocks)lifeLabels.push(f.lb);return}stepBirds(dt,now);stepZoo(dt,now);stepDogs(dt,now);stepPride(dt,now);stepDev(dt,now);stepVB(dt,now);stepTraffic(dt,now);stepBikers(dt,now);stepMore(dt,now)}
 $('bVB').onclick=()=>setVB(!vbOn);

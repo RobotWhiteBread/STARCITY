@@ -64,6 +64,34 @@ function rollData(kind){const out=[],Hd=t=>out.push(['h',t]),P=(a,b)=>out.push([
     Hd('National champions');T('1995 · 2000 · 2006 · 2015 · 2017');
     Hd('The crowds');for(const m of VBMSG.slice(6))P(m[0],m[1]);Hd('The names');for(const m of VBMSG.slice(2,6))P(m[0],m[1]);
     T(V.live?'Scores read live from ESPN\'s public scoreboard.':'Scores are the map\'s saved list as of '+VB26ASOF+'. The website copy reads them live.');T('Crowd records carry the date they were true, because records fall.')}
+  else if(kind==='bb'){
+    Hd('Nebraska basketball');T('Pinnacle Bank Arena');P('Opened','2013');P('Seats','15,500');
+    Hd('The drought, and the end of it');
+    T('Until March 2026 Nebraska was the only program in a power conference that had never won an NCAA tournament game. Eight appearances across 87 years, eight exits.');
+    P('March 19, 2026 \u00b7 Troy','Won 76-47');
+    T('The first NCAA tournament win in school history. The 29-point margin was the largest in any school\u2019s first tournament win since 1971.');
+    P('March 21, 2026 \u00b7 No. 5 Vanderbilt','Won 74-72');
+    T('Braden Frager\u2019s basket sent Nebraska to its first Sweet 16.');
+    P('March 26, 2026 \u00b7 Iowa','Lost 71-77');
+    T('Houston, and the end of the best season the program has had.');
+    Hd('2025-26');P('Record','28-7');P('Started the season','20-0');P('Big Ten','15-5');
+    T('Twenty-eight wins broke a school record that had stood since 1990-91, when Nebraska won 26. Those two teams are the only Nebraska sides ever to finish in the top 15 of the AP poll.');
+    P('All-time in the NCAA tournament','2-9');P('Postseason appearances','29 \u00b7 9 NCAA, 19 NIT, 1 Crown');
+    Hd('Fred Hoiberg');P('2026','AP National Coach of the Year');P('Signed through','2031-32');P('Season in Lincoln','Eighth in 2026-27');
+    T('His second Sweet 16; he took Iowa State to one in 2014. His grandfather, Jerry Bush, coached Toledo to the 1954 NCAA tournament, and his other grandfather taught here.');
+    {const m=(HK.ev.mbb||[]).filter(e=>e.st==='post'&&e.done&&e.my!=null);
+     Hd('Men, this season');if(HK.rec.mbb)P('Record',HK.rec.mbb);
+     if(m.length)for(const e of m)P(day(e.t)+' \u00b7 '+(e.ha==='home'?'':'at ')+e.opp,(e.win?'Won ':'Lost ')+e.my+'-'+e.th);
+     else T('No completed games read yet this season.')}
+    Hd('Nebraska women');P('Amy Williams','11th season in 2026-27');P('At Nebraska','177-136 across ten seasons');
+    P('NCAA tournaments','2018, 2022, 2024, 2025, 2026');T('Three in a row going into this season.');
+    P('Average crowd','5,638 \u00b7 16th in the country');
+    T('Allison Weidner is back as a graduate student after three knee surgeries, having torn her left ACL in December 2022 and her right in October 2023.');
+    {const w=(HK.ev.wbb||[]).filter(e=>e.st==='post'&&e.done&&e.my!=null);
+     Hd('Women, this season');if(HK.rec.wbb)P('Record',HK.rec.wbb);
+     if(w.length)for(const e of w)P(day(e.t)+' \u00b7 '+(e.ha==='home'?'':'at ')+e.opp,(e.win?'Won ':'Lost ')+e.my+'-'+e.th);
+     else T('No completed games read yet this season.')}
+    T('Season records and scores read live from ESPN\u2019s public scoreboard on the website copy. Everything above them is the map\u2019s own saved record, sourced to Nebraska Athletics and the Associated Press.')}
   else{const ev=(HK.ev.fb||[]).filter(e=>e.st==='post'&&e.done&&e.my!=null);Hd('Nebraska football');T('Memorial Stadium');P('Opened','1923');P('Sold out every home game since','November 3, 1962');P('Straight sellouts going into 2026','410');P('Listed capacity','85,458');
     Hd('Volleyball Day in Nebraska');P('August 30, 2023 · Nebraska 3, Omaha 0',RECORD.toLocaleString('en-US'));T('The largest crowd ever recorded at a women\'s sporting event, in a football stadium. It broke the 91,648 at Barcelona in 2022 and this stadium\'s own record of 91,585 against Miami in 2014.');
     Hd('This season');if(ev.length){const w=ev.filter(e=>e.win).length;P('Record',HK.rec.fb||(w+'-'+(ev.length-w)));for(const e of ev)P(day(e.t)+' · '+(e.ha==='home'?'':'at ')+e.opp,(e.win?'Won ':'Lost ')+e.my+'-'+e.th)}
@@ -74,7 +102,8 @@ function rollData(kind){const out=[],Hd=t=>out.push(['h',t]),P=(a,b)=>out.push([
     T(ev.length?'Scores read live from ESPN\'s public scoreboard.':'Scores are the map\'s saved list as of '+VB26ASOF+'. The website copy reads them live.')}
   return out}
 function rollFill(){ROLL.seen=HK.at;$('rollb').innerHTML=rollData(ROLL.on).map(r=>r[0]==='h'?'<h5>'+esc(r[1])+'</h5>':r[0]==='p'?'<p><small>'+esc(r[1])+'</small>'+esc(r[2])+'</p>':'<p class="t">'+esc(r[1])+'</p>').join('')+'<p class="t">★</p>'}
-function rollOpen(kind){const el=$('roll'),b=$('rollb');ROLL.on=kind;ROLL.at=hkVenue(kind==='vb'?'Devaney Sports Center':'Memorial Stadium');$('rollt').textContent=kind==='vb'?'DEVANEY CENTER':'MEMORIAL STADIUM';rollFill();
+const ROLLV={vb:['Devaney Sports Center','DEVANEY CENTER'],bb:['Pinnacle Bank Arena','PINNACLE BANK ARENA'],fb:['Memorial Stadium','MEMORIAL STADIUM']};
+function rollOpen(kind){const el=$('roll'),b=$('rollb');ROLL.on=kind;const V=ROLLV[kind]||ROLLV.fb;ROLL.at=hkVenue(V[0]);$('rollt').textContent=V[1];rollFill();
   {const tr=$('tools').getBoundingClientRect();el.style.right=innerWidth<700?'':(tr.width?Math.max(68,Math.round(innerWidth-tr.left+12)):68)+'px'}el.style.display='block';b.scrollTop=0;ROLL.pos=0;ROLL.hold=performance.now()+900;
   // it grows out of the building: the animation starts from the building's spot on the screen
   const p=ROLL.at;if(p){v3.set(p.x,hAt(p.x,p.z)+p.h*.5,p.z).project(camera);const r=el.getBoundingClientRect();el.style.transformOrigin=((v3.x*.5+.5)*innerWidth-r.left)+'px '+((-v3.y*.5+.5)*innerHeight-r.top)+'px'}

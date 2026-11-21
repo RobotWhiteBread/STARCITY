@@ -1282,7 +1282,7 @@ function pick(x,y){if(performance.now()-rideStopT<500)return;menuAt=0;ndc.set(x/
 function showB(b,force){if(codeOn){rawCard(b);return}const info=H.infos[S.b_info[b]];const tag=H.tags[S.b_tag[b]];const h=S.b_h[b]/10;const src=S.b_src[b];const rf=S.b_roof[b],tc=S.b_tc[b];
   const kinds={Residential:'Residential',Other:'Outbuilding',Commercial:'Commercial',Agricultural:'Agricultural',Industrial:'Industrial',yes:'Building',house:'House',detached:'Detached house',semidetached_house:'Duplex',garage:'Garage',garages:'Garages',shed:'Shed',apartments:'Apartments',roof:'Canopy',static_caravan:'Mobile home',retail:'Retail',commercial:'Commercial',industrial:'Industrial',university:'University building',office:'Office',church:'Church',school:'School',hotel:'Hotel',dormitory:'Residence hall',warehouse:'Warehouse',hospital:'Hospital',public:'Public building',stadium:'Stadium',residential:'Residential'};
   const kind=kinds[tag]||(tag.charAt(0).toUpperCase()+tag.slice(1).replace(/_/g,' '));
-  const parts=[];if(info==='Devaney Sports Center'){devCard(0);rollOpen('vb');return}if(info==='Pinnacle Bank Arena'&&S2){pbaCard(b);return}if(info)parts.push(kind);
+  const parts=[];if(info==='Devaney Sports Center'){devCard(0);rollOpen('vb');return}if(info==='Pinnacle Bank Arena'&&S2){pbaCard(b);rollOpen('bb');return}if(info)parts.push(kind);
   const st=S.b_st&&H.stypes?H.stypes[S.b_st[b]]:'';if(st)parts.push(st);
   const yr=S.b_yr?S.b_yr[b]:0;if(yr)parts.push('built '+yr);
   if(S.b_fl&&(S.b_fl[b]&1))parts.push("new in the city's 2026 footprint update");
@@ -1751,21 +1751,27 @@ function stepDev(dt,now){if(!LM.devSign)return;const t=controls.target,g=LM.devS
   if(LM.devBill&&now-devT>3200){devT=now;devI++;devBillTurn(devI)}
   if(LM.devBall&&d2<1600*1600){LM.devBall.rotation.y+=dt*.5;ambient=true}}
 let bikers=null;
+// ---- Wilderness Park runs on crushed rock, so the riders there talk like gravel riders
+const GRAVEL=['Send it','Spirit of gravel','It is not a race, it is an experience','Type 2 fun','I aired down for this','Chunk builds character','40 mil is plenty','Embrace the suck','The gravel chose me','Tire pressure is a lifestyle','Just one more gravel bike','Fuel is vibes and gummy bears','Nobody asked about my watts','Washboard is a state of mind','Lantern rouge energy','This is actually a gravel bike','Rutted but vibing','Pain cave, open daily'];
 function setupBikers(){const TR=LM.trails||[],best=new Map();for(let w=0;w<TR.length;w++){const T=TR[w];if(T.tc>=3||T.tn===65535||T.d.length<4)continue;const q=best.get(T.tn);if(q===undefined||TR[q].len<T.len)best.set(T.tn,w)}
   // each named trail becomes one continuous path, so riders travel its whole length and turn around at the ends
-  const paths=[];for(const w of best.values()){let pts;try{pts=trailPath(w)}catch(e){continue}const n=pts.length/2;if(n<2)continue;const c=new Float32Array(n);for(let k=1;k<n;k++)c[k]=c[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);if(c[n-1]>=300)paths.push({d:pts,cum:c,L:c[n-1]})}
+  const paths=[];for(const w of best.values()){let pts;try{pts=trailPath(w)}catch(e){continue}const n=pts.length/2;if(n<2)continue;const c=new Float32Array(n);for(let k=1;k<n;k++)c[k]=c[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);if(c[n-1]>=300)paths.push({d:pts,cum:c,L:c[n-1],tn:TR[w].tn})}
   if(!paths.length){bikers={none:true};return}const N=mobile?260:600,tot=paths.reduce((a,q)=>a+q.L,0),list=[];
   for(let i=0;i<N;i++){let r=Math.random()*tot,T=paths[0];for(const q of paths){if((r-=q.L)<=0){T=q;break}}list.push({T,L:T.L,s:Math.random()*T.L,dir:Math.random()<.5?1:-1,v:4.5+3.5*Math.random(),k:0})}
   // bike and rider: wheels, frame, bars, legs, jersey and helmet (the jersey and helmet take the rider's color)
   const geo=boxes([[.06,.62,.62,0,.34,-.52,0x18181a],[.06,.62,.62,0,.34,.52,0x18181a],[.07,.09,1.0,0,.62,0,0xffffff],[.07,.5,.07,0,.85,.2,0xffffff],[.44,.06,.07,0,.98,-.46,0x222222],[.12,.5,.14,-.1,.8,.12,0x232b36],[.12,.5,.14,.1,.8,.12,0x232b36],[.3,.56,.26,0,1.3,.06,0xffffff],[.2,.2,.22,0,1.7,-.08,0x3b2f27],[.25,.11,.28,0,1.83,-.08,0xffffff]]);
   const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({vertexColors:true}),N),col=new THREE.Color(),JER=[0xff3b30,0xffcc00,0x34c759,0x0a84ff,0xff9500,0xbf5af2,0xff2d92,0x30d5c8,0xffffff];m.frustumCulled=false;m.visible=false;
   for(let i=0;i<N;i++){lM.identity();m.setMatrixAt(i,lM);m.setColorAt(i,col.set(JER[i%JER.length]))}
-  m.userData.info=['Cyclists','Riders going up and down the trails while the Bike ride layer is on. They are part of the map, not real riders.'];scene.add(m);pickables.push(m);bikers={m,list}}
+  m.userData.info=['Cyclists','Riders going up and down the trails while the Bike ride layer is on. They are part of the map, not real riders. The ones in Wilderness Park are riding crushed rock, and they will tell you about it.'];scene.add(m);pickables.push(m);bikers={m,list}}
 function stepBikers(dt,now){if(!bikers){if(!rideMode)return;setupBikers()}const B=bikers;if(!B||B.none)return;if(!rideMode){if(B.m.visible){B.m.visible=false;dirty=true}return}if(!B.m.visible)B.m.visible=true;
   const d=camera.position.distanceTo(controls.target),sc=Math.min(40,Math.max(1.6,d/90)),sp=Math.max(1,sc*.3);
   for(let i=0;i<B.list.length;i++){const q=B.list[i],T=q.T,c=T.cum,n=c.length;q.s+=q.dir*q.v*sp*dt;if(q.s>=q.L){q.s=q.L;q.dir=-1}else if(q.s<=0){q.s=0;q.dir=1}
     let k=q.k;while(k<n-2&&c[k+1]<q.s)k++;while(k>0&&c[k]>q.s)k--;q.k=k;const u=(q.s-c[k])/Math.max(.01,c[k+1]-c[k]),D=T.d,x0=D[2*k],z0=D[2*k+1],x1=D[2*k+2],z1=D[2*k+3],x=x0+(x1-x0)*u,z=z0+(z1-z0)*u,y=hAt(x,z)+.7;
-    lP.set(x,y,z);lQ.setFromAxisAngle(lUp,Math.atan2(-(x1-x0)*q.dir,-(z1-z0)*q.dir));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM)}
+    lP.set(x,y,z);lQ.setFromAxisAngle(lUp,Math.atan2(-(x1-x0)*q.dir,-(z1-z0)*q.dir));lS.setScalar(sc);lM.compose(lP,lQ,lS);B.m.setMatrixAt(i,lM);
+    if(q.wild===undefined){const nm=(T.tn!==65535&&H.tnames)?H.tnames[T.tn]:null;q.wild=!!(nm&&nm.indexOf('Wilderness Park')===0);
+      if(q.wild){q.lb={t:'',x:0,y:0,z:0,k:3,pri:430,near:0,far:2200};q.qi=(i*7)%GRAVEL.length;q.qt=now+i*700}}
+    if(q.wild&&d<2400){if(now>q.qt){q.qi=(q.qi+1)%GRAVEL.length;q.qt=now+5400+((i*37)%2800)}
+      q.lb.t=GRAVEL[q.qi];q.lb.x=x;q.lb.z=z;q.lb.y=y+2.6*sc;lifeLabels.push(q.lb)}}
   B.m.instanceMatrix.needsUpdate=true;ambient=true}
 function stepLife(dt,now){lifeLabels.length=0;if(!(performance.now()-lastInput<120000||ride||tour||fly)){for(const f of flocks)lifeLabels.push(f.lb);return}stepBirds(dt,now);stepZoo(dt,now);stepDogs(dt,now);stepPride(dt,now);stepDev(dt,now);stepVB(dt,now);stepTraffic(dt,now);stepBikers(dt,now);stepMore(dt,now)}
 $('bVB').onclick=()=>setVB(!vbOn);
@@ -2808,7 +2814,7 @@ function huskInit(){$('bHusk').onclick=()=>{if(sheet===HUSK)closeSheet();else hu
   if(hosted()){setTimeout(()=>hkLoad(),6000);setInterval(hkTick,20000)}}
 function huskFrame(){if(!HK.beacon)return;const d=camera.position.distanceTo(controls.target),u=HK.beacon.material.uniforms;u.uR.value=Math.min(40,Math.max(3,d*.002));u.uHS.value=Math.min(4,Math.max(.25,d/3600))}
 function pbaCard(b){const m=HK.rec.mbb,w=HK.rec.wbb,links=[];bLinks(b,links);showCard('Pinnacle Bank Arena','Home court of Nebraska men\'s and women\'s basketball since 2013, with 15,500 seats in the West Haymarket. The men have ranked in the national top 25 for attendance every season here, and the women ranked 15th in the country in 2025-26. '
-  +(m||w?`This season: men ${m||'not started'}, women ${w||'not started'}. `:'')+'The scarlet beacon marks it on the map. '+(RE.on?propLines(b)||'':''),undefined,{label:'Husker scores',fn:()=>huskOpen(3)},links)}
+  +(m||w?`This season: men ${m||'not started'}, women ${w||'not started'}. `:'')+'In March 2026 the men won the first NCAA tournament game in school history here, then reached a first Sweet 16, finishing 28-7. The scarlet beacon marks the arena on the map. '+(RE.on?propLines(b)||'':''),undefined,{label:'Roll the records',fn:()=>rollOpen('bb')},[{label:'Husker scores',fn:()=>huskOpen(3)}].concat(links))}
 // ---- weather that loads on its own: current conditions, any alert in force, and the next few forecast periods
 async function wxDetail(){const dirs=['N','NE','E','SE','S','SW','W','NW'],base=()=>{const w=wxNow();return w&&w.tC!=null?`Now at Lincoln Airport: ${Math.round(w.tC*9/5+32)}°F, ${w.desc||'no sky report'}`+(w.kmh!=null?`, wind ${w.dir!=null?dirs[Math.round(w.dir/45)%8]+' ':''}${Math.round(w.kmh*.621)} mph`+(w.gust?`, gusts to ${Math.round(w.gust*.621)}`:''):'')+'. ':'Current conditions have not loaded. '};
   const links=[{href:'https://forecast.weather.gov/MapClick.php?lat=40.8136&lon=-96.7026',label:'Full forecast ↗'},{label:wxOn?'Weather effects are on':'Show wind and rain on the map',fn:()=>{if(!wxOn)setWx(true)}}];
@@ -3153,6 +3159,34 @@ function rollData(kind){const out=[],Hd=t=>out.push(['h',t]),P=(a,b)=>out.push([
     Hd('National champions');T('1995 · 2000 · 2006 · 2015 · 2017');
     Hd('The crowds');for(const m of VBMSG.slice(6))P(m[0],m[1]);Hd('The names');for(const m of VBMSG.slice(2,6))P(m[0],m[1]);
     T(V.live?'Scores read live from ESPN\'s public scoreboard.':'Scores are the map\'s saved list as of '+VB26ASOF+'. The website copy reads them live.');T('Crowd records carry the date they were true, because records fall.')}
+  else if(kind==='bb'){
+    Hd('Nebraska basketball');T('Pinnacle Bank Arena');P('Opened','2013');P('Seats','15,500');
+    Hd('The drought, and the end of it');
+    T('Until March 2026 Nebraska was the only program in a power conference that had never won an NCAA tournament game. Eight appearances across 87 years, eight exits.');
+    P('March 19, 2026 \u00b7 Troy','Won 76-47');
+    T('The first NCAA tournament win in school history. The 29-point margin was the largest in any school\u2019s first tournament win since 1971.');
+    P('March 21, 2026 \u00b7 No. 5 Vanderbilt','Won 74-72');
+    T('Braden Frager\u2019s basket sent Nebraska to its first Sweet 16.');
+    P('March 26, 2026 \u00b7 Iowa','Lost 71-77');
+    T('Houston, and the end of the best season the program has had.');
+    Hd('2025-26');P('Record','28-7');P('Started the season','20-0');P('Big Ten','15-5');
+    T('Twenty-eight wins broke a school record that had stood since 1990-91, when Nebraska won 26. Those two teams are the only Nebraska sides ever to finish in the top 15 of the AP poll.');
+    P('All-time in the NCAA tournament','2-9');P('Postseason appearances','29 \u00b7 9 NCAA, 19 NIT, 1 Crown');
+    Hd('Fred Hoiberg');P('2026','AP National Coach of the Year');P('Signed through','2031-32');P('Season in Lincoln','Eighth in 2026-27');
+    T('His second Sweet 16; he took Iowa State to one in 2014. His grandfather, Jerry Bush, coached Toledo to the 1954 NCAA tournament, and his other grandfather taught here.');
+    {const m=(HK.ev.mbb||[]).filter(e=>e.st==='post'&&e.done&&e.my!=null);
+     Hd('Men, this season');if(HK.rec.mbb)P('Record',HK.rec.mbb);
+     if(m.length)for(const e of m)P(day(e.t)+' \u00b7 '+(e.ha==='home'?'':'at ')+e.opp,(e.win?'Won ':'Lost ')+e.my+'-'+e.th);
+     else T('No completed games read yet this season.')}
+    Hd('Nebraska women');P('Amy Williams','11th season in 2026-27');P('At Nebraska','177-136 across ten seasons');
+    P('NCAA tournaments','2018, 2022, 2024, 2025, 2026');T('Three in a row going into this season.');
+    P('Average crowd','5,638 \u00b7 16th in the country');
+    T('Allison Weidner is back as a graduate student after three knee surgeries, having torn her left ACL in December 2022 and her right in October 2023.');
+    {const w=(HK.ev.wbb||[]).filter(e=>e.st==='post'&&e.done&&e.my!=null);
+     Hd('Women, this season');if(HK.rec.wbb)P('Record',HK.rec.wbb);
+     if(w.length)for(const e of w)P(day(e.t)+' \u00b7 '+(e.ha==='home'?'':'at ')+e.opp,(e.win?'Won ':'Lost ')+e.my+'-'+e.th);
+     else T('No completed games read yet this season.')}
+    T('Season records and scores read live from ESPN\u2019s public scoreboard on the website copy. Everything above them is the map\u2019s own saved record, sourced to Nebraska Athletics and the Associated Press.')}
   else{const ev=(HK.ev.fb||[]).filter(e=>e.st==='post'&&e.done&&e.my!=null);Hd('Nebraska football');T('Memorial Stadium');P('Opened','1923');P('Sold out every home game since','November 3, 1962');P('Straight sellouts going into 2026','410');P('Listed capacity','85,458');
     Hd('Volleyball Day in Nebraska');P('August 30, 2023 · Nebraska 3, Omaha 0',RECORD.toLocaleString('en-US'));T('The largest crowd ever recorded at a women\'s sporting event, in a football stadium. It broke the 91,648 at Barcelona in 2022 and this stadium\'s own record of 91,585 against Miami in 2014.');
     Hd('This season');if(ev.length){const w=ev.filter(e=>e.win).length;P('Record',HK.rec.fb||(w+'-'+(ev.length-w)));for(const e of ev)P(day(e.t)+' · '+(e.ha==='home'?'':'at ')+e.opp,(e.win?'Won ':'Lost ')+e.my+'-'+e.th)}
@@ -3163,7 +3197,8 @@ function rollData(kind){const out=[],Hd=t=>out.push(['h',t]),P=(a,b)=>out.push([
     T(ev.length?'Scores read live from ESPN\'s public scoreboard.':'Scores are the map\'s saved list as of '+VB26ASOF+'. The website copy reads them live.')}
   return out}
 function rollFill(){ROLL.seen=HK.at;$('rollb').innerHTML=rollData(ROLL.on).map(r=>r[0]==='h'?'<h5>'+esc(r[1])+'</h5>':r[0]==='p'?'<p><small>'+esc(r[1])+'</small>'+esc(r[2])+'</p>':'<p class="t">'+esc(r[1])+'</p>').join('')+'<p class="t">★</p>'}
-function rollOpen(kind){const el=$('roll'),b=$('rollb');ROLL.on=kind;ROLL.at=hkVenue(kind==='vb'?'Devaney Sports Center':'Memorial Stadium');$('rollt').textContent=kind==='vb'?'DEVANEY CENTER':'MEMORIAL STADIUM';rollFill();
+const ROLLV={vb:['Devaney Sports Center','DEVANEY CENTER'],bb:['Pinnacle Bank Arena','PINNACLE BANK ARENA'],fb:['Memorial Stadium','MEMORIAL STADIUM']};
+function rollOpen(kind){const el=$('roll'),b=$('rollb');ROLL.on=kind;const V=ROLLV[kind]||ROLLV.fb;ROLL.at=hkVenue(V[0]);$('rollt').textContent=V[1];rollFill();
   {const tr=$('tools').getBoundingClientRect();el.style.right=innerWidth<700?'':(tr.width?Math.max(68,Math.round(innerWidth-tr.left+12)):68)+'px'}el.style.display='block';b.scrollTop=0;ROLL.pos=0;ROLL.hold=performance.now()+900;
   // it grows out of the building: the animation starts from the building's spot on the screen
   const p=ROLL.at;if(p){v3.set(p.x,hAt(p.x,p.z)+p.h*.5,p.z).project(camera);const r=el.getBoundingClientRect();el.style.transformOrigin=((v3.x*.5+.5)*innerWidth-r.left)+'px '+((-v3.y*.5+.5)*innerHeight-r.top)+'px'}
@@ -3349,7 +3384,7 @@ function festBurst(){const D=LM.dev,s=FEST.ss,n=s.length/7,C=FEST.sparks.geometr
     col=new THREE.Color([0xff2b3d,0xfff3d6,0xffffff,0xffc94a][(Math.random()*4)|0]),k0=FEST.burst%6*Math.floor(n/6),m=Math.floor(n/6);FEST.burst++;
   for(let j=0;j<m;j++){const i=k0+j,o=7*i,u=Math.random()*2-1,t=Math.random()*6.2832,q=Math.sqrt(1-u*u),v=38+Math.random()*30;s[o]=cx;s[o+1]=cy;s[o+2]=cz;s[o+3]=q*Math.cos(t)*v;s[o+4]=u*v;s[o+5]=q*Math.sin(t)*v;s[o+6]=1.5+Math.random()*.9;C.setXYZ(i,col.r,col.g,col.b)}C.needsUpdate=true}
 function devNames(){showCard('Devaney Center: the names','From the top: DBK Universe, this map\'s own name for the place in the Dani Busboom Kelly era. Then the official names: John Cook Arena, Terry Pettit Court, and the building, the Bob Devaney Sports Center. The searchlights, roses and fireworks are decoration, not a report of anything happening there.',undefined,{label:FEST.on?'Lights off':'Lights on',fn:()=>devFest(!FEST.on)},
-  [{href:'https://huskers.com/sports/volleyball/roster',label:'This season\'s roster ↗'},{label:'Roll the records',fn:()=>rollOpen('vb')},{label:'Scores',fn:()=>huskOpen(1)},{label:'More on the names',fn:()=>devCard(1)}])}
+  [{href:'https://huskers.com/sports/volleyball/roster',label:'This season\'s roster ↗'},{label:'Roll the records',fn:()=>rollOpen('vb')},{label:'Basketball at Pinnacle Bank',fn:()=>rollOpen('bb')},{label:'Scores',fn:()=>huskOpen(1)},{label:'More on the names',fn:()=>devCard(1)}])}
 function devFest(on,fly){const D=LM.dev;if(!D)return;if(on&&!festBuild())return;if(fly){const dv=H.blabels.find(b=>b[0]==='Devaney Sports Center');if(dv)flyTo(innerWidth<700?camTo(dv[1],-dv[2],760,150,24,-70):camTo(dv[1],-dv[2],560,150,26,40),2200)}
   if(on!==FEST.on){FEST.on=on;for(const l of labels)if(l.t==='John Cook Arena'||l.t==='Devaney Sports Center'){if(on){if(l.far0===undefined)l.far0=l.far;l.far=0}else if(l.far0!==undefined)l.far=l.far0}
     if(on){FEST.t0=performance.now();scene.add(FEST.grp);for(let i=0;i<FEST.rs.length/7;i++)festRose(i,true);FEST.ss.fill(0);FEST.nextB=0}else{scene.remove(FEST.grp);festLabels.length=0}}
