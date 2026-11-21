@@ -358,7 +358,7 @@ body.hc :focus-visible{outline-color:#fff}
     <button class="btn x" id="b2D">2D view</button>
     <button class="btn x" id="bNorth">North up</button>
     <button class="btn x" id="bShare">Share view</button>
-    <button class="btn on x base" id="bBus">Buses</button>
+    <button class="btn x base" id="bBus">Buses</button>
     <button class="btn x" id="bGame">Game day</button>
     <button class="btn on x base" id="bLabels">Labels</button>
     <button class="btn on x base" id="bShadow">Shadows</button>
@@ -454,6 +454,15 @@ renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.5:2));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
 renderer.toneMapping=THREE.NoToneMapping;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x9fc4e8);scene.fog=new THREE.Fog(0x9fc4e8,11000,46000);
+// ---- Haze sized to the world that actually exists. The elevation grid stops at 8,400 units,
+// so a view along the ground has to fade out before the land runs out. Looking down from high
+// up keeps the long clear view, because from there the edge is below you, not on the skyline.
+function fogFit(){const f=scene.fog;if(!f||FOGQ.hold)return;const t=controls.target,p=camera.position;
+  const dx=p.x-t.x,dy=p.y-t.y,dz=p.z-t.z,el=Math.atan2(dy,Math.hypot(dx,dz))*57.2958;
+  const k=el<28?0:el>54?1:(el-28)/26,ke=k*k*(3-2*k);
+  const near=1800+9200*ke,far=8600+37400*ke;
+  if(Math.abs(f.near-near)>2||Math.abs(f.far-far)>2){f.near=near;f.far=far;dirty=true}}
+const FOGQ={hold:false};
 const camera=new THREE.PerspectiveCamera(45,1,3,60000);
 const controls=new OrbitControls(camera,canvas);
 controls.enableDamping=true;controls.dampingFactor=.09;controls.maxPolarAngle=Math.PI/2-0.035;controls.minDistance=25;controls.maxDistance=24000;
@@ -590,7 +599,7 @@ async function build(){
       const P=tc<3?offP:onP,C=tc<3?offC:onC,col=TC[tc],dim=tc===4?.92:1;
       for(let k=1;k<n;k++){P.push(d[2*k-2],ys[k-1],d[2*k-1],d[2*k],ys[k],d[2*k+1]);C.push(col.r*dim,col.g*dim,col.b*dim,col.r*dim,col.g*dim,col.b*dim)}
       LM.trailOf[i]=LM.trails.length;LM.trails.push({tc,tn:rtn[i],d:Float32Array.from(d),len:sl,ts:S.r_ts?S.r_ts[i]:0,ri:i,ix,ys})}
-    const mk=(P,C,w)=>{const g=new LineSegmentsGeometry();g.setPositions(P);g.setColors(C);const m=new LineMaterial({linewidth:w,vertexColors:true,worldUnits:false,fog:false});m.resolution.set(innerWidth,innerHeight);const l=new LineSegments2(g,m);l.frustumCulled=false;scene.add(l);return l};
+    const mk=(P,C,w)=>{const g=new LineSegmentsGeometry();g.setPositions(P);g.setColors(C);const m=new LineMaterial({linewidth:w,vertexColors:true,worldUnits:false,fog:true});m.resolution.set(innerWidth,innerHeight);const l=new LineSegments2(g,m);l.frustumCulled=false;scene.add(l);return l};
     LM.trailLines=[];if(onP.length)LM.trailLines.push(mk(onP,onC,mobile?2.6:3));if(offP.length)LM.trailLines.push(mk(offP,offC,mobile?3:3.3))}
    // rails
    const rail=hex(0x3a3836);for(const i of byc[9]){const p=get(i);ribbon(p,0.78,hex(0x6d665c));ribbon(p,0.12,rail)}
@@ -732,7 +741,7 @@ async function build(){
    let k=0;const cap=mobile?26000:48000;
    for(const [r,nm] of LM.woods){let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of r){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}
      const dens=nm==='wood'?1/260:1/2600;const n=Math.min(2500,Math.ceil((x1-x0)*(z1-z0)*dens));
-     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);if(Math.abs(x)<8100&&Math.abs(z)<8100&&pip(x,z,r)&&!wet(x,z)){if(LM.occ(x,z))roofed++;else pts.push([x,z,1])}}}
+     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);const ed=Math.abs(x)>Math.abs(z)?Math.abs(x):Math.abs(z);if(ed<8360&&(ed<6500||rnd(k*3+2)<(8360-ed)/1860)&&pip(x,z,r)&&!wet(x,z)){if(LM.occ(x,z))roofed++;else pts.push([x,z,1])}}}
    LM.roofed=roofed;
    const tg=new THREE.BufferGeometry();
    {const P=[],I=[];const ring=(y,r,n)=>{const b=P.length/3;for(let i=0;i<n;i++){const a=i/n*Math.PI*2;P.push(Math.cos(a)*r,y,Math.sin(a)*r)}return b};
@@ -1190,7 +1199,7 @@ function bikeGraph(){if(BG)return BG;const t0=performance.now();const RD=LM.road
   // straight bridges, drawn as dashed arcs
   {const P=[];for(const [a,b,L] of bridges){const n=Math.max(6,Math.min(24,Math.ceil(L/25))),lift=Math.min(70,7+L*.14);let px=0,py=0,pz=0;
      for(let j=0;j<=n;j++){const t=j/n,x=NX[a]+(NX[b]-NX[a])*t,z=NZ[a]+(NZ[b]-NZ[a])*t,y=hAt(x,z)+2.5+lift*Math.sin(Math.PI*t);if(j>0)P.push(px,py,pz,x,y,z);px=x;py=y;pz=z}}
-   if(P.length){const geo=new LineSegmentsGeometry();geo.setPositions(P);const m=new LineMaterial({color:0xffffff,linewidth:mobile?1.9:2.3,worldUnits:false,dashed:true,dashSize:10,gapSize:8,fog:false,transparent:true,opacity:.95});m.resolution.set(innerWidth,innerHeight);
+   if(P.length){const geo=new LineSegmentsGeometry();geo.setPositions(P);const m=new LineMaterial({color:0xffffff,linewidth:mobile?1.9:2.3,worldUnits:false,dashed:true,dashSize:10,gapSize:8,fog:true,transparent:true,opacity:.95});m.resolution.set(innerWidth,innerHeight);
      const l=new LineSegments2(geo,m);l.computeLineDistances();l.frustumCulled=false;l.visible=false;scene.add(l);LM.bridgeLines=l;LM.lineMats.push(m)}}
   BG.ms=Math.round(performance.now()-t0);return BG}
 function paintEdge(P,e){const g=BG,T=LM.trails[LM.trailOf[g.eRoad[e]]];const i0=T.ix[g.eK[e]],i1=T.ix[g.eK[e]+1],d=T.d,ys=T.ys;for(let k=i0;k<i1;k++)P.add(d[2*k],ys[k]+.45,d[2*k+1],d[2*k+2],ys[k+1]+.45,d[2*k+3])}
@@ -1361,7 +1370,7 @@ $('srcBtn').onclick=()=>{const m=$('srcMore');m.style.display=m.style.display===
 function lincolnNow(){const p={};for(const q of new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hourCycle:'h23',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(new Date()))p[q.type]=q.value;
   return {sec:(+p.hour)*3600+(+p.minute)*60+(+p.second),dow:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].indexOf(p.weekday),ymd:+(p.year+p.month+p.day)}}
 // ---------- buses (scheduled positions from the StarTran timetable)
-let busMesh=null,busShapes=null,busOn=true;const busState=[];let curHour=14.5;
+let busMesh=null,busShapes=null,busOn=false;const busState=[];let curHour=14.5;
 function setupBus(){const B=H.bus;if(!B||!B.trips.length)return;
   busShapes=B.shapes.map(a=>{const n=a.length/2,cum=new Float32Array(n);for(let i=1;i<n;i++)cum[i]=cum[i-1]+Math.hypot(a[2*i]-a[2*i-2],a[2*i+1]-a[2*i-1]);return {a,cum,n}});
   const g=new THREE.BoxGeometry(2.7,3.1,11.5);g.translate(0,1.75,0);
@@ -1807,7 +1816,7 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
  ['Make this for your city','Type any place, ZIP code or GPS point and see it in 3D from open map data. The code is free to copy.',()=>openSheet(FORKS,0)],
  ['Dress the Sower','The figure on the Capitol dome, in Husker scarlet, a cowboy hat, a sequin gown or a winter coat. For fun.',()=>{sowerFly();setTimeout(sowerCard,2100)}]];
 function guideHTML(i){const c=H.counts||{},n=v=>(v||0).toLocaleString(),org=c.org||[0,0,0];
-  if(i===0)return `<h4>What this is</h4>${COUNTH}<p><button class="btn go" data-go="about">About this map, and who made it<small>Who built it, why, what it is not, and how to tell us something is wrong.</small></button></p><p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account. This is release 0.9.14.</p>
+  if(i===0)return `<h4>What this is</h4>${COUNTH}<p><button class="btn go" data-go="about">About this map, and who made it<small>Who built it, why, what it is not, and how to tell us something is wrong.</small></button></p><p>STARCITY is a 3D map of Lincoln, Nebraska that runs in your browser. Every building in the city is here, ${n(c.buildings)} of them, on real hills, with the streets, trails, creeks, parks and trees around them. It is free, open source, and needs no app or account. This is release 0.9.15.</p>
 <h4>Getting around</h4><ul><li><b>Phone:</b> drag to move, pinch to zoom, twist two fingers to turn, slide two fingers up or down to tilt, double tap to zoom in, tap with two fingers to zoom out.</li><li><b>Computer:</b> drag to move, scroll to zoom, right-drag or Shift-drag to turn and tilt. Arrow keys, + and -, Q and E work too.</li><li><b>The round buttons</b> on the right: drag the compass to turn the map or tap it for north up, + and - zoom (hold to keep going), and the last one tilts.</li><li><b>Street names</b> come in by size: main roads from far out, every street as you move in close.</li><li><b>Tap anything</b> for a card that says what it is and how sure the map is about it. Buildings lead with their assessed value and a tax estimate. Trees on the city list give their kind, trunk size and city tree ID.</li><li>The <b>slider</b> at the bottom sets the time of day. The <b>ribbon</b> under it jumps to places.</li></ul>
 <h4>The buttons</h4><ul><li><b>Search</b> streets, addresses, buildings, parks and trails. <b>Tour</b> flies a short loop.</li><li><b>Find me</b> puts a blue dot where you are. It stays on your device.</li><li><b>Bike ride</b> rides trails and bike streets. <b>Trails</b> shows or hides them.</li><li><b>Weather</b> shows wind, rain, snow, lightning and warnings. The line under the title is the weather right now: tap it for alerts and the forecast.</li><li><b>Huskers</b> has live scores. <b>Democracy</b> shows how Lincoln has voted, who represents any spot, and what City Hall is deciding. <b>Real estate</b> is a switch. On, building cards lead with assessed value and a tax estimate, and value bars, new sales, taxes by district, the statistics and a compare-everything table are one tap away. Off, the map is about the place and a card offers its value only when you ask.</li><li><b>Walk</b> puts you on the street with a joystick. Tap a spot to walk there, or a building for its card.</li><li><b>Now</b> and <b>Reset</b> sit at the top of the screen. Now sets the map to this moment and says what is going on in Lincoln. Reset brings you back to the whole city from above with everything switched back, whenever you get lost. Under them is a row of reasons you may be here: tap one for a short list of where to go.</li><li><b>Menu</b> folds the buttons away for a clear view, and the small button at the bottom left does the same for the key, the time slider and the places ribbon. Tap again to bring them back.</li><li><b>More</b> holds Now (the real time of day), 2D view, North up, Share view, Buses, Game day, Labels, Shadows, Birds, Pride, Volleyballs, Traffic, the Real estate tour, Native Lincoln, Play in Lincoln, Flights and Creatures.</li></ul>
 <h4>Real, estimated, or just for fun</h4><p>Buildings, streets, trails, terrain, weather, scores, assessed values, election results and city records are real data. Some heights, all roof shapes, every property tax figure and the hour-by-hour traffic curve are estimates. The giraffes, penguins, dogs, cyclists, rainbows, volleyballs, lake monsters, Sasquatch, the East Campus cattle and combine, the birds circling the Capitol and the example planes are just for fun. Each card says which is which.</p>`;
@@ -1937,6 +1946,7 @@ function frame(now){requestAnimationFrame(frame);
   {const dtw=Math.min(.1,(now-(frame.t||now))/1000);frame.t=now;if(wxOn||liveOn){wetCheck(false);if(precip)stepPrecip(dtw)}if(wxOn){stepWind(dtw,now);stepStorm(dtw,now)}stepLife(dtw,now+simOff)}
   if(!fly&&!walk.on){const t=controls.target,gy=hAt(t.x,t.z);if(t.y<gy-.5||t.y>gy+160){const d=(gy-t.y)*.25;t.y+=d;camera.position.y+=d;dirty=true}}
   if(!walk.on){const cy=hAt(camera.position.x,camera.position.z)+(ride?1.5:6);if(camera.position.y<cy){camera.position.y=cy;dirty=true}}
+  fogFit();
   const user=dirty;if(!dirty){if(!ambient||!ambOK||now-lastAmb<Math.max(ambMin,frCost*2.6))return}lastAmb=now;dirty=false;ambient=false;prevR=true;
   camera.near=walk.on?.4:Math.max(2,(camera.position.y-hAt(camera.position.x,camera.position.z))*.02);camera.far=60000;camera.updateProjectionMatrix();
   {const dtf=now-lastF;lastF=now;const both=user&&lastUser;lastUser=user;if(dtf<250&&both){fAvg=fAvg*.9+dtf*.1;if(++fN>45&&fAvg>48&&perfStep<3){perfStep++;fN=0;fAvg=30;if(perfStep===1)renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.25));else if(perfStep===2){shadowsOn=false;$('bShadow').classList.remove('on');shadowDirty=true}else renderer.setPixelRatio(1);resize()}}}
