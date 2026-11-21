@@ -144,3 +144,7 @@ Both measures run further from standard than residential. A PRD of 1.091 is thre
 **If you are on the council or the board of equalization.** Three things follow. The PRD of 1.040 is a measurable failure against a professional standard and is the right question to put to the assessor's office. The COD of 24.0 on post-2010 construction names where the modelling is weakest. And commercial at a PRD of 1.091 is worse than residential on a sample thin enough that it should be measured properly rather than argued about.
 
 None of this requires new data collection. It is the county's own sales file, measured with the county's own profession's standard.
+
+---
+
+A companion study, [Lincoln Floodplain Exposure and Flood Loss](floodplain.html), maps every parcel against the FEMA floodplain and the NFIP claim record. It finds that 8.53% of Lincoln's parcels and 12.19% of its assessed value sit in the mapped floodplain, and that most of the city's realized flood losses fall outside it.

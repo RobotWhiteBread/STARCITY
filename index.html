@@ -2118,6 +2118,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const MAPBOX='geometry=-96.745%2C40.69%2C-96.535%2C40.85&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects';
 const CITYSRV='https://gis.lincoln.ne.gov/public/rest/services',hosted=()=>/^https?:/.test(location.protocol);
 const FPLINK={href:'https://robotwhitebread.github.io/STARCITY/floodplain.html',label:'The floodplain report ↗'};
+const ASLINK={href:'https://robotwhitebread.github.io/STARCITY/assessment.html',label:'How Lincoln assesses property ↗'};
 const dayStr=ms=>ms?new Date(ms).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric',year:'numeric'}):'';
 const nice=s=>String(s||'').replace(/_/g,' ').toLowerCase().replace(/^./,c=>c.toUpperCase());
 function dlIndex(L){const k=L.def.k;if(k==='ln'){L.lo=new Uint32Array(L.N.length);let o=0;for(let i=0;i<L.N.length;i++){L.lo[i]=o;o+=2*L.N[i]}}
@@ -2982,7 +2983,7 @@ const RET=[['hoods','Total value by neighborhood',()=>`The ${N0(H2.city.parcels)
  ['pv','Every property, one bar each',()=>'One round bar on every parcel, in straight proportion to its assessed value: a quarter mile of height for every $1 million when you are a couple of miles out. The gold box totals whatever is inside the gold ring. Zoom in and tap any bar for the property behind it.',[-4900,-4300,3600,-12,36]]];
 let reAt=-1;
 function reTour(k){if(reAt>=0&&RET[reAt])dlSet(RET[reAt][0],false,true);if(k<0||k>=RET.length){reAt=-1;hideCard();return}reAt=k;const r=RET[k];dlSet(r[0],true,true);flyTo(camTo(...r[3]),2000);lastInput=performance.now();
-  showCard(`Real estate ${k+1} of ${RET.length}: ${r[1]}`,r[2]()+' Tap anything standing on the map for its own numbers.',undefined,{label:k<RET.length-1?'Next: '+RET[k+1][1].toLowerCase()+' ▸':'Finish',fn:()=>reTour(k+1)},[{label:'◂ Back',fn:()=>reTour(Math.max(0,k-1))},{label:'The statistics',fn:()=>{reTour(-1);openSheet(NUMS,1)}},{label:'Stop',fn:()=>reTour(-1)}])}
+  showCard(`Real estate ${k+1} of ${RET.length}: ${r[1]}`,r[2]()+' Tap anything standing on the map for its own numbers.',undefined,{label:k<RET.length-1?'Next: '+RET[k+1][1].toLowerCase()+' ▸':'Finish',fn:()=>reTour(k+1)},[{label:'◂ Back',fn:()=>reTour(Math.max(0,k-1))},{label:'The statistics',fn:()=>{reTour(-1);openSheet(NUMS,1)}},ASLINK,{label:'Stop',fn:()=>reTour(-1)}])}
 // ---- for athletes weighing Lincoln: where you would play, who would be watching, and how the money works now
 function nilNear(v){if(!H2.biz||!v)return 0;if(!bizL)bizSetup();let n=0;for(let i=0;i<bizL.n;i++)if(S2.bz_w[i]<2&&(bizL.X[2*i]-v.x)**2+(bizL.X[2*i+1]-v.z)**2<1609*1609)n++;return n}
 function nilHTML(i){const rec=k=>HK.rec[k]?` This season: ${HK.rec[k]}.`:'',go=(n,l)=>`<button class="btn go2" data-v="${n}">${l}</button>`;
@@ -4102,6 +4103,7 @@ function aboutCard(){menuCard('about',()=>showCard('About this map',
   +'It is free and open source under the MIT license, and corrections from anyone, about anything, are the fastest way it gets better. The flag at the top of any card reports what that card says.',
   undefined,{label:'Something here is wrong',fn:()=>$('cflag').click()},
   [{href:'https://robotwhitebread.github.io/STARCITY/floodplain.html',label:'Floodplain report: what actually floods ↗'},
+   {href:'https://robotwhitebread.github.io/STARCITY/assessment.html',label:'Assessment study: who gets over-assessed ↗'},
    {href:'https://github.com/RobotWhiteBread/STARCITY','label':'The code and the data plan ↗'},
    {href:'https://github.com/RobotWhiteBread/STARCITY/blob/main/CONTRIBUTING.md',label:'Add to the map ↗'},
    {label:'Where every number comes from',fn:()=>openSheet(GUIDE,2)}]))}

@@ -327,3 +327,7 @@ These are operational and affect day-to-day administration.
 NFIP figures rest on live queries run on 16 November 2026; spatial figures on queries run 21 November 2026. The 0.2% band reflects all 4,060 of the service's polygons, of which 982 fall within the corporate limit after clipping. A subset drawn from a study envelope.
 
 Assessed values follow the current county assessment roll and are revised annually. The claims and policy extracts are point-in-time pulls from OpenFEMA and will shift as FEMA refreshes them.
+
+---
+
+A companion study, [Who Lincoln Over-Assesses, and Who It Does Not](assessment.html), measures the county assessor against the standards its own profession sets, using 2,858 arm's-length sales. It finds the level and the consistency sound and the vertical equity outside standard.
