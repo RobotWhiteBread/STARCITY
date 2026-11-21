@@ -18,8 +18,8 @@ function dlStyle(L){const st=L.def.st,n=L.n,Hh=new Float32Array(n),C=new Float32
   else if(cf){const get=fget(L,cf),vals=[];for(let i=0;i<n;i++){const v=get(i);if(v>0)vals.push(v)}vals.sort((a,b)=>a-b);
     let br=st.tiers;if(!br){br=[];for(const p of [.2,.4,.6,.8]){const v=vals[Math.min(vals.length-1,Math.floor(p*vals.length))];if(v!==undefined&&(!br.length||v>br[br.length-1]))br.push(v)}}
     const nT=br.length+1,cnt=new Array(nT+1).fill(0);
-    for(let i=0;i<n;i++){const v=get(i);if(!(v>0)){Ti[i]=nT;C.set(grey,3*i);cnt[nT]++;continue}let t=0;while(t<br.length&&v>=br[t])t++;Ti[i]=t;C.set(rampAt(st.ramp,nT>1?t/(nT-1):.5),3*i);cnt[t]++}
-    const u=cf.u;for(let t=0;t<nT;t++)legend.push({l:t===0?'under '+shortN(br[0],u):t===nT-1?shortN(br[t-1],u)+' and up':shortN(br[t-1],u)+' to '+shortN(br[t],u),c:rampAt(st.ramp,nT>1?t/(nT-1):.5),n:cnt[t],t});
+    for(let i=0;i<n;i++){const v=get(i);if(!(v>0)){Ti[i]=nT;C.set(grey,3*i);cnt[nT]++;continue}let t=0;while(t<br.length&&v>=br[t])t++;Ti[i]=t;C.set(st.tcol?c3(st.tcol[Math.min(t,st.tcol.length-1)]):rampAt(st.ramp,nT>1?t/(nT-1):.5),3*i);cnt[t]++}
+    const u=cf.u;for(let t=0;t<nT;t++)legend.push({l:t===0?'under '+shortN(br[0],u):t===nT-1?shortN(br[t-1],u)+' and up':shortN(br[t-1],u)+' to '+shortN(br[t],u),c:st.tcol?c3(st.tcol[Math.min(t,st.tcol.length-1)]):rampAt(st.ramp,nT>1?t/(nT-1):.5),n:cnt[t],t});
     if(cnt[nT])legend.push({l:'no figure',c:grey,n:cnt[nT],t:nT});L.cap=vals.length?vals[Math.min(vals.length-1,Math.floor(.985*vals.length))]:1}
   else{const c=c3(st.col||0x4cc9f0);for(let i=0;i<n;i++)C.set(c,3*i)}
   if(typeof st.h==='number')Hh.fill(st.h);
@@ -57,7 +57,7 @@ function dlAt(L,x,z){if(L.def.k==='hx'){const i=hexIdx(x,z);return i>=0&&L.Hh[i]
 function dlNearLine(L,x,z,tol){const G=dlGrid(L),l=G.g.get(Math.floor(x/G.cs)*4096+Math.floor(z/G.cs));if(!l)return -1;let best=-1,bd=tol;
   for(const code of l){const i=(code/65536)|0,j=code%65536,o=L.lo[i],ax=L.X[o+2*j-2],az=L.X[o+2*j-1],bx=L.X[o+2*j],bz=L.X[o+2*j+1],dx=bx-ax,dz=bz-az,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/((dx*dx+dz*dz)||1))),d=Math.hypot(x-ax-dx*t,z-az-dz*t);if(d<bd){bd=d;best=i}}return best}
 const dlV=new THREE.Vector3(),dlV2=new THREE.Vector3();
-function dlPick(cx,cy,solid){if(!dlOn.length)return false;const o=ray.ray.origin,d=ray.ray.direction;let best=null;const vis=(L,i)=>L.solo===undefined||L.solo<0||L.Ti[i]===L.solo;
+function dlPick(cx,cy,solid){if(!dlOn.length)return false;const o=ray.ray.origin,d=ray.ray.direction;let best=null;const vis=(L,i)=>soloHas(L.solo,L.Ti[i]);
   if(solid){for(const L of dlOn){if(L.def.k!=='pt'||L.noPick)continue;const X=L.X;for(let i=0;i<L.n;i++){if(!(L.Hh[i]>0)||!vis(L,i))continue;const x=X[2*i],z=X[2*i+1],y=hAt(x,z);dlV.set(x,y,z).project(camera);if(dlV.z>1||dlV.z<-1)continue;
         dlV2.set(x,y+L.Hh[i]*L.hs,z).project(camera);const ax=(dlV.x*.5+.5)*innerWidth,ay=(-dlV.y*.5+.5)*innerHeight,bx=(dlV2.x*.5+.5)*innerWidth,by=(-dlV2.y*.5+.5)*innerHeight,ux=bx-ax,uy=by-ay,t=Math.max(0,Math.min(1,((cx-ax)*ux+(cy-ay)*uy)/((ux*ux+uy*uy)||1))),dd=Math.hypot(cx-ax-ux*t,cy-ay-uy*t);
         if(dd<(mobile?18:12)){const dist=Math.hypot(x-o.x,y-o.y,z-o.z)+dd*.5;if(!best||dist<best.t)best={L,i,t:dist}}}}
@@ -74,9 +74,11 @@ function dlCard(L,i){const d=L.def;if(d.card){d.card(L,i);return}let title=d.t;c
 // ---- the key for the layer on top: tiers you can tap to single out, and the two sliders
 function dlLegend(){const h=$('dlg');$('bottom').classList.toggle('haslayer',!!dlTop);if(!dlTop){h.style.display='none';layoutCard();return}const L=dlTop;h.style.display='block';
   let s=`<div class="dlh"><b>${esc(L.def.t)}</b>${dlOn.length>1?`<span class="dlc">+${dlOn.length-1} more on</span>`:''}<button class="dlb" data-a="info" aria-label="About this layer">i</button><button class="dlb" data-a="off" aria-label="Turn this layer off">×</button></div>`;
-  if(L.legend&&L.legend.length)s+='<div class="dlt">'+L.legend.map(q=>`<button class="dlk${L.solo===q.t?' on':''}" data-t="${q.t}"><i style="background:${hex6(q.c)}"></i>${esc(q.l)}</button>`).join('')+'</div>';
+  if(L.legend&&L.legend.length)s+='<div class="dlt">'+L.legend.map(q=>`<button class="dlk${L.solo>=0&&soloHas(L.solo,q.t)?' on':''}" data-t="${q.t}"><i style="background:${hex6(q.c)}"></i>${esc(q.l)}</button>`).join('')+(L.def.st.up?L.def.st.up.map(([lo,hi,l])=>{const c=(hi+1)*100+lo;return `<button class="dlk dlup${L.solo===c?' on':''}" data-t="${c}">${esc(l)}</button>`}).join(''):'')+'</div>';
   s+=`<div class="dls"><label>Height<input type="range" min="20" max="320" value="${Math.round(dlHS*100)}" data-s="h" aria-label="Height of the data"></label><label>See-through<input type="range" min="0" max="90" value="${Math.round((1-dlAL/1.4)*100)}" data-s="a" aria-label="How see-through the data is"></label></div>`;
   h.innerHTML=s;layoutCard()}
+// a band, or a run of bands coded as (last+1)*100+first, as in $1 million and up
+function soloHas(s,t){return s===undefined||s<0||(s>=100?t>=s%100&&t<=Math.floor(s/100)-1:t===s)}
 function dlSolo(L,t){if(!L.mats||!L.mats.length)return;L.solo=L.solo===t?-1:t;for(const m of L.mats)m.uniforms.uSolo.value=L.solo;dlLegend();dirty=true}
 function dlWire(){const h=$('dlg');
   h.addEventListener('click',e=>{const k=e.target.closest('.dlk'),b=e.target.closest('.dlb');if(k&&dlTop)dlSolo(dlTop,+k.dataset.t);else if(b&&dlTop){if(b.dataset.a==='off')dlSet(dlTop.id,false);else dlIntro(dlTop)}});

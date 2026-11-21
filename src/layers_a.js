@@ -21,7 +21,7 @@ function fmtN(v,u,key){if(v===null||v===undefined||isNaN(v))return '';
 const DLU={uSolo:-1};
 function dlMat(vs,fs,extra){const u={uHS:{value:1},uA:{value:1},uSolo:{value:-1},uR:{value:4},uT:{value:0},uBar:{value:0}};
   return new THREE.ShaderMaterial(Object.assign({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:u,vertexShader:vs,fragmentShader:fs},extra||{}))}
-const ON_GLSL='float on=(uSolo<0.||abs(aTi-uSolo)<.5)?1.:0.;';
+const ON_GLSL='float on=(uSolo<0.||abs(aTi-uSolo)<.5||(uSolo>=100.&&aTi>=mod(uSolo,100.)-.5&&aTi<=floor(uSolo/100.)-.5))?1.:0.;';
 // ---- points: pillars of light. Width follows the zoom so they stay visible from the whole-city view.
 const VS_PT='attribute vec3 aP;attribute vec2 aS;attribute vec3 aC;attribute float aTi;uniform float uR,uHS,uSolo;varying float vY;varying vec3 vC;void main(){'+ON_GLSL+'if(aS.x<=0.)on=0.;vec3 p=position;p.xz*=uR*aS.y;p.y*=aS.x*uHS;vY=position.y;vC=aC;gl_Position=on>.5?projectionMatrix*modelViewMatrix*vec4(aP+p,1.):vec4(2.,2.,2.,1.);}';
 // every metric fades into the sky: bright at the ground, clear at the top
