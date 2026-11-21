@@ -113,14 +113,14 @@ def chart_claims():
 # ---------------------------------------------------------------- chart two
 
 LAND = [
-    ("Farm and acreage", 78.6, 18.0, "24,119 acres", "$200.7M"),
-    ("Parks and public open space", 14.8, 10.8, "4,526 acres", "$120.3M"),
-    ("Commercial and institutional", 2.6, 37.7, "783 acres", "$421.0M"),
-    ("Vacant land", 1.8, 3.3, "559 acres", "$37.3M"),
-    ("Single family homes", 1.8, 21.7, "544 acres", "$242.4M"),
-    ("Other housing", 0.4, 8.5, "137 acres", "$94.7M"),
+    ("Commercial, unimproved", 47.3, 9.2, "9,330 acres", "$411.2M"),
+    ("Commercial, improved", 33.2, 70.2, "6,544 acres", "$3,124.8M"),
+    ("Residential, unimproved", 7.3, 0.4, "1,430 acres", "$19.4M"),
+    ("Agricultural", 7.1, 0.3, "1,407 acres", "$11.7M"),
+    ("Residential, improved", 4.0, 19.8, "793 acres", "$881.1M"),
+    ("None on record", 1.1, 0.0, "207 acres", "$0"),
 ]
-DEV = {"Commercial and institutional", "Single family homes", "Other housing"}
+DEV = {"Commercial, improved", "Residential, improved"}
 
 
 def chart_land():
@@ -130,12 +130,12 @@ def chart_land():
     dev_a = sum(r[1] for r in LAND if r[0] in DEV)
     o = [
         "<svg viewBox='0 0 760 380' role='img' "
-        "aria-label='Two thirds of the floodplain value sits on 5% of its land' "
+        "aria-label='Nine tenths of the floodplain value sits on improved parcels' "
         "font-size='12' xmlns='http://www.w3.org/2000/svg'>",
         f"<text x='18' y='28' font-size='17' fill='{C_TEXT}' font-weight='600'>"
-        "Two thirds of the floodplain&#8217;s value sits on 5% of its land</text>",
+        "Nine tenths of the floodplain&#8217;s value sits on improved parcels</text>",
         f"<text x='18' y='49' fill='{C_DIM}'>{dev_v:.1f}% of assessed value sits on "
-        f"{dev_a:.1f}% of the mapped 1% floodplain</text>",
+        f"{dev_a:.1f}% of the floodplain parcel acreage</text>",
     ]
     for i, (label, colour) in enumerate(
             (("Share of floodplain acreage", C_MUTED),

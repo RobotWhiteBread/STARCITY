@@ -2,8 +2,6 @@
 
 ## Summary
 
-**Scope note, November 21, 2026.** The TIF totals in this paper are from the county's full table and are not affected. The comparisons with the parcel roll use parcels from the part of Lincoln shown on the STARCITY map, about two thirds of the city by area, so the roll total of $36.7 billion and the shares based on it understate the whole city. A citywide update is in progress.
-
 Tax increment financing lets a redevelopment project keep the property tax on the value it adds, usually for 15 years, to pay for public costs tied to the project. The tax on the value that was there before, the base, keeps going to the schools, the city, the county and the other taxing bodies. The tax on the new value, the excess, goes to the project's debt.
 
 The county publishes a table of every TIF project in Lancaster County. This paper adds it up.
@@ -22,7 +20,7 @@ The county publishes a table of every TIF project in Lancaster County. This pape
 | Single projects | 84 | $93.7 million | $969.9 million | $17.1 million |
 | **All active** | **89** | **$628.6 million** | **$1,295.0 million** | **$22.9 million** |
 
-For scale, $1.29 billion is about 3.5% of the $36.7 billion on Lincoln's 2026 assessment roll. The two figures are two years apart, so read that as a rough proportion.
+For scale, $1.29 billion is about 2.9% of the $44.4 billion on Lincoln's 2026 assessment roll. The two figures are two years apart, so read that as a rough proportion.
 
 The levy used is **$1.766448 per $100**, the rate the table itself records for every active project for tax year 2024.
 
@@ -84,9 +82,9 @@ If those years are start dates and the standard 15-year term applies, the projec
 
 ## Does the county's table match the parcel roll?
 
-Yes, closely. Each TIF project has its own tax district code, and the 2026 parcel layer carries that code on every parcel. For the 84 active projects whose code appears on parcels inside the city, the 2026 assessed value of those parcels totals $2.03 billion. The table's base plus excess for the same projects is $1.85 billion for 2024. The typical project's parcels are assessed about 5% above its 2024 base plus excess, which is what two years of rising values would produce. That agreement is why this paper reads the table's two value columns as base and excess.
+Yes, closely. Each TIF project has its own tax district code, and the 2026 parcel layer carries that code on every parcel. For the 86 active projects whose code appears on parcels inside the city, the 2026 assessed value of those parcels totals $2.28 billion. The table's base plus excess for the same projects is $1.87 billion for 2024. The typical project's parcels are assessed about 7% above its 2024 base plus excess, which is what two years of rising values would produce. That agreement is why this paper reads the table's two value columns as base and excess.
 
-In all, 107 TIF-coded tax districts appear on parcels inside the city, covering 3,904 parcels and $2.72 billion of 2026 assessed value, 7.4% of the roll. That figure includes base value and projects not marked active.
+In all, 110 TIF-coded tax districts appear on parcels inside the city, covering 4,110 parcels and $2.97 billion of 2026 assessed value, 6.7% of the roll. That figure includes base value and projects not marked active.
 
 ## What these numbers are not
 

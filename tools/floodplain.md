@@ -2,13 +2,11 @@
 
 ## Summary
 
-**Scope note, November 21, 2026.** The parcel counts and assessed values in this paper cover the part of Lincoln shown on the STARCITY map: about two thirds of the city by area (72 of 107 square miles). The city's north and northwest edges, including the Highlands, Fallbrook, Air Park and the airport area, are not yet counted, so citywide totals will be higher than the figures here. A citywide update is in progress.
-
 Lincoln's realized flood losses are mostly rainfall-driven and fall disproportionately outside the regulated floodplain, while the regulatory and insurance apparatus is riverine and SFHA-centric. Five findings support that, each reproducible from the queries in the Method section.
 
 1. **Most paid claims are not riverine.** Of 275 NFIP claims on record for the City of Lincoln, 165 (60%) carry cause-of-damage code 4, accumulation of rainfall or snowmelt. Only 47 (17%) are coded 2, overflow of a stream, river or lake. The effective FIRM maps riverine Salt Creek flooding.
 2. **Nearly a third of claims came from outside the SFHA, and policies have not followed.** 81 of 275 claims (29.5%) were rated in Zone X, B or C, accounting for $304,549 of payments. Yet only 109 of 929 in-force policies (11.7%) are rated outside the SFHA. Claims outside the mapped floodplain run at roughly 2.5 times the share of policies covering it.
-3. **The 0.2% band carries almost as much assessed value as the SFHA on a quarter of the land.** Inside the city limits the 1% floodplain covers 11,457 acres and touches $3.55 billion in assessed value. The 0.2% band covers 3,115 acres and touches $2.95 billion. Per mapped acre that is $946,582 against $309,742, a ratio of 3.1 to 1. Neither figure is a damage estimate and both are upper bounds. The ratio does not survive the strict wholly-inside test, which is set out in full below rather than left out.
+3. **The 0.2% band carries almost as much assessed value as the SFHA on a quarter of the land.** Inside the city limits the 1% floodplain covers 11,457 acres and touches $4.45 billion in assessed value. The 0.2% band covers 3,115 acres and touches $3.81 billion. Per mapped acre that is $1,221,837 against $388,268, a ratio of 3.1 to 1. Neither figure is a damage estimate and both are upper bounds. The ratio does not survive the strict wholly-inside test, which is set out in full below rather than left out.
 4. **One two-day event is nearly the entire loss history.** 107 of the 275 claims fall on 6 and 7 May 2015, and 2015 accounts for $2.28 million of the $2.63 million ever paid in Lincoln, or 87%. Any trend analysis on this record is really an analysis of one storm.
 5. **No repetitive-loss property has been mitigated.** FEMA lists 7 multiple-loss properties in Lincoln, including 1 severe repetitive loss, with 21 losses between them. The mitigated count is zero, and only 4 currently carry insurance. Two of the 7 sit outside the SFHA.
 
@@ -23,7 +21,7 @@ NFIP claim, policy and repetitive-loss figures come from live queries run on 16 
 | City of Lincoln GIS | `LTUWatershed/FEMAFlood/MapServer/1` (FEMA Floodplain, zones A and AE) | all 1,593 polygons, 462 clipped to the city | 1% annual chance extent |
 | City of Lincoln GIS | `LTUWatershed/FEMAFlood/MapServer/0` (0.2 PCT ANNUAL CHANCE FLOOD HAZARD) | all 4,060 polygons, 982 clipped to the city | 0.2% annual chance band |
 | City of Lincoln GIS | `Planning/LincolnLimits/MapServer/3` (Lincoln City Limits) | 70 features, 1 used | Jurisdictional clip |
-| City of Lincoln GIS | `Assessor/TaxParcels/MapServer/0` (Parcels) | 84,726 in the city, 5,296 and 3,744 matched | Parcel value, area, land use, year built |
+| City of Lincoln GIS | `Assessor/TaxParcels/MapServer/0` (Parcels) | 102,702 in the city, 6,046 and 4,466 matched | Parcel value, area, land use, year built |
 | OpenFEMA | `NfipClaims` v3, community 315273 | 275 claims | Realized loss record |
 | OpenFEMA | `NfipPolicies` v3, community 315273 | 889 records in force | Insurance penetration |
 | OpenFEMA | `NfipMultipleLossProperties` v1, community 315273 | 7 properties | Repetitive loss |
@@ -87,17 +85,17 @@ The 0.2% annual chance band holds assessed value comparable to the full Special 
 | --- | --- | --- |
 | Mapped area in the city, acres | 11,457 | 3,115 |
 | Polygons clipped to the city | 462 | 982 |
-| Parcels overlapping | 5,296 | 3,744 |
-| Distinct footprints | 5,192 | 3,647 |
-| Assessed value overlapping | $3,548.6M | $2,948.9M |
-| Parcels wholly inside | 2,954 (55.8%) | 688 (18.4%) |
-| Assessed value wholly inside | $1,180.7M | $293.7M |
-| Value per mapped acre, upper bound | $309,742 | $946,582 |
-| Value per mapped acre, lower bound | $103,054 | $94,262 |
+| Parcels overlapping | 6,046 | 4,466 |
+| Distinct footprints | 5,942 | 4,369 |
+| Assessed value overlapping | $4,448.2M | $3,806.4M |
+| Parcels wholly inside | 3,140 (51.9%) | 827 (18.5%) |
+| Assessed value wholly inside | $1,237.1M | $335.2M |
+| Value per mapped acre, upper bound | $388,268 | $1,221,837 |
+| Value per mapped acre, lower bound | $107,981 | $107,613 |
 
-On the upper bound the 0.2% band carries **3.06 times** the assessed value per mapped acre, on 3.7 times less land. That is the finding.
+On the upper bound the 0.2% band carries **3.15 times** the assessed value per mapped acre, on 3.7 times less land. That is the finding.
 
-**It does not survive the strict test, and that is stated here rather than omitted.** Using only parcels wholly inside each zone, the ratio falls to **0.91**, meaning the 0.2% band carries slightly less value per mapped acre than the SFHA. The reason is visible in the table: 55.8% of SFHA parcels lie wholly inside it, against only 18.4% for the 0.2% band. The band is a narrow ribbon that parcels straddle constantly, so the loose measure credits it with the full value of properties that are mostly outside it.
+**It does not survive the strict test, and that is stated here rather than omitted.** Using only parcels wholly inside each zone, the ratio falls to **1.00**, meaning the 0.2% band carries the same value per mapped acre as the SFHA and no more. The reason is visible in the table: 51.9% of SFHA parcels lie wholly inside it, against only 18.5% for the 0.2% band. The band is a narrow ribbon that parcels straddle constantly, so the loose measure credits it with the full value of properties that are mostly outside it.
 
 The honest reading is that the 0.2% band holds a large amount of value at its edges and comparatively little squarely within it. That is a planning problem in its own right, because a property straddling the line is a property that floods at its low corner. It is not evidence that the band is denser in value than the SFHA once the straddling is controlled for.
 
@@ -118,43 +116,43 @@ Claims from outside the mapped floodplain arrive at about 2.5 times the rate at 
 
 ### Combined footprint
 
-Taking both bands together and removing the 1,816 parcels that overlap both, **7,224 distinct parcels are affected, 8.53% of the 84,726 parcels inside Lincoln's corporate limit.** Those sit on 7,049 distinct footprints; the gap is condominium units, which are separate assessment records stacked on one building.
+Taking both bands together and removing the 2,202 parcels that overlap both, **8,310 distinct parcels are affected, 8.09% of the 102,702 parcels inside Lincoln's corporate limit.** Those sit on 8,135 distinct footprints; the gap is condominium units, which are separate assessment records stacked on one building.
 
-Assessed value overlapping either band is **$4.47 billion, 12.19% of the city's $36.70 billion.** The wholly-inside subset is 4,457 parcels and $2.03 billion. The defensible combined range is therefore $2.03 billion to $4.47 billion, and the Limits section explains why even the lower figure is not a damage estimate.
+Assessed value overlapping either band is **$5.64 billion, 12.71% of the city's $44.38 billion.** The wholly-inside subset is 4,957 parcels and $2.22 billion. The defensible combined range is therefore $2.22 billion to $5.64 billion, and the Limits section explains why even the lower figure is not a damage estimate.
 
 One dollar in eight of Lincoln's assessed value sits in the mapped floodplain.
 
 ## What is actually in Lincoln's floodplain
 
-&#91;embedded content: Lancaster County Assessor parcels joined to the FEMA 1% floodplain clipped to the Lincoln corporate limit · 5,296 parcels, 11,991 parcel acres, queried 21 November 2026\]
+&#91;embedded content: Lancaster County Assessor parcels joined to the FEMA 1% floodplain clipped to the Lincoln corporate limit · 6,046 parcels, 19,712 parcel acres, queried 21 November 2026\]
 
 Inside the city, the 1% floodplain is a commercial corridor with a large unimproved margin. It is not a farm corridor.
 
 | Assessor class | Parcels | Parcel acres | Share of acres | Share of value |
 | --- | --- | --- | --- | --- |
-| Commercial Unimproved | 810 | 5,419 | 45.2% | 8.1% |
-| Commercial Improved | 1,266 | 3,805 | 31.7% | 69.8% |
-| Residential Unimproved | 334 | 1,263 | 10.5% | 0.5% |
-| Residential Improved | 2,806 | 720 | 6.0% | 21.5% |
-| Ag Improved | 8 | 320 | 2.7% | 0.2% |
-| Ag Unimproved | 9 | 278 | 2.3% | 0.0% |
-| None on record | 63 | 187 | 1.6% | 0.0% |
+| Commercial Unimproved | 978 | 9,330 | 47.3% | 9.2% |
+| Commercial Improved | 1,424 | 6,544 | 33.2% | 70.2% |
+| Residential Unimproved | 391 | 1,430 | 7.3% | 0.4% |
+| Residential Improved | 3,150 | 793 | 4.0% | 19.8% |
+| Ag Improved | 9 | 339 | 1.7% | 0.1% |
+| Ag Unimproved | 26 | 1,068 | 5.4% | 0.1% |
+| None on record | 68 | 207 | 1.1% | 0.0% |
 
 Two things stand out.
 
-**Unimproved land is 58% of the acreage and 8.6% of the value.** The floodplain still has a large undeveloped margin, which is the outcome floodplain management aims for, and a reader scanning only for dollars at risk would pass over it.
+**Unimproved land is 60% of the acreage and 9.7% of the value.** The floodplain still has a large undeveloped margin, which is the outcome floodplain management aims for, and a reader scanning only for dollars at risk would pass over it.
 
-**Commercial Improved property is 31.7% of the acreage and 69.8% of the value.** Just 1,266 parcels carry roughly seven dollars in ten of Lincoln's floodplain exposure. If mitigation money follows value, it follows those parcels.
+**Commercial Improved property is 33.2% of the acreage and 70.2% of the value.** Just 1,424 parcels carry roughly seven dollars in ten of Lincoln's floodplain exposure. If mitigation money follows value, it follows those parcels.
 
 ### Why the agricultural share is so small
 
-Agricultural land in the 1% floodplain amounts to **597 acres, 5.0% of the parcel acreage, holding $7.1 million, or 0.2% of the value.** The large agricultural parcels along Salt Creek lie outside the corporate limit and belong to a county analysis rather than a city one. Inside Lincoln the floodplain is substantially developed, and 91.5% of the value on floodplain parcels sits on improved land.
+Agricultural land in the 1% floodplain amounts to **1,407 acres, 7.1% of the parcel acreage, holding $11.7 million, or 0.3% of the value.** The large agricultural parcels along Salt Creek lie outside the corporate limit and belong to a county analysis rather than a city one. Inside Lincoln the floodplain is substantially developed, and 90.1% of the value on floodplain parcels sits on improved land.
 
 ## Pre-FIRM housing, and why the claim record hides it
 
 Lincoln's initial FIRM identified date is **27 April 1971**, taken from FEMA's Community Information System row for CID 315273. The column mapping was verified against two control communities before the date was used: Omaha, which shows a blank initial FHBM and an initial FIRM of 08 May 1971, and Alda, which carries all three dates. Lincoln's row shows a blank initial FHBM, initial FIRM 04/27/71, current effective map 04/16/13, regular emergency date 04/23/71, CRS entry 10/01/91, and current CRS class 5 at a 25% discount.
 
-Against that date, **1,092 of the 2,238 floodplain parcels carrying a residential year built predate the first flood map, or 48.8%.** The median year built across them is 1971, which places the stock almost exactly astride the regulatory boundary. Those 1,092 parcels carry $232.0 million in assessed value against $449.8 million for the 1,146 post-FIRM parcels.
+Against that date, **1,793 of the 3,151 floodplain parcels carrying a residential year built predate the first flood map, or 56.9%.** The median year built across them is 1964, seven years before the regulatory boundary. Those 1,793 parcels carry $369.8 million in assessed value against $516.7 million for the 1,358 post-FIRM parcels.
 
 ### The record and the stock disagree sharply
 
@@ -163,13 +161,13 @@ Against that date, **1,092 of the 2,238 floodplain parcels carrying a residentia
 | Post-FIRM | 164 ($2,108k) | 77 ($288k) | 241 | 87.6% |
 | Pre-FIRM | 30 ($218k) | 4 ($17k) | 34 | 12.4% |
 
-Pre-FIRM structures make up 48.8% of the floodplain's dated residential stock but only 12.4% of its claimants. That is a four-fold discrepancy and it points one way.
+Pre-FIRM structures make up 56.9% of the floodplain's dated residential stock but only 12.4% of its claimants. That is a discrepancy of more than four-fold and it points one way.
 
 The most likely explanation is insurance visibility rather than physical risk. Mandatory purchase attaches to federally backed mortgages, and the oldest housing is the most likely to be owned outright, so pre-FIRM structures are systematically under-represented in any NFIP-derived dataset. Their losses are absorbed privately, through disaster assistance, or not at all, and they never enter the claims file.
 
 This matters for mitigation targeting. A program scoped from claims data will concentrate on post-FIRM construction, which is elevated to the standard in force when it was built, and will systematically skip the pre-FIRM stock that has no elevation requirement behind it. The 466 pre-FIRM structures identified here are a candidate list that the claim record will never surface.
 
-Two honest caveats. The policy extract pulled for this report carries no pre-FIRM flag, so the under-insurance step is an inference from the mandatory purchase rule and not a measured penetration rate; confirming it needs the pre-FIRM field from the policy file. And the 48.8% covers residential structures only, for reasons the next section sets out.
+Two honest caveats. The policy extract pulled for this report carries no pre-FIRM flag, so the under-insurance step is an inference from the mandatory purchase rule and not a measured penetration rate; confirming it needs the pre-FIRM field from the policy file. And the 56.9% covers residential structures only, for reasons the next section sets out.
 
 ## Data defects worth knowing about
 
@@ -177,9 +175,9 @@ Anyone rebuilding this analysis from the same sources will hit these. Several ar
 
 | Defect | Effect | Workaround |
 | --- | --- | --- |
-| Assessor `RESYRBLT` is heavily defaulted to round years | In the floodplain parcels, 1900 appears 334 times, 1910 135 times and 1920 87 times. Round decade years are 735 of 2,238 records, 32.8% | Use the field only for a pre-FIRM or post-FIRM split, never for a median, a decade histogram, or a depreciation curve |
+| Assessor `RESYRBLT` is heavily defaulted to round years | In the floodplain parcels, 1900 appears 370 times, 1910 164 times and 1920 144 times. Round decade years are 1,055 of 3,151 records, 33.5% | Use the field only for a pre-FIRM or post-FIRM split, never for a median, a decade histogram, or a depreciation curve |
 | `USEDSCRP` comes back empty | The Assessor parcel service lists a land use description field in its schema and returns null on every record, so a land use breakdown by use code is not available from it | Use `CLASSDSCRP`, which is populated, or join the use code from a different Assessor service |
-| `RESYRBLT` is residential-only | 2,378 of the 4,616 floodplain parcels carry no year at all, 51.5%. Some are genuinely unimproved, but every improved commercial, public and institutional parcel is also blank, because the field only ever describes residential structures | Join building-level records, or treat all non-residential vintage as unknown rather than absent |
+| `RESYRBLT` is residential-only | 2,958 of the 6,109 floodplain parcels carry no year at all, 48.4%. Some are genuinely unimproved, but every improved commercial, public and institutional parcel is also blank, because the field only ever describes residential structures | Join building-level records, or treat all non-residential vintage as unknown rather than absent |
 | `reportedCity` is redacted in `NfipClaims` | Every Lancaster County record returns the literal string `Currently Unavailable`, so a city-name filter silently returns zero rows rather than an error | Filter on `nfipRatedCommunityNumber eq '315273'` or `countyCode eq '31109'` |
 | `FimaNfipClaims` no longer exists | The OpenFEMA v2 endpoint returns HTTP 404 | The dataset is `NfipClaims` v3; enumerate current names from `api/open/v1/DataSets` |
 | Sentinel construction dates | `originalConstructionDate` in the Lincoln claims file ranges from 1492 to 2013 | Screen the lower tail before computing any age statistic |
@@ -199,19 +197,19 @@ This is an exposure inventory, not a risk assessment. Risk requires depth and a 
 
 ### Boundary-clip bias runs one way
 
-The overlap join counts a parcel at full assessed value however little of it lies inside the floodplain. Clipping to the city limits removed most of the mechanism, because the very large agricultural parcels along Salt Creek that drove it are outside the corporate limit. What remains is the 0.2% band, where only 18.4% of overlapping parcels lie wholly inside, against 55.8% for the SFHA. Value attributed to the 0.2% band is therefore substantially more clip-inflated than value attributed to the SFHA, which is why the two bands cannot be compared on the loose measure alone.
+The overlap join counts a parcel at full assessed value however little of it lies inside the floodplain. Clipping to the city limits removed most of the mechanism, because the very large agricultural parcels along Salt Creek that drove it are outside the corporate limit. What remains is the 0.2% band, where only 18.5% of overlapping parcels lie wholly inside, against 51.9% for the SFHA. Value attributed to the 0.2% band is therefore substantially more clip-inflated than value attributed to the SFHA, which is why the two bands cannot be compared on the loose measure alone.
 
-That is why every value in this report is given as a bracket. For the 1% floodplain the bracket is **$1,180.7 million to $3,548.6 million**, a factor of 3.0. For the 0.2% band it is $293.7 million to $2,948.9 million, a factor of 10.0, and that wider spread is itself the finding about the band's geometry. The true area-weighted figure sits inside each bracket and would need an area-apportioned valuation, which assessed value does not support.
+That is why every value in this report is given as a bracket. For the 1% floodplain the bracket is **$1,237.1 million to $4,448.2 million**, a factor of 3.6. For the 0.2% band it is $335.2 million to $3,806.4 million, a factor of 11.4, and that wider spread is itself the finding about the band's geometry. The true area-weighted figure sits inside each bracket and would need an area-apportioned valuation, which assessed value does not support.
 
 ### Assessed value is the wrong unit, in two directions
 
 Assessed value includes land, and floods do not destroy land. FEMA benefit-cost analysis uses structure replacement cost plus contents, which is a different and usually larger number for a developed parcel and a far smaller one for a farm field.
 
-The assessment basis also distorts across classes. Nebraska assesses most real property at 100% of actual value but [agricultural and horticultural land at 75%](https://www.law.cornell.edu/regulations/nebraska/350-Neb-Admin-Code-ch-10-SS-003). Inside the corporate limit that barely matters, because agricultural land accounts for $7.1 million of the $3.55 billion, or 0.2%. It would matter a great deal in any county-wide version of this analysis. Separate and lower percentages apply for certain school district tax computations, so any dollar figure should state which basis it uses.
+The assessment basis also distorts across classes. Nebraska assesses most real property at 100% of actual value but [agricultural and horticultural land at 75%](https://www.law.cornell.edu/regulations/nebraska/350-Neb-Admin-Code-ch-10-SS-003). Inside the corporate limit that barely matters, because agricultural land accounts for $11.7 million of the $4.45 billion, or 0.3%. It would matter a great deal in any county-wide version of this analysis. Separate and lower percentages apply for certain school district tax computations, so any dollar figure should state which basis it uses.
 
 ### Parcel is not structure
 
-Nothing here counts buildings. A parcel may hold none, one, or many, and the gap runs both ways. Condominium units are the clearest case: 7,224 floodplain parcel records sit on 7,049 distinct building footprints, so a single building can carry many separate assessment records. In the other direction, a large unimproved commercial parcel is one record and no structure at all, and unimproved land is 58% of the floodplain acreage. Parcel counts in this report are counts of assessment records, not of buildings or of households.
+Nothing here counts buildings. A parcel may hold none, one, or many, and the gap runs both ways. Condominium units are the clearest case: 8,310 floodplain parcel records sit on 8,135 distinct building footprints, so a single building can carry many separate assessment records. In the other direction, a large unimproved commercial parcel is one record and no structure at all, and unimproved land is 60% of the floodplain acreage. Parcel counts in this report are counts of assessment records, not of buildings or of households.
 
 ### No elevations, and nearly half the SFHA has no base flood elevation at all
 
@@ -271,7 +269,7 @@ The findings above point to different actions depending on who is holding them. 
 
 These are the items that need a policy choice or a budget line.
 
-- **Extend local floodplain standards into the 0.2% band.** $2.95 billion of assessed value overlaps 3,115 acres of shaded Zone X inside the city, where federal rules impose no mandatory insurance purchase, no substantial improvement trigger and no floodway standard. Most of that value straddles the line rather than sitting squarely inside it, which is an argument for a standard that applies at the edge. Communities may adopt stricter local standards there, and the CRS program gives credit for doing so.
+- **Extend local floodplain standards into the 0.2% band.** $3.81 billion of assessed value overlaps 3,115 acres of shaded Zone X inside the city, where federal rules impose no mandatory insurance purchase, no substantial improvement trigger and no floodway standard. Most of that value straddles the line rather than sitting squarely inside it, which is an argument for a standard that applies at the edge. Communities may adopt stricter local standards there, and the CRS program gives credit for doing so.
 - **Fund a rainfall flood study.** Sixty percent of paid claims are rainfall or snowmelt accumulation, a mechanism the FIRM does not model anywhere. Until that water is mapped, no capital project or ordinance can be aimed at the cause of most of Lincoln's flood damage. The minimum flood corridor is the nearest existing tool, and a fixed-width buffer is not a model of where water goes.
 - **Mitigate the seven repetitive-loss properties.** Seven properties, one of them severe repetitive loss, have produced 21 losses between them and none has been mitigated. FEMA's Flood Mitigation Assistance program prioritizes exactly these. Seven is a fundable number.
 - **Decide the levee posture deliberately.** The Salt Creek system is non-accredited at a 50-year design standard. The realistic options are pursuing accreditation, which is expensive, or formally communicating residual risk to the people living behind it, which is not. Doing neither is also a decision.
@@ -294,7 +292,7 @@ These are operational and affect day-to-day administration.
 - **Most flood damage here is rainfall, not Salt Creek.** Sixty percent of claims are rainfall or snowmelt accumulation: water that pools, backs up and cannot drain, rather than a creek leaving its banks. A property can take that damage without being near a channel.
 - **Homeowners insurance does not cover flood.** Flood coverage is a separate NFIP or private policy. Outside the SFHA it is usually inexpensive, and that is where the coverage gap is widest.
 - **In the floodplain, the city's CRS rating cuts premiums by 25%.** That discount exists because of floodplain management work the city does, and it applies to NFIP policies written in Lincoln.
-- **Know your zone, and know your home's age.** A house built before April 1971 predates Lincoln's first flood map and has no elevation requirement behind it. Roughly half the floodplain's residential structures with a recorded date fall in that group.
+- **Know your zone, and know your home's age.** A house built before April 1971 predates Lincoln's first flood map and has no elevation requirement behind it. More than half the floodplain's residential structures with a recorded date fall in that group.
 - **One storm can be the whole story.** 107 of Lincoln's 275 recorded flood claims landed on two days, 6 and 7 May 2015. Flood risk here is not a steady drip; it arrives all at once and then is quiet for years.
 
 ## Sources and verification log
@@ -321,7 +319,7 @@ These are operational and affect day-to-day administration.
 ### Checks that constrained the findings
 
 - **Year-built distribution.** Round decade years account for 30.9% of records carrying a construction date, with 1900 appearing 137 times against 18 records across all of 1901 to 1909. Vintage claims are capped at a pre-FIRM or post-FIRM split and go no finer.
-- **Containment test.** 2,954 of 5,296 parcels lie wholly inside the 1% floodplain and 688 of 3,744 inside the 0.2% band, so every dollar figure is reported as a bracket rather than a point estimate.
+- **Containment test.** 3,140 of 6,046 parcels lie wholly inside the 1% floodplain and 827 of 4,466 inside the 0.2% band, so every dollar figure is reported as a bracket rather than a point estimate.
 - **Elevation coverage.** Just 18 of 275 claims carry an elevation difference against base flood elevation, so no elevation or depth analysis was attempted at any scale.
 
 ### As of this report
@@ -332,4 +330,4 @@ Assessed values follow the current county assessment roll and are revised annual
 
 ---
 
-A companion study, [Who Lincoln Over-Assesses, and Who It Does Not](assessment.html), measures the county assessor against the standards its own profession sets, using 2,858 arm's-length sales. It finds the level and the consistency sound and the vertical equity outside standard.
+A companion study, [Who Lincoln Over-Assesses, and Who It Does Not](assessment.html), measures the county assessor against the standards its own profession sets, using 3,340 arm's-length sales. It finds the level and the consistency sound and the vertical equity outside standard.
