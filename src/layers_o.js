@@ -113,6 +113,9 @@ const SALESS={title:'New <i>sales</i>',tabs:['Newest','Where it is happening'],h
   if(v[0]==='w'){const c=SALE.where[+v.slice(1)];if(c)flyTo(camTo(c[0],c[1],2400,200,42),2000);return}const L=DL.get('sales'),i=+v;flyTo(camTo(L.X[2*i],L.X[2*i+1],420,200,40),1800);if(L.def.card)L.def.card(L,i);else dlCard(L,i)}};
 // ---- look around from where the camera is: hold and drag to look up to the horizon and all the way round
 const LOOK={on:false,keep:null};
+// the view from the Capitol's 14th floor observation deck: the look-around mode, started from up there
+function capitolDeck(){if(LOOK.on)setLook(false);if(walk.on||ride||!LM.capitol)return;const c=LM.capitol,y=hAt(c[0],c[1])+76;fly=null;stopTour();hideCard();camera.position.set(c[0]-15,y,c[1]);controls.target.set(c[0]-715,y-90,c[1]);controls.update();setLook(true);
+  hintShow('The view from the Capitol\'s 14th floor observation deck, about 245 feet up. Drag to look all the way round. Back to the map returns you.',9000)}
 function setLook(on){if(on===LOOK.on)return;if(on){if(walk.on||ride||NSKY.on)return;const p=camera.position.clone(),t=controls.target.clone(),v=viewAngles();LOOK.keep={p,t};LOOK.on=true;walk.eye=Math.max(1.7,p.y-hAt(p.x,p.z));
     setWalk(true,{x:p.x,z:p.z,yaw:v.az*Math.PI/180});walk.pitch=-Math.min(1.15,Math.max(0,v.el)*Math.PI/180);camera.fov=58;camera.updateProjectionMatrix();document.body.classList.add('looking');$('wkX').textContent='← Back to the map';$('bLook').classList.add('on');
     hintShow(mobile?'Drag to look up to the horizon and all the way round · pinch to zoom · Back to the map returns you':'Hold the mouse and drag to look up to the horizon and all the way round · scroll to zoom · Back to the map returns you',8000)}
