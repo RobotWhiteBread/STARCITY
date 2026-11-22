@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How STARCITY Checks Its Work · STARCITY</title>
+<meta name="description" content="How each STARCITY paper was checked against official figures, what the checks found, and what was corrected.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How STARCITY Checks Its Work">
+<meta property="og:description" content="How each STARCITY paper was checked against official figures, what the checks found, and what was corrected.">
+<meta property="og:url" content="https://starcitylincoln.org/verification.html">
+<meta property="og:image" content="https://starcitylincoln.org/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1a1d23;
+ font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:11.5pt;line-height:1.55}
+a{color:#1a4f8a}
+nav.bar{display:none}
+main{max-width:none;margin:0;padding:0}
+h1{font-size:21pt;line-height:1.2;margin:0 0 .12em;letter-spacing:-.01em}
+.sub{color:#5c6270;font-size:11pt;margin:0 0 1.6em}
+h2{font-size:14.5pt;line-height:1.28;margin:1.7em 0 .5em;padding-top:.8em;
+ border-top:1px solid #d8dce2;break-after:avoid;page-break-after:avoid}
+h3{font-size:11.8pt;margin:1.4em 0 .35em;color:#1a4f8a;font-weight:600;
+ break-after:avoid;page-break-after:avoid}
+p,li{color:#24282f}
+strong{color:#000;font-weight:600}
+code{background:#f2f4f7;border:1px solid #dde1e7;border-radius:3px;
+ padding:.05em .3em;font-size:.85em;color:#2d3340;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+ul,ol{padding-left:1.2em}
+li{margin:.3em 0}
+.tw{margin:1em 0;border:1px solid #dde1e7;border-radius:5px;overflow:hidden;
+ break-inside:avoid;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}
+th,td{text-align:left;padding:6px 9px;border-bottom:1px solid #e8ebef;vertical-align:top}
+th{background:#f2f4f7;color:#1a1d23;font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+.chart{margin:1.2em 0;break-inside:avoid;page-break-inside:avoid}
+.chart svg{width:100%;height:auto;display:block}
+figcaption{color:#6b7280;font-size:8.5pt;margin-top:.4em;line-height:1.4}
+footer{margin-top:1.8em;padding-top:.8em;color:#6b7280;font-size:8.5pt;
+ border-top:1px solid #d8dce2}
+@page{margin:16mm 15mm}
+</style>
+</head>
+<body>
+<nav class="bar"><div><a href="./">&#8592; STARCITY</a><span>Lincoln, Nebraska in 3D</span></div></nav>
+<main>
+<h1>How STARCITY Checks Its Work</h1>
+<p class="sub">Verification log &#183; Last updated November 21, 2026</p>
+<p>STARCITY is built by one person with AI assistance. AI makes it fast to pull public data and add it up. It does not make the result right. This page shows how each paper was checked, what the checks found, and what was corrected, so you can judge the work for yourself and do the same in your own city.</p>
+<h2>The process</h2>
+<ol>
+<li><strong>Start from the original record.</strong> Every figure comes from a file a government agency publishes, downloaded on a stated date. Nothing is carried from memory or from a news summary.</li>
+<li><strong>Publish the method and the script.</strong> Each paper says how its numbers were computed and what they leave out. The code is in the project's public repository, so anyone can run it again.</li>
+<li><strong>Look for an official figure that should agree.</strong> Before trusting a number, find the same quantity measured by someone else, usually a state agency. If they differ, find out why, and print both.</li>
+<li><strong>Look for independent reporting.</strong> Where newsrooms have covered the same records, check that the names and amounts match.</li>
+<li><strong>Say what is not verified.</strong> If no outside figure exists, or a gap is unexplained, the paper says so.</li>
+<li><strong>Correct in public.</strong> Mistakes are fixed in the paper and listed below with the date.</li>
+</ol>
+<h2>What the checks found</h2>
+<div class="tw"><table><thead><tr><th>Paper</th><th>Our figure</th><th>Outside figure</th><th>Result</th></tr></thead><tbody>
+<tr><td><a href="assessment.html">Assessment equity</a></td><td>Price-related differential 1.037, median ratio 0.920, on 3,340 sales after values were set</td><td>State's <a href="https://revenue.nebraska.gov/sites/default/files/doc/pad/research/statewide_equalization/counties/2026/55Lancaster.pdf" rel="noopener">2026 Reports and Opinions</a>: 1.006 and 0.970, on 8,360 earlier sales</td><td><strong>Corrected.</strong> The paper first said the assessor failed the fairness test and did not mention the state's study. It now leads with both results and explains why they differ.</td></tr>
+<tr><td><a href="taxbase.html">Property value</a></td><td>$44.4 billion assessed on the 2026 roll</td><td>State <a href="https://revenue.nebraska.gov/sites/default/files/doc/pad/research/TIF_Reports/TIF_REPORT_2025.pdf" rel="noopener">TIF report</a>: $40.0 billion taxable in 2025, including TIF excess</td><td><strong>Explained in part.</strong> Ours is a later year and includes exempt property. The size of the gap has not been measured, and the paper says so.</td></tr>
+<tr><td><a href="tif.html">TIF districts</a></td><td>$1.295 billion of excess value in 89 active projects, 2024</td><td>State reports: $1.377 billion for <a href="https://www.nebraskalegislature.gov/FloorDocs/109/PDF/Agencies/Revenue__Department_of/25_20250228-114020.pdf" rel="noopener">2024</a>, $1.506 billion for <a href="https://revenue.nebraska.gov/sites/default/files/doc/pad/research/TIF_Reports/TIF_REPORT_2025.pdf" rel="noopener">2025</a></td><td><strong>Ours is lower by 6%.</strong> We count only projects the county marks active. The paper now calls its total a floor and points to the state's.</td></tr>
+<tr><td><a href="sales.html">Home sales</a></td><td>Median price $320,000; $251 a square foot</td><td>Redfin: $315,000 for the three months ending October 2026; $166 a square foot</td><td><strong>Price agrees within 2%.</strong> Price per square foot does not, because we divide by above-grade area only. The paper now warns against comparing it with listing sites.</td></tr>
+<tr><td><a href="floodplain.html">Floodplain and flood loss</a></td><td>275 claims, $2.63 million paid, 7 repeat-loss properties</td><td>None found</td><td><strong>Not independently verified.</strong> These are direct counts from FEMA's files. No second official source publishes them for Lincoln.</td></tr>
+<tr><td><a href="campaign.html">Campaign money</a></td><td>$1,068,502 in independent spending; largest funders of each group</td><td>News coverage of the 2023 mayor's race by the Flatwater Free Press and Nebraska Examiner</td><td><strong>Names and direction agree.</strong> Totals were not checked line by line against individual filings. One candidate's committee was found to span two races, and a note was added.</td></tr>
+</tbody></table></div>
+<h2>Corrections</h2>
+<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>What changed</th></tr></thead><tbody>
+<tr><td>November 21, 2026</td><td>Assessment equity</td><td>Added the state's official 2026 ratio study beside our own and removed the statement that the assessor fails the fairness test. The PDF of this paper predates the change; the web page is current.</td></tr>
+<tr><td>November 21, 2026</td><td>Property value, TIF, Home sales, Floodplain</td><td>Added a section to each comparing its headline figure with an outside source, or saying none was found.</td></tr>
+<tr><td>November 21, 2026</td><td>All papers</td><td>Earlier releases described figures as citywide when the data had been clipped to the map's rectangle. Every paper was recomputed for the full city limits.</td></tr>
+<tr><td>November 21, 2026</td><td>Campaign money</td><td>Spending described only as "advertising" was first counted as TV and digital. It now has its own category.</td></tr>
+</tbody></table></div>
+<h2>Why this is hard</h2>
+<ul>
+<li><strong>A number can be computed correctly and still mislead.</strong> Our assessment figure was right arithmetic. The error was not knowing the state already publishes the official measure.</li>
+<li><strong>Public data has traps.</strong> Lincoln's city limits layer holds 70 shapes with the same name. Map layers report areas about 75% too large at this latitude. State files repeat records from year to year. Each produces a wrong answer that looks reasonable.</li>
+<li><strong>Checking takes people who know the subject.</strong> A county assessor, a floodplain manager or a campaign treasurer can spot in a minute what a script never will.</li>
+</ul>
+<h2>What has not been done yet</h2>
+<ul>
+<li>No paper has been reviewed by the agency whose data it uses, or by an outside expert.</li>
+<li>The figures on the map itself, outside the papers, have been checked less than the papers.</li>
+<li>Updates are still made by hand, so a figure can go stale without notice. Each one carries its date for that reason.</li>
+</ul>
+<h2>Check it yourself, or check your own city</h2>
+<ol>
+<li>Pick one number from any paper and open the source listed at the bottom of that paper.</li>
+<li>Find the same number, or the rows it was added up from.</li>
+<li>If it does not match, report it on the project's <a href="https://github.com/RobotWhiteBread/STARCITY/issues" rel="noopener">issues page</a>. It will be checked and, if wrong, corrected here with the date.</li>
+<li>To do this for another Nebraska city, the state's files for assessment, TIF and campaign finance cover every county and city in the same format. The scripts in the repository are a starting point.</li>
+</ol>
+<p>More at <a href="reports.html">The STARCITY Papers</a> and <a href="about.html">About</a>.</p>
+</main>
+<footer>
+Built from public data: City of Lincoln and Lancaster County GIS, and OpenFEMA.
+Part of <a href="./">STARCITY</a>, an open-source 3D map of Lincoln.
+Source and data scripts at <a href="https://github.com/RobotWhiteBread/STARCITY" rel="noopener">github.com/RobotWhiteBread/STARCITY</a>.
+</footer>
+</body>
+</html>

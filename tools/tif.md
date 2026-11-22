@@ -106,6 +106,10 @@ In all, 110 TIF-coded tax districts appear on parcels inside the city, covering 
 
 **If you are a resident.** TIF does not raise your tax rate directly. It decides where the tax from one new building goes for 15 years.
 
+## Checked against an outside figure
+
+The Nebraska Department of Revenue reports TIF excess value for the City of Lincoln of $1.377 billion for [tax year 2024](https://www.nebraskalegislature.gov/FloorDocs/109/PDF/Agencies/Revenue__Department_of/25_20250228-114020.pdf) and $1.506 billion for [tax year 2025](https://revenue.nebraska.gov/sites/default/files/doc/pad/research/TIF_Reports/TIF_REPORT_2025.pdf). This paper's $1.295 billion is about 6% below the state's 2024 figure. It counts only the 89 projects the county's table marks active, and the state's total can include projects this filter leaves out. Treat $1.295 billion as a floor for 2024, and the state's report as the official total. The state's 2025 figure shows excess value grew about 9% in a year. How every paper was checked is on the [verification page](verification.html).
+
 ## Method
 
 The source is the county's published TIF table (119 rows). Rows marked Active (89) are summed. Excess value times the recorded levy gives the tax on the excess. The cross-check sums 2026 assessed value by tax district code from the Lancaster County Assessor's parcel layer for parcels inside Lincoln's corporate limit. The 15-year term is the standard under Nebraska's Community Development Law. Some projects qualify for a longer term.

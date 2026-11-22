@@ -152,6 +152,10 @@ Near South has the lowest price per square foot in the table at $147, on a housi
 
 **If you are on the council.** New construction is selling at a median near $469,000, and 9.3% of sales close under $200,000. The supply of homes at entry prices is the existing older stock, which is a reason to care what happens to it.
 
+## Checked against outside figures
+
+[Redfin](https://www.redfin.com/city/7163/NE/Lincoln/housing-market) reported a median sale price of $315,000 in Lincoln for the three months ending October 2026. This paper's $320,000 for twelve months is within 2% of it. Price per square foot does not match and should not: Redfin reported $166, against $251 here. This paper divides by the assessor's above-grade floor area, which leaves out finished basements, and listing sites usually count all finished space. Use the $251 only to compare homes inside this paper. How every paper was checked is on the [verification page](verification.html).
+
 ## Method
 
 Sales are the Lancaster County Assessor's published sales layer, 3,761 records countywide dated November 23, 2025 through November 16, 2026. This paper uses the 3,430 located inside Lincoln's corporate limit, of which 3,340 are residential. Price per square foot, floor area, structure type and year built are the county's fields. Neighborhood was assigned by matching each sale's parcel number to the 2026 parcel layer and locating that parcel inside the city's neighborhood association boundaries. The assessment comparison uses the assessed value carried on each sale record. A fuller treatment of assessed value against sale price is in the companion paper on assessment equity.

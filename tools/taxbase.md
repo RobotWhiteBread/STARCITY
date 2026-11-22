@@ -166,6 +166,10 @@ The county's own TIF layer records a consolidated levy of **$1.766448 per $100**
 
 **If you are a resident.** Your neighborhood's line in the table shows what the ground under it contributes.
 
+## Checked against an outside figure
+
+The Nebraska Department of Revenue's [TIF report for tax year 2025](https://revenue.nebraska.gov/sites/default/files/doc/pad/research/TIF_Reports/TIF_REPORT_2025.pdf) lists the City of Lincoln's taxable value as $38.50 billion, plus $1.51 billion of TIF excess value, $40.01 billion in all. This paper's $44.4 billion is about 11% higher, and three known differences run that direction. It is the 2026 roll and the state figure is 2025. It sums the assessed value on every parcel, including hospitals, churches and public property that are assessed but exempt from tax. And it has not been reduced by homestead or other exemptions. The two figures measure different things. This paper has not measured how much of the gap each difference explains, so the size of the gap is not yet verified. Use the state's figure for what is taxed and this one for what the land and buildings are assessed at. How every paper was checked is on the [verification page](verification.html).
+
 ## Method
 
 Parcels are the Lancaster County Assessor's published layer with 2026 assessed values (field CNTASSDVAL), all 122,748 parcels in the county, pulled November 21, 2026. A parcel is counted as in Lincoln when a point inside it falls within the corporate limit (106.7 square miles; the larger extraterritorial jurisdiction polygon in the same layer is excluded). Areas are computed in an equal-area projection (EPSG:5070), not from a published area field. Neighborhood associations are the city's published boundaries. The scripts are in the project repository under tools/analysis.

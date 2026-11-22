@@ -14,6 +14,10 @@ Lincoln's realized flood losses are mostly rainfall-driven and fall disproportio
 
 The practical implication is that mapped-floodplain acreage is a weak proxy for where Lincoln actually takes flood damage. Mitigation and outreach targeted on the SFHA line will miss a large share of the loss history.
 
+## Checked against an outside figure
+
+The claim, policy and repeat-loss counts in this report are direct counts from FEMA's own files, so there is no second official source to check them against. The city's own pages confirm its Class 5 rating in FEMA's Community Rating System. How every paper was checked is on the [verification page](verification.html).
+
 ## Method and provenance
 
 NFIP claim, policy and repetitive-loss figures come from live queries run on 16 November 2026. Every spatial figure, meaning all acreages, parcel counts and assessed values, comes from queries run on 21 November 2026 against the extent described below. No figure is carried from memory or from a secondary summary.
