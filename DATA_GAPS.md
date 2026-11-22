@@ -33,6 +33,22 @@ STARCITY uses only data that public agencies already publish. This page lists th
 | Drinking water test results by sampling site | Lincoln Water System | Annual summary reports are public. Site-level results as data were not found. | Not on the map. | Results by site and date. | To confirm |
 | Street condition ratings | City Transportation and Utilities | Not found in the public catalog. | Not on the map. | The pavement rating for each street segment, with the year rated. | To confirm |
 | Rental registrations and housing code cases | City Building and Safety | Not found in the public catalog. | Not on the map. | Counts by block and year, without tenant or owner names. | To confirm |
+| Election results by precinct for every election | Lancaster County Election Commissioner | Precinct reports are posted for the 2025 city elections and for 2019 and earlier. For the May 2023 city election the page has citywide totals and turnout by precinct only. For November 2024 it has summaries and turnout statistics. | The votes paper covers sixteen votes from 2011 to 2025 and leaves out the 2023 mayor's race and the 2024 ballot measures. | The official precinct results report for every election, posted with the canvass, as a spreadsheet as well as a PDF. | Confirmed for 2023 and 2024. To confirm for 2022. |
+| Early votes counted in their home precinct | Lancaster County Election Commissioner | Through 2019 early votes are one citywide line. In 2018 that line was 34,497 of 117,836 ballots. | Precinct tables for 2011 to 2019 show election-day voters only, and say so. | Early ballots reported in the voter's precinct, as the 2025 reports appear to do. | Confirmed |
+| Where campaign mail and advertising was aimed | Nebraska Accountability and Disclosure Commission | Independent expenditure reports give a date, an amount, a candidate, support or oppose, and a short description such as mailing. They do not say which districts, precincts or ZIP codes received it, or how many pieces. | Outside spending is set beside results by candidate. It cannot be set beside results by precinct. | For each mailing or ad buy: the piece count and the districts or ZIP codes targeted, on the same report. | Confirmed |
+| Who funds groups that spend on local elections | Nebraska Accountability and Disclosure Commission | Three of the eight groups that spent on Lincoln's 2023 and 2025 city races have no funder list on file. | The money view shows those groups as a black block labeled no funders on file. | Funders above a set amount for any group that spends on a candidate or ballot question, filed before the election. | Confirmed |
+
+## When money is spent on a public vote
+
+A campaign for an office or a ballot question asks the public for something. When outside money is spent on that ask, these are the records that would let anyone follow it from the check to the result. Each line is a question a resident could answer in a minute if the record existed.
+
+1. **Who paid.** Funders of every group that spends, filed before the vote. Today three of eight groups in Lincoln's last two city elections list none.
+2. **What it bought.** Mail, broadcast, digital or canvassing, in set categories. Today a third of the spending is described only as advertising.
+3. **Where it was aimed.** Districts or ZIP codes and piece counts for each mailing or ad buy. Today this is not collected.
+4. **What the vote was, precinct by precinct.** The official precinct report for every election, with early votes in their home precinct, as a spreadsheet. Today it is posted for some elections and not others.
+5. **Who turned out.** Turnout by precinct, which the county already posts.
+
+With all five, the map could show a dollar leaving a funder, landing as mail in a set of precincts, and the vote in those precincts beside it. With what exists today it can show the first step for five groups, the second in part, and the fourth for some elections. See the [votes paper](votes.html) and the [campaign money paper](campaign.html).
 
 ## How to ask for it
 
