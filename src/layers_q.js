@@ -193,3 +193,78 @@ function hsFit(L){
   if(Math.abs(s-dlHS)<.02)return;
   dlHS=s;dirty=true;
   const sl=document.querySelector('#dlg input[data-s="h"]');if(sl)sl.value=Math.round(dlHS*100)}
+
+// ---- Watch Lincoln grow: every building with a year on record appears in that year. The year is the county assessor's, which covers homes.
+const GROW={on:false,play:false,y:1867,cum:null,n:0,sh:null};
+function growInit(){if(GROW.cum)return;const cum=new Uint32Array(2027-1860),yr=S.b_yr;let n=0;for(let b=0;b<yr.length;b++){const y=yr[b];if(y>1800){n++;cum[Math.max(0,Math.min(2026,y)-1860)]++}}for(let i=1;i<cum.length;i++)cum[i]+=cum[i-1];GROW.cum=cum;GROW.n=n;
+  for(const m of pickables){if(!(m.userData&&m.userData.ids&&m.geometry&&m.geometry.index&&m.userData.start))continue;const g=m.geometry,cnt=g.attributes.position.count,idx=g.index.array,st=m.userData.start,ids=m.userData.ids,a=new Float32Array(cnt);
+    for(let k=0;k<st.length;k++){const e=k+1<st.length?st[k+1]:idx.length,y=yr[ids[k]]>1800?yr[ids[k]]:0;for(let i=st[k];i<e;i++)a[idx[i]]=y}g.setAttribute('aYr',new THREE.BufferAttribute(a,1))}}
+function growSet(y){GROW.y=y;U.uYear.value=y;const yi=Math.round(y);$('growR').value=yi;$('growL').textContent=yi+' · '+GROW.cum[Math.max(0,yi-1860)].toLocaleString('en-US')+' homes';dirty=true}
+function growOpen(){growInit();GROW.on=true;GROW.sh=shadowsOn;shadowsOn=false;shadowDirty=true;$('grow').style.display='flex';$('sun').style.display='none';growSet(1867);GROW.play=true;$('growP').textContent='❚❚';
+  showCard('Watch Lincoln grow','Lincoln was named the capital in 1867. Press play or drag the year. Each home appears in the year the county assessor says it was built, and glows gold while it is new. Grey buildings have no year on record: that is most businesses, schools, churches and garages, so they stay up the whole time. '+GROW.n.toLocaleString('en-US')+' of the '+S.b_yr.length.toLocaleString('en-US')+' buildings on the map have a year. A house that replaced an older one shows only its own year, so the early city looks emptier than it was. Streets and trees are today\'s. Source: Lancaster County Assessor, year built.',undefined,{label:'Leave this view',fn:growClose})}
+function growClose(){if(!GROW.on)return;GROW.on=false;GROW.play=false;U.uYear.value=0;shadowsOn=GROW.sh;shadowDirty=true;$('grow').style.display='none';$('sun').style.display='';hideCard();dirty=true}
+function stepGrow(dt){if(!GROW.on||!GROW.play)return;const y=GROW.y+dt*(GROW.y<1945?9:6);if(y>=2026){growSet(2026);GROW.play=false;$('growP').textContent='▶';return}growSet(y)}
+$('growR').oninput=e=>{GROW.play=false;$('growP').textContent='▶';growSet(+e.target.value)};
+$('growP').onclick=()=>{if(!GROW.play&&GROW.y>=2026)growSet(1867);GROW.play=!GROW.play;$('growP').textContent=GROW.play?'❚❚':'▶'};
+$('growX').onclick=growClose;
+
+// ---- Follow a raindrop: where the rain on one spot runs. The ground is read on an 80 m grid, creeks are cut into it, and every
+// low spot is filled until it spills (priority flood), so each cell hands its water to one neighbor until it leaves the map.
+const RAIN={arm:false,dir:null,N:0,C:80,g:null,pts:null,t:0,len:0,drop:null,line:null,done:null};
+function rainGrid(){if(RAIN.dir)return;const C=RAIN.C,HF=16400,N=RAIN.N=Math.floor(2*HF/C),z=new Float32Array(N*N),X=i=>-HF+(i+.5)*C;
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++)z[j*N+i]=hAt(X(i),X(j));
+  {let xi=0;const wn=S.w_n,wc=S.w_c,xy=S.w_xy,cut=[9,5,3];for(let w=0;w<wn.length;w++){const n=wn[w],c=cut[wc[w]]||3;let px=0,pz=0;for(let k=0;k<n;k++){const x=xy[xi]*Qm,zz=-xy[xi+1]*Qm;xi+=2;
+      if(k){const L=Math.hypot(x-px,zz-pz),st=Math.max(1,Math.ceil(L/(C*.5)));for(let s=0;s<=st;s++){const i=Math.floor((px+(x-px)*s/st+HF)/C),j=Math.floor((pz+(zz-pz)*s/st+HF)/C);if(i>=0&&j>=0&&i<N&&j<N){const o=j*N+i;if(!(z[o]<-1e5)){z[o]=-(1e6)+z[o]-c}}}}px=x;pz=zz}}
+   for(let o=0;o<z.length;o++)if(z[o]<-1e5)z[o]+=1e6}
+  const dir=new Int32Array(N*N).fill(-2),hp=[],hz=[];const push=(o,v)=>{let i=hp.length;hp.push(o);hz.push(v);while(i>0){const p=(i-1)>>1;if(hz[p]<=v)break;hp[i]=hp[p];hz[i]=hz[p];i=p}hp[i]=o;hz[i]=v};
+  const pop=()=>{const o=hp[0],lo=hp.pop(),lv=hz.pop();if(hp.length){let i=0;const n=hp.length;for(;;){let c=2*i+1;if(c>=n)break;if(c+1<n&&hz[c+1]<hz[c])c++;if(hz[c]>=lv)break;hp[i]=hp[c];hz[i]=hz[c];i=c}hp[i]=lo;hz[i]=lv}return o};
+  for(let i=0;i<N;i++)for(const o of [i,(N-1)*N+i,i*N,i*N+N-1])if(dir[o]===-2){dir[o]=-1;push(o,z[o])}
+  while(hp.length){const lv=hz[0],o=pop(),i=o%N,j=(o-i)/N;for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj)continue;const a=i+di,b=j+dj;if(a<0||b<0||a>=N||b>=N)continue;const q=b*N+a;if(dir[q]!==-2)continue;dir[q]=o;push(q,Math.max(z[q],lv))}}
+  RAIN.dir=dir}
+function rainClear(){if(RAIN.g){scene.remove(RAIN.g);RAIN.g.traverse(o=>{if(o.geometry)o.geometry.dispose()});RAIN.g=null}RAIN.pts=null;dirty=true}
+function rainArm(){rainClear();RAIN.arm=true;showCard('Follow a raindrop','Tap any spot in the city: your roof, a parking lot, a park. The map will trace where rain that lands there runs.',undefined,{label:'Cancel',fn:()=>{RAIN.arm=false;hideCard()}})}
+function rainDrop(x,z){RAIN.arm=false;rainGrid();rainClear();const C=RAIN.C,HF=16400,N=RAIN.N,X=i=>-HF+(i+.5)*C;let i=Math.floor((x+HF)/C),j=Math.floor((z+HF)/C);if(i<0||j<0||i>=N||j>=N){showCard('Follow a raindrop','That spot is off the edge of the map. Tap inside the city.');return}
+  const raw=[[x,z]];let o=j*N+i,guard=0;while(o>=0&&guard++<4000){raw.push([X(o%N),X(Math.floor(o/N))]);o=RAIN.dir[o]}
+  // smooth the stair-steps of the grid
+  let P=raw;for(let it=0;it<2;it++){const Q=[P[0]];for(let k=1;k<P.length-1;k++)Q.push([(P[k-1][0]+2*P[k][0]+P[k+1][0])/4,(P[k-1][1]+2*P[k][1]+P[k+1][1])/4]);Q.push(P[P.length-1]);P=Q}
+  const n=P.length,pos=new Float32Array(n*6),ix=[],cum=new Float32Array(n);RAIN.w=0;for(let k=0;k<n;k++){if(k){cum[k]=cum[k-1]+Math.hypot(P[k][0]-P[k-1][0],P[k][1]-P[k-1][1]);const q=2*(k-1);ix.push(q,q+1,q+2,q+1,q+3,q+2)}}
+  RAIN.pts=P;const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));RAIN.line={geometry:geo};rainWide(Math.max(900,Math.hypot(P[n-1][0]-x,P[n-1][1]-z)*1.25));geo.setIndex(ix);geo.setDrawRange(0,0);
+  const line=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x35c8ff,side:THREE.DoubleSide,transparent:true,opacity:.92,depthTest:false}));line.renderOrder=20;line.frustumCulled=false;
+  const drop=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),new THREE.MeshBasicMaterial({color:0xbfefff,depthTest:false}));drop.renderOrder=21;
+  const g=new THREE.Group();g.add(line,drop);scene.add(g);
+  // creeks and lakes it passes, in order, from the water quality markers
+  const seen=[],dist=[];for(let k=0;k<n;k++)for(const q of WQ){const wx=(q[3]-H.lon0)*KXm,wz=-(q[2]-H.lat0)*KYm;if(Math.hypot(P[k][0]-wx,P[k][1]-wz)<330&&!seen.includes(q)){seen.push(q);dist.push(cum[k])}}
+  const y0=hAt(x,z),y1=hAt(P[n-1][0],P[n-1][1]),mi=cum[n-1]/1609.34,ex=P[n-1],edge=ex[0]>HF-200?'east':ex[0]<-HF+200?'west':ex[1]<-HF+200?'north':'south';
+  const pass=seen.length?' On the way it reaches '+seen.map((q,k)=>q[0]+' ('+(q[4]===5?'impaired':q[4]===1?'meets its standards':'not listed as impaired')+', '+(dist[k]/1609.34).toFixed(1)+' mi in)').join(', then ')+'. Tap a drop marker for what each one is impaired for.':' It does not pass a creek segment with a state water quality rating before it leaves the map.';
+  RAIN.g=g;RAIN.pts=P;RAIN.cum=cum;RAIN.t=0;RAIN.len=cum[n-1];RAIN.line=line;RAIN.drop=drop;
+  RAIN.done=()=>showCard('Where this rain goes','Rain that lands here runs about '+mi.toFixed(1)+' miles and drops about '+Math.round((y0-y1)*3.281)+' feet before it leaves the '+edge+' edge of the map.'+pass+' Nearly all of Lincoln drains to Salt Creek, which joins the Platte River near Ashland, then the Missouri and the Mississippi. How this is drawn: the ground is read from the USGS 10 meter elevation model on an 80 meter grid, mapped creeks are cut into it, and low spots are filled until they spill. It shows the lay of the land. It does not know about storm drains, culverts or curbs, so on a real street the first few blocks can differ.',undefined,{label:'Try another spot',fn:rainArm},[{label:'Clear the line',fn:()=>{rainClear();hideCard()}}]);
+  showCard('Follow a raindrop','Running downhill…');const mx=(x+ex[0])/2,mz=(z+ex[1])/2,sp=Math.max(900,Math.hypot(ex[0]-x,ex[1]-z)*1.25);flyTo(camTo(mx,mz,Math.min(22000,sp),200,48),1400)}
+// the line is redrawn wider as you pull back, so it stays visible from any height
+function rainWide(d){const w=Math.min(110,Math.max(5,d/170));if(RAIN.w&&Math.abs(w-RAIN.w)/RAIN.w<.25)return;RAIN.w=w;const P=RAIN.pts,n=P.length,at=RAIN.line.geometry.attributes.position,pos=at.array;for(let k=0;k<n;k++){const a=P[Math.max(0,k-1)],b=P[Math.min(n-1,k+1)];let dx=b[0]-a[0],dz=b[1]-a[1];const L=Math.hypot(dx,dz)||1;dx/=L;dz/=L;const y=hAt(P[k][0],P[k][1])+2.2+w*.05;pos[6*k]=P[k][0]-dz*w;pos[6*k+1]=y;pos[6*k+2]=P[k][1]+dx*w;pos[6*k+3]=P[k][0]+dz*w;pos[6*k+4]=y;pos[6*k+5]=P[k][1]-dx*w}at.needsUpdate=true;dirty=true}
+function stepRain(dt){if(!RAIN.pts||!RAIN.line)return;rainWide(camera.position.distanceTo(controls.target));const cum=RAIN.cum,n=cum.length;if(RAIN.t<RAIN.len){RAIN.t=Math.min(RAIN.len,RAIN.t+dt*Math.max(900,RAIN.len/9));if(RAIN.t>=RAIN.len&&RAIN.done){const f=RAIN.done;RAIN.done=null;f()}}
+  let k=1;while(k<n-1&&cum[k]<RAIN.t)k++;RAIN.line.geometry.setDrawRange(0,6*(k-1));const f=(RAIN.t-cum[k-1])/Math.max(1e-6,cum[k]-cum[k-1]),a=RAIN.pts[k-1],b=RAIN.pts[k],x=a[0]+(b[0]-a[0])*Math.min(1,f),z=a[1]+(b[1]-a[1])*Math.min(1,f),s=Math.max(5,camera.position.distanceTo(controls.target)/110);
+  RAIN.drop.position.set(x,hAt(x,z)+s*1.2,z);RAIN.drop.scale.setScalar(s);if(RAIN.t<RAIN.len||RAIN.s!==s){RAIN.s=s;dirty=true}}
+
+// ---- Follow the money: what campaign money is on the public record in Nebraska, where the record stops, and where to read it.
+// The same card for every office and every candidate. Read Nov 21, 2026.
+const MNU={search:'https://nadc-e.nebraska.gov/PublicSite/Search.aspx',data:'https://nadc-e.nebraska.gov/PublicSite/DataDownload.aspx',nadc:'https://nadc.nebraska.gov/',fec:'https://www.fec.gov/data/'};
+function moneyCard(){showCard('Follow the money in Lincoln politics','What is on the public record: every candidate and committee for state or local office in Nebraska, including Lincoln mayor, City Council, school board and county races, files campaign statements with the Nebraska Accountability and Disclosure Commission (NADC). You can search any candidate, committee or donor, and download every contribution and every expenditure by year as a spreadsheet. Committees that spend on their own for or against a candidate file independent expenditure reports there too. Federal races (Congress, President) file with the Federal Election Commission instead. '
+ +'Where the record stops: small donors are not listed by name, and a group\'s report shows what the group gave, not always who funded the group. Money that is never reported cannot be put on any map. What a map can do is show all of the money that is reported, in one place, the same way for every candidate, and mark plainly where the trail ends. '
+ +'How to use it now: open the NADC search, type a candidate\'s name, and read who gave and what was spent. To check one donor across every race, search the donor instead. If something looks wrong, the NADC takes complaints and its staff answer questions at 402-471-2522. '
+ +'Coming to this map: reported contributions to each Lincoln city race, drawn by where the money came from (inside Lincoln, elsewhere in Nebraska, out of state), and shown next to the votes on the agenda. Sources: NADC and FEC.',undefined,
+ {label:'Search the filings ↗',fn:()=>open(MNU.search,'_blank','noopener')},[{href:MNU.data,label:'Download the data ↗'},{href:MNU.fec,label:'Federal races (FEC) ↗'},{label:'City Council',fn:()=>councilOpen(0)}])}
+
+// ---- Irish pubs: a shamrock and a small tricolor over each one. McKinney's is where Liverpool supporters watch, per the person who built this map.
+const IRISH=[["McKinney's Irish Pub",40.8146061,-96.7108086,"Lincoln's Liverpool FC bar","An Irish pub in the Haymarket, and the bar where Lincoln's Liverpool FC supporters gather to watch matches. Does your Premier League club have a home bar in Lincoln? Report it on the project's issues page and it goes on the map."],
+ ["O'Rourke's Tavern",40.8132767,-96.7017569,'an Irish name on O Street',"A downtown tavern with an Irish name, on O Street. Know another Irish pub in Lincoln that should carry a shamrock? Report it on the project's issues page."]];
+let irishDone=false;
+function setupIrish(){if(irishDone||!H||!H.lat0)return;irishDone=true;const g=new THREE.Group(),gm=new THREE.MeshLambertMaterial({color:0x1fa34a,emissive:0x0c5a26,emissiveIntensity:.5}),pm=new THREE.MeshLambertMaterial({color:0x6b4a2a});
+  for(const [nm,lat,lon,sub,txt] of IRISH){const x=(lon-H.lon0)*KXm,z=-(lat-H.lat0)*KYm,y=hAt(x,z)+26,s=new THREE.Group();
+    for(const a of [90,210,330]){const r=a*Math.PI/180,l=new THREE.Mesh(new THREE.SphereGeometry(3.2,12,8),gm);l.position.set(Math.cos(r)*3.4,Math.sin(r)*3.4,0);l.scale.z=.45;s.add(l)}
+    const st=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,7,6),gm);st.position.set(1.2,-6,0);st.rotation.z=.3;s.add(st);s.position.set(x,y+9,z);s.userData.spin=1;g.add(s);
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,26,6),pm);pole.position.set(x+7,y-13,z);g.add(pole);
+    [0x169b62,0xffffff,0xff883e].forEach((c,k)=>{const f=new THREE.Mesh(new THREE.PlaneGeometry(2.6,4.6),new THREE.MeshBasicMaterial({color:c,side:THREE.DoubleSide}));f.position.set(x+8.6+2.6*k,y-3,z);g.add(f)});
+    labels.push({t:nm,sub,x,y:y+20,z,k:3,pri:540,near:0,far:2400})}
+  g.userData.info=['Irish pubs of Lincoln',IRISH.map(q=>q[0]+': '+q[4]).join(' ')];g.userData.act={label:'Suggest a pub ↗',fn:()=>open('https://github.com/RobotWhiteBread/STARCITY/issues','_blank','noopener')};
+  scene.add(g);pickables.push(g);LM.irish=g;dirty=true}
+function stepIrish(now){const g=LM.irish;if(!g)return;const t=controls.target;if(Math.hypot(t.x-g.children[0].position.x,t.z-g.children[0].position.z)>3500)return;for(const c of g.children)if(c.userData.spin)c.rotation.y=now*.0012;dirty=true}

@@ -6,7 +6,7 @@
 // =====================================================================================================
 const skyLabels=[];
 function labelSets(){if(walk.sky)return [skyLabels];const s=[labels,busLabels,wxLabels,lifeLabels,dlLabels,huskLabels,civLabels,festLabels,stopLabels];if(walk.on)s.push(walkLabels);return s}
-function pickMore(x,y){if(CIV.arm){const gp=groundPoint();if(gp&&Math.abs(gp.x)<8300&&Math.abs(gp.z)<8300)civicStack(gp.x,gp.z);return true}if(DM.on&&dmPick())return true;return false}
+function pickMore(x,y){if(RAIN.arm){const gp=groundPoint();if(gp)rainDrop(gp.x,gp.z);return true}if(CIV.arm){const gp=groundPoint();if(gp&&Math.abs(gp.x)<8300&&Math.abs(gp.z)<8300)civicStack(gp.x,gp.z);return true}if(DM.on&&dmPick())return true;return false}
 let fmT=0,navPT=0,fmRide=null,hintT=0;
 function hintShow(t,ms){const h=$('hint');h.textContent=t;h.style.display='block';clearTimeout(hintT);hintT=setTimeout(()=>{h.style.display='none'},ms||7000)}
 // the round buttons sit above whatever card is open, so a card never covers them on a phone
