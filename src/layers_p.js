@@ -3,7 +3,15 @@ const BED={m:null,k:0,col:null};
 function bedAt(x,y,z,s,h,tint){if(!BED.m){const g=boxes([[2.2,.38,3.3,0,.19,0,0xf3e7d2],[2.3,1,.22,0,.5,-1.66,0x7a5230],[1.5,.24,.7,0,.5,-1.1,0xffffff],[2.26,.2,1.9,0,.44,.6,0xc8102e]]);
     BED.m=new THREE.InstancedMesh(g,new THREE.MeshLambertMaterial({vertexColors:true,emissive:0x3a2208}),160);BED.m.frustumCulled=false;BED.m.count=0;BED.col=new THREE.Color();scene.add(BED.m)}
   if(BED.k>=160)return;lP.set(x,y,z);lQ.setFromAxisAngle(lUp,h||0);lS.setScalar(s);lM.compose(lP,lQ,lS);BED.m.setMatrixAt(BED.k,lM);BED.m.setColorAt(BED.k,BED.col.set(tint||0xffffff));BED.k++}
-function bedsFlush(){if(!BED.m)return;if(BED.m.count!==BED.k)dirty=true;BED.m.count=BED.k;BED.k=0;BED.m.instanceMatrix.needsUpdate=true;if(BED.m.instanceColor)BED.m.instanceColor.needsUpdate=true}
+// a bedside table with a teapot, a cup on a saucer and a plate of cookies, for the sleepers who asked
+const TEA={m:null,k:0};
+function teaAt(x,y,z,s,h){if(!TEA.m){const g=boxes([[1.5,.12,1.1,0,.9,0,0x8a5a2b],[.14,.9,.14,-.6,.45,-.4,0x6b4423],[.14,.9,.14,.6,.45,-.4,0x6b4423],[.14,.9,.14,-.6,.45,.4,0x6b4423],[.14,.9,.14,.6,.45,.4,0x6b4423],
+      [.42,.36,.42,-.4,1.14,-.12,0x5aa9e6],[.2,.1,.1,-.12,1.2,-.12,0x5aa9e6],[.16,.12,.16,-.4,1.38,-.12,0x3d7fb8],
+      [.34,.04,.34,.1,.98,.25,0xffffff],[.2,.18,.2,.1,1.08,.25,0xffffff],[.14,.03,.14,.1,1.16,.25,0x8b5a2b],
+      [.5,.04,.5,.45,.98,-.2,0xf3e7d2],[.18,.07,.18,.37,1.03,-.26,0xc68642],[.18,.07,.18,.53,1.03,-.15,0xc68642],[.18,.07,.18,.44,1.1,-.2,0xb5712f]]);
+    TEA.m=new THREE.InstancedMesh(g,new THREE.MeshLambertMaterial({vertexColors:true,emissive:0x2a1806}),48);TEA.m.frustumCulled=false;TEA.m.count=0;TEA.m.userData.info=['Tea and cookies','A pot of tea, a cup and a plate of cookies on the bedside table. Sasquatch and the lake monster turn in early. Just for fun.'];scene.add(TEA.m);pickables.push(TEA.m)}
+  if(TEA.k>=48)return;lP.set(x,y,z);lQ.setFromAxisAngle(lUp,h||0);lS.setScalar(s);lM.compose(lP,lQ,lS);TEA.m.setMatrixAt(TEA.k,lM);TEA.k++}
+function bedsFlush(){if(TEA.m){if(TEA.m.count!==TEA.k)dirty=true;TEA.m.count=TEA.k;TEA.k=0;TEA.m.instanceMatrix.needsUpdate=true}if(!BED.m)return;if(BED.m.count!==BED.k)dirty=true;BED.m.count=BED.k;BED.k=0;BED.m.instanceMatrix.needsUpdate=true;if(BED.m.instanceColor)BED.m.instanceColor.needsUpdate=true}
 // ---- charts for the real estate view: a spike for every property, by value and by tax, and the years of sale prices behind them
 const CH={b:-1};
 const chSvg=(inner,h)=>`<svg viewBox="0 0 640 ${h||226}" role="img" style="width:100%;height:auto;background:rgba(255,255,255,.05);border-radius:10px;margin:6px 0">${inner}</svg>`;
