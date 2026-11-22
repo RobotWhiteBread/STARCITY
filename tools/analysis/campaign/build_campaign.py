@@ -99,7 +99,7 @@ body=f'''<main>
 <p>A group's donors paid for everything the group did, across the state and across several years. No filing ties a particular donor to a particular mailer or ad. Read these lists as who stood behind each group, not as who paid for a specific message. Names are spelled as the state's files spell them, so one person can appear on two lines.</p>
 {''.join(sec2)}
 <h2>The candidates' own committees</h2>
-<p>For comparison, here is what the candidates named in those reports raised through their own committees, from receipts dated 2022 through 2026. Loans and in-kind contributions are included. Shares may not add to 100% because of rounding.</p>
+<p>For comparison, here is what the candidates named in those reports raised through their own committees, from receipts dated 2022 through 2026. Loans and in-kind contributions are included. Shares may not add to 100% because of rounding. A committee's receipts cover every office that candidate sought in those years. Stan Parker, listed under the 2025 council race, also ran for mayor in 2023, so his total spans both campaigns.</p>
 <div class="tw"><table><thead><tr><th>Candidate</th><th>Race</th><th>Receipts</th><th>Named individuals</th><th>Donors of $250 or less</th><th>Businesses and organizations</th><th>Committees and parties</th><th>Candidate's own money</th><th>From Lincoln ZIP codes</th><th>Elsewhere in Nebraska</th><th>Out of state</th></tr></thead><tbody>
 {''.join('<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+money(r[2])+'</td>'+''.join(f'<td>{v}</td>' for v in r[3:])+'</tr>' for r in rows3)}
 </tbody></table></div>

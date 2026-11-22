@@ -4,7 +4,7 @@
 
 ## Summary
 
-Lincoln's assessor passes the two headline tests its own profession sets, and fails the third. The third is the one about fairness between neighbours.
+On sales made after the 2026 values were set, Lincoln's assessments pass two of the profession's three headline tests and miss the third, the one about fairness between cheaper and more expensive homes. **The state's official study, which uses earlier sales, finds all three within the standard.** Both results are set out below, and readers should weigh them together.
 
 Across **3,340 valid residential sales inside the city limits in 2025 and 2026**, each carrying both a sale price and the assessed value in force, the assessment ratio behaves like this:
 
@@ -20,6 +20,23 @@ What regressivity looks like in dollars, measured across sale price deciles:
 The tax rate is the same for both. So the owner of a $172,000 house pays property tax on essentially the whole value of their house, and the owner of a $665,000 house pays on about six sevenths of theirs.
 
 **This is not an accusation of misconduct.** Regressivity is the most common failure mode in mass appraisal anywhere, because expensive homes are more varied and harder for a model to price than modest ones, and the error runs one way. It is still a real transfer, it is measurable, and it is fixable.
+
+## How this compares with the state's official study
+
+The Nebraska Department of Revenue measures every county assessor each year. Its [2026 Reports and Opinions for Lancaster County](https://revenue.nebraska.gov/sites/default/files/doc/pad/research/statewide_equalization/counties/2026/55Lancaster.pdf) tested 2026 residential values against 8,360 sales made from October 1, 2023 to September 30, 2025.
+
+| Measure | State's official study | This paper | Standard |
+| --- | --- | --- | --- |
+| Sales used | 8,360, countywide, October 2023 to September 2025 | 3,340, inside Lincoln, November 2025 to November 2026 | |
+| Median ratio | 0.970 | 0.920 | 0.90 to 1.10 (Nebraska requires 0.92 to 1.00) |
+| Coefficient of dispersion | 4.97 | 12.6 | 15 or less |
+| Price-related differential | 1.006 | 1.037 | 0.98 to 1.03 |
+
+The two studies answer different questions. The state tests values against the sales that were available when the values were set. This paper tests the same values against sales that happened afterward, which the assessor could not have seen.
+
+The state's own table by price range shows a gradient in the same direction, but much smaller: a median ratio of 1.019 for homes sold at $100,000 to $149,999, and 0.963 for homes sold at $500,000 to $999,999.
+
+A wider gap on later sales can have more than one cause. Prices may have risen faster for expensive homes during 2026. A valuation model fits the sales it was built on more closely than the sales that come later. The mix of homes sold differs between the two periods, and the state's figures cover the whole county. This paper cannot tell these apart, and it is not evidence of any wrongdoing. It is a reason to repeat the test each year.
 
 ## Method
 
