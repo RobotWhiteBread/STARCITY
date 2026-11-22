@@ -292,6 +292,8 @@ function spotHTML(sheet){const x=SPOT.x,z=SPOT.z,row=(a,b)=>`<p><b>${esc(a)}</b>
   if(hi>=0){const med=S2.hx_med[hi]*1000,vpa=S2.hx_vpa[hi]*5000,tpa=S2.hx_tpa[hi]*100,yr=S2.hx_yr[hi],psf=S2.hx_psf[hi];
     if(med)h+=row('Typical home',fmtN(med,'$')+' assessed'+(psf?' · $'+psf+' a square foot':''));if(vpa)h+=row('Assessed value per acre',fmtN(vpa,'$'));if(tpa)h+=row('Property tax raised per acre (estimate)',fmtN(tpa,'$')+' a year');if(yr)h+=row('Typical year homes were built',String(yr));
     if(!med&&!vpa)h+='<p>No assessed value is on file in this hexagon.</p>'}else h+='<p>No property figures here.</p>';
+  try{const R=804.67,s=numSales((px,pz)=>(px-x)**2+(pz-z)**2<R*R);if(s&&s.n>=3)h+=row('Home sales within half a mile, last 12 months',s.n+' sales · median price '+fmtN(s.med,'$')+(s.psf?' · median $'+Math.round(s.psf)+' a square foot':''));else if(s)h+=row('Home sales within half a mile, last 12 months','Fewer than 3 on record, too few to summarize.')}catch(e){}
+  try{const L=DL.get('cases');if(L&&L.X&&L.n){let c=0;for(let i=0;i<L.n;i++)if((L.X[2*i]-x)**2+(L.X[2*i+1]-z)**2<804.67**2)c++;h+=row('Planning and zoning cases within half a mile',c?c+' open or recent. Turn on Decisions in the works on the map to read them.':'None on file right now.')}}catch(e){}
   if(at('council'))h+=levyHTML(hi>=0?S2.hx_med[hi]*1000:0);
   {const zn=at('zoning');if(zn)h+=row('Zoning',esc(String(zn('zone')))+' ('+esc(String(zn('cat')).toLowerCase())+')')}
   // water
