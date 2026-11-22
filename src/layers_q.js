@@ -284,7 +284,7 @@ function spotHTML(){const x=SPOT.x,z=SPOT.z,row=(a,b)=>`<p><b>${esc(a)}</b><br>$
   h+=`<p class="psub">The spot you tapped: ${lat.toFixed(5)}, ${lon.toFixed(5)}${hd?' · '+esc(String(hd('name'))):''}. Figures for value and age describe the area around it (a hexagon of about ${H2.hex.acres.toFixed(0)} acres), not one property.</p>`;
   // who decides
   h+='<h4>Who decides for this spot</h4>';let any=false;
-  for(const [id,what] of CIVL){const f=at(id);if(!f)continue;any=true;const nm=String(f('name')).replace(/^(City Council|County Board|LPS Board|Legislative|Lower Platte South NRD|Southeast Community College|NU Board of Regents) /,''),who=f('member')||f('senator');h+=row(what,esc(nm)+(who?' · '+esc(String(who)):'')+(id==='precincts'&&f('poll')?' · votes at '+esc(String(f('poll'))):''));if(id==='precincts'){const tl=t25Line(f('name'));if(tl)h+=row('Who voted here',esc(tl))}}
+  for(const [id,what] of CIVL){const f=at(id);if(!f)continue;any=true;const nm=String(f('name')).replace(/^(City Council|County Board|LPS Board|Legislative|Lower Platte South NRD|Southeast Community College|NU Board of Regents) /,''),who=f('member')||f('senator');h+=row(what,esc(nm)+(who?' · '+esc(String(who)):'')+(id==='precincts'&&f('poll')?' · votes at '+esc(String(f('poll'))):''));if(id==='precincts'){const tl=t25Line(f('name'));if(tl){const v=t25(f('name')),stay=v[0]-v[1];h+=row('Who voted here',esc(tl)+'<br>'+esc(`${stay.toLocaleString('en-US')} registered voters in this precinct did not vote. For scale, Lincoln's 2019 street sales tax passed by 650 votes citywide, 25,281 to 24,631.`)+`<br><button class="btn go2" data-sp="share" data-pn="${esc(String(f('name')))}">Share this precinct's number</button> <a href="https://www.lancaster.ne.gov/election" target="_blank" rel="noopener">Register, vote early, find the next election ↗</a>`)}}}
   if(!any)h+='<p>No districts are on file here. This spot may be outside the city.</p>';
   {const m=ccNext(1)[0],r=rgNext();if(m)h+=row('Next City Council meeting',ccDay(m)+', '+ccTime(m)+', County-City Building');if(r)h+=row('Next NU Regents meeting',rgDay(r[0])+(r[1]?', '+r[1]:'')+', '+esc(r[2]))}
   // money
@@ -308,7 +308,7 @@ function spotHTML(){const x=SPOT.x,z=SPOT.z,row=(a,b)=>`<p><b>${esc(a)}</b><br>$
   h+='<p><button class="btn go" data-sp="rain">Follow this spot\'s rain</button> <button class="btn go" data-sp="walls">Raise its district walls</button> <button class="btn go" data-sp="cc">City Council</button> <button class="btn go" data-sp="again">Pick another spot</button></p>';
   h+='<p class="psub">Sources: districts and precincts from the Lancaster County Election Commissioner and city GIS; values from the Lancaster County Assessor 2026 roll, with tax estimated from the 2025 levy; flood zones from the FEMA layers the city publishes; creek ratings from Nebraska\'s 2022 Water Quality Integrated Report; rain path from the USGS 10 meter elevation model; bus stops from StarTran\'s timetable. Read November 2026.</p>';
   return h}
-const SPOTS={title:'Everything about <i>one spot</i>',tabs:['This spot'],html:()=>spotHTML(),click:e=>{const b=e.target.closest('[data-sp]');if(!b)return;const v=b.dataset.sp,x=SPOT.x,z=SPOT.z;closeSheet();if(v==='rain')rainDrop(x,z);else if(v==='walls')civicStack(x,z);else if(v==='cc')councilOpen(0);else spotArm()}};
+const SPOTS={title:'Everything about <i>one spot</i>',tabs:['This spot'],html:()=>spotHTML(),click:e=>{const b=e.target.closest('[data-sp]');if(!b)return;const v=b.dataset.sp,x=SPOT.x,z=SPOT.z;if(v==='share'){t25Share(b.dataset.pn);return}closeSheet();if(v==='rain')rainDrop(x,z);else if(v==='walls')civicStack(x,z);else if(v==='cc')councilOpen(0);else spotArm()}};
 
 // ---- A saxophone player on the sidewalk in front of the Zoo Bar, 136 N. 14th Street, with the notes drifting down the street. For fun.
 const SAX={g:null,x:0,z:0,dx:0,dz:1,notes:[],lb:null};
@@ -508,3 +508,17 @@ function t25Key(s){s=String(s||'').trim();const m=/^0*(\d{1,2})\s*([A-Za-z])\s*(
 function t25(name){const v=T25[t25Key(name)];return v&&v[0]>=50?v:null}
 function t25Line(name){const v=t25(name);if(!v)return '';const r=v[1]/v[0],n=Math.max(2,Math.round(1/r));return `In the May 2025 city election, ${v[1].toLocaleString('en-US')} of ${v[0].toLocaleString('en-US')} registered voters here voted: ${(100*r).toFixed(1)}%${r<.3?', about 1 in '+n:''}. Citywide it was ${(100*T25C[1]/T25C[0]).toFixed(1)}%.`}
 function turnoutOpen(){lastInput=performance.now();flyTo(camTo(-5200,-5600,11000,200,42),2200);setVotes(true);if(DM.S){const k=DM.S.findIndex(s=>s.k==='t25');if(k>=0)dmShow(k)}}
+
+// a square picture of one precinct's turnout, for a neighborhood group or a class to post. Same card for every precinct.
+function t25Share(name){const v=t25(name);if(!v)return;const c=document.createElement('canvas');c.width=c.height=1080;const g=c.getContext('2d'),r=v[1]/v[0],city=T25C[1]/T25C[0],F='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
+  g.fillStyle='#0b1020';g.fillRect(0,0,1080,1080);g.fillStyle='#e2b93b';g.fillRect(0,0,1080,14);g.textAlign='left';
+  g.fillStyle='#e2b93b';g.font='700 40px '+F;g.fillText('STARCITY',80,120);g.fillStyle='#9aa3b8';g.font='400 34px '+F;g.fillText('Lincoln, Nebraska · public records',300,120);
+  g.fillStyle='#ffffff';g.font='700 58px '+F;g.fillText('Voting precinct '+name,80,250);g.fillStyle='#9aa3b8';g.font='400 38px '+F;g.fillText('City election, May 6, 2025',80,310);
+  g.fillStyle='#e2b93b';g.font='800 300px '+F;g.fillText((100*r).toFixed(0)+'%',70,610);g.fillStyle='#ffffff';g.font='600 50px '+F;g.fillText('of registered voters here voted',80,700);
+  g.fillStyle='#c9d0e0';g.font='400 40px '+F;g.fillText(v[1].toLocaleString('en-US')+' of '+v[0].toLocaleString('en-US')+' voted. '+(v[0]-v[1]).toLocaleString('en-US')+' did not.',80,770);
+  const bar=(y,f,col,lab)=>{g.fillStyle='#1c2440';g.fillRect(80,y,920,34);g.fillStyle=col;g.fillRect(80,y,920*Math.min(1,f/.5),34);g.fillStyle='#c9d0e0';g.font='400 30px '+F;g.fillText(lab,80,y-12)};
+  bar(860,r,'#e2b93b','This precinct: '+(100*r).toFixed(1)+'%');bar(950,city,'#7f8aa8','All of Lincoln: '+(100*city).toFixed(1)+'%');
+  g.fillStyle='#9aa3b8';g.font='400 28px '+F;g.fillText('Source: Lancaster County Election Commissioner, official precinct results',80,1030);g.textAlign='right';g.fillStyle='#e2b93b';g.font='700 30px '+F;g.fillText('starcitylincoln.org',1000,1066);
+  c.toBlob(async bl=>{if(!bl)return;const fn='starcity-precinct-'+t25Key(name)+'.png',file=new File([bl],fn,{type:'image/png'});
+    try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Precinct '+name+' turnout',text:'How many of us voted in the last city election? starcitylincoln.org'});return}}catch(e){if(e&&e.name==='AbortError')return}
+    const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000)},'image/png');return c}
