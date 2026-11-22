@@ -610,7 +610,10 @@ async function build(){
     if(BR.nv){const m=new THREE.Mesh(BR.geo(),matB);m.castShadow=true;m.receiveShadow=true;scene.add(m)}LM.nbridges=nb}
    // bike trails: bright lines of constant screen width, following the terrain and the bridge decks
    {const TC=[0xff2a8a,0xff8a00,0x8a4dff,0x00b3a4,0x00b3a4].map(h=>new THREE.Color(h));const offP=[],offC=[],onP=[],onC=[];LM.trails=[];LM.trailOf=new Int32Array(rn.length).fill(-1);LM.road={rn,rc,rf,xy,rtc,off,rsn:S.r_sn};
-    for(let i=0;i<rn.length;i++){const tc=rtc[i];if(tc===255)continue;const p=get(i);const bi=brInfo.get(i);const step=bi?8:35;
+    // orphan stubs: a few yards of mapped path that touch no other trail (a crossing island, a curb ramp) read as stray marks, so short unnamed ones are not drawn as trail
+    const stub=new Set();{const ek=(x,z)=>Math.round(x/3)*65536+Math.round(z/3),ec=new Map(),ends=[];for(let i=0;i<rn.length;i++){if(rtc[i]===255)continue;const q=get(i),m=q.length;let L=0;for(let k=2;k<m;k+=2)L+=Math.hypot(q[k]-q[k-2],q[k+1]-q[k-1]);const e=[q[0],q[1],q[m-2],q[m-1]];ends.push([i,L,e]);for(const k of [ek(e[0],e[1]),ek(e[2],e[3])])ec.set(k,(ec.get(k)||0)+1)}
+      const nb=(x,z)=>{let c=0;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)c+=ec.get((Math.round(x/3)+a)*65536+Math.round(z/3)+b)||0;return c};for(const [i,L,e] of ends)if(rtc[i]<3&&rtn[i]===65535&&L<60&&nb(e[0],e[1])<=1&&nb(e[2],e[3])<=1)stub.add(i)}LM.trailStubs=stub.size;
+    for(let i=0;i<rn.length;i++){const tc=rtc[i];if(tc===255||stub.has(i))continue;const p=get(i);const bi=brInfo.get(i);const step=bi?8:35;
       const d=[p[0],p[1]];const ix=new Int32Array(p.length/2);for(let k=1;k<p.length/2;k++){const ax=p[2*k-2],az=p[2*k-1],bx=p[2*k],bz=p[2*k+1];const L=Math.hypot(bx-ax,bz-az);const n=Math.max(1,Math.ceil(L/step));for(let j=1;j<=n;j++)d.push(ax+(bx-ax)*j/n,az+(bz-az)*j/n);ix[k]=d.length/2-1}
       const n=d.length/2;const ys=new Float32Array(n);let sl=0;
       for(let k=0;k<n;k++){if(k>0)sl+=Math.hypot(d[2*k]-d[2*k-2],d[2*k+1]-d[2*k-1]);let y=hAt(d[2*k],d[2*k+1])+(tc>=3?1.15:.7);if(bi){const t=Math.min(1,Math.max(0,(bi[0]+sl)/bi[1]));y+=.3+bi[2]*Math.pow(Math.sin(Math.PI*t),.75)}ys[k]=y}
