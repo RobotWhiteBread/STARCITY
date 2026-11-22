@@ -1421,7 +1421,7 @@ function parseObs(p){const c={CLR:0,SKC:0,FEW:.15,SCT:.4,BKN:.75,OVC:1,VV:1};let
   const d=(p.textDescription||'')+' '+(p.presentWeather||[]).map(w=>(w.intensity||'')+' '+(w.weather||'')).join(' ');const val=o=>o&&o.value!=null?o.value:null;
   return {tC:val(p.temperature),desc:p.textDescription||'',kmh:val(p.windSpeed),gust:val(p.windGust),dir:val(p.windDirection),cloud:cl,
     precip:/snow|flurr|sleet|ice pellets|freezing/i.test(d)?'snow':(/rain|drizzle|shower|thunder/i.test(d)?'rain':null),heavy:/heavy/i.test(d)?1.6:(/light/i.test(d)?.55:1),thunder:/thunder/i.test(d),time:p.timestamp}}
-async function loadWeather(){try{const r=await fetch('https://api.weather.gov/stations/KLNK/observations/latest',{headers:{Accept:'application/geo+json'}});if(!r.ok)throw 0;wx=parseObs((await r.json()).properties);wxFail=false;showWx();applyWx();if(wxOn&&!wxDemo)wxCard()}
+async function loadWeather(){try{const r=await fetch('https://api.weather.gov/stations/KLNK/observations/latest',{headers:{Accept:'application/geo+json'}});if(!r.ok)throw 0;wx=parseObs((await r.json()).properties);wxFail=false;showWx();applyWx();if(wxOn&&!wxDemo){wxCard();if(ovl&&ovl.radar&&ovl.dry===!!(wx&&wx.precip))loadRadar()}}
   catch(e){wxFail=true;if(!wx)$('wx').textContent='';if(wxOn&&!wxDemo)wxCard()}}
 // National Weather Service alerts for Lincoln: warnings come with the warned area and, for storms, where the storm was and how it is moving
 const ARANK={'Tornado Warning':100,'Severe Thunderstorm Warning':90,'Flash Flood Warning':85,'Tornado Watch':80,'Blizzard Warning':78,'Ice Storm Warning':77,'Winter Storm Warning':75,'Severe Thunderstorm Watch':70,'Flood Warning':65,'High Wind Warning':60,'Winter Weather Advisory':50,'Wind Advisory':45};
@@ -1439,7 +1439,7 @@ function applyWx(){const w=wxNow(),on=(wxOn||liveOn)&&w;cloud=on?w.cloud:0;thund
 let pPts=null,wetT=0;
 // where the radar shows something falling, it falls there; without radar, the airport report decides
 function wetCheck(force){const now=performance.now();if(!force&&now-wetT<600)return;wetT=now;const w=wxNow(),on=(wxOn||liveOn)&&w;let kind=on?w.precip:null,heavy=on?w.heavy:1;
-  if(wxOn&&w&&ovl&&ovl.rd){kind=(ovl.wet>.03||(w.precip&&ovl.wet>.002))?((w.tC!=null&&w.tC<=1.5)||w.precip==='snow'?'snow':'rain'):null;heavy=Math.max(heavy||1,1.3)}
+  if(wxOn&&w&&ovl&&ovl.rd){kind=((w.precip&&ovl.wet>.002)||(!w.precip&&ovl.wet>.06))?((w.tC!=null&&w.tC<=1.5)||w.precip==='snow'?'snow':'rain'):null;heavy=Math.max(heavy||1,1.3)}
   if(kind!==precip||force)setPrecip(kind,heavy)}
 let pU=null;
 function flakeTex(){const c=document.createElement('canvas');c.width=c.height=32;const q=c.getContext('2d'),g=q.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.5,'rgba(255,255,255,.92)');g.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=g;q.fillRect(0,0,32,32);return new THREE.CanvasTexture(c)}
@@ -1521,13 +1521,13 @@ async function loadRadar(){const o=overlay(),zm=10,n=1<<zm,W=o.cv.width,px=v=>(v
   for(let x=tx(lonA);x<=tx(lonB);x++)for(let y=ty(latB);y<=ty(latA);y++)jobs.push(new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';
     im.onload=()=>{const x0=px((lonOf(x)-H.lon0)*KXm),x1=px((lonOf(x+1)-H.lon0)*KXm),y0=px(-(latOf(y)-H.lat0)*KYm),y1=px(-(latOf(y+1)-H.lat0)*KYm);c.drawImage(im,x0,y0,x1-x0,y1-y0);ok++;res()};im.onerror=()=>res();
     im.src=`https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/${zm}/${x}/${y}.png?t=${Math.floor(Date.now()/300000)}`}));
-  await Promise.all(jobs);if(wxDemo)return;setRadar(ok?radarClean(rc):null);if(wxOn)wxCard()}
+  await Promise.all(jobs);if(wxDemo)return;{const w0=wxNow(),dry=!(w0&&w0.precip);const o2=overlay();o2.dry=dry;setRadar(ok?radarClean(rc,dry):null)}if(wxOn)wxCard()}
 // The raw mosaic is a quilt of one-kilometer squares in a dozen colors, which reads as noise from above. Turn it into one smooth
 // field instead: read each square's color as a strength, blur the strengths together, and paint a single soft wash that deepens
 // from pale blue (light) through blue to yellow and red (heavy). Scattered light echoes become an even haze, not patches.
-function radarClean(rc){try{const W=rc.width,c=rc.getContext('2d'),im=c.getImageData(0,0,W,W),d=im.data;
+function radarClean(rc,dry){try{const W=rc.width,c=rc.getContext('2d'),im=c.getImageData(0,0,W,W),d=im.data;
     for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2];let t=0;
-      if(d[i+3]>=40&&!(Math.abs(r-g)<18&&Math.abs(g-b)<18)){if(r>200&&g<120)t=1;else if(r>200&&g>150&&b<120)t=.78;else if(g>=r&&g>b+6)t=g>180?.5:.6;else t=b>g+40?.3:.2}
+      if(d[i+3]>=40&&!(Math.abs(r-g)<18&&Math.abs(g-b)<18)){if(r>200&&g<120)t=1;else if(r>200&&g>150&&b<120)t=.78;else if(g>=r&&g>b+6)t=g>180?.5:.6;else t=b>g+40?.3:.2;if(dry&&t<.5)t=0}
       d[i]=d[i+1]=d[i+2]=255;d[i+3]=Math.round(255*t)}
     c.putImageData(im,0,0);
     const sm=(src,n)=>{const s=document.createElement('canvas');s.width=s.height=n;const sc=s.getContext('2d');sc.imageSmoothingEnabled=true;sc.imageSmoothingQuality='high';sc.drawImage(src,0,0,n,n);return s};
@@ -1557,7 +1557,7 @@ function setDemo(i){const C=LM.capitol,soon=new Date(Date.now()+35*60000).toISOS
 function wxCard(){if(CORE.wx)return;const w=wx,A=alerts,pv={label:'▶ Preview storm effects',fn:()=>setDemo(0)};
   if(!w){showCard('Weather',wxFail?'Live weather only loads when this map is on a website, such as GitHub Pages. It cannot load inside the Claude app or from a file on your computer. You can still preview wind, rain, snow, lightning and a tornado warning.':'Checking the National Weather Service…',-1,pv);return}
   const dirs=['N','NE','E','SE','S','SW','W','NW'],mph=w.kmh!=null?Math.round(w.kmh*.621):null,o=ovl;
-  const rad=o&&o.radar?(o.wet>.01?`Radar: rain or snow over about ${Math.max(1,Math.round(o.wet*100))}% of the map`:'Radar: nothing falling over Lincoln'):'Radar picture not available';
+  const rad=o&&o.radar?(o.wet>.01?`Radar: rain or snow over about ${Math.max(1,Math.round(o.wet*100))}% of the map`:(o.dry?'Radar: nothing falling over Lincoln. The airport reports no rain or snow, so the faint echoes radar picks up in fair weather are not drawn':'Radar: nothing falling over Lincoln')):'Radar picture not available';
   showCard('Weather right now',`${Math.round(w.tC*9/5+32)}°F ${w.desc} at Lincoln Airport (${clock(w.time)})`+(mph!=null?` · wind ${w.dir!=null?dirs[Math.round(w.dir/45)%8]+' ':''}${mph} mph`+(w.gust?`, gusts ${Math.round(w.gust*.621)}`:''):'')+' · '+(A.length?A.map(a=>a.event+(a.ends?' until '+clock(a.ends):'')).join(', '):'No weather alerts for Lincoln')+' · '+rad,-1,pv)}
 function setWx(on){if(on===wxOn)return;wxOn=on;$('bWx').classList.toggle('on',on);$('wx').classList.toggle('big',on);
   if(on){if(rideMode)setRideMode(false);wxCard();loadWeather();loadAlerts();loadRadar()}else{if(wxDemo)setDemo(-1);hideCard()}
@@ -2221,8 +2221,11 @@ function dlSet(id,on,quiet){const L=DL.get(id);if(!L)return;if(on&&!L.obj){if(L.
   dlLegend();if(on&&!quiet)dlIntro(L);if(L.def.onSet)L.def.onSet(on,L);lastInput=performance.now();dirty=true}
 function dlIntro(L){const d=L.def;showCard(d.t,(d.note||'')+' '+(d.k!=='fn'&&typeof d.st.h!=='number'?(d.id==='pv'?'Height is in straight proportion to value: a quarter mile for every $1 million, seen from about two miles out, and it follows your zoom so the picture holds as you move in. Anything above $6 million is drawn at the $6 million height. The gold ring on the ground marks the area being totaled in the gold box. ':'The tallest stand about a quarter mile high and fade into the sky, and they follow your zoom so the picture holds as you move in. '):'')+(L.n?L.n.toLocaleString('en-US')+(d.k==='hx'?' hexagons':d.k==='pt'?' points':d.k==='ln'?' segments':' areas')+'. ':'')+'Tap one for its numbers. Source: '+d.src+(d.asof?(d.asof==='live'?', read live just now':', as of '+d.asof):'')+'.'+(L.more?' This view holds more than is shown here. Zoom in to see the rest.':''),undefined,undefined,d.link)}
 // keep heights and widths readable at every zoom, and apply the two sliders
+// Up close, heights grow with distance so a bar keeps its size on screen. Past about three miles out that stops paying off:
+// bars become a forest that hides the city. From there they grow only slightly, so the whole-city view reads without touching the slider.
+function dlZoomK(z){return z<=1.2?z:Math.min(1.7,1.2+(z-1.2)*.09)}
 function dlFrame(){if(!dlOn.length)return;const d=camera.position.distanceTo(controls.target);
-  for(const L of dlOn){const k=L.def.k,num=typeof L.def.st.h!=='number',z=L.flat?Math.min(6,Math.max(.6,d/1500)):Math.min(5.5,Math.max(.08,d/(k==='pt'&&!num?2500:k==='ln'&&!num?3000:3600)));L.hs=dlHS*z; // heights follow the zoom, so a bar covers the same share of the screen near or far: a true quarter mile for the tallest from about two miles out
+  for(const L of dlOn){const k=L.def.k,num=typeof L.def.st.h!=='number',z=L.flat?Math.min(6,Math.max(.6,d/1500)):dlZoomK(Math.max(.08,d/(k==='pt'&&!num?2500:k==='ln'&&!num?3000:3600)));L.hs=dlHS*z; // heights follow the zoom, so a bar covers the same share of the screen near or far: a true quarter mile for the tallest from about two miles out
     for(const m of L.mats){const u=m.uniforms;u.uHS.value=L.hs;u.uA.value=dlAL*dlAuto*(L.def.st.a?L.def.st.a/.55:1);u.uR.value=Math.min(34,Math.max(2.2,d*.0017))}
     if(L.obj.userData&&L.obj.userData.haze)L.obj.userData.haze.material.opacity=Math.min(1,.85*dlAL)}}
 // ---- finding what was tapped
