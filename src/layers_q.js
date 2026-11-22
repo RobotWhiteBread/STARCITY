@@ -292,11 +292,12 @@ function spotHTML(){const x=SPOT.x,z=SPOT.z,row=(a,b)=>`<p><b>${esc(a)}</b><br>$
   if(hi>=0){const med=S2.hx_med[hi]*1000,vpa=S2.hx_vpa[hi]*5000,tpa=S2.hx_tpa[hi]*100,yr=S2.hx_yr[hi],psf=S2.hx_psf[hi];
     if(med)h+=row('Typical home',fmtN(med,'$')+' assessed'+(psf?' · $'+psf+' a square foot':''));if(vpa)h+=row('Assessed value per acre',fmtN(vpa,'$'));if(tpa)h+=row('Property tax raised per acre (estimate)',fmtN(tpa,'$')+' a year');if(yr)h+=row('Typical year homes were built',String(yr));
     if(!med&&!vpa)h+='<p>No assessed value is on file in this hexagon.</p>'}else h+='<p>No property figures here.</p>';
+  if(at('council'))h+=levyHTML(hi>=0?S2.hx_med[hi]*1000:0);
   {const zn=at('zoning');if(zn)h+=row('Zoning',esc(String(zn('zone')))+' ('+esc(String(zn('cat')).toLowerCase())+')')}
   // water
   h+='<h4>Flood and water</h4>';
   {const f1=at('flood100'),f5=at('flood500'),L1=DL.get('flood100');
-   h+=row('Mapped floodplain',!L1||!L1.X?'The flood layer is not loaded in this copy of the map.':f1?'Inside the 1% yearly chance floodplain (the regulated zone).':f5?'Inside the 0.2% yearly chance band, outside the regulated zone.':'Outside both mapped flood zones. Most flood claims paid in Lincoln were rainfall, and nearly a third came from outside the mapped floodplain.');
+   if(L1&&L1.X)h+=row('Mapped floodplain',f1?'Inside the 1% yearly chance floodplain (the regulated zone).':f5?'Inside the 0.2% yearly chance band, outside the regulated zone.':'Outside both mapped flood zones. Most flood claims paid in Lincoln were rainfall, and nearly a third came from outside the mapped floodplain.');
    let rf=null;try{rf=rainFirst(x,z)}catch(e){}
    h+=row('Where its rain goes',rf?esc(rf.w[0])+', about '+rf.mi.toFixed(1)+' miles downhill. '+(rf.w[4]===5?'The state lists it as impaired.':rf.w[4]===1?'It meets its standards.':'It is not listed as impaired.'):'It leaves the map before reaching a creek with a state rating.')}
   // nearby
@@ -380,3 +381,58 @@ function moneyGroupCard(i){const G=MFLOW[i],$$=v=>'$'+Math.round(v).toLocaleStri
    +(G.known?'Its own filings list '+$$(G.rec)+' in receipts for everything it does statewide: '+[['lnk','from Lincoln ZIP codes'],['ne','from elsewhere in Nebraska'],['out','from out of state'],['none','from donors of $250 or less or with no address listed']].filter(q=>G.geo[q[0]]).map(q=>$$(G.geo[q[0]])+' '+q[1]).join(', ')+'. No filing ties a donor to a particular mailer or ad. The paper lists its largest funders by name, as the state publishes them.':'The public record stops here. The state\'s files show what this group spent and hold no list of who funded it.'),
    undefined,{label:'Back to all groups',fn:moneyMap},[{href:'https://starcitylincoln.org/campaign.html',label:'Read the paper ↗'}])}
 function stepMoney(now){if(!MM.g)return;const s=now*.00022;for(const d of MM.dots){const t=(s+d.ph)%1,f=t*24,k=Math.min(23,Math.floor(f)),u=f-k,a=d.P[k],b=d.P[k+1];d.s.position.set(a.x+(b.x-a.x)*u,a.y+(b.y-a.y)*u,a.z+(b.z-a.z)*u)}dirty=true}
+
+// ---- Where a property tax dollar goes, for tax district 0001 (most of Lincoln), tax year 2025.
+// Rates per $100 from the Nebraska Department of Revenue's reference list of taxing subdivisions (Certificates of Taxes Levied as of 12-31-2025).
+// Check: the sixteen rates add to 1.666284, the consolidated levy the county reports for district 0001.
+const LEVY25=[['Lincoln Public Schools',[['General fund',.925324],['Bond 2006',.035232],['Bond 2014',.020692],['Bond 2020',.04001],['Educational Service Unit 18',.015]],0x4c9be8],
+ ['City of Lincoln',[['City',.297319]],0xe9b949],['Lancaster County',[['County',.214482]],0x7fb069],['Lincoln Airport Authority',[['Airport',.029289]],0xb07ad6],
+ ['Lower Platte South Natural Resources District',[['NRD',.022999]],0x35b8a8],['Southeast Community College',[['Capital fund',.02]],0xe4572e],
+ ['Railroad Transportation Safety District',[['RTSD',.015275]],0x9aa5b1],['Public Building Commission',[['PBC',.014875]],0xc98f5a],
+ ['Lancaster Correctional Facility joint agency (city and county shares)',[['City share',.006315],['County share',.004244]],0x8a6fa8],['County fair (Ag Society and fairgrounds)',[['Ag Society',.003766],['Fairgrounds',.001462]],0xd4b483]];
+const LEVY25T=LEVY25.reduce((s,g)=>s+g[1].reduce((a,r)=>a+r[1],0),0);
+function levyHTML(val){const hex=c=>'#'+c.toString(16).padStart(6,'0');let h='<h4>Where a property tax dollar goes</h4><p class="psub">Tax district 0001, which covers most of Lincoln, at the 2025 levies. '+(val?'Dollar figures are for a home assessed at '+fmtN(val,'$')+', before the state school tax credit and any exemptions.':'')+'</p>';
+  for(const [nm,rows,c] of LEVY25){const r=rows.reduce((a,q)=>a+q[1],0),sh=r/LEVY25T;h+=`<p style="margin:6px 0"><b>${esc(nm)}</b> · ${(sh*100).toFixed(1)}¢ of each dollar${val?' · about '+fmtN(val*r/100,'$')+' a year':''}<br><span style="display:block;height:10px;border-radius:5px;background:${hex(c)};width:${Math.max(1.5,sh*100).toFixed(1)}%"></span></p>`}
+  return h+`<p class="psub">The total levy is ${LEVY25T.toFixed(6)} per $100 of taxable value${val?', about '+fmtN(val*LEVY25T/100,'$')+' a year on that home':''}. Schools include three voter-approved bond issues and the educational service unit. Parts of Lincoln in another school or fire district pay a different mix. Source: Nebraska Department of Revenue, reference list of taxing subdivisions and tax rates, tax year 2025. The sixteen rates were checked against the county's consolidated levy for district 0001 and match.</p>`}
+
+// ---- Property finder: the filters people pay listing and data services for, run on public records for every building in Lincoln.
+// A building matches on its parcel's assessed value, the assessor's class, floor area and year built. Matches glow gold; the rest go grey.
+const FIND={on:false,f:null,flood:null,res:null};
+const FINDP=[['Homes under $200,000',{t:'res',v1:200000}],['Homes $200,000 to $350,000',{t:'res',v0:200000,v1:350000}],['Homes $350,000 to $600,000',{t:'res',v0:350000,v1:600000}],['Homes $1 million and up',{t:'res',v0:1000000}],
+ ['Built before 1930',{t:'res',y1:1929}],['Built since 2015',{t:'res',y0:2015}],['Small homes, under 1,000 sq ft',{t:'res',a1:999}],['Big homes, 3,000 sq ft and up',{t:'res',a0:3000}],
+ ['Under $150 a sq ft',{t:'res',p1:150}],['Over $300 a sq ft',{t:'res',p0:300}],['Homes in a mapped flood zone',{t:'res',fl:'in'}],['Commercial over $5 million',{t:'com',v0:5000000}]];
+function findVB(){for(const m of pickables){if(!(m.userData&&m.userData.ids&&m.geometry&&m.geometry.index&&m.userData.start)||m.userData.vb)continue;const g=m.geometry,cnt=g.attributes.position.count,idx=g.index.array,st=m.userData.start,ids=m.userData.ids,vb=new Uint32Array(cnt);
+    for(let k=0;k<st.length;k++){const e=k+1<st.length?st[k+1]:idx.length;for(let i=st[k];i<e;i++)vb[idx[i]]=ids[k]}m.userData.vb=vb;g.setAttribute('aHi',new THREE.BufferAttribute(new Float32Array(cnt),1))}}
+function findFlood(){if(FIND.flood)return FIND.flood;const L1=DL.get('flood100'),L5=DL.get('flood500');if(!L1||!L1.X)return null;const n=S.b_yr.length,a=new Uint8Array(n);for(let b=0;b<n;b++){const x=LM.bc[2*b],z=LM.bc[2*b+1];let v=0;try{if(dlAt(L1,x,z)>=0)v=1;else if(L5&&L5.X&&dlAt(L5,x,z)>=0)v=2}catch(e){}a[b]=v}return FIND.flood=a}
+function finderApply(f){findVB();const n=S.b_yr.length,hit=new Uint8Array(n),fl=f.fl?findFlood():null,vals=[],yrs=[],psf=[];let tot=0,sx=0,sz=0;
+  for(let b=0;b<n;b++){const v=S2.b_sv[b]||S2.b_val[b];if(!v)continue;const c=H2.cls[S2.b_cls[b]]||'',res=c.startsWith('Res'),com=c.startsWith('Com');
+    if(f.t==='res'&&!(res&&S2.b_fa[b]>200))continue;if(f.t==='com'&&!com)continue;if(f.v0&&v<f.v0)continue;if(f.v1&&v>f.v1)continue;
+    const y=S.b_yr[b];if(f.y0||f.y1){if(!(y>1800))continue;if(f.y0&&y<f.y0)continue;if(f.y1&&y>f.y1)continue}
+    const a=S2.b_fa[b];if(f.a0||f.a1||f.p0||f.p1){if(!(a>200))continue;if(f.a0&&a<f.a0)continue;if(f.a1&&a>f.a1)continue;const pp=v/a;if(f.p0&&pp<f.p0)continue;if(f.p1&&pp>f.p1)continue}
+    if(f.fl){if(!fl)continue;if(f.fl==='in'&&!fl[b])continue;if(f.fl==='out'&&fl[b])continue}
+    hit[b]=1;vals.push(v);tot+=v;if(y>1800)yrs.push(y);if(res&&a>200)psf.push(v/a);sx+=LM.bc[2*b];sz+=LM.bc[2*b+1]}
+  for(const m of pickables){const vb=m.userData&&m.userData.vb;if(!vb)continue;const at=m.geometry.attributes.aHi,A=at.array;for(let i=0;i<vb.length;i++)A[i]=hit[vb[i]];at.needsUpdate=true}
+  const med=a=>{if(!a.length)return 0;a.sort((p,q)=>p-q);return a[a.length>>1]};FIND.on=true;FIND.f=f;U.uHi.value=1;FIND.sh=FIND.sh===undefined?shadowsOn:FIND.sh;
+  FIND.res={n:vals.length,med:med(vals),tot,yr:med(yrs),psf:med(psf),cx:vals.length?sx/vals.length:0,cz:vals.length?sz/vals.length:0};dirty=true;return FIND.res}
+function finderOff(){FIND.on=false;U.uHi.value=0;dirty=true;hideCard()}
+function findWords(f){const w=[],M=v=>fmtN(v,'$');w.push(f.t==='res'?'Homes':f.t==='com'?'Commercial property':'All property');
+  if(f.v0&&f.v1)w.push('assessed '+M(f.v0)+' to '+M(f.v1));else if(f.v0)w.push('assessed '+M(f.v0)+' and up');else if(f.v1)w.push('assessed under '+M(f.v1));
+  if(f.y0&&f.y1)w.push('built '+f.y0+' to '+f.y1);else if(f.y0)w.push('built '+f.y0+' or later');else if(f.y1)w.push('built '+f.y1+' or earlier');
+  if(f.a0&&f.a1)w.push(f.a0.toLocaleString('en-US')+' to '+f.a1.toLocaleString('en-US')+' sq ft');else if(f.a0)w.push(f.a0.toLocaleString('en-US')+' sq ft and up');else if(f.a1)w.push('under '+f.a1.toLocaleString('en-US')+' sq ft');
+  if(f.p0&&f.p1)w.push('$'+f.p0+' to $'+f.p1+' a sq ft');else if(f.p0)w.push('over $'+f.p0+' a sq ft');else if(f.p1)w.push('under $'+f.p1+' a sq ft');
+  if(f.fl==='in')w.push('in a mapped flood zone');if(f.fl==='out')w.push('outside the mapped flood zones');return w.join(', ')}
+function finderRun(f){closeSheet();const r=finderApply(f),M=v=>fmtN(v,'$');lastInput=performance.now();
+  if(!r.n){showCard('Property finder: no matches',findWords(f)+'. Nothing on the map fits all of that. Loosen a filter.',undefined,{label:'Change the filters',fn:finderOpen},[{label:'Clear',fn:finderOff}]);return}
+  showCard('Property finder: '+r.n.toLocaleString('en-US')+' buildings',findWords(f)+'. The matches are gold on the map and everything else is grey. Median assessed value '+M(r.med)+(r.yr?', median year built '+r.yr:'')+(r.psf?', median $'+Math.round(r.psf)+' a square foot':'')+'. Together they are assessed at '+M(r.tot)+'. Tap any gold building for its own value, tax estimate, size and year. These are the county assessor\'s 2026 values, not asking prices or sale prices, and a building on a shared parcel carries its share of the parcel\'s value. "Homes" means residential buildings with a floor area on record, which leaves out detached garages and sheds and includes apartment buildings. Year built and floor area are on record for homes and missing for most other buildings, so a filter on either one leaves those out.',undefined,{label:'Change the filters',fn:finderOpen},
+   [{label:'Clear',fn:finderOff},{label:'Recent sales',fn:()=>reMap(5)},{label:'Everything about one spot',fn:spotArm},{href:'https://starcitylincoln.org/sales.html',label:'Home sales paper ↗'}]);
+  const d=camera.position.distanceTo(controls.target);if(d<6000)flyTo(camTo(controls.target.x,controls.target.z,9000,200,48),1600)}
+function finderHTML(){const f=FIND.f||{t:'res'},v=k=>f[k]?`value="${f[k]}"`:'',inp=(k,ph)=>`<input type="number" inputmode="numeric" data-ff="${k}" placeholder="${ph}" ${v(k)} style="width:46%;padding:9px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;font:inherit">`,
+  sel=(k,opts)=>`<select data-ff="${k}" style="width:100%;padding:9px;border-radius:9px;border:1px solid var(--line);background:#1b1f26;color:inherit;font:inherit">${opts.map(([val,l])=>`<option value="${val}"${(f[k]||'')===val?' selected':''}>${l}</option>`).join('')}</select>`,hasFl=!!(DL.get('flood100')&&DL.get('flood100').X);
+  return '<p>The filters people pay listing and data services for, run on public records for every building in Lincoln. Matches turn gold on the map.</p><h4>One tap</h4><p>'+FINDP.filter(q=>hasFl||!q[1].fl).map((q,i)=>`<button class="btn go" data-fp="${FINDP.indexOf(q)}">${esc(q[0])}</button>`).join(' ')+'</p>'
+   +'<h4>Or build your own</h4><p><b>Kind of property</b><br>'+sel('t',[['res','Homes'],['com','Commercial'],['','Everything']])+'</p>'
+   +'<p><b>Assessed value, dollars</b><br>'+inp('v0','at least')+' '+inp('v1','at most')+'</p><p><b>Year built</b><br>'+inp('y0','from')+' '+inp('y1','to')+'</p>'
+   +'<p><b>Floor area, square feet</b><br>'+inp('a0','at least')+' '+inp('a1','at most')+'</p><p><b>Value per square foot, dollars</b><br>'+inp('p0','at least')+' '+inp('p1','at most')+'</p>'
+   +(hasFl?'<p><b>Mapped flood zone</b><br>'+sel('fl',[['','Either'],['in','Inside a flood zone'],['out','Outside the flood zones']])+'</p>':'')
+   +'<p><button class="btn go2" data-fgo="1">Show the matches</button></p><p class="psub">Source: Lancaster County Assessor, 2026 assessment roll, and the FEMA flood layers the city publishes. Assessed values are not sale prices. For what actually sold, see Recent sales. No owner names are stored.</p>'}
+const FINDS={title:'Property <i>finder</i>',tabs:['Filters'],html:()=>finderHTML(),click:e=>{const p=e.target.closest('[data-fp]');if(p){finderRun(Object.assign({},FINDP[+p.dataset.fp][1]));return}if(!e.target.closest('[data-fgo]'))return;const f={};document.querySelectorAll('#gbody [data-ff]').forEach(el=>{const k=el.dataset.ff,val=el.value;if(val==='')return;f[k]=(k==='t'||k==='fl')?val:+val});finderRun(f)}};
+function finderOpen(){openSheet(FINDS,0)}
