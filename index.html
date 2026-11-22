@@ -1977,6 +1977,7 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
  ['The university: graduation, cost, direction','How UNL students do, what a year costs in 2026-27 and which way both are moving, from the university\'s own figures.',()=>unlOpen(0)],
  ['Feeding the world, with the details','Where Nebraska\'s corn actually goes: fuel, feed, beef and water. On East Campus.',()=>{chipGo('UNL East Campus');unlOpen(2)}],
  ['Harvest and ice cream on East Campus','Cattle, a combine working the plots and a cone on the Dairy Store. For fun.',()=>chipGo('UNL East Campus')],
+ ['The Bryan house move','Fairview, the William Jennings Bryan house, was moved across the hospital campus on November 7, 2026. See where it stands now, and replay the trip with a flying saucer. The saucer is for fun.',()=>fvPlay()],
  ['Lake monsters and Sasquatch','Something surfaces in Holmes Lake, and something walks in the woods. For fun.',()=>chipGo('Holmes')],
  ['Flights at the airport','Who flies from Lincoln, with example planes taking off and landing.',()=>setFlights(true)],
  ['Every city tree, on the record','Street trees and park trees from the city inventory. Tap one for its kind, its trunk size and its city tree ID.',()=>{flyTo(camTo(-3300,-3500,430,-12,36),2400);showCard('City trees','Tap any tree along a street or in a park. If it is on the city list, its card gives the kind, the species, how big the trunk is and the tree ID the city knows it by.',undefined,{label:'All city trees as a layer',fn:()=>dlSet('trees',true)})}],
@@ -3578,6 +3579,7 @@ function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date
   for(const s of HK.sp.slice(1)){const e=(HK.ev[s[0]]||[]).find(q=>q.st==='in');if(e)out.push({t:'LIVE · '+hkLine(e,s),c:'hot',fn:()=>huskOpen(0)})}
   const al=wxAlerts();if(al.length)out.push({t:'⚠ '+al[0].event,c:'hot',fn:()=>wxDetail()});
   if(!U._t)out.push({t:'New here? Take the short tour',c:'ctx',fn:()=>{sgUse('tour');$('bTour').click()}});
+  if(n.ymd<20270301&&LM.fair)out.push({t:'🛸 The Bryan house just moved',c:'ctx',fn:()=>fvPlay()});
   {const soon=[];for(const s of HK.sp.slice(1))for(const e of HK.ev[s[0]]||[])if(e.st==='pre'&&e.t>nowMs-9e5&&e.t-nowMs<20*36e5)soon.push([e,s]);soon.sort((a,b)=>a[0].t-b[0].t);
     if(soon[0]){const [e,s]=soon[0];out.push({t:s[1]+(e.ha==='home'?' vs ':' at ')+e.opp+' · '+clock(e.t),c:'ctx',fn:()=>huskOpen(0)})}}
   {const w=wxNow();if(w&&w.precip)out.push({t:(w.precip==='snow'?'Snow':'Rain')+' now · weather',c:'ctx',fn:()=>wxDetail()})}
