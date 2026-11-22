@@ -2071,7 +2071,7 @@ function goResult(r){$('res').style.display='none';$('q').blur();stopTour();
 $('bFind').onclick=e=>{const f=$('find');const on=f.style.display!=='block';f.style.display=on?'block':'none';e.target.classList.toggle('on',on);if(on){if(!sIndex)sIndex=buildIndex();$('q').focus()}};
 $('q').oninput=()=>{const q=$('q').value.trim().toLowerCase();const host=$('res');host.innerHTML='';if(q.length<2){host.style.display='none';return}
   const rank={building:0,trail:.5,street:1,park:2,neighborhood:3,address:4};const hits=[];for(const r of sIndex){const i=r.l.indexOf(q);if(i<0)continue;hits.push([ (i===0?0:10)+rank[r.k]+r.l.length*.01,r]);if(hits.length>400)break}
-  hits.sort((a,b)=>a[0]-b[0]);for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b)}
+  hits.sort((a,b)=>a[0]-b[0]);for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b);if(r.b!==undefined&&r.k==='address'){const s=document.createElement('button');s.textContent='↳ Neighborhood sheet for '+r.t;s.style.cssText='font-size:12px;opacity:.85;padding-left:22px';s.onclick=()=>{goResult(r);SPOT.arm=false;SPOT.x=LM.bc[2*r.b];SPOT.z=LM.bc[2*r.b+1];spotSheet(r.t)};host.appendChild(s)}}
   host.style.display=hits.length?'block':'none'};
 $('q').onkeydown=e=>{if(e.key==='Enter'){const b=$('res').firstElementChild;if(b)b.click()}};
 $('bTour').onclick=()=>tour?stopTour():startTour();

@@ -2071,7 +2071,7 @@ function goResult(r){$('res').style.display='none';$('q').blur();stopTour();
 $('bFind').onclick=e=>{const f=$('find');const on=f.style.display!=='block';f.style.display=on?'block':'none';e.target.classList.toggle('on',on);if(on){if(!sIndex)sIndex=buildIndex();$('q').focus()}};
 $('q').oninput=()=>{const q=$('q').value.trim().toLowerCase();const host=$('res');host.innerHTML='';if(q.length<2){host.style.display='none';return}
   const rank={building:0,trail:.5,street:1,park:2,neighborhood:3,address:4};const hits=[];for(const r of sIndex){const i=r.l.indexOf(q);if(i<0)continue;hits.push([ (i===0?0:10)+rank[r.k]+r.l.length*.01,r]);if(hits.length>400)break}
-  hits.sort((a,b)=>a[0]-b[0]);for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b)}
+  hits.sort((a,b)=>a[0]-b[0]);for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b);if(r.b!==undefined&&r.k==='address'){const s=document.createElement('button');s.textContent='↳ Neighborhood sheet for '+r.t;s.style.cssText='font-size:12px;opacity:.85;padding-left:22px';s.onclick=()=>{goResult(r);SPOT.arm=false;SPOT.x=LM.bc[2*r.b];SPOT.z=LM.bc[2*r.b+1];spotSheet(r.t)};host.appendChild(s)}}
   host.style.display=hits.length?'block':'none'};
 $('q').onkeydown=e=>{if(e.key==='Enter'){const b=$('res').firstElementChild;if(b)b.click()}};
 $('bTour').onclick=()=>tour?stopTour():startTour();
@@ -4492,19 +4492,19 @@ function t25Share(name){const v=t25(name);if(!v)return;const c=document.createEl
 
 // ---- a one-page neighborhood sheet for one spot: what an agent, a seller or a buyer would otherwise gather by hand.
 // It leaves out voting and anything about who lives nearby, on purpose, and says what it is not.
-function spotSheetDoc(){const x=SPOT.x,z=SPOT.z,lat=H.lat0-z/KYm,lon=H.lon0+x/KXm,d=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});let hd='';try{const L=DL.get('hoods');if(L&&L.X){const i=dlAt(L,x,z);if(i>=0)hd=String(fget(L,L.fields.find(f=>f.k==='name'))(i))}}catch(e){}
+function spotSheetDoc(label){const x=SPOT.x,z=SPOT.z,lat=H.lat0-z/KYm,lon=H.lon0+x/KXm,d=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});let hd='';try{const L=DL.get('hoods');if(L&&L.X){const i=dlAt(L,x,z);if(i>=0)hd=String(fget(L,L.fields.find(f=>f.k==='name'))(i))}}catch(e){}
   const body=spotHTML(true).replace(/<h4>Who decides for this spot<\/h4>/,'<h4>Districts and who represents this spot</h4>');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Neighborhood sheet · STARCITY</title><style>
 body{font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#151a2c;max-width:760px;margin:0 auto;padding:22px}h1{font-size:24px;margin:0 0 2px}h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8a6a00;border-bottom:1px solid #d9dce6;padding-bottom:3px;margin:20px 0 8px}
 p{margin:0 0 9px}.psub{color:#5b6278;font-size:12.5px}.top{border-top:6px solid #e2b93b;padding-top:12px}.brand{font-weight:700;letter-spacing:.2em;color:#8a6a00;font-size:12px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-top:1px solid #d9dce6;padding:4px 6px;text-align:left}
 .pbar{display:inline-block;width:90px;height:7px;background:#e6e8ef;border-radius:4px;vertical-align:middle;margin:0 6px}.pbar i{display:block;height:7px;background:#e2b93b;border-radius:4px}.prow{display:flex;justify-content:space-between;gap:8px;font-size:13px;border-top:1px solid #eceef4;padding:3px 0}
 button{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid #8a6a00;background:#e2b93b;cursor:pointer}.note{background:#f5f6fa;border-radius:8px;padding:10px 12px;margin-top:18px}a{color:#1d4ed8}@media print{button{display:none}body{padding:0}}
-</style></head><body><div class="top"><div class="brand">STARCITY · LINCOLN, NEBRASKA</div><h1>Neighborhood sheet</h1><p class="psub">${hd?esc(hd)+' · ':''}${lat.toFixed(5)}, ${lon.toFixed(5)} · prepared ${d} from public records · free at starcitylincoln.org</p><p><button onclick="print()">Print or save as PDF</button></p></div>
+</style></head><body><div class="top"><div class="brand">STARCITY · LINCOLN, NEBRASKA</div><h1>Neighborhood sheet</h1>${label?'<p><b>Near '+esc(label)+'</b></p>':''}<p class="psub">${hd?esc(hd)+' · ':''}${lat.toFixed(5)}, ${lon.toFixed(5)} · prepared ${d} from public records · free at starcitylincoln.org</p><p><button onclick="print()">Print or save as PDF</button></p></div>
 ${body}
 <div class="note"><p><b>What this sheet is not.</b> It is not an appraisal or a price opinion. Assessed value is the county's figure for tax purposes and recent Lincoln sales have run above it. The value and age figures describe the blocks around this spot, not one house. Tax figures are estimates before credits and exemptions.</p>
 <p><b>What it leaves out on purpose.</b> Nothing here describes the people who live nearby. It has no owner names, no income or demographic figures and no voting information. Those do not belong in a decision about housing.</p>
 <p class="psub">Check anything that matters to a sale against the source: the Lancaster County Assessor for the parcel, the city's floodplain office for flood status, and Lincoln Public Schools for attendance areas, which this sheet does not show. Live map: <a href="https://starcitylincoln.org">starcitylincoln.org</a></p></div></body></html>`}
-function spotSheet(){const u=URL.createObjectURL(new Blob([spotSheetDoc()],{type:'text/html'}));const w=window.open(u,'_blank');if(!w)location.href=u}
+function spotSheet(label){const u=URL.createObjectURL(new Blob([spotSheetDoc(label)],{type:'text/html'}));const w=window.open(u,'_blank');if(!w)location.href=u}
 
 // ---- The Sower's wardrobe. The statue on the dome is this map's own simple figure, and these are costumes for it. For fun, and the card says so.
 const SWP={lam:(c,f)=>new THREE.MeshLambertMaterial({color:c,flatShading:f!==false}),
