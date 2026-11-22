@@ -326,6 +326,7 @@ function setupSax(){if(SAX.g||!H||!H.lat0)return;const bx=(-96.7008172-H.lon0)*K
   box(.9,.1,.4,0x2a1c12,1.3,.06,.5);box(.9,.4,.05,0x3a2819,1.3,.25,.3);
   g.position.set(x,y,z);g.rotation.y=Math.atan2(ux,uz);g.scale.setScalar(2.4);
   g.userData.info=['Saxophone outside the Zoo Bar','For fun. The Zoo Bar, 136 North 14th Street, has been Lincoln\'s blues club since 1973, and the music has always found its way out the door. The player is part of the map, not a real person.'];
+  g.userData.act={label:'Hear a few bars ♪',fn:saxPlay};
   scene.add(g);pickables.push(g);SAX.g=g;SAX.x=x;SAX.z=z;SAX.dx=-uz;SAX.dz=ux;SAX.body=g;
   for(let i=0;i<7;i++)SAX.notes.push({t:i%3===1?'♫':i%3===2?'♬':'♪',x,y:y+4,z,k:3,pri:900-i,near:0,far:1500,ph:i/7});
   SAX.lb={t:'Zoo Bar',sub:'blues on 14th Street since 1973',x,y:y+13,z,k:3,pri:560,near:0,far:2400};labels.push(SAX.lb);dirty=true}
@@ -339,3 +340,15 @@ function stepSax(now){const g=SAX.g;if(!g)return;const t=controls.target,d=camer
 function reMap(k){if(k===undefined)k=reAt>=0?reAt:0;if(reAt>=0&&RET[reAt]&&reAt!==k)dlSet(RET[reAt][0],false,true);reAt=k;const r=RET[k];dlSet(r[0],true,true);lastInput=performance.now();
   showCard('Real estate map: '+r[1],r[2]()+' Tap any neighborhood, hexagon, sale or bar on the map for its own numbers. Use the buttons to change what the map shows without leaving it.',undefined,{label:'Numbers for this view',fn:()=>openSheet(NUMS,0)},
    RET.map((q,i)=>({label:(i===k?'● ':'')+q[1],fn:()=>reMap(i)})).concat([{label:'Property and taxes tables',fn:()=>openSheet(TAXS,0)},{label:'Everything about one spot',fn:()=>spotArm()},{label:'Switch off',fn:()=>{dlSet(RET[reAt][0],false,true);reAt=-1;hideCard()}}]))}
+
+// A short blues phrase made in the browser, no recording. It plays only when someone taps the button, because phones do not allow sound to start on its own.
+let saxCtx=null,saxUntil=0;
+function saxPlay(){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;saxCtx=saxCtx||new AC();const c=saxCtx;if(c.state==='suspended')c.resume();if(c.currentTime<saxUntil)return;
+  const out=c.createGain();out.gain.value=.16;const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1500;lp.Q.value=3;lp.connect(out);out.connect(c.destination);
+  // an A minor blues line: [semitones above A3, beats]
+  const L=[[0,1],[3,.5],[5,.5],[6,.25],[5,.25],[3,.5],[0,1.5],[null,.5],[7,.5],[10,.5],[12,1],[10,.5],[7,.5],[6,.25],[5,.75],[3,.5],[0,2]],beat=.36;let t=c.currentTime+.06;
+  for(const [n,b] of L){const d=b*beat;if(n!==null){const f=220*Math.pow(2,n/12),o=c.createOscillator(),o2=c.createOscillator(),g=c.createGain(),v=c.createOscillator(),vg=c.createGain();
+      o.type='sawtooth';o2.type='square';o.frequency.setValueAtTime(f*.97,t);o.frequency.linearRampToValueAtTime(f,t+.06);o2.frequency.value=f*1.005;v.frequency.value=5.5;vg.gain.setValueAtTime(0,t);vg.gain.linearRampToValueAtTime(f*.012,t+d*.7);v.connect(vg);vg.connect(o.frequency);
+      const g2=c.createGain();g2.gain.value=.25;o2.connect(g2);g2.connect(g);o.connect(g);g.connect(lp);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+.03);g.gain.setValueAtTime(1,t+d*.75);g.gain.linearRampToValueAtTime(0,t+d*.98);
+      for(const q of [o,o2,v]){q.start(t);q.stop(t+d)}}t+=d}
+  saxUntil=t}catch(e){}}

@@ -1,6 +1,6 @@
 # Putting STARCITY on starcitylincoln.org, behind Cloudflare
 
-Why: the map is a single file of about 7.7 MB over the wire after gzip. GitHub
+Why: the map is one small page (about 0.3 MB after gzip) plus two data files in `data/` (about 10.8 MB together). The data files are named by their content, so a browser that has them keeps them when only the code changes. The page must be served over http or https; opening `index.html` straight from a folder will not load the data. GitHub
 Pages has a soft bandwidth limit of 100 GB a month, which is roughly 13,900
 loads. Cloudflare caches the whole site at its edge and serves it free and
 unmetered, which removes that ceiling. Cloudflare cannot proxy a `github.io`
