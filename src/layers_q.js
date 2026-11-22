@@ -308,3 +308,34 @@ function spotHTML(){const x=SPOT.x,z=SPOT.z,row=(a,b)=>`<p><b>${esc(a)}</b><br>$
   h+='<p class="psub">Sources: districts and precincts from the Lancaster County Election Commissioner and city GIS; values from the Lancaster County Assessor 2026 roll, with tax estimated from the 2025 levy; flood zones from the FEMA layers the city publishes; creek ratings from Nebraska\'s 2022 Water Quality Integrated Report; rain path from the USGS 10 meter elevation model; bus stops from StarTran\'s timetable. Read November 2026.</p>';
   return h}
 const SPOTS={title:'Everything about <i>one spot</i>',tabs:['This spot'],html:()=>spotHTML(),click:e=>{const b=e.target.closest('[data-sp]');if(!b)return;const v=b.dataset.sp,x=SPOT.x,z=SPOT.z;closeSheet();if(v==='rain')rainDrop(x,z);else if(v==='walls')civicStack(x,z);else if(v==='cc')councilOpen(0);else spotArm()}};
+
+// ---- A saxophone player on the sidewalk in front of the Zoo Bar, 136 N. 14th Street, with the notes drifting down the street. For fun.
+const SAX={g:null,x:0,z:0,dx:0,dz:1,notes:[],lb:null};
+function setupSax(){if(SAX.g||!H||!H.lat0)return;const bx=(-96.7008172-H.lon0)*KXm,bz=-(40.8143782-H.lat0)*KYm;
+  // step from the bar's door toward the nearest street, and stop on the sidewalk
+  let rx=bx+9,rz=bz,bd=1e18;{const xy=S.r_xy,rn=S.r_n,rc=S.r_c;let i=0;for(let w=0;w<rn.length;w++){const ok=rc[w]<=5;let px=0,pz=0;for(let k=0;k<rn[w];k++,i+=2){const x=xy[i]*Qm,z=-xy[i+1]*Qm;if(ok&&k){const vx=x-px,vz=z-pz,l2=vx*vx+vz*vz||1,t=Math.max(0,Math.min(1,((bx-px)*vx+(bz-pz)*vz)/l2)),cx=px+vx*t,cz=pz+vz*t,d=(cx-bx)**2+(cz-bz)**2;if(d<bd){bd=d;rx=cx;rz=cz}}px=x;pz=z}}}
+  const L=Math.hypot(rx-bx,rz-bz)||1,ux=(rx-bx)/L,uz=(rz-bz)/L,x=bx+ux*Math.max(3,L-7),z=bz+uz*Math.max(3,L-7),y=hAt(x,z),g=new THREE.Group(),
+    M=c=>new THREE.MeshLambertMaterial({color:c}),box=(w,h,d,c,px,py,pz)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(px,py,pz);g.add(m);return m};
+  box(.34,.85,.3,0x23262e,-.2,.43,0);box(.34,.85,.3,0x23262e,.2,.43,0);box(.86,.9,.42,0x7a1f2b,0,1.3,0);const head=box(.42,.44,.42,0x8a5a3c,0,2.0,0);box(.5,.14,.5,0x15171c,0,2.27,0);box(.7,.04,.7,0x15171c,0,2.2,0);
+  const gold=new THREE.MeshLambertMaterial({color:0xe2b33a,emissive:0x6b4a08,emissiveIntensity:.55});
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.05,.07,1.15,8),gold);neck.position.set(.12,1.3,.42);neck.rotation.x=.42;g.add(neck);
+  const bell=new THREE.Mesh(new THREE.ConeGeometry(.24,.5,12,1,true),gold);bell.position.set(.12,.92,.78);bell.rotation.x=-2.3;g.add(bell);
+  const bow=new THREE.Mesh(new THREE.TorusGeometry(.16,.06,8,12,Math.PI),gold);bow.position.set(.12,.78,.6);bow.rotation.set(Math.PI,Math.PI/2,0);g.add(bow);
+  box(.2,.6,.2,0x7a1f2b,-.42,1.25,.3).rotation.x=-.7;box(.2,.6,.2,0x7a1f2b,.5,1.3,.3).rotation.x=-.8;
+  // an open case on the sidewalk
+  box(.9,.1,.4,0x2a1c12,1.3,.06,.5);box(.9,.4,.05,0x3a2819,1.3,.25,.3);
+  g.position.set(x,y,z);g.rotation.y=Math.atan2(ux,uz);g.scale.setScalar(2.4);
+  g.userData.info=['Saxophone outside the Zoo Bar','For fun. The Zoo Bar, 136 North 14th Street, has been Lincoln\'s blues club since 1973, and the music has always found its way out the door. The player is part of the map, not a real person.'];
+  scene.add(g);pickables.push(g);SAX.g=g;SAX.x=x;SAX.z=z;SAX.dx=-uz;SAX.dz=ux;SAX.body=g;
+  for(let i=0;i<7;i++)SAX.notes.push({t:i%3===1?'♫':i%3===2?'♬':'♪',x,y:y+4,z,k:3,pri:900-i,near:0,far:1500,ph:i/7});
+  SAX.lb={t:'Zoo Bar',sub:'blues on 14th Street since 1973',x,y:y+13,z,k:3,pri:560,near:0,far:2400};labels.push(SAX.lb);dirty=true}
+function stepSax(now){const g=SAX.g;if(!g)return;const t=controls.target,d=camera.position.distanceTo(t);if(Math.hypot(t.x-SAX.x,t.z-SAX.z)>900||d>1600)return;
+  const s=now*.001,y0=hAt(SAX.x,SAX.z);g.rotation.z=Math.sin(s*2.2)*.07;g.position.y=y0+Math.abs(Math.sin(s*4.4))*.12;
+  // each note leaves the horn, rises, and drifts along the street both ways
+  for(const n of SAX.notes){const p=(s*.16+n.ph)%1,side=n.ph*7%2<1?1:-1,along=p*70*side,sway=Math.sin(p*9+n.ph*20)*3;n.x=SAX.x+SAX.dx*along+SAX.dz*sway;n.z=SAX.z+SAX.dz*along-SAX.dx*sway;n.y=y0+5+p*16;if(p<.92)lifeLabels.push(n)}
+  dirty=true}
+
+// ---- Real estate as one map: every measure is a button, the map redraws in place, and anything standing on it can be tapped.
+function reMap(k){if(k===undefined)k=reAt>=0?reAt:0;if(reAt>=0&&RET[reAt]&&reAt!==k)dlSet(RET[reAt][0],false,true);reAt=k;const r=RET[k];dlSet(r[0],true,true);lastInput=performance.now();
+  showCard('Real estate map: '+r[1],r[2]()+' Tap any neighborhood, hexagon, sale or bar on the map for its own numbers. Use the buttons to change what the map shows without leaving it.',undefined,{label:'Numbers for this view',fn:()=>openSheet(NUMS,0)},
+   RET.map((q,i)=>({label:(i===k?'● ':'')+q[1],fn:()=>reMap(i)})).concat([{label:'Property and taxes tables',fn:()=>openSheet(TAXS,0)},{label:'Everything about one spot',fn:()=>spotArm()},{label:'Switch off',fn:()=>{dlSet(RET[reAt][0],false,true);reAt=-1;hideCard()}}]))}
