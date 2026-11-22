@@ -680,3 +680,62 @@ function cpaOpen(preset){lastInput=performance.now();closeSheet();hideCard();if(
     CPA.el.addEventListener('wheel',e=>{if(e.target.closest('.cpav')){e.preventDefault();CPA.zoom=Math.max(.5,Math.min(4,CPA.zoom*(e.deltaY<0?1.1:.91)));cpaDraw()}},{passive:false});
     CPA.el.addEventListener('scroll',cpaDraw,true);addEventListener('resize',()=>{if(CPA.on)cpaSize()})}
   CPA.home=[controls.target.x,controls.target.z];CPA.on=true;CPA.el.style.display='block';if(preset||!CPA.boxes.length)cpaPreset(preset||'council');cpaRefresh()}
+
+// ---- Fairview, the William Jennings Bryan house. The real house was moved on November 7, 2026 from the south side of Bryan East Campus
+// (Sumner Street) to the corner of 52nd and A, on about 35 remote-controlled dollies. The map shows it where it stands now.
+// The replay with a flying saucer, an alien flagger and Sasquatch is decoration and says so on the card.
+const FV={on:false,t0:0,g:null,O:[-930,-2855],N:null,lb:{t:'',x:0,y:0,z:0,k:3,pri:900,near:0,far:4000},lb2:{t:'',x:0,y:0,z:0,k:3,pri:890,near:0,far:4000}};
+function fvM(geo,c,x,y,z,o){const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial(Object.assign({color:c},o||{})));m.position.set(x,y,z);return m}
+function fvB(w,h,d,c,x,y,z,o){return fvM(new THREE.BoxGeometry(w,h,d),c,x,y,z,o)}
+function setupFairview(){if(FV.g||!LM.fair)return;const N=LM.fair;FV.N=[N.x,N.z];const BR=0x8e3b2c,WH=0xf1ece0,RF=0x474c53,g=new THREE.Group();
+  g.add(fvB(13.6,1.2,15.6,0x9a958c,0,.6,0),fvB(13,8.4,15,BR,0,5.2,0));
+  {const r=fvM(new THREE.ConeGeometry(1,1,4),RF,0,11.7,0);r.rotation.y=Math.PI/4;r.scale.set(14.2/1.414,4.6,16.2/1.414);g.add(r)}
+  g.add(fvM(new THREE.CylinderGeometry(2.3,2.3,11.4,10),BR,6.2,5.7,7.2),fvM(new THREE.ConeGeometry(2.8,3.8,10),RF,6.2,13.3,7.2));
+  g.add(fvB(9.5,.4,3.2,WH,-1.6,4.1,9),fvB(9.5,.5,3.2,0x9a958c,-1.6,.9,9));for(let i=0;i<5;i++)g.add(fvB(.36,3,.36,WH,-6+i*2.1,2.6,10.3));
+  g.add(fvB(4.2,2.6,1.2,BR,-1.5,10.6,6.6),fvB(4.8,.3,1.6,RF,-1.5,12,6.6),fvB(1,3.4,1,BR,-4,12.6,-3),fvB(1,3.4,1,BR,4,12.6,-4));
+  for(const [x,y] of [[-4.5,3.2],[-1.5,3.2],[-4.5,6.9],[-1.5,6.9],[1.6,6.9]])g.add(fvB(1.1,1.8,.12,0xf6e7b0,x,y,7.52,{emissive:0x4a3c12}));
+  g.traverse(m=>{if(m.isMesh){m.castShadow=true;m.userData.card=fvCard}});g.userData.card=fvCard;FV.y0=hAt(N.x,N.z);g.position.set(N.x,FV.y0,N.z);scene.add(g);pickables.push(g);FV.g=g;
+  labels.push({t:'Fairview',sub:'Bryan house, moved 2026',x:N.x,y:FV.y0+20,z:N.z,k:3,pri:520,near:0,far:1500});
+  // the saucer
+  const u=new THREE.Group(),hull=fvM(new THREE.SphereGeometry(10,28,10),0x9aa7b5,0,0,0,{emissive:0x1a2026});hull.scale.y=.2;u.add(hull);
+  {const d=fvM(new THREE.SphereGeometry(4,18,10,0,Math.PI*2,0,Math.PI/2),0x8ff3ff,0,1.2,0,{emissive:0x2aa3b3,transparent:true,opacity:.85});u.add(d)}
+  FV.lights=[];for(let i=0;i<10;i++){const a=i/10*Math.PI*2,l=fvM(new THREE.SphereGeometry(.7,8,6),0xffffff,Math.cos(a)*8.2,-1.1,Math.sin(a)*8.2,{emissive:0xffd23a});u.add(l);FV.lights.push(l)}
+  {const bg=new THREE.ConeGeometry(1,1,24,1,true);bg.translate(0,-.5,0);FV.beam=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color:0x9ff5ff,transparent:true,opacity:.26,side:THREE.DoubleSide,depthWrite:false}));u.add(FV.beam)}
+  u.visible=false;scene.add(u);FV.ufo=u;
+  // the alien flagger: hard hat, high-visibility vest, two lit wands
+  const al=new THREE.Group(),GN=0x7ed957;al.add(fvB(.34,.9,.34,GN,-.22,.45,0),fvB(.34,.9,.34,GN,.22,.45,0),fvB(.95,1.1,.5,GN,0,1.45,0),fvB(1.02,.8,.56,0xd8ff2e,0,1.5,0,{emissive:0x39440a}),fvB(1.04,.12,.58,0xff7a1a,0,1.3,0),fvB(1.04,.12,.58,0xff7a1a,0,1.7,0));
+  al.add(fvM(new THREE.SphereGeometry(.52,14,10),GN,0,2.5,0));{const e1=fvM(new THREE.SphereGeometry(.16,8,6),0x101010,-.2,2.55,.42),e2=fvM(new THREE.SphereGeometry(.16,8,6),0x101010,.2,2.55,.42);e1.scale.set(1,1.5,.6);e2.scale.set(1,1.5,.6);al.add(e1,e2)}
+  al.add(fvM(new THREE.SphereGeometry(.56,14,8,0,Math.PI*2,0,Math.PI/2),0xffd21f,0,2.72,0),fvB(1.3,.07,1.5,0xffd21f,0,2.74,.12));
+  FV.arms=[-1,1].map(s=>{const a=new THREE.Group();a.position.set(s*.6,1.9,0);a.add(fvB(.2,.9,.2,GN,0,.45,0),fvM(new THREE.CylinderGeometry(.09,.09,1.1,8),0xff5a14,0,1.4,0,{emissive:0xff5a14}));al.add(a);return a});
+  al.scale.setScalar(2.4);al.visible=false;scene.add(al);FV.alien=al;
+  // Sasquatch, house-moving size
+  const sq=new THREE.Group(),F=0x3b2a1e,F2=0x4c3828;FV.legs=[-1,1].map(s=>{const l=new THREE.Group();l.position.set(s*.26,1.15,0);l.add(fvB(.42,1.15,.42,F,0,-.57,0));sq.add(l);return l});
+  sq.add(fvB(1.05,1.25,.62,F,0,1.75,0),fvB(.82,.5,.5,F2,0,2.05,.08),fvB(.56,.56,.56,F,0,2.68,.04),fvB(.42,.12,.1,0x1c130d,0,2.74,.33));
+  FV.sarms=[-1,1].map(s=>{const a=new THREE.Group();a.position.set(s*.72,2.3,0);a.add(fvB(.34,1.35,.34,F,0,-.67,0));sq.add(a);return a});sq.scale.setScalar(6);sq.visible=false;scene.add(sq);FV.sq=sq}
+function fvCard(){showCard('Fairview, the William Jennings Bryan house','Built around 1901 for William Jennings Bryan and Mary Baird Bryan, and a National Historic Landmark since 1963. On Saturday, November 7, 2026 the brick house was moved about 1,200 feet, from the south side of Bryan East Campus on Sumner Street to this corner at 52nd and A, to make room for a larger emergency department. It rode on about 35 remote-controlled dollies and the trip took most of a day. The map shows it where it stands now. The replay below is for fun: no saucer, alien or Sasquatch was involved.',-1,{label:FV.on?'Stop the replay':'Replay the move, saucer edition',fn:()=>FV.on?fvStop():fvPlay()},[{href:'https://nebraskapublicmedia.org/en/news/news-articles/historic-home-of-william-jennings-bryan-moved-as-bryan-health-expands/',label:'Nebraska Public Media on the move ↗'}])}
+function fvStop(){FV.on=false;if(!FV.g)return;for(const o of [FV.ufo,FV.alien,FV.sq])o.visible=false;FV.g.position.set(FV.N[0],FV.y0,FV.N[1]);FV.g.rotation.set(0,0,0);FV.g.scale.set(1,1,1);dirty=true}
+function fvPlay(){setupFairview();if(!FV.g)return;FV.on=true;FV.t0=performance.now();const mx=(FV.O[0]+FV.N[0])/2,mz=(FV.O[1]+FV.N[1])/2;try{flyTo(camTo(mx,mz,640,118,30),1800)}catch(e){}hideCard();dirty=true}
+function stepFairview(now){if(!FV.on||!FV.g)return;dirty=true;lastInput=performance.now();const t=FV.hold>=0?FV.hold:(now-FV.t0)/1000,O=FV.O,N=FV.N,yO=hAt(O[0],O[1]),yN=FV.y0,g=FV.g,u=FV.ufo,al=FV.alien,sq=FV.sq,
+    sm=(a,b)=>{const x=Math.max(0,Math.min(1,(t-a)/(b-a)));return x*x*(3-2*x)},mix=(a,b,k)=>a+(b-a)*k,HV=62;
+  const say=(lb,txt,x,y,z)=>{if(!txt)return;lb.t=txt;lb.x=x;lb.y=y;lb.z=z;lifeLabels.push(lb)};
+  let hx=O[0],hz=O[1],hy=yO,rx=0,ry=0,rz=0,sy=1,ux=O[0],uz=O[1],uy=yO+400,beam=0;
+  const AX=N[0]-15,AZ=N[1]-24,SX0=N[0]+70,SZ=N[1]+4,SX1=N[0]+13;
+  if(t<25){const k=sm(9,19);ux=mix(O[0],N[0],k);uz=mix(O[1],N[1],k);uy=mix(yO,yN,k)+HV+mix(340,0,sm(.6,4.5))+Math.sin(t*2.1)*.8;
+    const lift=sm(5,9)*(1-sm(19,24.6));hx=ux;hz=uz;hy=mix(mix(yO,yN,k),uy-22,lift);ry=sm(5,24)*Math.PI*2;rz=Math.sin(t*1.7)*.05*lift;beam=t>4.6&&t<24.8?1:0}
+  else if(t<28){hx=N[0];hz=N[1];hy=yN;ux=N[0]+sm(25,28)*260;uz=N[1]-sm(25,28)*120;uy=yN+HV+sm(25,28)*sm(25,28)*900}
+  else if(t<33){hx=N[0];hz=N[1];hy=yN;uy=1e5}
+  else if(t<36){const k=sm(33,35.6);hx=mix(N[0],SX1-2,k*.5);hz=N[1];hy=yN+k*19;rz=-k*.35;uy=1e5}
+  else if(t<40.6){const k=Math.max(0,Math.min(1,(t-36)/4.6));hx=mix(SX1-6,O[0],k);hz=mix(N[1],O[1],k);hy=mix(yN+19,yO,k)+Math.sin(k*Math.PI)*170;rz=-.35-k*Math.PI*4+.35*k;rx=k*Math.PI*2;uy=1e5}
+  else if(t<45){const b=Math.max(0,1-(t-40.6)/1.4);hy=yO+Math.abs(Math.sin((t-40.6)*7))*5*b;sy=1-.12*b*Math.abs(Math.cos((t-40.6)*7));uy=1e5}
+  else if(t<53){const k=sm(47.4,50.4);ux=mix(O[0],N[0],k);uz=mix(O[1],N[1],k);uy=mix(yO,yN,k)+HV+mix(500,0,sm(45,46.6))+mix(0,700,sm(52,53));const lift=sm(46.6,47.6)*(1-sm(50.4,51.8));hx=ux;hz=uz;hy=mix(mix(yO,yN,k),uy-22,lift);ry=k*Math.PI*2;beam=t>46.4&&t<52?1:0}
+  else{fvStop();return}
+  g.position.set(hx,hy,hz);g.rotation.set(rx,ry,rz);g.scale.set(1,sy,1);
+  u.visible=uy<5e4;if(u.visible){u.position.set(ux,uy,uz);u.rotation.y=t*1.4;FV.lights.forEach((l,i)=>l.material.emissive.setHex(((Math.floor(t*6)+i)%3)?0xffd23a:0xff3a6a));FV.beam.visible=!!beam;if(beam){const h=Math.max(6,uy-Math.min(hy,mix(yO,yN,.5))+2);FV.beam.scale.set(11,h,11);FV.beam.material.opacity=.2+.08*Math.sin(t*9)}}
+  // the alien flagger works the landing zone
+  al.visible=t>7&&t<53;if(al.visible){const pop=sm(7,7.8),hop=(t>25&&t<28)?Math.abs(Math.sin(t*6))*1.6:0;al.position.set(AX,yN+hop,AZ);al.scale.setScalar(3.6*pop);al.rotation.y=Math.atan2((t<25||t>45?ux:hx)-AX,(t<25||t>45?uz:hz)-AZ);
+    const [L,R]=FV.arms;if(t<19||(t>45&&t<50.4)){const w=Math.sin(t*5)*.5;L.rotation.set(0,0,.5+w);R.rotation.set(0,0,-.5-w)}else if(t<24.6||(t>=50.4&&t<51.8)){const w=(Math.sin(t*4)+1)*.5;L.rotation.set(-1.5*w,0,.25);R.rotation.set(-1.5*w,0,-.25)}else if(t<28||t>=51.8){L.rotation.set(0,0,.9);R.rotation.set(0,0,-.9)}else if(t<36){L.rotation.set(0,0,.2);R.rotation.set(0,0,-.2)}else{L.rotation.set(-2.6,0,-.5);R.rotation.set(-2.6,0,.5)}
+    say(FV.lb,t<19?'Bring it on over':t<24.6?'Easy. Easy. A little left':t<28?'Nailed it':t<33?'':t<36?'Hey. HEY':t<45?'I just set that down':t<51.8?'One more time':'Nobody touch it',AX,yN+13.5+hop,AZ)}
+  // Sasquatch has opinions
+  sq.visible=t>28&&t<47;if(sq.visible){const w=sm(28,33),out=sm(42,47),x=mix(SX0,SX1,w)+out*90;sq.position.set(x,yN,SZ);sq.rotation.y=out>0?Math.PI/2:-Math.PI/2;const walking=(t<33||t>42),sw=walking?Math.sin(t*6)*.5:0;FV.legs[0].rotation.x=sw;FV.legs[1].rotation.x=-sw;
+    const up=t<33?0:t<35.6?sm(33,35.6):t<36.5?1:1-sm(36.5,37.4),thr=t>36&&t<36.5?sm(36,36.5):0;FV.sarms.forEach((a,i)=>{a.rotation.set((walking&&up===0?(i?sw:-sw):0)+thr*.8,0,(i?1:-1)*up*2.9)});
+    say(FV.lb2,t<33?'Sasquatch':t<36?'It was fine where it was':t<41?'Hup':t<44?'There':'',x,yN+19,SZ)}}
