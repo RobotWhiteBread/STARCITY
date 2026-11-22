@@ -8,7 +8,7 @@ const LY=(id,label)=>[label,()=>{const L=DL.get(id);dlSet(id,!(L&&L.on))},id];
 // what each reason for coming opens: a short card of one-tap actions
 const INTENT=[
  ['home','My home and block','Search your address or tap your house. Its card leads with the assessed value and an estimate of this year\'s property tax. From there: who represents that spot, the trees the city looks after on your street, and the nearest bus.',
-  [['Search an address',()=>{if($('find').style.display!=='block')$('bFind').click()}],['Find me',()=>$('bMe').click()],LY('pv','Every property as a value bar'),['Who represents this spot',()=>civArm()],LY('trees','City trees'),['Nearest bus stop',()=>busNear()],['What is around here',()=>aroundCard()]]],
+  [['Everything about one spot',()=>spotArm()],['Search an address',()=>{if($('find').style.display!=='block')$('bFind').click()}],['Find me',()=>$('bMe').click()],LY('pv','Every property as a value bar'),['Who represents this spot',()=>civArm()],LY('trees','City trees'),['Nearest bus stop',()=>busNear()],['What is around here',()=>aroundCard()]]],
  ['move','Getting around','Buses run on StarTran\'s published timetable, with the next departures at every stop. Bike rides take the shortest way along trails and bike streets. Traffic is the usual pattern for the hour, and closures are read live from the city.',
   [['Next bus near here',()=>busNear()],['Bus routes and times',()=>openSheet(BUSS,0)],['Bike ride',()=>setRideMode(true)],['Traffic by the hour',()=>setTraffic(true)],LY('closures','Road closures now'),['Walk the street',()=>setWalk(true)]]],
  ['now','Happening now','What is going on in Lincoln at this moment: the weather and any warnings, Husker scores, what City Hall is deciding, and streets that are closed.',

@@ -221,10 +221,13 @@ function rainGrid(){if(RAIN.dir)return;const C=RAIN.C,HF=16400,N=RAIN.N=Math.flo
   for(let i=0;i<N;i++)for(const o of [i,(N-1)*N+i,i*N,i*N+N-1])if(dir[o]===-2){dir[o]=-1;push(o,z[o])}
   while(hp.length){const lv=hz[0],o=pop(),i=o%N,j=(o-i)/N;for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj)continue;const a=i+di,b=j+dj;if(a<0||b<0||a>=N||b>=N)continue;const q=b*N+a;if(dir[q]!==-2)continue;dir[q]=o;push(q,Math.max(z[q],lv))}}
   RAIN.dir=dir}
+function rainRaw(x,z){rainGrid();const C=RAIN.C,HF=16400,N=RAIN.N,X=i=>-HF+(i+.5)*C,i=Math.floor((x+HF)/C),j=Math.floor((z+HF)/C),raw=[[x,z]];if(i<0||j<0||i>=N||j>=N)return raw;let o=j*N+i,guard=0;while(o>=0&&guard++<4000){raw.push([X(o%N),X(Math.floor(o/N))]);o=RAIN.dir[o]}return raw}
+// the first rated creek or lake this spot's rain reaches, and how far downhill that is
+function rainFirst(x,z){const P=rainRaw(x,z);let d=0;for(let k=0;k<P.length;k++){if(k)d+=Math.hypot(P[k][0]-P[k-1][0],P[k][1]-P[k-1][1]);for(const w of WQ){const wx=(w[3]-H.lon0)*KXm,wz=-(w[2]-H.lat0)*KYm;if(Math.hypot(P[k][0]-wx,P[k][1]-wz)<330)return {w,mi:d/1609.34}}}return null}
 function rainClear(){if(RAIN.g){scene.remove(RAIN.g);RAIN.g.traverse(o=>{if(o.geometry)o.geometry.dispose()});RAIN.g=null}RAIN.pts=null;dirty=true}
 function rainArm(){rainClear();RAIN.arm=true;showCard('Follow a raindrop','Tap any spot in the city: your roof, a parking lot, a park. The map will trace where rain that lands there runs.',undefined,{label:'Cancel',fn:()=>{RAIN.arm=false;hideCard()}})}
 function rainDrop(x,z){RAIN.arm=false;rainGrid();rainClear();const C=RAIN.C,HF=16400,N=RAIN.N,X=i=>-HF+(i+.5)*C;let i=Math.floor((x+HF)/C),j=Math.floor((z+HF)/C);if(i<0||j<0||i>=N||j>=N){showCard('Follow a raindrop','That spot is off the edge of the map. Tap inside the city.');return}
-  const raw=[[x,z]];let o=j*N+i,guard=0;while(o>=0&&guard++<4000){raw.push([X(o%N),X(Math.floor(o/N))]);o=RAIN.dir[o]}
+  const raw=rainRaw(x,z);
   // smooth the stair-steps of the grid
   let P=raw;for(let it=0;it<2;it++){const Q=[P[0]];for(let k=1;k<P.length-1;k++)Q.push([(P[k-1][0]+2*P[k][0]+P[k+1][0])/4,(P[k-1][1]+2*P[k][1]+P[k+1][1])/4]);Q.push(P[P.length-1]);P=Q}
   const n=P.length,pos=new Float32Array(n*6),ix=[],cum=new Float32Array(n);RAIN.w=0;for(let k=0;k<n;k++){if(k){cum[k]=cum[k-1]+Math.hypot(P[k][0]-P[k-1][0],P[k][1]-P[k-1][1]);const q=2*(k-1);ix.push(q,q+1,q+2,q+1,q+3,q+2)}}
@@ -268,3 +271,40 @@ function setupIrish(){if(irishDone||!H||!H.lat0)return;irishDone=true;const g=ne
   g.userData.info=['Irish pubs of Lincoln',IRISH.map(q=>q[0]+': '+q[4]).join(' ')];g.userData.act={label:'Suggest a pub ↗',fn:()=>open('https://github.com/RobotWhiteBread/STARCITY/issues','_blank','noopener')};
   scene.add(g);pickables.push(g);LM.irish=g;dirty=true}
 function stepIrish(now){const g=LM.irish;if(!g)return;const t=controls.target;if(Math.hypot(t.x-g.children[0].position.x,t.z-g.children[0].position.z)>3500)return;for(const c of g.children)if(c.userData.spin)c.rotation.y=now*.0012;dirty=true}
+
+// ---- Everything about one spot: one tap, every public record the map holds for that place, each with its source.
+const SPOT={arm:false,x:0,z:0};
+function spotArm(){SPOT.arm=true;showCard('Everything about one spot','Tap your house, your block, or any place in the city. One page will list who represents it, what it is worth, its flood and water facts, and what is nearby, each with its source.',undefined,{label:'Cancel',fn:()=>{SPOT.arm=false;hideCard()}})}
+function spotOpen(x,z){SPOT.arm=false;SPOT.x=x;SPOT.z=z;openSheet(SPOTS,0)}
+function spotHTML(){const x=SPOT.x,z=SPOT.z,row=(a,b)=>`<p><b>${esc(a)}</b><br>${b}</p>`,
+  at=id=>{const L=DL.get(id);if(!L||!L.X)return null;let i=-1;try{i=dlAt(L,x,z)}catch(e){}return i<0?null:(k=>{const f=L.fields.find(f=>f.k===k);return f?fget(L,f)(i):''})},
+  near=(id,k)=>{const L=DL.get(id);if(!L||!L.X||L.def.k!=='pt')return null;let b=-1,bd=1e18;for(let i=0;i<L.n;i++){const d=(L.X[2*i]-x)**2+(L.X[2*i+1]-z)**2;if(d<bd){bd=d;b=i}}if(b<0)return null;const f=L.fields.find(f=>f.k===k);return f?esc(String(fget(L,f)(b)))+' <span class="psub">'+far(Math.sqrt(bd))+'</span>':null},
+  far=m=>m<400?Math.round(m*3.281/50)*50+' ft':(m/1609.344).toFixed(1)+' mi';
+  let h='';const lat=H.lat0-z/KYm,lon=H.lon0+x/KXm,hd=at('hoods');
+  h+=`<p class="psub">The spot you tapped: ${lat.toFixed(5)}, ${lon.toFixed(5)}${hd?' · '+esc(String(hd('name'))):''}. Figures for value and age describe the area around it (a hexagon of about ${H2.hex.acres.toFixed(0)} acres), not one property.</p>`;
+  // who decides
+  h+='<h4>Who decides for this spot</h4>';let any=false;
+  for(const [id,what] of CIVL){const f=at(id);if(!f)continue;any=true;const nm=String(f('name')).replace(/^(City Council|County Board|LPS Board|Legislative|Lower Platte South NRD|Southeast Community College|NU Board of Regents) /,''),who=f('member')||f('senator');h+=row(what,esc(nm)+(who?' · '+esc(String(who)):'')+(id==='precincts'&&f('poll')?' · votes at '+esc(String(f('poll'))):''))}
+  if(!any)h+='<p>No districts are on file here. This spot may be outside the city.</p>';
+  {const m=ccNext(1)[0],r=rgNext();if(m)h+=row('Next City Council meeting',ccDay(m)+', '+ccTime(m)+', County-City Building');if(r)h+=row('Next NU Regents meeting',rgDay(r[0])+(r[1]?', '+r[1]:'')+', '+esc(r[2]))}
+  // money
+  h+='<h4>Value and taxes around it</h4>';const hi=hexIdx(x,z);
+  if(hi>=0){const med=S2.hx_med[hi]*1000,vpa=S2.hx_vpa[hi]*5000,tpa=S2.hx_tpa[hi]*100,yr=S2.hx_yr[hi],psf=S2.hx_psf[hi];
+    if(med)h+=row('Typical home',fmtN(med,'$')+' assessed'+(psf?' · $'+psf+' a square foot':''));if(vpa)h+=row('Assessed value per acre',fmtN(vpa,'$'));if(tpa)h+=row('Property tax raised per acre (estimate)',fmtN(tpa,'$')+' a year');if(yr)h+=row('Typical year homes were built',String(yr));
+    if(!med&&!vpa)h+='<p>No assessed value is on file in this hexagon.</p>'}else h+='<p>No property figures here.</p>';
+  {const zn=at('zoning');if(zn)h+=row('Zoning',esc(String(zn('zone')))+' ('+esc(String(zn('cat')).toLowerCase())+')')}
+  // water
+  h+='<h4>Flood and water</h4>';
+  {const f1=at('flood100'),f5=at('flood500'),L1=DL.get('flood100');
+   h+=row('Mapped floodplain',!L1||!L1.X?'The flood layer is not loaded in this copy of the map.':f1?'Inside the 1% yearly chance floodplain (the regulated zone).':f5?'Inside the 0.2% yearly chance band, outside the regulated zone.':'Outside both mapped flood zones. Most flood claims paid in Lincoln were rainfall, and nearly a third came from outside the mapped floodplain.');
+   let rf=null;try{rf=rainFirst(x,z)}catch(e){}
+   h+=row('Where its rain goes',rf?esc(rf.w[0])+', about '+rf.mi.toFixed(1)+' miles downhill. '+(rf.w[4]===5?'The state lists it as impaired.':rf.w[4]===1?'It meets its standards.':'It is not listed as impaired.'):'It leaves the map before reaching a creek with a state rating.')}
+  // nearby
+  h+='<h4>Nearby</h4>';
+  for(const [id,k,l] of [['schools','name','School'],['libraries','name','Library'],['playgrounds','name','Playground'],['fire','no','Fire station']]){const s=near(id,k);if(s)h+=row(l,(id==='fire'?'Station ':'')+s)}
+  try{if(BX.ok){const b=busNearest({x,z});if(b){const s=BX.stops[b.i];h+=row('Bus stop',esc(String(s[0]))+' <span class="psub">'+far(Math.hypot(s[1]-x,s[2]-z))+'</span>')}}}catch(e){}
+  {let bd=1e18,bn=-1;for(const T of LM.trails||[]){const D=T.d;for(let k=0;k<D.length;k+=2){const d=(D[k]-x)**2+(D[k+1]-z)**2;if(d<bd){bd=d;bn=T.tn}}}const nm=bn>=0&&bn!==65535&&H.tnames?H.tnames[bn]:null;if(bd<1e17)h+=row('Bike trail',(nm?esc(nm):'A trail')+' <span class="psub">'+far(Math.sqrt(bd))+'</span>')}
+  h+='<p><button class="btn go" data-sp="rain">Follow this spot\'s rain</button> <button class="btn go" data-sp="walls">Raise its district walls</button> <button class="btn go" data-sp="cc">City Council</button> <button class="btn go" data-sp="again">Pick another spot</button></p>';
+  h+='<p class="psub">Sources: districts and precincts from the Lancaster County Election Commissioner and city GIS; values from the Lancaster County Assessor 2026 roll, with tax estimated from the 2025 levy; flood zones from the FEMA layers the city publishes; creek ratings from Nebraska\'s 2022 Water Quality Integrated Report; rain path from the USGS 10 meter elevation model; bus stops from StarTran\'s timetable. Read November 2026.</p>';
+  return h}
+const SPOTS={title:'Everything about <i>one spot</i>',tabs:['This spot'],html:()=>spotHTML(),click:e=>{const b=e.target.closest('[data-sp]');if(!b)return;const v=b.dataset.sp,x=SPOT.x,z=SPOT.z;closeSheet();if(v==='rain')rainDrop(x,z);else if(v==='walls')civicStack(x,z);else if(v==='cc')councilOpen(0);else spotArm()}};
