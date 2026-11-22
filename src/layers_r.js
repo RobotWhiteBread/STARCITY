@@ -57,7 +57,7 @@ const SWEAR=[
     for(const sx of [-.22,.22])swAdd(g,new THREE.TorusGeometry(.16,.07,6,10),SWP.lam(0xe8e4dc),sx,122.9,0,0,0,Math.PI/2);
     swAdd(g,new THREE.CylinderGeometry(.2,.22,.5,8),SWP.lam(0xe8c9a0),.92,124.55,0,0,0,-1.05);
     const ball=swAdd(g,new THREE.SphereGeometry(.4,16,12),SWP.lam(0xfffdf7,false),1.62,126.2,0);
-    for(let i=0;i<3;i++){const t=swAdd(g,new THREE.TorusGeometry(.4,.035,6,18),SWP.lam(0xd00000,false),1.62,126.2,0);t.rotation.x=i*1.05;t.rotation.z=i*.7}
+    for(let i=0;i<3;i++){const t=swAdd(ball,new THREE.TorusGeometry(.4,.035,6,18),SWP.lam(0xd00000,false),0,0,0);t.rotation.x=i*1.05;t.rotation.z=i*.7}
     g.userData.ball=ball;},
   {body:0xd00000,head:0xe8c9a0,arm:0xe8c9a0,base:0xfffdf7}],
  ['winter','Winter','A quilted coat, a long scarf and earmuffs. Lincoln gets to twenty below and he has never once gone inside.',
