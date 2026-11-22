@@ -4,7 +4,11 @@
 [![Cities built](https://hits.sh/robotwhitebread.github.io/STARCITY-anycity.svg?style=flat-square&label=cities%20built&color=4c9a6a&labelColor=1b1f26)](https://robotwhitebread.github.io/STARCITY/anycity/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-An interactive 3D map of Lincoln, Nebraska that runs in a web browser. One HTML file, no server, no API keys, no account. It is built only from public data, and every estimate and every decoration is labeled as one.
+**Code for a more open and better informed society, starting in Lincoln, Nebraska.**
+
+Public information that arrives as a PDF or a flat chart gets rebuilt here so you can see it in 3D, interact with it, find your own place in it, and view it in ways that were not possible on paper. Every feature is held to three questions: Is it on the ground? Is it yours? Does it show something the PDF could not?
+
+An interactive 3D map of Lincoln, Nebraska that runs in a web browser. One small page and two data files, no server, no API keys, no account. It is built only from public data, and every estimate and every decoration is labeled as one.
 
 ### **[Open the map](https://robotwhitebread.github.io/STARCITY/)**
 

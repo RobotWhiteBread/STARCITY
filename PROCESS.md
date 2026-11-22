@@ -2,6 +2,8 @@
 
 *Last updated November 21, 2026.*
 
+**Code for a more open and better informed society, starting in Lincoln, Nebraska.** Public information that arrives as a PDF or a flat chart gets rebuilt so people can see it in 3D, interact with it, find their own place in it, and view it in new ways. Every feature is held to three questions: Is it on the ground? Is it yours? Does it show something the PDF could not?
+
 This is the working process behind the map and its papers, written so that someone else can check it, repeat it, or run it for another city.
 
 ## 1. Find the public source
