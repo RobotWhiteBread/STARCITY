@@ -8,7 +8,7 @@ The same list, with the dates, is inside the map itself: Guide, then The data.
 
 1. Public sources only. Nothing behind a login, nothing scraped past a challenge page.
 2. Each download names the fields it wants. Owner names, owners' mailing addresses, buyer and seller names, staff names, notes and edit histories are never requested and never stored.
-3. A person's name appears in the map only where a public body lists an elected office holder (council member, school board member, state senator).
+3. A person's name appears in the map only where a public body lists an elected office holder (council member, school board member, state senator, university regent). The campaign money paper also names donors and committees, exactly as the state's public campaign finance files list them. The About page names the author.
 4. Anything read live is read by the visitor's own browser, straight from the public source, at the moment they ask. STARCITY has no server and keeps no logs.
 5. Every estimate is labeled as an estimate where it appears. Every decoration is labeled as one.
 

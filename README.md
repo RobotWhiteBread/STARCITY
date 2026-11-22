@@ -161,6 +161,13 @@ The whole map is Otoe-Missouria homeland, marked with a gold line around its edg
 
 Giraffes and penguins at the zoo, dogs at the dog parks, cyclists on the trails, a volleyball storm that grows with the week's wins and blows with the day's wind, lake monsters and jumping fish, Sasquatch in the woods, cattle and a combine on East Campus, a giant cone on the Dairy Store, falcons and hawks over the Capitol, example planes at the airport, a credits roll of records that scrolls out of the Devaney Center and Memorial Stadium, searchlights, roses and fireworks over the Devaney Center, a touch of fall color on the trees, and Nader, the tornado who talks. On a real warning Nader says what the Weather Service says. In the preview he says he is a preview.
 
+## How it is made, checked, and where the data stops
+
+- [PROCESS.md](PROCESS.md): how data is found, pulled, joined, checked, labeled, published and corrected.
+- [Verification log](https://starcitylincoln.org/verification.html): each paper's outside benchmark, what the check found, and every correction.
+- [DATA_GAPS.md](DATA_GAPS.md): where the city's public data stops, what the map does in the meantime, and what each agency could publish to fill the gap.
+- [DATA_PLAN.md](DATA_PLAN.md): every source, what is kept, and what is never requested.
+
 ## Real, estimated, or for fun
 
 Real data: buildings, streets, trails, terrain, trees on the city's list, assessed values, sales, election results, registration, district lines, traffic counts, crashes, city records, weather, alerts and scores.

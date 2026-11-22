@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Where the City's Data Stops · STARCITY</title>
+<meta name="description" content="Where Lincoln's public data is missing, stale or unusable, what the map does in the meantime, and what each agency could publish to fill the gap.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where the City's Data Stops">
+<meta property="og:description" content="Where Lincoln's public data is missing, stale or unusable, what the map does in the meantime, and what each agency could publish to fill the gap.">
+<meta property="og:url" content="https://starcitylincoln.org/gaps.html">
+<meta property="og:image" content="https://starcitylincoln.org/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1a1d23;
+ font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:11.5pt;line-height:1.55}
+a{color:#1a4f8a}
+nav.bar{display:none}
+main{max-width:none;margin:0;padding:0}
+h1{font-size:21pt;line-height:1.2;margin:0 0 .12em;letter-spacing:-.01em}
+.sub{color:#5c6270;font-size:11pt;margin:0 0 1.6em}
+h2{font-size:14.5pt;line-height:1.28;margin:1.7em 0 .5em;padding-top:.8em;
+ border-top:1px solid #d8dce2;break-after:avoid;page-break-after:avoid}
+h3{font-size:11.8pt;margin:1.4em 0 .35em;color:#1a4f8a;font-weight:600;
+ break-after:avoid;page-break-after:avoid}
+p,li{color:#24282f}
+strong{color:#000;font-weight:600}
+code{background:#f2f4f7;border:1px solid #dde1e7;border-radius:3px;
+ padding:.05em .3em;font-size:.85em;color:#2d3340;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+ul,ol{padding-left:1.2em}
+li{margin:.3em 0}
+.tw{margin:1em 0;border:1px solid #dde1e7;border-radius:5px;overflow:hidden;
+ break-inside:avoid;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}
+th,td{text-align:left;padding:6px 9px;border-bottom:1px solid #e8ebef;vertical-align:top}
+th{background:#f2f4f7;color:#1a1d23;font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+.chart{margin:1.2em 0;break-inside:avoid;page-break-inside:avoid}
+.chart svg{width:100%;height:auto;display:block}
+figcaption{color:#6b7280;font-size:8.5pt;margin-top:.4em;line-height:1.4}
+footer{margin-top:1.8em;padding-top:.8em;color:#6b7280;font-size:8.5pt;
+ border-top:1px solid #d8dce2}
+@page{margin:16mm 15mm}
+</style>
+</head>
+<body>
+<nav class="bar"><div><a href="./">&#8592; STARCITY</a><span>Lincoln, Nebraska in 3D</span></div></nav>
+<main>
+<h1>Where the City's Data Stops</h1>
+<p class="sub">And what would fill each gap &#183; Last updated November 21, 2026</p>
+<p>STARCITY uses only data that public agencies already publish. This page lists the places where that data stops: where it is missing, out of date, or published in a form that cannot be mapped. For each one it says what the map does in the meantime and what would fill the gap. Every item is something an agency could fix, and take credit for.</p>
+<h2>How to read this</h2>
+<ul><li>A gap marked Confirmed is one we hit while building the map or its papers.</li><li>A gap marked To confirm is one we looked for and did not find. The data may exist somewhere we did not look. If you know where, tell us.</li><li>Where the map fills a gap with an estimate, the estimate is labeled as one, with its method.</li><li>Where a gap cannot be filled honestly, the map shows nothing. It does not show placeholders.</li></ul>
+<h2>The gaps</h2>
+<div class="tw"><table><thead><tr><th>Data</th><th>Who holds it</th><th>Where it stops</th><th>What the map does now</th><th>What would fill it</th><th>Status</th></tr></thead><tbody>
+<tr><td><strong>City Council and County Board votes</strong></td><td>City Clerk; County Clerk</td><td>Votes are recorded inside PDF minutes, one meeting at a time. There is no table of item, member and vote.</td><td>The map shows meeting dates, agendas and planning cases, not how anyone voted.</td><td>A table with one row per member per vote, published with each meeting&#x27;s minutes.</td><td>Confirmed</td></tr><tr><td><strong>Traffic crashes</strong></td><td>Lincoln Police Department</td><td>Published through 2026, but with no map coordinates. Each crash is a line of text such as &quot;S 40 at A&quot;.</td><td>STARCITY matches the street text to the map&#x27;s street network and reports the share it could place.</td><td>Latitude and longitude columns, which the records system already holds.</td><td>Confirmed</td></tr><tr><td><strong>Police incident reports</strong></td><td>Lincoln Police Department</td><td>Published through 2026 with a block address and no coordinates.</td><td>Not on the map yet. When added, shown as counts by type and area, never as single reports at an address.</td><td>Block-level coordinates published with each record.</td><td>Confirmed</td></tr><tr><td><strong>Fire and ambulance incidents</strong></td><td>Lincoln Fire and Rescue</td><td>The public tables stop at 2019.</td><td>Not shown. A seven-year-old table would mislead.</td><td>The yearly tables for 2020 onward, with response times.</td><td>Confirmed</td></tr><tr><td><strong>Ground elevation and building heights (LIDAR)</strong></td><td>USGS 3D Elevation Program, flown with state and local partners</td><td>The newest public survey of Lincoln was flown in 2016.</td><td>Buildings put up since 2016 keep an estimated height, labeled as an estimate.</td><td>A new survey. USGS shares the cost with local partners.</td><td>Confirmed</td></tr><tr><td><strong>Creek and lake water quality</strong></td><td>Nebraska Department of Water, Energy and Environment</td><td>The newest Integrated Report is the 2022 edition, published June 2023.</td><td>Each creek card names that report and its date.</td><td>The next Integrated Report, and the sample results behind it as data.</td><td>Confirmed</td></tr><tr><td><strong>What each TIF project paid for</strong></td><td>City Urban Development Department</td><td>The county publishes each project&#x27;s base and excess value. What the money bought is in separate redevelopment agreements, as PDFs.</td><td>The TIF paper totals value and tax and says it cannot show spending.</td><td>One table: project, year, amount, purpose.</td><td>Confirmed</td></tr><tr><td><strong>Update dates and licenses on city map layers</strong></td><td>City and County GIS</td><td>Most layers do not say when they were last updated, and the open data catalog lists no license.</td><td>Every figure carries the date STARCITY retrieved it.</td><td>A last-updated date and a license statement on every layer.</td><td>Confirmed</td></tr><tr><td><strong>One clear city-limits boundary</strong></td><td>City and County GIS</td><td>The city limits layer holds 70 shapes all named Lincoln, including the three-mile zoning jurisdiction.</td><td>STARCITY picks the corporate limit by area and says so in each paper.</td><td>A single labeled corporate-limit layer.</td><td>Confirmed</td></tr><tr><td><strong>Construction year for non-residential buildings</strong></td><td>County Assessor</td><td>Year built is published for homes. About 51,000 of the 132,822 buildings on the map have no year.</td><td>The growing-city view shows those buildings in grey for every year.</td><td>Year built for commercial, public and exempt buildings.</td><td>Confirmed</td></tr><tr><td><strong>Taxable value and exemption status by parcel</strong></td><td>County Assessor</td><td>The parcel layer publishes assessed value and leaves taxable value blank.</td><td>The property value paper totals assessed value and compares it with the state&#x27;s taxable total.</td><td>The taxable value and exemption code on each parcel.</td><td>Confirmed</td></tr><tr><td><strong>Residential building permits</strong></td><td>City Building and Safety</td><td>The open data layer for residential permits did not answer when queried on November 21, 2026.</td><td>The map reads this year&#x27;s permits from a different city layer.</td><td>A working, dated permits layer.</td><td>Confirmed</td></tr><tr><td><strong>The city budget and spending as data</strong></td><td>City Finance Department</td><td>The adopted budget is a long PDF.</td><td>Not on the map.</td><td>A table by department, fund and line, and a list of payments to vendors.</td><td>To confirm</td></tr><tr><td><strong>Stormwater complaints and basement flooding reports</strong></td><td>City Watershed Management</td><td>Not found in the public catalog.</td><td>The flood paper relies on federal insurance claims, which exist only where someone held a policy.</td><td>Complaint counts by block and year.</td><td>To confirm</td></tr><tr><td><strong>Lead service line inventory</strong></td><td>Lincoln Water System</td><td>A lead target area layer is public. A line-by-line inventory was not found.</td><td>Not on the map.</td><td>The service line inventory by block.</td><td>To confirm</td></tr><tr><td><strong>Drinking water test results by sampling site</strong></td><td>Lincoln Water System</td><td>Annual summary reports are public. Site-level results as data were not found.</td><td>Not on the map.</td><td>Results by site and date.</td><td>To confirm</td></tr><tr><td><strong>Street condition ratings</strong></td><td>City Transportation and Utilities</td><td>Not found in the public catalog.</td><td>Not on the map.</td><td>The pavement rating for each street segment, with the year rated.</td><td>To confirm</td></tr><tr><td><strong>Rental registrations and housing code cases</strong></td><td>City Building and Safety</td><td>Not found in the public catalog.</td><td>Not on the map.</td><td>Counts by block and year, without tenant or owner names.</td><td>To confirm</td></tr>
+</tbody></table></div>
+<h2>How to ask for it</h2>
+<ul><li>Ask the agency named in the table. Most of these are a records question, not a budget question.</li><li>Bring the specific row. &quot;Publish crash coordinates&quot; is easier to say yes to than &quot;more open data&quot;.</li><li>Lincoln&#x27;s City Council adopted an open data resolution on August 8, 2016, committing the city to publish machine-readable data in a central place. Each row here is a way to meet it.</li><li>If an agency publishes one of these, report it on the project&#x27;s issues page and the map will use it.</li></ul>
+<p>Report a filled gap or a missing row at the project's <a href="https://github.com/RobotWhiteBread/STARCITY/issues" rel="noopener">issues page</a>. See also <a href="verification.html">how the papers are checked</a> and <a href="reports.html">The STARCITY Papers</a>.</p>
+</main>
+<footer>
+Built from public data: City of Lincoln and Lancaster County GIS, and OpenFEMA.
+Part of <a href="./">STARCITY</a>, an open-source 3D map of Lincoln.
+Source and data scripts at <a href="https://github.com/RobotWhiteBread/STARCITY" rel="noopener">github.com/RobotWhiteBread/STARCITY</a>.
+</footer>
+</body>
+</html>
