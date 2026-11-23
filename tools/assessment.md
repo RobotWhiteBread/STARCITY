@@ -4,22 +4,22 @@
 
 ## Summary
 
-On sales made after the 2026 values were set, Lincoln's assessments pass two of the profession's three headline tests and miss the third, the one about fairness between cheaper and more expensive homes. **The state's official study, which uses earlier sales, finds all three within the standard.** Both results are set out below, and readers should weigh them together.
+On sales made after the 2026 values were set, Lincoln's assessments pass two of the profession's three headline tests and miss the third, the one about fairness between cheaper and more expensive homes. A second check on November 22, 2026 found that the miss comes from newly built homes, and that with them set aside all three pass. **The state's official study, which uses earlier sales, finds all three within the standard.** Both results are set out below, and readers should weigh them together.
 
 Across **3,340 valid residential sales inside the city limits in 2025 and 2026**, each carrying both a sale price and the assessed value in force, the assessment ratio behaves like this:
 
 1. **The level is sound.** The median ratio is **0.920**, inside the International Association of Assessing Officers' acceptable range of 0.90 to 1.10.
 2. **The consistency is sound.** The coefficient of dispersion is **12.6**, inside the IAAO standard of 15 or less for older, mixed residential areas. Most of Lincoln is assessed consistently.
-3. **The equity is not.** The price-related differential is **1.037**, outside the IAAO standard of 0.98 to 1.03. A PRD above that range means the assessment is **regressive**: cheaper homes are assessed at a higher share of what they actually sell for than expensive ones.
+3. **The equity result depends on new construction.** Across all 3,340 sales the price-related differential is **1.037**, outside the IAAO standard of 0.98 to 1.03. A PRD above that range means the assessment is **regressive**: cheaper homes are assessed at a higher share of what they actually sell for than expensive ones. Most of that comes from homes built in 2024 or later, many of them on the roll at an unfinished value. With those set aside the PRD is **1.012**, inside the standard, and a small tilt remains at the two ends of the market. The section on the University of Chicago's method below has the detail.
 
 What regressivity looks like in dollars, measured across sale price deciles:
 
 - Homes in the **cheapest tenth** of the market, median sale price **$172,000**, are assessed at **98.9%** of what they sell for.
 - Homes in the **most expensive tenth**, median sale price **$665,368**, are assessed at **85.6%**.
 
-The tax rate is the same for both. So the owner of a $172,000 house pays property tax on essentially the whole value of their house, and the owner of a $665,000 house pays on about six sevenths of theirs.
+The tax rate is the same for both. So the owner of a $172,000 house pays property tax on essentially the whole value of their house, and the owner of a $665,000 house pays on about six sevenths of theirs. **Newly built homes account for much of that gap.** They are mostly expensive, and many were assessed before they were finished. Leaving out the sales the University of Chicago's method treats as outliers, the cheapest tenth is at 97.6% and the most expensive tenth at 89.9%: a gap of about eight points, not thirteen.
 
-**This is not an accusation of misconduct.** Regressivity is the most common failure mode in mass appraisal anywhere, because expensive homes are more varied and harder for a model to price than modest ones, and the error runs one way. It is still a real transfer, it is measurable, and it is fixable.
+**This is not an accusation of misconduct.** Regressivity is the most common failure mode in mass appraisal anywhere, because expensive homes are more varied and harder for a model to price than modest ones, and the error runs one way. What remains once new construction is set aside is small. It is measurable, and it is a reason to repeat the test each year.
 
 ## How this compares with the state's official study
 
@@ -37,6 +37,28 @@ The two studies answer different questions. The state tests values against the s
 The state's own table by price range shows a gradient in the same direction, but much smaller: a median ratio of 1.019 for homes sold at $100,000 to $149,999, and 0.963 for homes sold at $500,000 to $999,999.
 
 A wider gap on later sales can have more than one cause. Prices may have risen faster for expensive homes during 2026. A valuation model fits the sales it was built on more closely than the sales that come later. The mix of homes sold differs between the two periods, and the state's figures cover the whole county. This paper cannot tell these apart, and it is not evidence of any wrongdoing. It is a reason to repeat the test each year.
+
+## The same sales through the University of Chicago's method
+
+The Center for Municipal Finance at the University of Chicago publishes an open R package, [cmfproperty](https://github.com/cmf-uchicago/cmfproperty), that it uses to grade assessment fairness in counties across the country. On November 22, 2026 the 3,340 sales in this paper were run through it unchanged.
+
+The package first removes outliers: any sale whose ratio sits more than one and a half times the interquartile range outside the middle half of all ratios. Here that removes 334 sales, 10% of the total. Their median ratio is 0.31, and 228 of them are homes built in 2024 or later. A new home is often on the roll on January 1 at the value of a lot or a partly built house, and sells finished months later. This paper counted those sales. The package, like most ratio studies, does not.
+
+| Measure | All 3,340 sales, as in this paper | Chicago method, 3,006 sales | Homes built before 2024, 2,868 sales, nothing else removed | State's official study | Standard |
+| --- | --- | --- | --- | --- | --- |
+| Median ratio | 0.920 | 0.927 | 0.926 | 0.970 | 0.90 to 1.10 |
+| Coefficient of dispersion | 12.6 | 7.1 | 7.8 | 4.97 | 15 or less |
+| Price-related differential | 1.037 | 1.008 | 1.012 | 1.006 | 0.98 to 1.03 |
+| Price-related bias | not run | -0.013 | not run | not published | -0.05 to 0.05 |
+
+Four things follow.
+
+1. **With unfinished new construction out, Lincoln passes all three standards.** It does so whether the outliers are removed by the package's rule or simply by leaving out homes built in 2024 or later.
+2. **The failure in this paper lives in new homes.** The 435 sales of homes built in 2024 or later have a median ratio of 0.607 and a coefficient of dispersion of 49.7. That measures when those values were set more than how well. It is the same place the section on the newest housing, further down, already points to.
+3. **A small tilt remains at the two ends of the market.** After the package's outlier rule, the cheapest tenth of homes, median sale price $175,000, are assessed at 97.6% of what they sold for. The most expensive tenth, median $635,000, are at 89.9%. The eight groups between them run from 91.6% to 93.3%. Six of the package's seven regression tests call that regressive. It is real enough to detect and small enough to pass the standards.
+4. **Part of that tilt is an artifact of sorting by sale price.** A home that sells for more than it is worth lands in a higher price group with a lower ratio, with no error by the assessor. The package's own simulation shows that random noise of 8 to 9% in sale prices, on top of perfectly even assessments, would produce the same three statistics. Ranked by the average of sale price and assessed value instead, the two ends come to 94.7% and 91.4%. The true tilt is somewhere between none and what the price ranking shows.
+
+The gradient and the maps in the rest of this paper use all 3,340 sales, new construction included, so they show a steeper slope than the figures here. Read them with this section in mind.
 
 ## Method
 
@@ -160,9 +182,13 @@ Both measures run further from standard than residential. A PRD of 1.261 is far 
 
 **If you are a realtor.** The ratio by neighborhood group is a pricing signal. A listing in a group assessed at 0.79 is carrying an assessed value that understates the market, and a buyer should expect the assessment to catch up. In a group assessed above 1.00 the opposite is true, and the tax line in the listing is overstated relative to value.
 
-**If you are on the council or the board of equalization.** Three things follow. The PRD of 1.037 is a measurable failure against a professional standard and is the right question to put to the assessor's office. The COD of 22.1 on post-2010 construction names where the modelling is weakest. And commercial at a PRD of 1.261 is worse than residential on a sample thin enough that it should be measured properly rather than argued about.
+**If you are on the council or the board of equalization.** Three things follow. The PRD of 1.037 fails a professional standard when every sale is counted and passes at 1.012 when homes built in 2024 or later are set aside, so the question to put to the assessor's office is how a newly built home is valued in its first year on the roll. The COD of 22.1 on post-2010 construction names where the modelling is weakest. And commercial at a PRD of 1.261 is worse than residential on a sample thin enough that it should be measured properly rather than argued about.
 
 None of this requires new data collection. It is the county's own sales file, measured with the county's own profession's standard.
+
+## Corrected November 22, 2026
+
+The first version of this paper said assessments fail the equity standard. Running the same sales through the University of Chicago's open method showed that result depends on homes built in 2024 or later, many assessed before they were finished. With those set aside the standard is met. The summary, the comparison section and the advice to the council were rewritten to say so. The figures for all 3,340 sales are unchanged and still shown.
 
 ## Sources
 
