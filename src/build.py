@@ -3,7 +3,7 @@
 import sys, os
 t = open('page.html', encoding='utf-8').read()
 d = open('data.b64').read(); d2 = open('data2.b64').read()
-LAY = 'abcdefghijklmnopqr'
+LAY = 'abcdefghijklmnopqrs'
 layers = ''
 for c in LAY:
     try: layers += open('layers_%s.js' % c, encoding='utf-8').read() + '\n'
