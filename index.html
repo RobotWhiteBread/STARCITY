@@ -4857,32 +4857,43 @@ function chtSetup(){if(CHT.g)return;CHT.T.forEach(t=>{t.x=(t[8]-H.lon0)*KXm;t.z=
   {const G5=(typeof treeGeoms==='function')?treeGeoms():[],sh=t=>/pin oak/i.test(t[0])?3:/chokecherry/i.test(t[0])?4:/baldcypress/i.test(t[0])?-1:2;
    const mat=new THREE.MeshLambertMaterial({vertexColors:true,flatShading:true}),bark=new THREE.MeshLambertMaterial({color:0x4a3324});
    for(const t of CHT.T){const k=sh(t),geo=k>=0?G5[k]:null,y=hAt(t.x,t.z),cardFn=()=>chtCard(CHT.T.indexOf(t));
-     if(geo){const m=new THREE.Mesh(geo,mat);m.scale.set(t.sm,t.hm,t.sm);m.position.set(t.x,y,t.z);m.castShadow=true;m.userData.card=cardFn;g.add(m);pickables.push(m)}
-     else{const c=new THREE.Mesh(new THREE.ConeGeometry(t.sm*.42,t.hm*.85,9),new THREE.MeshLambertMaterial({color:0x8a7a3a,flatShading:true}));c.position.set(t.x,y+t.hm*.56,t.z);c.castShadow=true;c.userData.card=cardFn;g.add(c);pickables.push(c)}
-     const r=t[2]*.3048/6.2832,tk=new THREE.Mesh(new THREE.CylinderGeometry(r*.8,r*1.15,t.hm*.42,10),bark);tk.position.set(t.x,y+t.hm*.21,t.z);tk.castShadow=true;tk.userData.card=cardFn;g.add(tk);pickables.push(tk)}}CHT.T.forEach((t,i)=>{const y=hAt(t.x,t.z),R=new THREE.Mesh(new THREE.TorusGeometry(t.sm*.55+3,1.1,8,40),new THREE.MeshBasicMaterial({color:0xffd23a}));R.rotation.x=-Math.PI/2;R.position.set(t.x,y+1.5,t.z);
-    const P=new THREE.Object3D();const S=new THREE.Mesh(new THREE.OctahedronGeometry(3.2),new THREE.MeshLambertMaterial({color:0xffd23a,emissive:0x8a6a00}));S.position.set(t.x,y+t.hm+7,t.z);
-    for(const m of [R,P,S]){m.userData.card=()=>chtCard(i);g.add(m);pickables.push(m)}t.star=S;CHT.lbs.push({t:'★ '+t[0],sub:'state champion · '+Math.round(t[5])+' points',x:t.x,y:y+t.hm+14,z:t.z,k:3,pri:720,near:0,far:9000})});
-  // the meadowlark: brown back, yellow breast, black V on the chest
-  const b=new THREE.Group(),M=(geo,c,x,y,z,e)=>{const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:c,emissive:e||0}));m.position.set(x,y,z);b.add(m);return m};
-  const body=M(new THREE.SphereGeometry(1,14,10),0x8a6a45,0,0,0);body.scale.set(.9,.8,1.5);const br=M(new THREE.SphereGeometry(.86,14,10),0xffd21f,0,-.12,.38,0x4a3a00);br.scale.set(.85,.72,1.05);
-  const v=M(new THREE.TorusGeometry(.5,.12,6,12,Math.PI),0x111111,0,.05,1.05);v.rotation.set(-.5,0,Math.PI);M(new THREE.SphereGeometry(.55,12,10),0x8a6a45,0,.55,1.35);
-  for(const s of[-1,1])M(new THREE.SphereGeometry(.12,6,6),0x111111,s*.3,.7,1.75);{const bk=M(new THREE.ConeGeometry(.16,.8,8),0x5b5b5b,0,.5,2.05);bk.rotation.x=Math.PI/2}
-  {const tl=M(new THREE.BoxGeometry(.6,.12,1.1),0x6d5235,0,.05,-1.8);tl.rotation.x=.15}
-  CHT.wings=[-1,1].map(s=>{const w=new THREE.Group();w.position.set(s*.7,.25,0);const m=new THREE.Mesh(new THREE.BoxGeometry(1.5,.1,1.3),new THREE.MeshLambertMaterial({color:0x7b5c3c}));m.position.x=s*.75;w.add(m);
-    const tip=new THREE.Mesh(new THREE.BoxGeometry(.7,.08,.9),new THREE.MeshLambertMaterial({color:0xf3efe4}));tip.position.set(s*1.75,0,-.2);w.add(tip);b.add(w);return w});
+     t.parts=[];if(geo){const m=new THREE.Mesh(geo,mat);m.scale.set(t.sm,t.hm,t.sm);m.position.set(t.x,y,t.z);m.castShadow=true;m.userData.card=cardFn;g.add(m);pickables.push(m);t.parts.push(m)}
+     else{const cg=new THREE.ConeGeometry(t.sm*.42,t.hm*.85,9);cg.translate(0,t.hm*.56,0);const c=new THREE.Mesh(cg,new THREE.MeshLambertMaterial({color:0x8a7a3a,flatShading:true}));c.position.set(t.x,y,t.z);t.parts.push(c);c.castShadow=true;c.userData.card=cardFn;g.add(c);pickables.push(c)}
+     const r=t[2]*.3048/6.2832,tg=new THREE.CylinderGeometry(r*.8,r*1.15,t.hm*.42,10);tg.translate(0,t.hm*.21,0);const tk=new THREE.Mesh(tg,bark);tk.position.set(t.x,y,t.z);t.parts.push(tk);tk.castShadow=true;tk.userData.card=cardFn;g.add(tk);pickables.push(tk)}}CHT.T.forEach((t,i)=>{const y=hAt(t.x,t.z),R=new THREE.Mesh(new THREE.TorusGeometry(t.sm*.55+3,1.1,8,40),new THREE.MeshBasicMaterial({color:0xffd23a}));R.rotation.x=-Math.PI/2;R.position.set(t.x,y+1.5,t.z);
+    const P=new THREE.Object3D();const S=new THREE.Mesh(new THREE.OctahedronGeometry(3.2),new THREE.MeshLambertMaterial({color:0xffd23a,emissive:0x8a6a00}));S.position.set(t.x,y+t.hm+19,t.z);
+    for(const m of [R,P,S]){m.userData.card=()=>chtCard(i);g.add(m);pickables.push(m)}t.star=S;CHT.lbs.push({t:'★ '+t[0],sub:'state champion · '+Math.round(t[5])+' points',x:t.x,y:y+t.hm+27,z:t.z,k:3,pri:720,near:0,far:9000})});
+  // the western meadowlark, Nebraska's state bird: chunky and short-tailed, a long sharp bill, bright yellow throat and belly
+  // with a black V across the chest, a streaky brown back, a striped crown with a yellow mark by the eye, white outer tail feathers
+  const b=new THREE.Group(),mat=(c,e)=>new THREE.MeshLambertMaterial({color:c,emissive:e||0,flatShading:true}),M=(geo,c,x,y,z,e,par)=>{const m=new THREE.Mesh(geo,mat(c,e));m.position.set(x,y,z);(par||b).add(m);return m};
+  const BR=0x8a6a45,DK=0x3d2b1c,YE=0xffd200,body=M(new THREE.SphereGeometry(1,16,12),BR,0,0,0);body.scale.set(.82,.78,1.25);
+  {const y=M(new THREE.SphereGeometry(1,16,12,0,Math.PI*2,Math.PI*.42,Math.PI*.58),YE,0,-.02,.18,0x6a5200);y.scale.set(.8,.78,1.12)}
+  for(let k=0;k<5;k++){const s=M(new THREE.BoxGeometry(.9,.04,.12),DK,0,.62+k*.02,-.55+k*.32);s.rotation.x=.35}
+  const hd=new THREE.Group();hd.position.set(0,.55,1.05);b.add(hd);CHT.head=hd;
+  M(new THREE.SphereGeometry(.5,14,12),BR,0,0,0,0,hd);{const t=M(new THREE.SphereGeometry(.47,14,10,0,Math.PI*2,Math.PI*.45,Math.PI*.55),YE,0,-.03,.06,0x6a5200,hd);t.scale.set(.95,1,1.05)}
+  for(const s of[-1,1]){M(new THREE.BoxGeometry(.06,.05,.62),0xf4efe2,s*.2,.44,0,0,hd);M(new THREE.BoxGeometry(.06,.05,.55),DK,s*.34,.36,-.02,0,hd);M(new THREE.SphereGeometry(.07,8,6),YE,s*.3,.2,.34,0x6a5200,hd);M(new THREE.SphereGeometry(.07,8,6),0x0a0a0a,s*.34,.12,.24,0,hd);M(new THREE.BoxGeometry(.05,.04,.4),DK,s*.36,.08,.05,0,hd)}
+  M(new THREE.BoxGeometry(.1,.05,.66),DK,0,.47,-.02,0,hd);
+  {const bk=M(new THREE.ConeGeometry(.12,.95,8),0x6d6a63,0,-.02,.82,0,hd);bk.rotation.x=Math.PI/2;bk.scale.set(1,1,.75);CHT.bill=bk}
+  for(const s of[-1,1]){const v=M(new THREE.BoxGeometry(.16,.72,.14),0x0a0a0a,s*.21,.2,1.24);v.rotation.set(-.5,0,-s*.6)}
+  const tl=new THREE.Group();tl.position.set(0,.18,-1.15);b.add(tl);M(new THREE.BoxGeometry(.44,.1,.8),0x6d5235,0,0,-.38,0,tl);for(const s of[-1,1])M(new THREE.BoxGeometry(.1,.1,.75),0xf6f3ea,s*.26,0,-.36,0,tl);tl.rotation.x=.25;
+  for(const s of[-1,1]){const l=M(new THREE.CylinderGeometry(.05,.05,.7,6),0xd9a77a,s*.25,-.95,.1);M(new THREE.BoxGeometry(.25,.04,.35),0xd9a77a,s*.25,-1.3,.2)}
+  CHT.wings=[-1,1].map(s=>{const w=new THREE.Group();w.position.set(s*.62,.32,.1);const m=M(new THREE.BoxGeometry(1.35,.09,1.15),BR,s*.68,0,-.05,0,w);
+    for(let k=0;k<3;k++)M(new THREE.BoxGeometry(1.3,.1,.08),DK,s*.68,.01,.4-k*.38,0,w);M(new THREE.BoxGeometry(.6,.08,.8),0x6d5235,s*1.55,0,-.25,0,w);b.add(w);return w});
   b.scale.setScalar(4.5);b.visible=false;scene.add(b);CHT.bird=b;CHT.blb={t:'',sub:'',x:0,y:0,z:0,k:3,pri:950,near:0,far:20000};scene.add(g);CHT.g=g}
 function chtShow(on){chtSetup();CHT.on=on;CHT.g.visible=on;if(!on)chtStop();dirty=true}
 function chtTour(i){chtShow(true);hideCard();const order=CHT.T.map((t,j)=>j);CHT.tour={i:i||0,t0:performance.now(),from:null};chtLeg();}
-function chtLeg(){const T=CHT.tour;if(!T)return;const t=CHT.T[T.i],b=CHT.bird,p=b.visible?b.position.clone():new THREE.Vector3(t.x-260,hAt(t.x,t.z)+180,t.z+220);T.from=p;T.to=new THREE.Vector3(t.x+18,hAt(t.x,t.z)+t.hm*.75,t.z+10);T.t0=performance.now();T.dur=Math.max(3500,Math.min(9000,p.distanceTo(T.to)*3.2));b.visible=true;
+function chtLeg(){const T=CHT.tour;if(!T)return;for(const u of CHT.T)if(u.parts)for(const m of u.parts){m.rotation.set(0,0,0)}if(CHT.head)CHT.head.rotation.x=0;const t=CHT.T[T.i],b=CHT.bird,p=b.visible?b.position.clone():new THREE.Vector3(t.x-260,hAt(t.x,t.z)+180,t.z+220);T.from=p;T.to=new THREE.Vector3(t.x+18,hAt(t.x,t.z)+t.hm*.75,t.z+10);T.t0=performance.now();T.dur=Math.max(3500,Math.min(9000,p.distanceTo(T.to)*3.2));b.visible=true;
   try{flyTo(camTo(t.x,t.z,Math.max(170,t.hm*4.2),(T.i*47)%360,24),Math.min(4500,T.dur))}catch(e){}}
-function chtStop(){CHT.tour=null;if(CHT.bird)CHT.bird.visible=false;dirty=true}
+function chtStop(){CHT.tour=null;for(const u of CHT.T)if(u.parts)for(const m of u.parts)m.rotation.set(0,0,0);if(CHT.bird)CHT.bird.visible=false;dirty=true}
 function stepCht(now){if(!CHT.g||!CHT.on)return;for(const l of CHT.lbs)lifeLabels.push(l);for(const t of CHT.T)if(t.star)t.star.rotation.y=now*.0015;const T=CHT.tour,b=CHT.bird;if(!T||!b)return;dirty=true;lastInput=performance.now();
-  const e=(now-T.t0)/T.dur,t=CHT.T[T.i];CHT.wings[0].rotation.z=Math.sin(now*.025)*(e<1?.9:.35);CHT.wings[1].rotation.z=-CHT.wings[0].rotation.z;
+  const e=(now-T.t0)/T.dur,t=CHT.T[T.i];CHT.wings[0].rotation.z=Math.sin(now*.025)*(e<1?.9:.35);CHT.wings[1].rotation.z=-CHT.wings[0].rotation.z;if(e<1){if(CHT.head)CHT.head.rotation.x=0;for(const w of CHT.wings)w.scale.x=1}
   if(e<1){const k=e*e*(3-2*e),P=T.from.clone().lerp(T.to,k);P.y+=Math.sin(Math.PI*k)*90;const nx=T.to.clone().sub(T.from);b.position.copy(P);b.rotation.set(0,Math.atan2(nx.x,nx.z),0);
     CHT.blb.t='Western meadowlark';CHT.blb.sub=e<.5?'off to the '+t[0].toLowerCase():'almost there';}
-  else{const h=(now-T.t0-T.dur)/1000,a=h*1.1;b.position.set(t.x+Math.cos(a)*(t.sm*.5+8),hAt(t.x,t.z)+t.hm*.75+Math.sin(h*2.3)*2,t.z+Math.sin(a)*(t.sm*.5+8));b.rotation.set(0,-a,-.35);
+  else{const h=(now-T.t0-T.dur)/1000,a=h*1.1;const yb=hAt(t.x,t.z);if(h<3){const k=h/3,ar=a*(1-k);b.position.set(t.x+Math.cos(ar)*(t.sm*.5+8)*(1-k),yb+t.hm*(.75+.27*k)+Math.sin(h*2.3)*2*(1-k),t.z+Math.sin(ar)*(t.sm*.5+8)*(1-k));b.rotation.set(0,-ar,-.35*(1-k))}
+      else{b.position.set(t.x,yb+t.hm*1.02+2,t.z);b.rotation.set(0,b.rotation.y+(Math.sin(h*.6)*.004),0);CHT.wings[0].rotation.z=CHT.wings[1].rotation.z=0;for(const w of CHT.wings)w.scale.x=.32;if(CHT.head){CHT.head.rotation.x=-.45-.12*Math.sin(h*7);}}
+      // the tree waves: a slow sway that starts when the bird lands and settles again
+      if(t.parts){const sw=Math.min(1,h/1.5)*.075*Math.sin(h*2.2),sx=.04*Math.sin(h*1.6+1);for(const m of t.parts){m.rotation.z=sw;m.rotation.x=sx}}
     if(!T.said){T.said=1;const n=CHT.T.length,nx=(T.i+1)%n;showCard('The meadowlark: '+t[0],t[11]+' '+t[12]+' '+Math.round(t[5])+' points · trunk '+t.inch+' inches around · '+t[3]+' feet tall · crown '+t[4]+' feet · measured '+t[6]+' · '+t[9]+'.',-1,{label:'Next: '+CHT.T[nx][0],fn:()=>{T.i=nx;T.said=0;chtLeg()}},[{label:'Stop',fn:()=>{chtStop();hideCard()}},{label:'All champions',fn:()=>chtOpen(0)}])}
-    CHT.blb.t='"'+(h<5?'Tweedle-ee! The '+t[0].toLowerCase()+'!':h<10?Math.round(t[5])+' points!':'Tap Next and follow me')+'"';CHT.blb.sub='Western meadowlark, Nebraska\'s state bird'}
+    CHT.blb.t='"'+(h<3?'Here we are!':h<7?'Tweedle-oodle-ee! The '+t[0].toLowerCase()+'!':h<11?Math.round(t[5])+' points, biggest in Nebraska':h<15?'Look, it\'s waving at you':'Tap Next and follow me')+'"';CHT.blb.sub='Western meadowlark, Nebraska\'s state bird'}
   CHT.blb.x=b.position.x;CHT.blb.y=b.position.y+12;CHT.blb.z=b.position.z;lifeLabels.push(CHT.blb)}
 function chtHTML(i){chtSetup();const T=CHT.T,go='<p><button class="btn go2" data-cht="t">Fly with the meadowlark</button> <button class="btn go2" data-cht="m">Show them on the map</button></p>';
   if(i===0)return '<p>The Nebraska Forest Service keeps a register of the biggest tree of each kind in the state. Eight of them stand in Lincoln.</p>'+go
