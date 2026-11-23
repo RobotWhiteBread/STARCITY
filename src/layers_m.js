@@ -31,6 +31,7 @@ function sgList(){const n=lincolnNow(),h=n.sec/3600,out=[],U=sgUsed(),nowMs=Date
   for(const s of HK.sp.slice(1)){const e=(HK.ev[s[0]]||[]).find(q=>q.st==='in');if(e)out.push({t:'LIVE · '+hkLine(e,s),c:'hot',fn:()=>huskOpen(0)})}
   const al=wxAlerts();if(al.length)out.push({t:'⚠ '+al[0].event,c:'hot',fn:()=>wxDetail()});
   if(!U._t)out.push({t:'New here? Take the short tour',c:'ctx',fn:()=>{sgUse('tour');$('bTour').click()}});
+  if(n.ymd<20261215)out.push({t:'🐦 Champion trees, with a meadowlark',c:'ctx',fn:()=>chtTour(0)});
   if(n.ymd<20270301&&LM.fair)out.push({t:'🛸 The Bryan house just moved',c:'ctx',fn:()=>fvPlay()});
   {const soon=[];for(const s of HK.sp.slice(1))for(const e of HK.ev[s[0]]||[])if(e.st==='pre'&&e.t>nowMs-9e5&&e.t-nowMs<20*36e5)soon.push([e,s]);soon.sort((a,b)=>a[0].t-b[0].t);
     if(soon[0]){const [e,s]=soon[0];out.push({t:s[1]+(e.ha==='home'?' vs ':' at ')+e.opp+' · '+clock(e.t),c:'ctx',fn:()=>huskOpen(0)})}}

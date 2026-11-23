@@ -1,0 +1,81 @@
+common,sci,circ_ft,h,sp,pts,loc
+"Arborvitae, American",Thuja occidentalis,8.83,25,31,138,"Nemaha Cemetery, Nemaha"
+"Ash, Blue",Fraxinus quadrangulata,12.59,59,71,226,"403 South 9th St., Nebraska City"
+"Ash, Green",Fraxinus pennsylvanica,16.58,93,84,313,3 N of Ponca on Hwy. 12
+"Ash, White",Fraxinus americana,14.00,68,61,251.25,"Youth Rehabilitation & Treatment Center, Geneva"
+"Aspen, Quaking",Populus tremuloides,4.6,60,30,122.7,Near South Sioux City
+Baldcypress,Taxodium distichum,15.99,65,66,273.38,"University of Nebraska-Lincoln, North end of Maxwell Arboretum"
+"Birch, European White",Betula pendula,6.25,45,42,130,"409 Lambrecht St, Beemer"
+"Birch, Paper",Betula papyrifera,4.17,45,32,103,"south of Sparks"
+Boxelder,Acer negundo,12.92,57,60,226,4 miles North of Long Pine
+"Buckeye, Ohio",Aesculus glabra,11.5,52.5,56,205,Gretna
+Butternut,Juglans cinerea,5.5,55,40,131,"Pierce"
+"Catalpa, Northern",Catalpa speciosa,18.6,74,72,315,"Weeping Water"
+"Cherry, Black",Prunus serotina,10.17,62,57,198,Honey Creek School near Peru
+"Chestnut, American",Castanea dentata,12.33,80,60,243,"Arbor Lodge State Park, Nebraska City"
+Chokecherry,Prunus virginiana,4.42,45,20,103,"St. John's Catholic Church, 371 Skyway Dr., Lincoln"
+"Coffeetree, Kentucky",Gymnocladus dioicus,11,104,68,253,"335 N.33rd St. Lincoln"
+"Cottonwood, Eastern",Populus deltoides,37.2,85,120,561.4,"Pibel Lake SRA"
+Crab Apple (1),Malus spp,7.58,57,55,162,"Metro Community College, Fort Omaha"
+"Elm, American",Ulmus americana,18.5,70,85,313.25,Near Idylwild Park in Lincoln
+"Elm, Rock",Ulmus thomasii,5.08,53,54,128,Ponca State Park
+"Elm, Siberian (1)",Ulmus pumila,17.00,94,92,325.8,"Cozad"
+"Elm, Slippery or Red",Ulmus rubra,19.5,100,96,358,"Tekamah"
+"Fir, Concolor (white)",Abies concolor,9.50,61,35,184,"Omaha"
+"Fir, Douglas",Pseudotsugo menziesii,9.50,65,46,190,"Arbor Lodge State Park, Nebraska City"
+Ginkgo,Ginkgo biloba,12.33,52,63,215,"Nebraska City"
+Goldenraintree,Koelreuteria paniculata,6.95,29,47,134.15,"Plattsmouth"
+Hackberry (1),Celtis occidentalis,18,73,73,307.25,"Syracuse"
+Hawthorns,Crataegus spp,3.30,28,36,77,"near Beemer"
+"Hickory, Bitternut",Carya cordiformis,9.83,89,68,224,"Wyuka Cemetery, Nebraska City"
+"Hickory, Shagbark",Carya ovata,7.58,95,56,200,"Nebraska City"
+Honeylocust,Gleditsia triacanthos,14.50,85,63,275,"3256 Holdrege St, Lincoln"
+"Hophornbeam, Eastern",Ostrya virginiana,4.00,41,36,98,"near Wymore"
+Horsechestnut,Aesculus hippocastanum,9.25,59,36,179,"West Point"
+"Juniper, Rocky Mountain",Juniperus scopulorum,13.08,28,31.5,192,near Minatare
+Larches,Larix spp,8.58,58,60,176,"Miller Park, Omaha"
+"Linden, American",Tilia americana,16.4,72,50,281.3,"UNK, Kearney"
+"Locust, Black",Robinia pseudoacacia,15.2,77,80,292,"Grand Island"
+"Magnolia, Saucer",Magnolia soulangiana,8.08,37,52,108,Falls City
+"Maple, Amur",Acer ginnala,5,26,51,98.75,Genoa
+"Maple, Norway",Acer platanoides,12.50,70,77,239,"Blair"
+"Maple, Red",Acer rubrum,8.67,75,60,194,"Arbor Lodge, Nebraska City"
+"Maple, Rocky Mountain",Acer glabrum,1.33,16,23.5,38,near Harrison
+"Maple, Silver",Acer saccharinum,25.9,76,90,413.55,"Hillcrest Country Club, Lincoln"
+"Maple, Sugar",Acer saccharum,12.08,56,77,220,"Auburn"
+"Mulberry, Red or White","Morus rubra; Morus alba",21.92,49,76,331,"near Wahoo"
+"Oak, Black",Quercus velutina,16.75,82,72,301,near Barada
+"Oak, Bur",Quercus macrocarpa,18.7,84,94,331.65,Peru
+"Oak, Chinkapin",Quercus muehlenbergii,18.2,95,85,334.65,"Omaha"
+"Oak, Dwarf Chinkapin",Quercus prinoides,3.25,25,20,69,near Salem
+"Oak, English",Quercus robur,12.42,55,50,267,"Joslyn Castle, Omaha"
+"Oak, Northern Red (1)",Quercus rubra,15.42,85,80,290,"Fremont"
+"Oak, Pin",Quercus palustris,15.6,115,85,323.45,"Woods Avenue, Lincoln"
+"Oak, Swamp White",Quercus bicolor,13,68,97,249,"Elmwood Park, Omaha"
+"Oak, White",Quercus alba,11.25,59,72,212,"Johnson"
+Osage Orange,Maclura pomifera,17.50,57,76,286,"near Table Rock"
+"Pagoda Tree, Japanese",Sophora japonica,9.83,79,39,207,"Arbor Lodge State Park, Nebraska City"
+Pawpaw,Asimina triloba,2.75,34,33,74,"Near Bellevue"
+Pecan,Carya illinoensis,9.33,98,92,233,"Brownville"
+Persimmon,Diospyros virginiana,3.1,50,30,95,unknown
+"Pine, Austrian",Pinus nigra,9.822,72,65,206.114,"Bellevue"
+"Pine, Eastern White",Pinus strobus,11.33,80,72,233,"near Falls City"
+"Pine, Jack",Pinus banksiana,4.92,72,24,137,"Peru"
+"Pine, Limber",Pinus flexilis,6.00,62,42,145,"Kimball"
+"Pine, Pinyon",Pinus cembroides,2.50,25,16,59,"Sidney"
+"Pine, Ponderosa",Pinus ponderosa,11.20,105.5,43,250.25,Gilbert Baker WMA
+"Pine, Scotch",Pinus sylvestris,13.7,56,56,234.4,"Levi Carter Park, Omaha"
+"Poplar, White (silver)",Populus alba,12,92,42,334,"Arthur"
+"Redbud, Eastern",Cercis canadensis,5.75,32,34,110,"Peru"
+"Redcedar, Eastern",Juniperus virginiana,9.08,71,34,189,"near Peru"
+Russian Olive,Elaeagnus angustifolia,11.00,49,40,191,near Marsland
+"Spruce, Colorado Blue",Picea pungens,10.00,63,45,201.25,"Chadron"
+"Spruce, Norway",Picea abies,12.25,79,55,240,"Plattsmouth"
+"Spruce, White",Picea glauca,7.83,71,35,173.75,Chadron State College
+Sweetgum,Liquidambar styraciflua,5.33,74,31,146,"Arbor Lodge State Park, Nebraska City"
+"Sycamore, American",Platanus occidentalis,18.08,88,112,333,near Brownville
+"Walnut, Black",Juglans nigra,18,101,97,341,"Arbor Lodge, Nebraska City"
+"Willow, Black",Salix nigra,12.83,74,74,247,"near O'Neill"
+"Willow, Peachleaf",Salix amygdaloides,10.33,66,44,200,"Chadron"
+"Willow, Weeping",Salix babylonica,17.17,97,58,317.5,"near Niobrara"
+"Yellow-Poplar (tulip tree)",Liriodendron tulipifera,12.6,106,84,278.2,Falls City
