@@ -1476,21 +1476,25 @@ function stepPrecip(dt){if(!pPts||!precip)return;const snow=precip==='snow',U=pU
     if(snow){P[o]=wx_;P[o+1]=wy;P[o+2]=wz_}else{const p=6*i;Q[p]=wx_;Q[p+1]=wy;Q[p+2]=wz_;Q[p+3]=wx_-sx;Q[p+4]=wy+sl;Q[p+5]=wz_-sz}}
   if(snow)pPts.geometry.attributes.position.needsUpdate=true;else LM.rainL.geometry.attributes.instanceStart.data.needsUpdate=true;
   dirty=true}
-// wind: streaks that blow the way the wind is blowing, faster when it blows harder
-let windL=null,windV=null;
-function setWind(w){const ms=w&&w.kmh!=null?w.kmh/3.6:0;if(ms<1.6||w.dir==null){windV=null;if(windL)windL.visible=false;dirty=true;return}
+// wind: long curling ribbons that drift the way the wind blows, low over the ground, bright at the head and fading along the tail.
+// Rain is short straight slanted strokes falling from the sky; wind is drawn to look like neither rain nor snow: level, curved, pale blue.
+let windL=null,windV=null;const WIND_T=9;
+function setWind(w){const ms=w&&w.kmh!=null?w.kmh/3.6:0;if(ms<1.6||w.dir==null){windV=null;if(windL)for(const l of windL)l.visible=false;dirty=true;return}
   const a=w.dir*Math.PI/180;windV={x:-Math.sin(a)*ms,z:Math.cos(a)*ms,ms,gust:w.gust?w.gust/3.6:ms};
-  if(!windL){const N=mobile?400:820,g=new LineSegmentsGeometry();g.setPositions(new Float32Array(N*6));
-    LM.windMat=new LineMaterial({color:0xffffff,linewidth:2,transparent:true,opacity:.88,depthWrite:false,worldUnits:false,fog:false});LM.windMat.resolution.set(innerWidth,innerHeight);LM.lineMats.push(LM.windMat);
-    windL=new LineSegments2(g,LM.windMat);windL.frustumCulled=false;windL.renderOrder=3;scene.add(windL);
-    const q=new Float32Array(N*4);for(let i=0;i<N;i++){q[4*i]=rnd(i*4+11);q[4*i+1]=rnd(i*4+12);q[4*i+2]=rnd(i*4+13);q[4*i+3]=.6+.8*rnd(i*4+14)}windL.userData.q=q}
-  LM.windMat.linewidth=(mobile?1.4:1.6)+Math.min(1.2,ms*.06);windL.visible=true;dirty=true}
-function stepWind(dt,now){if(!windL||!windL.visible||!windV)return;const P=windL.geometry.attributes.instanceStart.data.array,q=windL.userData.q,N=q.length/4,t=controls.target;
-  const d=camera.position.distanceTo(t),R=Math.min(7000,Math.max(260,d*.9)),top=Math.min(600,Math.max(70,d*.3)),ux=windV.x/windV.ms,uz=windV.z/windV.ms;
-  const g=1+.4*Math.sin(now*.0013)*Math.min(1,(windV.gust-windV.ms)/windV.ms+.25),adv=windV.ms*dt*g*.0125,len=Math.min(.16,.035+windV.ms*.006)*R;LM.windMat.opacity=precip?.4:.74;
-  for(let i=0;i<N;i++){const sp=q[4*i+3];let a=q[4*i]+ux*adv*sp,b=q[4*i+1]+uz*adv*sp;a-=Math.floor(a);b-=Math.floor(b);q[4*i]=a;q[4*i+1]=b;
-    const x=t.x+(a-.5)*2*R,z=t.z+(b-.5)*2*R,y=hAt(x,z)+12+q[4*i+2]*top,o=6*i;P[o]=x;P[o+1]=y;P[o+2]=z;P[o+3]=x-ux*len*sp;P[o+4]=y;P[o+5]=z-uz*len*sp}
-  windL.geometry.attributes.instanceStart.data.needsUpdate=true;dirty=true}
+  if(!windL){const N=mobile?110:230;windL=[];for(let k=0;k<WIND_T;k++){const g=new LineSegmentsGeometry();g.setPositions(new Float32Array(N*6));const f=1-k/WIND_T;
+      const m=new LineMaterial({color:0xcfeeff,linewidth:2,transparent:true,opacity:.8*f*f+.05,depthWrite:false,worldUnits:false,fog:false});m.resolution.set(innerWidth,innerHeight);LM.lineMats.push(m);m.userData={f};
+      const l=new LineSegments2(g,m);l.frustumCulled=false;l.renderOrder=3;scene.add(l);windL.push(l)}
+    const q=new Float32Array(N*5);for(let i=0;i<N;i++){q[5*i]=rnd(i*5+11);q[5*i+1]=rnd(i*5+12);q[5*i+2]=rnd(i*5+13);q[5*i+3]=.65+.7*rnd(i*5+14);q[5*i+4]=rnd(i*5+15)*6.283}windL.q=q}
+  for(const l of windL){l.visible=true;l.material.linewidth=((mobile?1.5:1.9)+Math.min(1.6,ms*.08))*(.35+.65*l.material.userData.f)}dirty=true}
+function stepWind(dt,now){if(!windL||!windL[0].visible||!windV)return;const q=windL.q,N=q.length/5,t=controls.target;
+  const d=camera.position.distanceTo(t),R=Math.min(7000,Math.max(260,d*.9)),lift=Math.min(160,Math.max(14,d*.05)),ux=windV.x/windV.ms,uz=windV.z/windV.ms,px=-uz,pz=ux;
+  const gs=Math.min(1,(windV.gust-windV.ms)/windV.ms+.25),g=1+.45*Math.sin(now*.0013)*gs,adv=windV.ms*dt*g*.0125,seg=Math.min(.036,.011+windV.ms*.0017)*R,amp=R*.042,wl=6.283/(R*.3),sw=now*.0011;
+  for(const l of windL)l.material.opacity=(precip?.45:1)*(.8*l.material.userData.f*l.material.userData.f+.05)*(.8+.2*g);
+  for(let i=0;i<N;i++){const sp=q[5*i+3];let a=q[5*i]+ux*adv*sp,b=q[5*i+1]+uz*adv*sp;a-=Math.floor(a);b-=Math.floor(b);q[5*i]=a;q[5*i+1]=b;
+    const bx=t.x+(a-.5)*2*R,bz=t.z+(b-.5)*2*R,ph=q[5*i+4],along=bx*ux+bz*uz,o=6*i;let x0=0,y0=0,z0=0;
+    for(let k=0;k<=WIND_T;k++){const s=k*seg*sp,w=Math.sin(ph+(along-s)*wl+sw)*amp*(.4+.6*q[5*i+2]),x=bx-ux*s+px*w,z=bz-uz*s+pz*w,y=(k%3===0?hAt(x,z):y0-lift)+lift;
+      if(k){const P=windL[k-1].geometry.attributes.instanceStart.data.array;P[o]=x0;P[o+1]=y0;P[o+2]=z0;P[o+3]=x;P[o+4]=y;P[o+5]=z}x0=x;y0=y;z0=z}}
+  for(const l of windL)l.geometry.attributes.instanceStart.data.needsUpdate=true;dirty=true}
 // lightning and the storm marker. Flashes mean a thunderstorm is reported; they do not mark real strikes.
 let flashT=-1e9,nextFlash=0,bolt=null,funnels=[];const cWhite=new THREE.Color(0xffffff);
 function makeBolt(){const t=controls.target,dC=camera.position.distanceTo(t),a=Math.atan2(t.z-camera.position.z,t.x-camera.position.x)+(Math.random()-.5)*1.9,r=Math.max(250,dC*(.2+.9*Math.random()));let x=t.x+Math.cos(a)*r,z=t.z+Math.sin(a)*r;const g0=hAt(x,z),P=[];let px=x+(Math.random()-.5)*500,py=g0+1150,pz=z+(Math.random()-.5)*500;
@@ -1557,7 +1561,7 @@ function demoRadar(kind){const o=overlay(),W=o.cv.width,rc=document.createElemen
   else{const snow=kind==='snow';for(let i=0;i<(snow?46:34);i++){const x=W*rnd(i*3+70),y=W*rnd(i*3+71),r=W*((snow?.09:.07)+.1*rnd(i*3+72));blob(x,y,r,snow?[[0,'rgba(70,130,255,.75)'],[.6,'rgba(130,185,255,.5)'],[1,'rgba(150,200,255,0)']]:[[0,'rgba(0,185,0,.8)'],[.65,'rgba(0,150,0,.5)'],[1,'rgba(0,150,0,0)']]);if(!snow&&i%4===0)blob(x,y,r*.35,[[0,'rgba(255,235,0,.9)'],[1,'rgba(255,235,0,0)']])}}
   return rc}
 function setDemo(i){const C=LM.capitol,soon=new Date(Date.now()+35*60000).toISOString(),here=(dx,dz)=>({lat:H.lat0-(C[1]+dz)/KYm,lon:H.lon0+(C[0]+dx)/KXm});
-  const D=[{name:'A windy day',say:'White streaks blow the way the wind blows, faster in gusts.',tC:14,desc:'Windy',kmh:45,gust:72,dir:310,cloud:.3,precip:null,heavy:1,thunder:false,alerts:[]},
+  const D=[{name:'A windy day',say:'Pale ribbons curl along the ground the way the wind blows, faster in gusts.',tC:14,desc:'Windy',kmh:45,gust:72,dir:310,cloud:.3,precip:null,heavy:1,thunder:false,alerts:[]},
     {name:'Steady rain',say:'Rain falls only where the radar picture shows it. Move around and it starts and stops.',tC:11,desc:'Rain',kmh:19,gust:null,dir:170,cloud:1,precip:'rain',heavy:1,thunder:false,alerts:[],radar:'rain'},
     {name:'Heavy snow',say:'Below freezing, the same radar picture brings snow, blown sideways by the wind.',tC:-3,desc:'Heavy Snow',kmh:29,gust:48,dir:350,cloud:1,precip:'snow',heavy:1.6,thunder:false,alerts:[{event:'Winter Storm Warning',ends:soon,rank:75,polys:[],storm:null}],radar:'snow'},
     {name:'A thunderstorm',say:'Lightning flashes when the airport reports a thunderstorm. The orange outline is the warned area.',tC:23,desc:'Thunderstorm and Heavy Rain',kmh:32,gust:80,dir:240,cloud:1,precip:'rain',heavy:1.6,thunder:true,alerts:[{event:'Severe Thunderstorm Warning',ends:soon,rank:90,polys:[demoPoly(C[0]-6500,C[1]+5200,.82,9000,2300,4200)],storm:null}],radar:'storm'},
