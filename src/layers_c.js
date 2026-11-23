@@ -87,7 +87,7 @@ function hexCard(L,i){const g=k=>S2['hx_'+k][i],ac=H2.hex.acres,p=[],n=g('n'),nh
   showCard(L.def.t,`This hexagon covers about ${ac.toFixed(1)} acres: `+p.join(' · ')+'. '+L.def.note+' Source: '+L.def.src+'.')}
 // ---- color every building by a property stratum
 let paintOrig=null,paintMode=null;
-const PAINT={value:{t:'Color buildings by assessed value',note:'Every building takes the color of its parcel\'s assessed value band.',br:[100000,200000,300000,400000,500000,1000000,2000000,5000000,10000000],ramp:'value',get:b=>S2.b_sv[b]||S2.b_val[b],u:'$'},
+const PAINT={value:{t:'Color buildings by assessed value',note:'Every building takes the color of its parcel\'s assessed value band.',br:[100000,200000,300000,400000,500000,1000000,2000000,5000000,10000000],ramp:'value',get:b=>bVal(b),u:'$'},
   cls:{t:'Color buildings by property class',note:'Homes, businesses, farms and land without buildings, as the county assessor classes each parcel.',cats:[['Residential',0xf2c14e],['Commercial',0xe4572e],['Agricultural',0x7fb069],['No class on record',0x9aa5b1]],get:b=>{const c=H2.cls[S2.b_cls[b]]||'';return c.startsWith('Res')?0:c.startsWith('Com')?1:c.startsWith('Ag')?2:3}},
   decade:{t:'Color buildings by year built',note:'Homes colored by the year the county assessor says they were built. Buildings without a recorded year keep their own color.',br:[1920,1950,1970,1990,2010],ramp:'age',get:b=>S.b_yr?S.b_yr[b]:0,u:''}};
 function paintLegend(P){if(P.cats)return P.cats.map((c,i)=>({l:c[0],c:c3(c[1]),t:i}));const n=P.br.length+1,o=[];for(let t=0;t<n;t++)o.push({l:t===0?'under '+shortN(P.br[0],P.u):t===n-1?shortN(P.br[t-1],P.u)+' and up':shortN(P.br[t-1],P.u)+' to '+shortN(P.br[t],P.u),c:rampAt(P.ramp,t/(n-1)),t});return o}

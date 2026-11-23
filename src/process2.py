@@ -221,6 +221,24 @@ for i, p in enumerate(PAR):
 for b, n in cnt.items():
     if n >= 2: b_un[b] = min(65535, n); b_sv[b] = min(4294967295, int(round(tot[b])))
 log('buildings holding several parcels', int((b_un > 0).sum()), 'largest', int(b_un.max()))
+# several buildings on one parcel: count the parcel's value once. b_sh is this building's share of it (0 to 65535), b_pn how many
+# buildings the parcel holds. On a home or farm lot the main building carries the value and the garage or shed carries none,
+# unless the next building is nearly as big (a twin, a cluster); everywhere else the value is split by size, footprint times height.
+b_sh = np.full(NB, 65535, np.uint16); b_pn = np.where(b_val > 0, 1, 0).astype(np.uint16)
+_g = collections.defaultdict(list)
+for b in range(NB):
+    if b_par[b] >= 0 and b_un[b] == 0 and b_val[b] > 0: _g[int(b_par[b])].append(b)
+_vol = b_area * np.maximum(S['b_h'].astype(float) / 10, 3.0)
+for i, bs in _g.items():
+    if len(bs) < 2: continue
+    w = _vol[bs]; o = np.argsort(-w); res = CLS[b_cls[bs[0]]].startswith(('Res', 'Ag'))
+    for b in bs: b_pn[b] = min(65535, len(bs))
+    if res and w[o[1]] < (.8 if len(bs) == 2 else .5) * w[o[0]]:
+        for b in bs: b_sh[b] = 0
+        b_sh[bs[o[0]]] = 65535
+    else:
+        for b, q in zip(bs, w / w.sum()): b_sh[b] = int(round(q * 65535))
+log('parcels with several buildings', sum(1 for bs in _g.values() if len(bs) > 1))
 # assessor neighborhoods: median home value, for the "how does this compare" line
 nbv = collections.defaultdict(list)
 for p in PAR:
@@ -511,7 +529,7 @@ def line_layer(id, title, group, items, src, asof, note, fields, style, tol=2.0)
 CITYGIS = 'City of Lincoln and Lancaster County GIS'
 
 # per-building arrays
-sec('b_val', 'I', b_val); sec('b_cls', 'B', b_cls); sec('b_nb', 'H', b_nb); sec('b_fa', 'H', b_fa); sec('b_tx', 'B', b_tx); sec('b_sv', 'I', b_sv); sec('b_un', 'H', b_un)
+sec('b_val', 'I', b_val); sec('b_cls', 'B', b_cls); sec('b_nb', 'H', b_nb); sec('b_fa', 'H', b_fa); sec('b_tx', 'B', b_tx); sec('b_sv', 'I', b_sv); sec('b_un', 'H', b_un); sec('b_sh', 'H', b_sh); sec('b_pn', 'H', b_pn)
 HEAD['cls'] = CLS; HEAD['nb'] = NBL; HEAD['txd'] = TXL; HEAD['city'] = CITY; HEAD['tax'] = TAXS
 for k, t in (('i', 'H'), ('vpa', 'H'), ('med', 'H'), ('tpa', 'H'), ('psf', 'H'), ('yr', 'H'), ('hpa', 'H'), ('pop', 'H'), ('cr', 'H'), ('n', 'H'), ('nh', 'H'), ('biz', 'H'), ('tot', 'H')): sec('hx_' + k, t, hx[k])
 HEAD['pop'] = dict(onMap=int(POPMAP))

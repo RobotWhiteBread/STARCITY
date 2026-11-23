@@ -1,7 +1,10 @@
 
 // ---- property facts on every building card: assessed value, estimated tax, how it compares, and the owner on request
+// value a building stands for in bars, counts, medians and sums. A parcel's value is counted once: on a home lot the main building carries it, elsewhere it is split among the parcel's buildings by size (footprint times height). Shares are 0 to 65535.
+function bVal(b){const v=S2.b_sv[b]||S2.b_val[b];if(!v||!S2.b_sh)return v;const s=S2.b_sh[b];return s===65535?v:Math.round(v*s/65535)}
 function propLines(b){if(!S2||!S2.b_val)return null;const v=S2.b_val[b];if(!v)return null;const out=[],un=S2.b_un[b],sv=S2.b_sv[b],cls=H2.cls[S2.b_cls[b]]||'',r=H2.txd[S2.b_tx[b]];
   out.push('Assessed at '+fmtN(v,'$')+' for 2026'+(cls&&cls!=='Unclassified'?' ('+cls.toLowerCase()+')':''));
+  if(S2.b_pn&&S2.b_pn[b]>1&&!un){const n=S2.b_pn[b],s=S2.b_sh[b];out.push('that is the value of the whole parcel, which holds '+n+' buildings on this map'+(s===0?'; in value bars, counts and medians the main building carries it and this one carries none':s<65535?'; in value bars, counts and medians this building stands for '+fmtN(bVal(b),'$')+' of it, its share by size':''))}
   const tg=H.tags[S.b_tag[b]]||'',ex=/^(university|college|school|kindergarten|church|cathedral|chapel|religious|government|public|civic|hospital|fire_station|library|dormitory|stadium)$/.test(tg);
   if(r&&r[1])out.push('property tax about '+fmtN(v*r[1]/100,'$')+' a year (an estimate: value times the '+H2.city.rateYear+' levy of '+r[1].toFixed(4)+' per $100 in tax district '+r[0]+', before credits and exemptions'+(ex?'; public, school and church property is usually exempt, so the real bill here may be nothing':'')+'). What was billed and paid is on the county record');
   else out.push('no tax district is on file for this parcel, so no tax estimate. The county record has the bill');

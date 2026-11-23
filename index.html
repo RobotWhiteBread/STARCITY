@@ -413,8 +413,8 @@ body.hc :focus-visible{outline-color:#fff}
 <path d="M0 158 Q60 148 120 156 T240 152 V190 H0 Z" fill="#3d4a2c"/><path d="M0 168 Q70 158 130 168 T240 164 V190 H0 Z" fill="#566a35"/>
 </svg><b>STAR<i>CITY</i></b><div id="bar"><div></div></div><span id="ls">Unpacking Lincoln…</span><small id="lnote">Lincoln, Nebraska · public records, in your hands</small></div>
 <script type="application/octet-stream" id="d" data-src="data/d-3eda28c7f6.bin"></script>
-<script type="application/octet-stream" id="d2" data-src="data/d2-d8c1b3f582.bin"></script>
-<link rel="preload" as="fetch" crossorigin href="data/d-3eda28c7f6.bin"><link rel="preload" as="fetch" crossorigin href="data/d2-d8c1b3f582.bin">
+<script type="application/octet-stream" id="d2" data-src="data/d2-ff863a1ce2.bin"></script>
+<link rel="preload" as="fetch" crossorigin href="data/d-3eda28c7f6.bin"><link rel="preload" as="fetch" crossorigin href="data/d2-ff863a1ce2.bin">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -2378,7 +2378,7 @@ function hexCard(L,i){const g=k=>S2['hx_'+k][i],ac=H2.hex.acres,p=[],n=g('n'),nh
   showCard(L.def.t,`This hexagon covers about ${ac.toFixed(1)} acres: `+p.join(' · ')+'. '+L.def.note+' Source: '+L.def.src+'.')}
 // ---- color every building by a property stratum
 let paintOrig=null,paintMode=null;
-const PAINT={value:{t:'Color buildings by assessed value',note:'Every building takes the color of its parcel\'s assessed value band.',br:[100000,200000,300000,400000,500000,1000000,2000000,5000000,10000000],ramp:'value',get:b=>S2.b_sv[b]||S2.b_val[b],u:'$'},
+const PAINT={value:{t:'Color buildings by assessed value',note:'Every building takes the color of its parcel\'s assessed value band.',br:[100000,200000,300000,400000,500000,1000000,2000000,5000000,10000000],ramp:'value',get:b=>bVal(b),u:'$'},
   cls:{t:'Color buildings by property class',note:'Homes, businesses, farms and land without buildings, as the county assessor classes each parcel.',cats:[['Residential',0xf2c14e],['Commercial',0xe4572e],['Agricultural',0x7fb069],['No class on record',0x9aa5b1]],get:b=>{const c=H2.cls[S2.b_cls[b]]||'';return c.startsWith('Res')?0:c.startsWith('Com')?1:c.startsWith('Ag')?2:3}},
   decade:{t:'Color buildings by year built',note:'Homes colored by the year the county assessor says they were built. Buildings without a recorded year keep their own color.',br:[1920,1950,1970,1990,2010],ramp:'age',get:b=>S.b_yr?S.b_yr[b]:0,u:''}};
 function paintLegend(P){if(P.cats)return P.cats.map((c,i)=>({l:c[0],c:c3(c[1]),t:i}));const n=P.br.length+1,o=[];for(let t=0;t<n;t++)o.push({l:t===0?'under '+shortN(P.br[0],P.u):t===n-1?shortN(P.br[t-1],P.u)+' and up':shortN(P.br[t-1],P.u)+' to '+shortN(P.br[t],P.u),c:rampAt(P.ramp,t/(n-1)),t});return o}
@@ -2407,8 +2407,11 @@ function pvCard(L,i){const x=L.X[2*i],z=L.X[2*i+1],v=fget(L,L.fields[0])(i);let 
 
 
 // ---- property facts on every building card: assessed value, estimated tax, how it compares, and the owner on request
+// value a building stands for in bars, counts, medians and sums. A parcel's value is counted once: on a home lot the main building carries it, elsewhere it is split among the parcel's buildings by size (footprint times height). Shares are 0 to 65535.
+function bVal(b){const v=S2.b_sv[b]||S2.b_val[b];if(!v||!S2.b_sh)return v;const s=S2.b_sh[b];return s===65535?v:Math.round(v*s/65535)}
 function propLines(b){if(!S2||!S2.b_val)return null;const v=S2.b_val[b];if(!v)return null;const out=[],un=S2.b_un[b],sv=S2.b_sv[b],cls=H2.cls[S2.b_cls[b]]||'',r=H2.txd[S2.b_tx[b]];
   out.push('Assessed at '+fmtN(v,'$')+' for 2026'+(cls&&cls!=='Unclassified'?' ('+cls.toLowerCase()+')':''));
+  if(S2.b_pn&&S2.b_pn[b]>1&&!un){const n=S2.b_pn[b],s=S2.b_sh[b];out.push('that is the value of the whole parcel, which holds '+n+' buildings on this map'+(s===0?'; in value bars, counts and medians the main building carries it and this one carries none':s<65535?'; in value bars, counts and medians this building stands for '+fmtN(bVal(b),'$')+' of it, its share by size':''))}
   const tg=H.tags[S.b_tag[b]]||'',ex=/^(university|college|school|kindergarten|church|cathedral|chapel|religious|government|public|civic|hospital|fire_station|library|dormitory|stadium)$/.test(tg);
   if(r&&r[1])out.push('property tax about '+fmtN(v*r[1]/100,'$')+' a year (an estimate: value times the '+H2.city.rateYear+' levy of '+r[1].toFixed(4)+' per $100 in tax district '+r[0]+', before credits and exemptions'+(ex?'; public, school and church property is usually exempt, so the real bill here may be nothing':'')+'). What was billed and paid is on the county record');
   else out.push('no tax district is on file for this parcel, so no tax estimate. The county record has the bill');
@@ -3185,7 +3188,7 @@ function numStats(pick){const D=numData(),all=[],homes=[];let tot=0,tax=0,n=0;fo
 function numSales(pick){const L=DL.get('sales');if(!L)return null;const p=fget(L,L.fields.find(f=>f.k==='price')),a=fget(L,L.fields.find(f=>f.k==='assd')),ps=fget(L,L.fields.find(f=>f.k==='ppsf')),pr=[],ra=[],sf=[];
   for(let i=0;i<L.n;i++){if(pick&&!pick(L.X[2*i],L.X[2*i+1]))continue;const v=p(i);if(!(v>0))continue;pr.push(v);if(a(i)>0)ra.push(a(i)/v);if(ps(i)>0)sf.push(ps(i))}pr.sort((x,y)=>x-y);ra.sort((x,y)=>x-y);sf.sort((x,y)=>x-y);
   const m=qtile(ra,.5),cod=ra.length&&m?ra.reduce((s,r)=>s+Math.abs(r-m),0)/ra.length/m*100:0;return {n:pr.length,med:qtile(pr,.5),ratio:m,cod,psf:qtile(sf,.5)}}
-function numBld(pick){const yr=[],sf=[];for(let b=0;b<LM.bc.length/2;b++){if(!pick(LM.bc[2*b],LM.bc[2*b+1]))continue;if(S.b_yr&&S.b_yr[b]>1800)yr.push(S.b_yr[b]);const fa=S2.b_fa[b],v=S2.b_val[b];if(fa>200&&v>0&&(H2.cls[S2.b_cls[b]]||'').startsWith('Residential Imp'))sf.push(v/fa)}yr.sort((a,b)=>a-b);sf.sort((a,b)=>a-b);return {yr:qtile(yr,.5),psf:qtile(sf,.5)}}
+function numBld(pick){const yr=[],sf=[];for(let b=0;b<LM.bc.length/2;b++){if(!pick(LM.bc[2*b],LM.bc[2*b+1]))continue;if(S.b_yr&&S.b_yr[b]>1800)yr.push(S.b_yr[b]);const fa=S2.b_fa[b],v=bVal(b);if(fa>200&&v>0&&(H2.cls[S2.b_cls[b]]||'').startsWith('Residential Imp'))sf.push(v/fa)}yr.sort((a,b)=>a-b);sf.sort((a,b)=>a-b);return {yr:qtile(yr,.5),psf:qtile(sf,.5)}}
 function numTrend(){const mo=H2.city.monthly||[];if(mo.length<30)return null;const md=a=>{const s=a.map(m=>m[2]).filter(v=>v>0).sort((x,y)=>x-y);return qtile(s,.5)},l=mo.slice(-12),p=mo.slice(-24,-12),f=mo.slice(-72,-60),n12=l.reduce((s,m)=>s+m[3],0),p12=p.reduce((s,m)=>s+m[3],0);
   return {now:md(l),prev:md(p),five:f.length?md(f):0,n12,p12,last:mo[mo.length-1]}}
 // homes counted by value band: steps of $100,000, then $500,000 to $1 million, and the millions beyond
@@ -4428,7 +4431,7 @@ function findVB(){for(const m of pickables){if(!(m.userData&&m.userData.ids&&m.g
     for(let k=0;k<st.length;k++){const e=k+1<st.length?st[k+1]:idx.length;for(let i=st[k];i<e;i++)vb[idx[i]]=ids[k]}m.userData.vb=vb;g.setAttribute('aHi',new THREE.BufferAttribute(new Float32Array(cnt),1))}}
 function findFlood(){if(FIND.flood)return FIND.flood;const L1=DL.get('flood100'),L5=DL.get('flood500');if(!L1||!L1.X)return null;const n=S.b_yr.length,a=new Uint8Array(n);for(let b=0;b<n;b++){const x=LM.bc[2*b],z=LM.bc[2*b+1];let v=0;try{if(dlAt(L1,x,z)>=0)v=1;else if(L5&&L5.X&&dlAt(L5,x,z)>=0)v=2}catch(e){}a[b]=v}return FIND.flood=a}
 function finderApply(f){findVB();const n=S.b_yr.length,hit=new Uint8Array(n),fl=f.fl?findFlood():null,vals=[],yrs=[],psf=[];let tot=0,sx=0,sz=0;
-  for(let b=0;b<n;b++){const v=S2.b_sv[b]||S2.b_val[b];if(!v)continue;const c=H2.cls[S2.b_cls[b]]||'',res=c.startsWith('Res'),com=c.startsWith('Com');
+  for(let b=0;b<n;b++){const v=bVal(b);if(!v)continue;const c=H2.cls[S2.b_cls[b]]||'',res=c.startsWith('Res'),com=c.startsWith('Com');
     if(f.t==='res'&&!(res&&S2.b_fa[b]>200))continue;if(f.t==='com'&&!com)continue;if(f.v0&&v<f.v0)continue;if(f.v1&&v>f.v1)continue;
     const y=S.b_yr[b];if(f.y0||f.y1){if(!(y>1800))continue;if(f.y0&&y<f.y0)continue;if(f.y1&&y>f.y1)continue}
     const a=S2.b_fa[b];if(f.a0||f.a1||f.p0||f.p1){if(!(a>200))continue;if(f.a0&&a<f.a0)continue;if(f.a1&&a>f.a1)continue;const pp=v/a;if(f.p0&&pp<f.p0)continue;if(f.p1&&pp>f.p1)continue}
@@ -4446,7 +4449,7 @@ function findWords(f){const w=[],M=v=>fmtN(v,'$');w.push(f.t==='res'?'Homes':f.t
   if(f.fl==='in')w.push('in a mapped flood zone');if(f.fl==='out')w.push('outside the mapped flood zones');return w.join(', ')}
 function finderRun(f){closeSheet();const r=finderApply(f),M=v=>fmtN(v,'$');lastInput=performance.now();
   if(!r.n){showCard('Property finder: no matches',findWords(f)+'. Nothing on the map fits all of that. Loosen a filter.',undefined,{label:'Change the filters',fn:finderOpen},[{label:'Clear',fn:finderOff}]);return}
-  showCard('Property finder: '+r.n.toLocaleString('en-US')+' buildings',findWords(f)+'. The matches are gold on the map and everything else is grey. Median assessed value '+M(r.med)+(r.yr?', median year built '+r.yr:'')+(r.psf?', median $'+Math.round(r.psf)+' a square foot':'')+'. Tap any gold building for its own value, tax estimate, size and year. These are the county assessor\'s 2026 values, not asking prices or sale prices, and where several buildings stand on one parcel (a campus, an apartment complex) each one shows the whole parcel\'s value, so the matches are not added into a total here. "Homes" means residential buildings with a floor area on record, which leaves out detached garages and sheds and includes apartment buildings. Year built and floor area are on record for homes and missing for most other buildings, so a filter on either one leaves those out.',undefined,{label:'Change the filters',fn:finderOpen},
+  showCard('Property finder: '+r.n.toLocaleString('en-US')+' buildings',findWords(f)+'. The matches are gold on the map and everything else is grey. Median assessed value '+M(r.med)+(r.yr?', median year built '+r.yr:'')+(r.psf?', median $'+Math.round(r.psf)+' a square foot':'')+'. Together they are assessed at '+M(r.tot)+', each parcel counted once. Tap any gold building for its own value, tax estimate, size and year. These are the county assessor\'s 2026 values, not asking prices or sale prices, and where several buildings stand on one parcel its value is counted once: a house carries it and its garage or shed carries none, and a campus or apartment complex splits it among its buildings by size. "Homes" means the main residential building on a parcel with a floor area on record, which leaves out detached garages and sheds. Year built and floor area are on record for homes and missing for most other buildings, so a filter on either one leaves those out.',undefined,{label:'Change the filters',fn:finderOpen},
    [{label:'Clear',fn:finderOff},{label:'Recent sales',fn:()=>reMap(5)},{label:'Everything about one spot',fn:spotArm},{href:'https://starcitylincoln.org/sales.html',label:'Home sales paper ↗'}]);
   const d=camera.position.distanceTo(controls.target);if(d<6000)flyTo(camTo(controls.target.x,controls.target.z,9000,200,48),1600)}
 function finderHTML(){const f=FIND.f||{t:'res'},v=k=>f[k]?`value="${f[k]}"`:'',inp=(k,ph)=>`<input type="number" inputmode="numeric" data-ff="${k}" placeholder="${ph}" ${v(k)} style="width:46%;padding:9px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;font:inherit">`,
@@ -4606,7 +4609,7 @@ function cpaRate(b){const r=H2.txd&&H2.txd[S2.b_tx[b]];return r&&r[1]>0?r[1]:1.6
 function cpaTax(b){return cpaVal(b)*cpaRate(b)/100}
 const CPAC={tier:'Value',age:'Age',cls:'Kind of property'};
 const CPAF=[['All property',{}],['Homes only',{t:'res'}],['Homes under $200,000',{t:'res',v1:200000}],['Homes $200,000 to $350,000',{t:'res',v0:200000,v1:350000}],['Homes $350,000 to $600,000',{t:'res',v0:350000,v1:600000}],['Homes $600,000 and up',{t:'res',v0:600000}],['Homes built before 1950',{t:'res',y1:1949}],['Homes built 2000 or later',{t:'res',y0:2000}],['Commercial property',{t:'com'}]];
-function cpaVal(b){return S2.b_sv[b]||S2.b_val[b]||0}
+function cpaVal(b){return bVal(b)||0}
 function cpaPass(b,f){const v=cpaVal(b);if(!v)return false;const c=H2.cls[S2.b_cls[b]]||'',res=c.startsWith('Res'),com=c.startsWith('Com');if(f.t==='res'&&!(res&&S2.b_fa[b]>200))return false;if(f.t==='com'&&!com)return false;if(f.v0&&v<f.v0)return false;if(f.v1&&v>f.v1)return false;const y=S.b_yr[b];if(f.y0||f.y1){if(!(y>1800))return false;if(f.y0&&y<f.y0)return false;if(f.y1&&y>f.y1)return false}return true}
 function cpaMetric(b,k){const v=cpaVal(b);if(k==='val')return v;if(k==='tax')return cpaTax(b);if(k==='psf')return S2.b_fa[b]>200?v/S2.b_fa[b]:0;if(k==='tpsf')return S2.b_fa[b]>200?cpaTax(b)/S2.b_fa[b]:0;const y=S.b_yr[b];return y>1800?y:0}
 // which polygon of a layer each building sits in, worked out once
