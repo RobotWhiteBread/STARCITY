@@ -25,7 +25,7 @@ Every record, placed or not, is in `data_public/crashes_2024_2026_placed.csv` wi
 | What | This file | Published | Reading |
 |---|---|---|---|
 | Fatal crashes, January to June 2026 | 7, two before late May and five after | Lincoln Journal Star: seven fatal crashes in 2026, five since late May | Match |
-| Fatal crash records, 2024 | 15 | Lincoln Police told the Omaha World-Herald there were 12 traffic fatalities in 2024 | Does not match. At least three of the 15 records are at or beyond the city edge (`W 84 at W HOLDREGE`, `S 27,BARNARD RD to SALTILLO`, `W DENTON,S FOLSOM to S 1`), which may explain it. Not confirmed. |
+| Fatal crash records, 2024 | 15 | Lincoln Police told the Omaha World-Herald there were 12 traffic fatalities in 2024 | Consistent once the city limit is applied. Of the 15 records, 12 are placed inside the city limit. One is placed 141 m outside it (`S 27,BARNARD RD to SALTILLO`) and two could not be placed (`W 84 at W HOLDREGE`, a rural crossing, and `FOLSOM CONNECTOR,S FOLSOM to W VAN DORN`). The police figure counts deaths and this file counts crashes, so the match is a strong sign, not proof. |
 | Share of crashes with an injury or death | 22.7% to 23.3% a year | City crash study: 9,278 of 42,552 over five years, 21.8% | Consistent |
 | 14th and Superior, 2025 | 28 at the intersection, 42 counting the approach blocks | State figure reported by the Journal Star: 37 | Same range. The state counts reportable crashes and draws the intersection its own way. |
 | Yearly total | 7,265 (2024), 7,574 (2025) | City crash study: 8,510 a year on average, for an earlier five-year period | Lower, different years. No published total for 2024 or 2025 was found to compare directly. |

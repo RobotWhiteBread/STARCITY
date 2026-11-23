@@ -45,9 +45,10 @@ Corrected November 22, 2026 in three places:
 - **The papers.** Property value and County. Lincoln's parcel land is 55,135 acres, not 59,524, and every
   per-acre figure was recomputed (`tools/analysis/citywide/papers.py`).
 - **Compare areas.** Its parcel file folds each stack into one row (`tools/analysis/value_per_acre`).
-- **The map's "value per acre" and "tax per acre" hex layers.** `patch_hex.py` finds each stack, works out the
-  extra acres in each hex cell and rescales the two layers. 69 cells changed. Cells holding downtown
-  condominium towers rose the most, for example from $2.45 million to $21.2 million an acre. In 11 cells the
-  extra acres came out larger than the cell's recorded land, because the outline's area and the assessor's
-  recorded area differ slightly; those cells are held at one lot per stack. Cell totals, medians and counts
-  were not changed. The next full rebuild should count stacked land once at the source instead.
+- **The map's "value per acre" and "tax per acre" hex layers.** `patch_hex.py` rebuilds every cell's value and
+  acres from the parcel layer with the build's own cell rule, then rescales the two layers in the 69 cells that
+  hold a stack by the ratio of acres as stacked to acres counted once. Check: the rebuilt cell total matches
+  the data file in 15,570 of 15,753 cells overall and in all 69 of the cells that were changed. Cells holding
+  downtown condominium towers rose the most, for example from $2.45 million to $21.4 million an acre. Cell
+  totals, medians and counts were not changed. The next full rebuild should count stacked land once at the
+  source instead.

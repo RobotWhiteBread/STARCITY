@@ -413,8 +413,8 @@ body.hc :focus-visible{outline-color:#fff}
 <path d="M0 158 Q60 148 120 156 T240 152 V190 H0 Z" fill="#3d4a2c"/><path d="M0 168 Q70 158 130 168 T240 164 V190 H0 Z" fill="#566a35"/>
 </svg><b>STAR<i>CITY</i></b><div id="bar"><div></div></div><span id="ls">Unpacking Lincoln…</span><small id="lnote">Lincoln, Nebraska · public records, in your hands</small></div>
 <script type="application/octet-stream" id="d" data-src="data/d-3eda28c7f6.bin"></script>
-<script type="application/octet-stream" id="d2" data-src="data/d2-32c72cd71c.bin"></script>
-<link rel="preload" as="fetch" crossorigin href="data/d-3eda28c7f6.bin"><link rel="preload" as="fetch" crossorigin href="data/d2-32c72cd71c.bin">
+<script type="application/octet-stream" id="d2" data-src="data/d2-f94e523dd2.bin"></script>
+<link rel="preload" as="fetch" crossorigin href="data/d-3eda28c7f6.bin"><link rel="preload" as="fetch" crossorigin href="data/d2-f94e523dd2.bin">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -4717,7 +4717,7 @@ function setupFairview(){if(FV.g||!LM.fair)return;const N=LM.fair;FV.N=[N.x,N.z]
   g.add(fvB(9.5,.4,3.2,WH,-1.6,4.1,9),fvB(9.5,.5,3.2,0x9a958c,-1.6,.9,9));for(let i=0;i<5;i++)g.add(fvB(.36,3,.36,WH,-6+i*2.1,2.6,10.3));
   g.add(fvB(4.2,2.6,1.2,BR,-1.5,10.6,6.6),fvB(4.8,.3,1.6,RF,-1.5,12,6.6),fvB(1,3.4,1,BR,-4,12.6,-3),fvB(1,3.4,1,BR,4,12.6,-4));
   for(const [x,y] of [[-4.5,3.2],[-1.5,3.2],[-4.5,6.9],[-1.5,6.9],[1.6,6.9]])g.add(fvB(1.1,1.8,.12,0xf6e7b0,x,y,7.52,{emissive:0x4a3c12}));
-  g.traverse(m=>{if(m.isMesh){m.castShadow=true;m.userData.card=fvCard}});g.userData.card=fvCard;FV.y0=hAt(N.x,N.z);g.position.set(N.x,FV.y0,N.z);scene.add(g);pickables.push(g);FV.g=g;
+  g.traverse(m=>{if(m.isMesh){m.castShadow=true;m.userData.card=fvCard}});g.userData.card=fvCard;FV.y0=hAt(N.x,N.z);g.position.set(N.x,FV.y0,N.z);g.rotation.y=Math.PI;scene.add(g);pickables.push(g);FV.g=g;
   {const i=labels.findIndex(l=>l.t==='Fairview/Bryan Museum');if(i>=0)labels.splice(i,1)}labels.push({t:'Fairview',sub:'Bryan house, moved 2026',x:N.x,y:FV.y0+20,z:N.z,k:3,pri:520,near:0,far:1500});
   // the saucer
   const u=new THREE.Group(),hull=fvM(new THREE.SphereGeometry(10,28,10),0x9aa7b5,0,0,0,{emissive:0x1a2026});hull.scale.y=.2;u.add(hull);
@@ -4737,7 +4737,7 @@ function setupFairview(){if(FV.g||!LM.fair)return;const N=LM.fair;FV.N=[N.x,N.z]
   FV.sarms=[-1,1].map(s=>{const a=new THREE.Group();a.position.set(s*.72,2.3,0);a.add(fvB(.34,1.35,.34,F,0,-.67,0));sq.add(a);return a});sq.scale.setScalar(6);sq.visible=false;scene.add(sq);FV.sq=sq;
   {let best=null,bd=1e9;for(const p of LM.treePts||[]){const d=Math.hypot(p[0]-N.x,p[1]-N.z);if(d>45&&d<190&&d<bd){bd=d;best=p}}FV.tree=best?[best[0],best[1]]:[N.x+70,N.z+30]}}
 function fvCard(){showCard('Fairview, the William Jennings Bryan house','Built around 1901 for William Jennings Bryan and Mary Baird Bryan, and a National Historic Landmark since 1963. On Saturday, November 7, 2026 the brick house was moved about 1,200 feet, from the south side of Bryan East Campus on Sumner Street to this corner at 52nd and A, to make room for a larger emergency department. It rode on about 35 remote-controlled dollies and the trip took most of a day. The map shows it where it stands now. The replay below is for fun: no saucer, alien or Sasquatch was involved.',-1,{label:FV.on?'Stop the replay':'Replay the move, saucer edition',fn:()=>FV.on?fvStop():fvPlay()},[{href:'https://nebraskapublicmedia.org/en/news/news-articles/historic-home-of-william-jennings-bryan-moved-as-bryan-health-expands/',label:'Nebraska Public Media on the move ↗'}])}
-function fvStop(){FV.on=false;if(!FV.g)return;for(const o of [FV.ufo,FV.alien,FV.sq])o.visible=false;FV.g.position.set(FV.N[0],FV.y0,FV.N[1]);FV.g.rotation.set(0,0,0);FV.g.scale.set(1,1,1);dirty=true}
+function fvStop(){FV.on=false;if(!FV.g)return;for(const o of [FV.ufo,FV.alien,FV.sq])o.visible=false;FV.g.position.set(FV.N[0],FV.y0,FV.N[1]);FV.g.rotation.set(0,Math.PI,0);FV.g.scale.set(1,1,1);dirty=true}
 function fvPlay(){setupFairview();if(!FV.g)return;FV.on=true;FV.t0=performance.now();const mx=(FV.O[0]+FV.N[0])/2,mz=(FV.O[1]+FV.N[1])/2;try{flyTo(camTo(mx,mz,640,118,30),1800)}catch(e){}hideCard();dirty=true}
 function stepFairview(now){if(!FV.on||!FV.g)return;dirty=true;lastInput=performance.now();const t=FV.hold>=0?FV.hold:(now-FV.t0)/1000,O=FV.O,N=FV.N,yO=hAt(O[0],O[1]),yN=FV.y0,g=FV.g,u=FV.ufo,al=FV.alien,sq=FV.sq,
     sm=(a,b)=>{const x=Math.max(0,Math.min(1,(t-a)/(b-a)));return x*x*(3-2*x)},mix=(a,b,k)=>a+(b-a)*k,HV=62;
@@ -4751,7 +4751,7 @@ function stepFairview(now){if(!FV.on||!FV.g)return;dirty=true;lastInput=performa
   else if(t<36){const k=sm(33,35.6);hx=mix(N[0],SX1-2,k*.5);hz=N[1];hy=yN+k*19;rz=-k*.35;uy=1e5}
   else if(t<40.6){const k=Math.max(0,Math.min(1,(t-36)/4.6));hx=mix(SX1-6,O[0],k);hz=mix(N[1],O[1],k);hy=mix(yN+19,yO,k)+Math.sin(k*Math.PI)*170;rz=-.35-k*Math.PI*4+.35*k;rx=k*Math.PI*2;uy=1e5}
   else if(t<45){const b=Math.max(0,1-(t-40.6)/1.4);hy=yO+Math.abs(Math.sin((t-40.6)*7))*5*b;sy=1-.12*b*Math.abs(Math.cos((t-40.6)*7));uy=1e5}
-  else if(t<53){const k=sm(47.4,50.4);ux=mix(O[0],N[0],k);uz=mix(O[1],N[1],k);uy=mix(yO,yN,k)+HV+mix(500,0,sm(45,46.6))+mix(0,700,sm(52,53));const lift=sm(46.6,47.6)*(1-sm(50.4,51.8));hx=ux;hz=uz;hy=mix(mix(yO,yN,k),uy-22,lift);ry=k*Math.PI*2;beam=t>46.4&&t<52?1:0}
+  else if(t<53){const k=sm(47.4,50.4);ux=mix(O[0],N[0],k);uz=mix(O[1],N[1],k);uy=mix(yO,yN,k)+HV+mix(500,0,sm(45,46.6))+mix(0,700,sm(52,53));const lift=sm(46.6,47.6)*(1-sm(50.4,51.8));hx=ux;hz=uz;hy=mix(mix(yO,yN,k),uy-22,lift);ry=k*Math.PI*3;beam=t>46.4&&t<52?1:0}
   else{fvStop();return}
   g.position.set(hx,hy,hz);g.rotation.set(rx,ry,rz);g.scale.set(1,sy,1);
   u.visible=uy<5e4;if(u.visible){u.position.set(ux,uy,uz);u.rotation.y=t*1.4;FV.lights.forEach((l,i)=>l.material.emissive.setHex(((Math.floor(t*6)+i)%3)?0xffd23a:0xff3a6a));FV.beam.visible=!!beam;if(beam){const h=Math.max(6,uy-Math.min(hy,mix(yO,yN,.5))+2);FV.beam.scale.set(11,h,11);FV.beam.material.opacity=.2+.08*Math.sin(t*9)}}
@@ -4761,7 +4761,7 @@ function stepFairview(now){if(!FV.on||!FV.g)return;dirty=true;lastInput=performa
     let hop=0,split=0;if(land){const q=t-25;hop=q<1.2?Math.abs(Math.sin(q*Math.PI/.6))*2.2:q<2.4?Math.sin((q-1.2)*Math.PI/1.2)*7:0;split=sm(27.1,27.5)*(1-sm(28.9,29.4))}else if(land2){hop=Math.abs(Math.sin((t-51.8)*5.2))*2.4}
     const tx=u.visible&&t<19?ux:hx,tz=u.visible&&t<19?uz:hz;al.position.set(AX,yN+hop-split*.72*SC,AZ);al.scale.setScalar(SC*pop);al.rotation.y=Math.atan2(tx-AX,tz-AZ);FV.alegs[0].rotation.z=-split*1.45;FV.alegs[1].rotation.z=split*1.45;
     const [L,R]=FV.arms;if(land||land2){const w=Math.sin(t*14)*.25;L.rotation.set(0,0,.55+w);R.rotation.set(0,0,-.55-w)}else if(t<19||(t>45&&t<50.4)){const w=Math.sin(t*5)*.5;L.rotation.set(0,0,.5+w);R.rotation.set(0,0,-.5-w)}else if(t<25||(t>=50.4&&t<51.8)){const w=(Math.sin(t*4)+1)*.5;L.rotation.set(1.5*w,0,.25);R.rotation.set(1.5*w,0,-.25)}else if(t<36){L.rotation.set(0,0,.2);R.rotation.set(0,0,-.2)}else{L.rotation.set(2.6,0,-.5);R.rotation.set(2.6,0,.5)}
-    say(FV.lb,t<19?'Bring it on over':t<25?'Easy. Easy. A little left':t<27.1?'YES!':t<29.4?'Stuck the landing':t<33?'':t<36?'Hey. HEY':t<45?'I just set that down':t<51.8?'One more time':'Nobody touch it',AX,yN+13.5+hop,AZ)}
+    say(FV.lb,t<19?'Bring it on over':t<25?'Easy. Easy. A little left':t<27.1?'YES!':t<29.4?'Stuck the landing':t<33?'':t<36?'Hey. HEY':t<45?'I just set that down':t<49?'One more time':t<51.8?'Front door to the street this time':'Nobody touch it',AX,yN+13.5+hop,AZ)}
   // Sasquatch steps out of a tree with opinions, and goes back into it afterward
   sq.visible=t>29.6&&t<47;if(t>28.2&&t<29.8)say(FV.lb2,'rustle rustle',FV.tree[0],hAt(FV.tree[0],FV.tree[1])+16,FV.tree[1]);
   if(sq.visible){const P0=FV.tree,P1=[SX1,SZ],w=sm(29.8,33),out=sm(42,46.4),k=w*(1-out),x=mix(P0[0],P1[0],k),z=mix(P0[1],P1[1],k);sq.position.set(x,hAt(x,z),z);sq.scale.setScalar(6*sm(29.6,30.3)*(1-sm(46.3,47)));
