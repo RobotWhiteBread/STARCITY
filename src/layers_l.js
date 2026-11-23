@@ -30,8 +30,8 @@ function treesInit(){if(!S2||!S2.tr_c||!H2.trees||!LM.treeMesh)return;const T=H2
   // the list comes cell by cell, each tree stored as its place inside its 128 m cell: rebuild where every tree stands
   {let i=0;for(let k=0;k<G*G;k++){cs[k]=i;const x0=(k%G)*C-TH,z0=Math.floor(k/G)*C-TH;for(let j=S2.tr_c[k];j>0;j--,i++){X[2*i]=x0+S2.tr_x[i]*.5;X[2*i+1]=z0+S2.tr_z[i]*.5;kk[i]=T.names[S2.tr_n[i]][2]}}cs[G*G]=i}
   TR.n=n;TR.X=X;TR.cs=cs;TR.kk=kk;TR.con=T.kinds.map(k=>CONIFER.test(k));TR.sh=T.kinds.map((k,j)=>TR.con[j]?1:((TSHAPE.find(q=>q[0].test(k))||[0,0])[1]));TR.C=C;TR.G=G;TR.H=TH;
-  // the map's stand-in trees step aside wherever the city has a real record
-  {const m=LM.treeMesh,zero=new THREE.Matrix4().makeScale(0,0,0),pts=LM.treePts||[];let gone=0;for(let i=0;i<pts.length;i++){if(treeNear(pts[i][0],pts[i][1],pts[i][2]?20:8)>=0){m.setMatrixAt(i,zero);gone++}}m.instanceMatrix.needsUpdate=true;TR.gone=gone}
+  // the map's stand-in trees step aside wherever the city has a real record, and the made-up ones scattered over city parks go once the city's own list is in, because the city lists its park trees and a guess is worse than a gap (private golf courses and cemeteries keep theirs)
+  {const m=LM.treeMesh,zero=new THREE.Matrix4().makeScale(0,0,0),pts=LM.treePts||[];let gone=0;for(let i=0;i<pts.length;i++){if(pts[i][2]===2||treeNear(pts[i][0],pts[i][1],pts[i][2]?20:8)>=0){m.setMatrixAt(i,zero);gone++}}m.instanceMatrix.needsUpdate=true;TR.gone=gone}
   // two shapes: the map's round-crowned tree for broadleaf kinds, and stacked cones for conifers
   const P=[],I=[],col=[],ring=(y,r,nn)=>{const b=P.length/3;for(let i=0;i<nn;i++){const a=i/nn*6.2832;P.push(Math.cos(a)*r,y,Math.sin(a)*r)}return b};
   {const a=ring(0,.07,5),b=ring(.2,.06,5);for(let i=0;i<5;i++){const j=(i+1)%5;I.push(a+i,b+i,a+j,a+j,b+i,b+j)}for(let i=0;i<10;i++)col.push(.1,.06,.035)}

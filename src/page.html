@@ -762,8 +762,10 @@ async function build(){
    const wet=(x,z)=>{for(const w of LM.waters){if(x>w[1]&&x<w[2]&&z>w[3]&&z<w[4]&&pip(x,z,w[0]))return true}return false};
    let k=0;const cap=mobile?26000:48000;
    for(const [r,nm] of LM.woods){let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const p of r){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<z0)z0=p[1];if(p[1]>z1)z1=p[1]}
+     // a long thin strip (a trail corridor, a drainage way, a median mapped as park) filled with made-up trees reads as a row of trees that is not there: skip strips under about 30 m wide
+     {let A=0,Pm=0;for(let i=0,j=r.length-1;i<r.length;j=i++){A+=(r[j][0]-r[i][0])*(r[j][1]+r[i][1]);Pm+=Math.hypot(r[j][0]-r[i][0],r[j][1]-r[i][1])}A=Math.abs(A)/2;if(Pm>0&&2*A/Pm<15)continue}
      const dens=nm==='wood'?1/260:1/2600;const n=Math.min(2500,Math.ceil((x1-x0)*(z1-z0)*dens));
-     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);const ed=Math.abs(x)>Math.abs(z)?Math.abs(x):Math.abs(z);if(ed<16360&&(ed<14500||rnd(k*3+2)<(16360-ed)/1860)&&pip(x,z,r)&&!wet(x,z)){if(LM.occ(x,z))roofed++;else pts.push([x,z,1])}}}
+     for(let i=0;i<n&&pts.length<cap;i++){const x=x0+(x1-x0)*rnd(++k*3),z=z0+(z1-z0)*rnd(k*3+1);const ed=Math.abs(x)>Math.abs(z)?Math.abs(x):Math.abs(z);if(ed<16360&&(ed<14500||rnd(k*3+2)<(16360-ed)/1860)&&pip(x,z,r)&&!wet(x,z)){if(LM.occ(x,z))roofed++;else pts.push([x,z,nm==='park'?2:1])}}}
    LM.roofed=roofed;
    const tg=new THREE.BufferGeometry();
    {const P=[],I=[];const ring=(y,r,n)=>{const b=P.length/3;for(let i=0;i<n;i++){const a=i/n*Math.PI*2;P.push(Math.cos(a)*r,y,Math.sin(a)*r)}return b};
