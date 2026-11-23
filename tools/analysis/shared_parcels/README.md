@@ -33,3 +33,21 @@ matched) and checks the match against the values already in the map: 132,599 of 
 and the other 15 are buildings the map had no value for. It then adds two columns to the data file:
 `b_sh` (the share, 0 to 65535) and `b_pn` (buildings on the parcel). The same rule is in `src/process2.py`
 for the next full rebuild.
+
+## The same kind of error in land: stacked condominium outlines
+
+The parcel layer draws condominium units that share one footprint as identical stacked outlines, and each
+unit carries the whole lot's area. Anything that adds parcel acres counted that land once per unit: 81 stacks,
+about 4,380 acres too many inside Lincoln.
+
+Corrected November 22, 2026 in three places:
+
+- **The papers.** Property value and County. Lincoln's parcel land is 55,135 acres, not 59,524, and every
+  per-acre figure was recomputed (`tools/analysis/citywide/papers.py`).
+- **Compare areas.** Its parcel file folds each stack into one row (`tools/analysis/value_per_acre`).
+- **The map's "value per acre" and "tax per acre" hex layers.** `patch_hex.py` finds each stack, works out the
+  extra acres in each hex cell and rescales the two layers. 69 cells changed. Cells holding downtown
+  condominium towers rose the most, for example from $2.45 million to $21.2 million an acre. In 11 cells the
+  extra acres came out larger than the cell's recorded land, because the outline's area and the assessor's
+  recorded area differ slightly; those cells are held at one lot per stack. Cell totals, medians and counts
+  were not changed. The next full rebuild should count stacked land once at the source instead.

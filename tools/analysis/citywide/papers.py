@@ -19,6 +19,17 @@ def hood(x,y):
         if H[i][1].contains(p):return H[i][0]
 for r in R:r['hood']=hood(r['x'],r['y'])
 byid={r['id']:r for r in R}
+# Condominium units that share one footprint are drawn as stacked identical polygons. Count that land once:
+# the first unit keeps the acres, the rest carry none. RM is the same roll with each stack folded into one row,
+# for anything that ranks land by value per acre.
+_stk=D(list)
+for r in R:_stk[(round(r['x']),round(r['y']),round(r['ac'],3))].append(r)
+RM=[]
+for _g in _stk.values():
+    m=dict(_g[0]);m['v']=sum(r['v'] for r in _g);RM.append(m)
+    for r in _g:r['stk']=len(_g)
+    for r in _g[1:]:r['ac']=0.0
+STACKS=sum(1 for g in _stk.values() if len(g)>1);STACKED=sum(len(g) for g in _stk.values() if len(g)>1)
 N=len(R);TV=sum(r['v'] for r in R);TA=sum(r['ac'] for r in R)
 B=lambda v:f"${v/1e9:.2f} billion";M=lambda v:f"${v/1e6:,.0f} million";pc=lambda a,b:f"{100*a/b:.1f}%"
 FOOT="""
@@ -44,7 +55,7 @@ while half<TV/2:half+=vs[i]['v'];i+=1
 halfn=i
 top10=vs[:10];assert all(r['cls'].startswith('Commercial') for r in top10)
 t10nb=C(r['nb'] for r in top10);print('top10',[(r['nb'],round(r['ac'],1),r['v']) for r in top10])
-q=sorted([r for r in R if r['v']>0 and r['ac']>0.01],key=lambda r:-r['v']/r['ac']);ta=sum(r['ac'] for r in q)
+q=sorted([r for r in RM if r['v']>0 and r['ac']>0.01],key=lambda r:-r['v']/r['ac']);ta=sum(r['ac'] for r in q)
 marks=[.01,.05,.10,.25,.5];band={};ca=cv=0;mi=0
 for r in q:
     ca+=r['ac'];cv+=r['v']
@@ -66,7 +77,7 @@ print('com districts',[(k,m[0],round(m[1]/1e6),round(m[2])) for k,m in sorted(cm
 comtab="\n".join(f"| {NAMES.get(k,k)} | {m[0]:,} | {M(m[1])} | {m[2]:,.0f} | ${m[1]/m[2]/1e6:.2f} million |" for k,m in crows)
 dt=cm['DTCOM'];hy=cm['HYCOM'];ec=cm['ECCOM']
 big=[m[1]/m[2]/1e6 for k,m in cm.items() if k in('ECCOM','SCCOM','SECOM')]
-rs=sorted([r for r in ri[3] if r['v']>0 and r['ac']>0.01 and not r['hr']],key=lambda r:r['ac']);Q=[]
+rs=sorted([r for r in ri[3] if r['v']>0 and r['ac']>0.01 and not r['hr'] and r['stk']==1],key=lambda r:r['ac']);Q=[]
 for k in range(5):
     b=rs[k*len(rs)//5:(k+1)*len(rs)//5];Q.append((b[0]['ac'],b[-1]['ac'],st.median([r['v'] for r in b]),sum(r['v'] for r in b),sum(r['ac'] for r in b)))
 lab=['Smallest fifth','Second','Middle','Fourth','Largest fifth']

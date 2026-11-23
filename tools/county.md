@@ -6,8 +6,8 @@
 
 The STARCITY papers so far stop at Lincoln's city limits. The county assessor's records do not. This paper uses the same parcel, sales and levy data to set Lincoln beside the rest of Lancaster County: its villages, acreages and farms.
 
-1. **Lincoln is 84% of the county's parcels and 83% of its assessed value, on 12% of its parcel land.** 102,700 of 122,740 parcels, $44.38 billion of $53.44 billion, on 59,524 of 514,458 acres.
-2. **An acre in Lincoln is assessed at about 37 times an acre outside it.** $745,517 an acre inside the city limits, $19,925 outside.
+1. **Lincoln is 84% of the county's parcels and 83% of its assessed value, on 11% of its parcel land.** 102,700 of 122,740 parcels, $44.38 billion of $53.44 billion, on 55,135 of 510,069 acres.
+2. **An acre in Lincoln is assessed at about 40 times an acre outside it.** $804,862 an acre inside the city limits, $19,925 outside.
 3. **Outside Lincoln, the land is farms.** 7,151 agricultural parcels cover 395,669 acres, 87% of the parcel land outside the city, and are assessed at $3.58 billion, about $9,041 an acre.
 4. **Homes outside Lincoln are assessed higher.** The median improved residential parcel is $439,000 outside the city (9,748 homes) and $276,900 inside it (87,481 homes).
 5. **The tax rate is lower outside Lincoln, and the typical bill is higher.** The median home outside the city sits in a tax district with a 2025 levy of 1.3755 per $100, against 1.6663 in Lincoln. Because the homes are worth more, the estimated tax on the median home is about $6,039 outside and $4,614 inside, before credits.
@@ -19,8 +19,8 @@ The STARCITY papers so far stop at Lincoln's city limits. The county assessor's 
 |---|---|---|---|
 | Parcels | 102,700 | 20,040 | 122,740 |
 | Assessed value | $44.38 billion | $9.06 billion | $53.44 billion |
-| Parcel land, acres | 59,524 | 454,934 | 514,458 |
-| Assessed value per acre | $745,517 | $19,925 | $103,878 |
+| Parcel land, acres | 55,135 | 454,934 | 510,069 |
+| Assessed value per acre | $804,862 | $19,925 | $104,772 |
 | Improved residential parcels | 87,481 | 9,748 | 97,229 |
 | Median improved residential value | $276,900 | $439,000 | $285,800 |
 | Median 2025 levy on a home, per $100 | 1.6663 | 1.3755 | 1.6663 |
@@ -84,6 +84,10 @@ How every paper was checked is on the [verification page](verification.html).
 ## Method
 
 Parcels are the Lancaster County Assessor's published layer, 122,740 parcels with geometry, retrieved November 21, 2026. A parcel is counted as in Lincoln when a point inside it falls within the corporate limit, the second-largest shape in the city's limits layer. Areas are computed in an equal-area projection. Levies are each tax district's 2025 consolidated rate from the Nebraska Department of Revenue. Sales are the county's file of valid residential sales, validity code 01.
+
+## Corrected November 22, 2026
+
+The first version of this paper counted the land under some Lincoln condominium buildings once for every unit, because the parcel layer draws units that share one footprint as stacked identical outlines. Counting that land once takes 4,389 acres off Lincoln's parcel total (59,524 to 55,135), which raises Lincoln's assessed value per acre from $745,517 to $804,862 and the comparison with the rest of the county from about 37 times to about 40 times. No stacked outlines were found outside the city, so those figures did not change. Parcel counts, assessed values and medians did not change.
 
 ## Sources and where to go
 

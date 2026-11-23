@@ -1,3 +1,5 @@
+# SUPERSEDED. Kept for the record only. The current generator is tools/analysis/citywide/papers.py,
+# which counts stacked condominium land once. Figures written in this file are the earlier, uncorrected ones.
 import pickle,collections,statistics as st,datetime,warnings
 warnings.filterwarnings('ignore')
 R=pickle.load(open('city2.pkl','rb'));P,S,T=pickle.load(open('all.pkl','rb'))
