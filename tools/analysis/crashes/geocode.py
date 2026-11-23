@@ -14,6 +14,7 @@ def key(s):
     if t[:2] == ['US', 'HIGHWAY']: t = ['HWY'] + t[2:]
     if len(t) == 2 and t[0] in ('US', 'NE', 'N', 'HIGHWAY') and t[1].isdigit() and t[0] != 'N': t = ['HWY', t[1]]
     if t and t[0] == 'INTERSTATE': t[0] = 'I'
+    if len(t) > 1 and t[0] == 'ST': t[0] = 'SAINT'   # ST PAUL is Saint Paul; a trailing ST was already dropped as a suffix
     return ' '.join(t)
 ways = collections.defaultdict(list); node_xy = {}
 for f in sorted(glob.glob(RD + 'roads*.json')):
@@ -82,6 +83,13 @@ def cross(a, b):
                         for q in pa[::max(1, len(pa)//400)]:
                             d = dist(p, q)
                             if d < 45 and (best is None or d < best[0]): best = (d, ((p[0]+q[0])/2, (p[1]+q[1])/2))
+                if not best and (ka.startswith('I ') or kb.startswith('I ')):
+                    pb = [p for ids, pts in ways[kb] for p in pts]
+                    for p in pb:
+                        for q in pa:
+                            if abs(p[0]-q[0]) > .002 or abs(p[1]-q[1]) > .002: continue
+                            d = dist(p, q)
+                            if d < 120 and (best is None or d < best[0]): best = (d, ((p[0]+q[0])/2, (p[1]+q[1])/2))
                 if best: res.append(best[1])
     XC[(a, b)] = res; return res
 def mean(ps): return (sum(p[0] for p in ps)/len(ps), sum(p[1] for p in ps)/len(ps))
@@ -98,7 +106,10 @@ def place(loc):
     if m:
         a, b, c, d = [key(x) for x in m.groups()]; P = [p for x in (a, b) for y in (c, d) for p in cross(x, y)[:1]]
         return (mean(P), 'block') if len(P) >= 2 else (None, 'block street not found')
-    m = re.match(r'^(.*?),(.*?) TO (.*)$', s)
+    m = re.match(r'^([^,]*?) *& *([^,]*?), *TO$', s)   # written as two streets and an empty 'to'
+    if m:
+        P = cross(key(m.group(1)), key(m.group(2))); return (P[0], 'intersection') if P else (None, 'intersection not found')
+    m = re.match(r'^(.*?),(.*?) TO ?(.*)$', s)
     if m:
         a, b, c = [key(x) for x in m.groups()]
         if not a: return None, 'blank'
@@ -107,13 +118,25 @@ def place(loc):
             d, p, q = nearest_pair(A, B)
             return (((p[0]+q[0])/2, (p[1]+q[1])/2), 'segment') if d < 2500 else (p, 'segment, far end unclear')
         if A or B: return (A or B)[0], 'segment, one end'
+        # a short street whose cross streets are not on the map: the middle of the street is within a block of anywhere on it
+        ks = cands(a)
+        if len(ks) == 1:
+            pts = [p for ids, ps in ways[ks[0]] for p in ps]; xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+            if dist((min(xs), min(ys)), (max(xs), max(ys))) < 500: return (pts[len(pts)//2], 'short street, middle')
         return None, 'segment street not found'
     m = re.match(r'^(.*?) AT (.*)$', s)
     if m:
         a, b = m.group(1).strip(), m.group(2).strip()
         ma = re.match(r'^(\d{3,}) (.+)$', a)
         if ma:
-            p = addr(int(ma.group(1)), ma.group(2)); return (p, 'address, same block') if p else (None, 'address not found')
+            p = addr(int(ma.group(1)), ma.group(2))
+            if p: return p, 'address, same block'
+            # Lincoln numbers houses by the cross street: 2906 on a named east-west street is at 29th
+            k = key(ma.group(2)); blk = int(ma.group(1)) // 100
+            if blk >= 1 and not re.search(r'\d', k):
+                P = cross(k, str(blk))
+                if len(P) == 1: return P[0], 'address, by block number'
+            return None, 'address not found'
         if b in ('-', '') or 'PARKING' in b: return None, 'no street given'
         P = cross(key(a), key(b)); return (P[0], 'intersection') if P else (None, 'intersection not found')
     return None, 'blank or other'
