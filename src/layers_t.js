@@ -82,3 +82,28 @@ function rcShow(){try{closeSheet()}catch(e){}plClear();PL.on=true;const g=new TH
   for(const a of items)PL.lbs.push({t:a.n.replace(' Recycling Site',''),sub:'recycling drop-off',x:a.c[0],y:300,z:a.c[1],k:3,pri:900,near:0,far:60000});
   try{flyTo(camTo(-3000,-1500,26000,160,55),1800)}catch(e){}
   showCard('Recycling drop-off sites','The City of Lincoln\'s five multi-material recycling drop-offs, open for household use by anyone in Lincoln and Lancaster County. Tap a green pin for where it is. Household use only: businesses and contractors arrange their own recycling.',-1,null,[{href:RCLINK,label:'City recycling page ↗'},{label:'Clear',fn:plOff}])}
+// ---- red foxes and raccoons along the creek and park trails. Both live all over Lincoln; raccoons come out at night, foxes mostly at dawn, dusk and night. They are part of the map, not real sightings, and only show up close in
+const CRT_TR=/^(Wilderness Park|Billy Wolff|Jamaica North|Dietrich|Salt Creek|Antelope|Deadmans Run|Murdock|Rock Island|Bison|Tierra|Boosalis|Holmes|Pioneers)/i;
+let critters=null,critTry=0;
+function setupCritters(){const TR=LM.trails||[],pts=[];for(const T of TR){if(T.tn===65535||!H.tnames)continue;const nm=H.tnames[T.tn];if(!CRT_TR.test(nm))continue;const D=T.d;for(let k=0;k+3<D.length;k+=10)pts.push(D[k],D[k+1])}
+  const n=pts.length/2;if(!n){critters={none:true};return}const N=Math.min(mobile?90:180,n),list=[];
+  const FOX=0xc8551d,FW=0xf2ece2,FB=0x2a1d16,RG=0x7d7770,RD=0x2b2826,RL=0xcfc8bd;
+  const geo=[boxes([[.22,.22,.62,0,.34,0,FOX],[.18,.12,.4,0,.27,-.02,FW],[.17,.18,.2,0,.5,-.38,FOX],[.1,.09,.16,0,.46,-.53,FW],[.05,.05,.04,0,.47,-.62,FB],[.05,.12,.04,-.06,.65,-.36,FB],[.05,.12,.04,.06,.65,-.36,FB],
+      [.05,.24,.05,-.07,.12,-.2,FB],[.05,.24,.05,.07,.12,-.2,FB],[.05,.24,.05,-.07,.12,.2,FB],[.05,.24,.05,.07,.12,.2,FB],[.12,.12,.42,0,.34,.48,FOX],[.1,.1,.1,0,.34,.72,FW]]),
+    boxes([[.3,.26,.5,0,.3,0,RG],[.22,.18,.2,0,.4,-.32,RG],[.23,.07,.08,0,.43,-.4,RD],[.08,.06,.1,0,.37,-.46,RL],[.05,.05,.03,0,.38,-.52,RD],[.06,.08,.04,-.08,.53,-.3,RD],[.06,.08,.04,.08,.53,-.3,RD],
+      [.06,.18,.06,-.1,.09,-.16,RD],[.06,.18,.06,.1,.09,-.16,RD],[.06,.18,.06,-.1,.09,.16,RD],[.06,.18,.06,.1,.09,.16,RD],[.1,.1,.1,0,.32,.3,RD],[.1,.1,.1,0,.3,.4,RG],[.1,.1,.1,0,.28,.5,RD],[.1,.1,.1,0,.26,.6,RG]])];
+  const ms=geo.map((g,k)=>{const m=new THREE.InstancedMesh(g,new THREE.MeshLambertMaterial({vertexColors:true}),N),z=new THREE.Matrix4().makeScale(0,0,0);for(let i=0;i<N;i++)m.setMatrixAt(i,z);m.frustumCulled=false;m.visible=false;scene.add(m);pickables.push(m);
+    m.userData.info=k?['Raccoon','Raccoons live along every creek in Lincoln and come out after dark, feeling for food along the water and raiding trash cans. Keep lids latched and pet food inside. Part of the map, not a real sighting.']:['Red fox','Red foxes live in Lincoln\'s parks and neighborhoods, hunting mice and rabbits at dawn, dusk and night. Give them room, and never feed one. Part of the map, not a real sighting.'];return m});
+  for(let i=0;i<N;i++){const p=Math.floor(Math.random()*n),a=Math.random()*6.283,r=8+Math.random()*22,ox=pts[2*p]+Math.cos(a)*r,oz=pts[2*p+1]+Math.sin(a)*r;list.push({k:i%3===0?0:1,j:Math.floor(i/1),ox,oz,x:ox,z:oz,tx:ox,tz:oz,h:0,sp:i%3===0?2.2:1.1,wait:Math.random()*4})}
+  const idx=[0,0];for(const q of list)q.j=idx[q.k]++;critters={ms,list}}
+function stepCritters(dt,now){if(!critters){if(now-critTry<5000||!LM.trails||!H.tnames)return;critTry=now;setupCritters()}const C=critters;if(!C||C.none)return;
+  const t=controls.target,d=camera.position.distanceTo(t),nt=U.uNight.value,show=d<1400;
+  for(const m of C.ms)if(m.visible!==show){m.visible=show;dirty=true}if(!show)return;
+  // raccoons need real dark; foxes come out from dusk on, and a few are about in daylight
+  for(let i=0;i<C.list.length;i++){const q=C.list[i],m=C.ms[q.k],out=q.k===1?nt>.6:(nt>.25||i%9===0),near=Math.hypot(q.ox-t.x,q.oz-t.z)<1600;
+    if(!out||!near){if(q.vis){lM.makeScale(0,0,0);m.setMatrixAt(q.j,lM);q.vis=false;m.instanceMatrix.needsUpdate=true}continue}q.vis=true;
+    const dx=q.tx-q.x,dz=q.tz-q.z,dd=Math.hypot(dx,dz);
+    if(q.wait>0)q.wait-=dt;else if(dd<.4){q.wait=1+Math.random()*5;const a=Math.random()*6.283,r=Math.random()*14;q.tx=q.ox+Math.cos(a)*r;q.tz=q.oz+Math.sin(a)*r}
+    else{const st=Math.min(dd,q.sp*dt);q.x+=dx/dd*st;q.z+=dz/dd*st;q.h=Math.atan2(-dx,-dz)}
+    lP.set(q.x,hAt(q.x,q.z),q.z);lQ.setFromAxisAngle(lUp,q.h);lS.setScalar(Math.min(10,Math.max(4,d/45)));lM.compose(lP,lQ,lS);m.setMatrixAt(q.j,lM);m.instanceMatrix.needsUpdate=true}
+  ambient=true}
