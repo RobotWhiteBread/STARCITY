@@ -1839,13 +1839,14 @@ let bikers=null;
 // ---- Wilderness Park's dirt singletrack belongs to the mountain bikers; the gravel crew rides the crushed rock of the MoPac and Jamaica North trails inside the city limits, and checks the wind before it chases a segment
 const MTB=['Send it','Roots are nature\'s rumble strips','Dropper down, vibes up','Singletrack mind','I meant to do that','Tubeless and fearless','Walking that bit is valid','Flow trail? Mostly flow','Mud is a free upgrade','Is that a creek crossing or a lake','Clipped out, still cool','Pedal, pedal, roots','Wet trail? Wait it out. Ruts last all year','Bunny hop pending'];
 const GRAVEL=['Spirit of gravel','It is not a race, it is an experience','Type 2 fun','I aired down for this','Chunk builds character','40 mil is plenty','The gravel chose me','Tire pressure is a lifestyle','Just one more gravel bike','Fuel is vibes and gummy bears','Washboard is a state of mind','Lantern rouge energy','This is actually a gravel bike','Pain cave, open daily'];
-const WTAIL=['Favorable wind. It is never about the watts','Tailwind KOM incoming','QOM attempt, wind assisted, still counts','PR? Pure fitness. Definitely not the wind','Do not check the wind on my KOM','Aero tuck, free speed','Strava says I am a legend today','Riding this segment the right way today'];
-const WHEAD=['Headwind. Not a PR day','This is zone 2. On purpose','I will be back for that KOM with a tailwind','Watts up, speed down','Taking a pull for nobody','Segment hunting? Wrong way today','It is never about the watts. Today it is'];
-const WSIDE=['Crosswind. Echelon of one','Checking the wind map for tomorrow\'s QOM','Saving legs for the tailwind leg'];
+const WTAIL=['Favorable wind. It is never about the watts','KOM secured. The 30 mph tailwind had nothing to do with it','QOM attempt, wind assisted, still counts','PR! Pure fitness. Definitely not the wind','My power meter says 140 watts. Strava says legend','Do not look at the flag behind me','Watts are a social construct when the wind is right','I trained all winter for this exact tailwind','Nebraska wind, I forgive you for everything','Strava, please do not ask about my watts','Hold my bottle, KOM incoming','Riding this segment the correct direction today'];
+const WHEAD=['Headwind. Not a PR day. Never a PR day','This is zone 2. On purpose. Totally on purpose','I will be back for that KOM when the wind turns','Watts up, speed down, dignity gone','Nebraska wind 1, me 0','Pedaling hard enough to go backward','I am not slow, the wind is fast','It is never about the watts. Today it is all about the watts','Segment hunting? Wrong direction, wrong state','The QOM is out there. Behind me. Downwind'];
+const WSIDE=['Crosswind. Echelon of one','Leaning 15 degrees just to ride straight','Checking the wind map for tomorrow\'s KOM','Saving my legs for the tailwind leg','Side wind, side eye'];
+const WCALM=['No wind in Nebraska? Am I still in Nebraska','Dead calm. Now it really is about the watts. Uh oh','Calm day. Nobody is going for a KOM today'];
 const GRAVTR=['MoPac Trail','Jamaica North Trail'];
 function setupBikers(){const TR=LM.trails||[],best=new Map();for(let w=0;w<TR.length;w++){const T=TR[w];if(T.tc>=3||T.tn===65535||T.d.length<4)continue;const q=best.get(T.tn);if(q===undefined||TR[q].len<T.len)best.set(T.tn,w)}
   // each named trail becomes one continuous path, so riders travel its whole length and turn around at the ends
-  const paths=[];for(const w of best.values()){let pts;try{pts=trailPath(w)}catch(e){continue}const n=pts.length/2;if(n<2)continue;const c=new Float32Array(n);for(let k=1;k<n;k++)c[k]=c[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);if(c[n-1]>=300){const nm=H.tnames?H.tnames[TR[w].tn]:null;paths.push({d:pts,cum:c,L:c[n-1],tn:TR[w].tn,wt:nm&&nm.indexOf('Wilderness Park')===0?6:GRAVTR.includes(nm)?2:1,kind:nm&&nm.indexOf('Wilderness Park')===0?'mtb':GRAVTR.includes(nm)?'grav':''})}}
+  const paths=[];for(const w of best.values()){let pts;try{pts=trailPath(w)}catch(e){continue}const n=pts.length/2;if(n<2)continue;const c=new Float32Array(n);for(let k=1;k<n;k++)c[k]=c[k-1]+Math.hypot(pts[2*k]-pts[2*k-2],pts[2*k+1]-pts[2*k-1]);if(c[n-1]>=300){const nm=H.tnames?H.tnames[TR[w].tn]:null;paths.push({d:pts,cum:c,L:c[n-1],tn:TR[w].tn,wt:nm&&nm.indexOf('Wilderness Park')===0?6:GRAVTR.includes(nm)?3:1,kind:nm&&nm.indexOf('Wilderness Park')===0?'mtb':GRAVTR.includes(nm)?'grav':''})}}
   if(!paths.length){bikers={none:true};return}const N=mobile?260:600,tot=paths.reduce((a,q)=>a+q.L*q.wt,0),list=[];
   // Wilderness Park and the two gravel trails get extra riders so the crews are easy to find
   for(let i=0;i<N;i++){let r=Math.random()*tot,T=paths[0];for(const q of paths){if((r-=q.L*q.wt)<=0){T=q;break}}list.push({T,L:T.L,s:Math.random()*T.L,dir:Math.random()<.5?1:-1,v:4.5+3.5*Math.random(),k:0})}
@@ -1853,14 +1854,18 @@ function setupBikers(){const TR=LM.trails||[],best=new Map();for(let w=0;w<TR.le
   const geo=boxes([[.06,.62,.62,0,.34,-.52,0x18181a],[.06,.62,.62,0,.34,.52,0x18181a],[.07,.09,1.0,0,.62,0,0xffffff],[.07,.5,.07,0,.85,.2,0xffffff],[.44,.06,.07,0,.98,-.46,0x222222],[.12,.5,.14,-.1,.8,.12,0x232b36],[.12,.5,.14,.1,.8,.12,0x232b36],[.3,.56,.26,0,1.3,.06,0xffffff],[.2,.2,.22,0,1.7,-.08,0x3b2f27],[.25,.11,.28,0,1.83,-.08,0xffffff]]);
   const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({vertexColors:true}),N),col=new THREE.Color(),JER=[0xff3b30,0xffcc00,0x34c759,0x0a84ff,0xff9500,0xbf5af2,0xff2d92,0x30d5c8,0xffffff];m.frustumCulled=false;m.visible=false;
   for(let i=0;i<N;i++){lM.identity();m.setMatrixAt(i,lM);m.setColorAt(i,col.set(JER[i%JER.length]))}
-  m.userData.info=['Cyclists','Riders going up and down the trails. With the Bike ride layer on they are out on every trail. Mountain bikers ride the dirt in Wilderness Park, and the gravel crew rides the MoPac and Jamaica North trails inside the city limits, wind permitting. They will tell you about it. They are part of the map, not real riders.'];scene.add(m);pickables.push(m);
+  m.userData.info=['Cyclists','Riders going up and down the trails. With the Bike ride layer on they are out on every trail. Mountain bikers ride the dirt in Wilderness Park. The gravel crew sticks to the crushed rock: the MoPac Trail east of town and the south end of the Jamaica North Trail, where they chase KOMs and QOMs whenever Nebraska\'s wind is at their backs, and insist it was never about the watts. They are part of the map, not real riders.'];scene.add(m);pickables.push(m);
   // who rides gravel in Wilderness Park, and where the park is, so they can be out even with the Bike ride layer off
   const crew=[];for(let i=0;i<N;i++){const k=list[i].T.kind;list[i].isW=!!k;list[i].kind=k;if(k)crew.push(i)}
-  // the gravel trails run past the city limits; the gravel crew stays on the longest stretch inside them (the city's voting precincts mark the limits)
-  fetch('data/areas.json').then(r=>r.json()).then(A=>{const P=[];for(const a of A.vp)for(const p of a.p){let x0=1e9,z0=1e9,x1=-1e9,z1=-1e9;for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);z0=Math.min(z0,p[i+1]);z1=Math.max(z1,p[i+1])}P.push({p,bb:[x0,z0,x1,z1]})}
-    const inC=(x,z)=>{for(const q of P){if(x<q.bb[0]||x>q.bb[2]||z<q.bb[1]||z>q.bb[3])continue;const p=q.p;let c=false;for(let i=0,j=p.length-2;i<p.length;j=i,i+=2){const xi=p[i],zi=p[i+1],xj=p[j],zj=p[j+1];if((zi>z)!=(zj>z)&&x<(xj-xi)*(z-zi)/(zj-zi)+xi)c=!c}if(c)return true}return false};
-    for(const T of paths){if(T.kind!=='grav')continue;const n=T.cum.length;let best=[0,-1],a=-1;for(let k=0;k<=n;k++){const ok=k<n&&inC(T.d[2*k],T.d[2*k+1]);if(ok&&a<0)a=k;if(!ok&&a>=0){if(T.cum[k-1]-T.cum[a]>best[1]-best[0]||best[1]<0)best=[a,k-1];a=-1}}T.lo=best[1]>=0?T.cum[best[0]]:0;T.hi=best[1]>=0?T.cum[best[1]]:-1}
-    for(const q of list)if(q.kind==='grav'){if(q.T.hi>q.T.lo)q.s=q.T.lo+Math.random()*(q.T.hi-q.T.lo)}}).catch(()=>{});
+  // the gravel crew rides only the crushed rock (orange on the trail key): the long MoPac stretch east of town and the south end of Jamaica North
+  {const G=new Map();for(const T of TR){if(T.tc!==1)continue;for(let k=0;k<T.d.length;k+=2){const key=Math.floor(T.d[k]/40)+','+Math.floor(T.d[k+1]/40);(G.get(key)||G.set(key,[]).get(key)).push(T.d[k],T.d[k+1])}}
+    const rock=(x,z)=>{const cx=Math.floor(x/40),cz=Math.floor(z/40);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const a=G.get((cx+i)+','+(cz+j));if(a)for(let k=0;k<a.length;k+=2)if((a[k]-x)**2+(a[k+1]-z)**2<625)return true}return false};
+    for(const T of paths){if(T.kind!=='grav')continue;const n=T.cum.length,runs=[];let a=-1;for(let k=0;k<=n;k++){const ok=k<n&&rock(T.d[2*k],T.d[2*k+1]);if(ok&&a<0)a=k;if(!ok&&a>=0){if(T.cum[k-1]-T.cum[a]>400)runs.push([a,k-1]);a=-1}}
+      const nm=H.tnames[T.tn];let pick=null;
+      if(nm==='Jamaica North Trail'){for(const r of runs){const z=(T.d[2*r[0]+1]+T.d[2*r[1]+1])/2;if(!pick||z>pick.z)pick={r,z}}pick=pick&&pick.r}
+      else for(const r of runs)if(!pick||T.cum[r[1]]-T.cum[r[0]]>T.cum[pick[1]]-T.cum[pick[0]])pick=r;
+      T.lo=pick?T.cum[pick[0]]:0;T.hi=pick?T.cum[pick[1]]:-1}
+    for(const q of list)if(q.kind==='grav'&&q.T.hi>q.T.lo)q.s=q.T.lo+Math.random()*(q.T.hi-q.T.lo)}
   bikers={m,list,wild:crew,all:null}}
 let bikerTry=0;window.__bk=()=>bikers;
 function stepBikers(dt,now){if(!bikers){if(!rideMode&&(now-bikerTry<4000||!LM.trails||!H.tnames))return;bikerTry=now;setupBikers()}const B=bikers;if(!B||B.none)return;
@@ -1877,7 +1882,7 @@ function stepBikers(dt,now){if(!bikers){if(!rideMode&&(now-bikerTry<4000||!LM.tr
     if(q.kind&&!q.lb){q.lb={t:'',x:0,y:0,z:0,k:3,pri:430,near:0,far:2200};q.qi=i*7;q.qt=now+1500+(i%9)*900;q.say=(q.kind==='mtb'?MTB:GRAVEL)[q.qi%(q.kind==='mtb'?MTB:GRAVEL).length]}
     if(q.kind&&!far&&d<2400){if(now>q.qt){q.qi++;q.qt=now+5400+((i*37)%2800);let L=q.kind==='mtb'?MTB:GRAVEL;
         // into the wind or with it: the dot of the rider's heading and where the wind is blowing
-        if(q.kind==='grav'&&windV&&windV.ms>=2.5&&q.qi%2){const hx=(x1-x0)*q.dir,hz=(z1-z0)*q.dir,hl=Math.hypot(hx,hz)||1,c=(hx*windV.x+hz*windV.z)/(hl*windV.ms);L=c>.45?WTAIL:c<-.45?WHEAD:WSIDE}
+        if(q.kind==='grav'&&q.qi%4&&windV){if(windV.ms<2)L=WCALM;else{const hx=(x1-x0)*q.dir,hz=(z1-z0)*q.dir,hl=Math.hypot(hx,hz)||1,c=(hx*windV.x+hz*windV.z)/(hl*windV.ms);L=c>.4?WTAIL:c<-.4?WHEAD:WSIDE}}
         q.say=L[q.qi%L.length]}
       q.lb.t=q.say||'';q.lb.x=x;q.lb.z=z;q.lb.y=y+2.6*sc;if(q.lb.t)lifeLabels.push(q.lb)}}
   B.m.instanceMatrix.needsUpdate=true;ambient=true}
