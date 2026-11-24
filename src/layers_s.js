@@ -73,7 +73,7 @@ function arOff(){AR.on=false;if(AR.grp){AR.grp.traverse(o=>{if(o.geometry)o.geom
 function arShow(kind,val,o){arLoad().then(d=>{if(!d)return;arOff();insOff&&insOff();AR.on=true;const A=d[kind],vals=A.map(a=>val(a.id)).filter(v=>v>0),hi=vals.length?vals.sort((a,b)=>a-b)[Math.floor(.97*(vals.length-1))]:1,g=new THREE.Group(),c=new THREE.Color();
   for(const a of A){const v=val(a.id),t=v>0?Math.min(1,v/hi):0,h=v>0?60+t*(o.tall||700):v===-1?30:12;for(const p of a.p){const sh=new THREE.Shape();for(let i=0;i<p.length;i+=2)i?sh.lineTo(p[i],-p[i+1]):sh.moveTo(p[i],-p[i+1]);
       const geo=new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false});geo.rotateX(-Math.PI/2);if(v>0)c.setRGB(.98-.2*t,.88-.72*t,.5-.42*t);else c.setRGB(.5,.52,.56);
-      const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:c.getHex(),transparent:true,opacity:v>0?.6:.25,depthWrite:false,fog:false}));m.userData.card=()=>o.card(a,v);g.add(m);pickables.push(m);
+      const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:c.getHex(),transparent:true,opacity:v>0?.6:.25,depthWrite:false,fog:false}));m.userData.card=()=>o.card(a,v);g.add(m);pickables.push(m);
       g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,30),new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.55,fog:false})))}
     if(o.labels)AR.lbs.push({t:o.labels(a),sub:v>0?psN(v):v===-1?'fewer than 5':'',x:a.c[0],y:h+40,z:a.c[1],k:3,pri:800,near:0,far:90000})}
   scene.add(g);AR.grp=g;dirty=true;lastInput=performance.now();try{flyTo(camTo(0,0,o.dist||22000,160,48),2000)}catch(e){}
@@ -92,7 +92,7 @@ const UPCOL=[0xf59e0b,0x60a5fa,0xa3e635,0xf472b6,0x34d399,0xe879f9,0x94a3b8,0xfb
 function upLoad(){if(UP.d)return Promise.resolve(UP.d);if(UP.loading)return UP.loading;return UP.loading=fetch('data/uplnk.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{UP.d=d;return d}).catch(()=>{UP.loading=null;return null})}
 function upOff(){UP.on=false;if(UP.m){scene.remove(UP.m);UP.m.geometry.dispose();UP.m.material.dispose();const i=pickables.indexOf(UP.m);if(i>=0)pickables.splice(i,1);UP.m=null}dirty=true}
 function upShow(g){upLoad().then(d=>{if(!d)return;upOff();arOff();UP.on=true;UP.g=g;const P=d.pts.filter(p=>g<0||p[2]===g);UP.idx=P;
-  const geo=new THREE.CylinderGeometry(7,7,1,6);geo.translate(0,.5,0);const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({color:0xffffff,emissive:0x222222}),P.length),M=new THREE.Matrix4(),c=new THREE.Color();
+  const geo=new THREE.CylinderGeometry(7,7,1,6);geo.translate(0,.5,0);const m=new THREE.InstancedMesh(geo,new THREE.MeshBasicMaterial({color:0xffffff,fog:false}),P.length),M=new THREE.Matrix4(),c=new THREE.Color();
   P.forEach((p,i)=>{const x=(p[0]-H.lon0)*KXm,z=-(p[1]-H.lat0)*KYm,h=12+Math.log2(1+p[3])*24;M.makeScale(1,h,1).setPosition(x,0,z);m.setMatrixAt(i,M);m.setColorAt(i,c.set(UPCOL[p[2]%UPCOL.length]))});
   m.frustumCulled=false;m.userData.card=hit=>{const p=UP.idx[hit.instanceId];if(!p)return;const nm=d.street_groups[p[2]];
     showCard(nm+': '+psN(p[3])+' request'+(p[3]===1?'':'s')+' here',`Requests to the city's UPLNK service about ${nm.toLowerCase()} within about 30 meters of this spot, ${p[5]===p[6]?p[5]:p[5]+' to '+p[6]}.`+(p[7]>=0?` Half were closed within ${p[7]} day${p[7]===1?'':'s'}.`:'')+(p[4]?` ${p[4]} still open.`:'')+' Public places only: who asked, their words and photos, and exact house addresses are never shown.',-1,{label:'Fix-it requests',fn:()=>upOpen(0)})};
@@ -123,7 +123,7 @@ function hoaCard(a){showCard(a.n,'A homeowners association, from the City of Lin
   +' The dues are not in any public city or county data. A buyer can get them from the association\'s resale certificate or budget, from the seller, or from the listing. The city keeps a contact person for each association; this map leaves those names and phone numbers out.',-1,null,[{label:'All HOAs',fn:()=>hoaShow()},{label:'Clear',fn:hoaOff}])}
 function hoaShow(){hoaLoad().then(d=>{if(!d)return;hoaOff();HOA.on=true;const g=new THREE.Group();
   for(const a of d.hoa){for(const p of a.p){const sh=new THREE.Shape();for(let i=0;i<p.length;i+=2)i?sh.lineTo(p[i],-p[i+1]):sh.moveTo(p[i],-p[i+1]);const geo=new THREE.ExtrudeGeometry(sh,{depth:14,bevelEnabled:false});geo.rotateX(-Math.PI/2);
-      const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:0x8b5cf6,transparent:true,opacity:.38,depthWrite:false,fog:false}));m.userData.card=()=>hoaCard(a);g.add(m);pickables.push(m);
+      const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x8b5cf6,transparent:true,opacity:.38,depthWrite:false,fog:false}));m.userData.card=()=>hoaCard(a);g.add(m);pickables.push(m);
       g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,30),new THREE.LineBasicMaterial({color:0xe9d5ff,transparent:true,opacity:.8,fog:false})))}
     HOA.lbs.push({t:a.n.replace(/ (Homeowners'?|Home Owners'?|Homeowner's|Home Owner's)? ?(Association|Assoc\.?)(, Inc\.?)?$/i,'').slice(0,34),sub:'HOA',x:a.c[0],y:40,z:a.c[1],k:3,pri:500,near:0,far:9000})}
   scene.add(g);HOA.grp=g;dirty=true;lastInput=performance.now();try{flyTo(camTo(-1000,0,16000,160,50),2000)}catch(e){}
