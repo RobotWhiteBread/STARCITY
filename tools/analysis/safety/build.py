@@ -30,6 +30,8 @@ for k in ('inc', 'dispatch', 'arrests', 'stops', 'uoc', 'pursuits', 'qsa'):
     out[k] = {int(y): v for y, v in d[k].items()}
 out['area'] = {'years': [2021, 2025], 'groups': ['violent', 'property', 'narcotics', 'disturbance'], 'rd': {k: [sup(x) for x in v] for k, v in rd.items()},
   'cc': {k: [v[i:i + 4] for i in range(0, 20, 4)] for k, v in cc.items()}, 'placed': {y: {'reports': a, 'counted': b, 'placed': c, 'inside': e} for y, (a, b, c, e) in st.items()}}
+# what officers were sent for: dispatch CALL_TYPE counts per year, grouped (outStatistics on each yearly dispatch table, November 2026)
+out['ctype'] = {int(y): v for y, v in json.load(open(os.path.join(here, 'calltypes_raw.json'))).items()}
 json.dump(out, open(os.path.join(root, 'data', 'safety-citywide.json'), 'w'), separators=(',', ':'))
 G = {'V': 'violent', 'P': 'property', 'D': 'narcotics', 'N': 'disturbance_nuisance', 'S': 'domestic_sex_child_stalking', 'X': 'not_shown_medical_death_missing'}
 S = {'lar': 'theft', 'frd': 'fraud_forgery', 'van': 'vandalism', 'bur': 'burglary', 'mvt': 'motor_vehicle_theft', 'sas': 'simple_assault', 'agg': 'aggravated_assault', 'rob': 'robbery', 'wpn': 'weapons', 'hom': 'homicide', 'nar': 'narcotics'}
