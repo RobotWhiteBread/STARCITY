@@ -49,7 +49,7 @@ function grShow(){grLoad().then(G=>{if(!G)return;try{closeSheet()}catch(e){}plCl
   lastInput=performance.now();try{flyTo(camTo(0,0,30000,160,58),1800)}catch(e){}GR.play=true;GR.t=performance.now();grSet(0)})}
 // ---- earlier sale prices on the property sheet (county sales files, 2013 to 2018; no buyer or seller names exist in them)
 const SH={d:null,loading:null};
-function shLoad(){if(SH.d||SH.loading)return;SH.loading=fetch('data/sales-2013-2018.json').then(r=>r.json()).then(d=>{SH.d=d}).catch(()=>{SH.loading=null})}
+function shLoad(){if(typeof ldLoad==="function")ldLoad();if(SH.d||SH.loading)return;SH.loading=fetch('data/sales-2013-2018.json').then(r=>r.json()).then(d=>{SH.d=d}).catch(()=>{SH.loading=null})}
 function shAdd(b,pl){if(pl==null)return pl;shLoad();try{if(!SH.d||!S.b_p1||!S.b_p1[b])return pl;const pid=String(S.b_p1[b]).padStart(7,'0')+String(S.b_p2[b]).padStart(3,'0')+String(S.b_p3[b]).padStart(3,'0'),s=SH.d.s[pid];if(!s)return pl;
     const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return pl+' · Earlier sales on county record: '+s.map(q=>MN[q[0]%100-1]+' '+Math.floor(q[0]/100)+' $'+q[1].toLocaleString('en-US')+(q[2]?'':' (as vacant land)')).join('; ')}catch(e){return pl}}
 function plHTML(i){const d=PL.d;if(!d)return '<p>Loading the city\'s plans…</p>';const btn=(k,t)=>`<button class="btn go2" data-pl="${k}">${t}</button> `;
@@ -69,3 +69,16 @@ function plHTML(i){const d=PL.d;if(!d)return '<p>Loading the city\'s plans…</p
     +'<p class="psub">A plan or an application is not a promise. Projects move, get delayed or are withdrawn. Check the city\'s own file before relying on any of it.</p><p><a href="https://opendata.lincoln.ne.gov/" target="_blank" rel="noopener">Lincoln open data ↗</a></p>'}
 const PLS={title:'City <i>plans</i>',tabs:['What is planned','How the city grew','Historic places','About this'],html:plHTML,click:e=>{const b=e.target.closest('[data-pl]');if(!b)return;closeSheet();const k=b.dataset.pl;if(k==='grow')grShow();else plShow(k)}};
 function plOpen(i){lastInput=performance.now();openSheet(PLS,i||0);const re=()=>{if(sheet===PLS){const t=[...$('gtabs').children].findIndex(q=>q.classList.contains('on'));$('gbody').innerHTML=plHTML(Math.max(0,t))}};if(!PL.d)plLoad().then(re);if(!GR.j)grLoad().then(re);if(!SH.d){shLoad();SH.loading&&SH.loading.then(re)}}
+// ---- city recycling drop-off sites, from the City of Lincoln's collection-site map (November 2026)
+const RCLINK='https://lincoln.ne.gov/RecyclingSites';
+const RC=[['Lewis Ball Field Recycling Site','Capitol Parkway and "J" Street',40.808668,-96.687319],
+  ['27th and Tamarin Ridge Road Recycling Site','South 27th Street and Tamarin Ridge Road',40.734106,-96.681862],
+  ['North 48th Street Recycling Site','At the North 48th Street transfer station, 5101 North 48th Street',40.865063,-96.652965],
+  ['Seacrest Parking Lot Recycling Site','7300 "A" Street, the Seacrest Field parking lot by East High',40.799204,-96.621585],
+  ['Northwest Lincoln Recycling Site','West Vine Street, west of NW 48th Street',40.821188,-96.795213]];
+function rcShow(){try{closeSheet()}catch(e){}plClear();PL.on=true;const g=new THREE.Group();scene.add(g);PL.grp=g;dirty=true;lastInput=performance.now();
+  const items=RC.map(r=>({n:r[0],w:r[1],c:[(r[3]-H.lon0)*KXm,(H.lat0-r[2])*KYm]}));
+  plPins(g,items,()=>0x22c55e,70,()=>320,a=>showCard(a.n,a.w+'. A City of Lincoln multi-material recycling drop-off, free, for household use only. What each bin takes is posted at the site and on the city\'s page.',-1,{label:'All recycling sites',fn:rcShow},[{href:RCLINK,label:'What they take ↗'},{label:'Clear',fn:plOff}]));
+  for(const a of items)PL.lbs.push({t:a.n.replace(' Recycling Site',''),sub:'recycling drop-off',x:a.c[0],y:300,z:a.c[1],k:3,pri:900,near:0,far:60000});
+  try{flyTo(camTo(-3000,-1500,26000,160,55),1800)}catch(e){}
+  showCard('Recycling drop-off sites','The City of Lincoln\'s five multi-material recycling drop-offs, open for household use by anyone in Lincoln and Lancaster County. Tap a green pin for where it is. Household use only: businesses and contractors arrange their own recycling.',-1,null,[{href:RCLINK,label:'City recycling page ↗'},{label:'Clear',fn:plOff}])}
