@@ -309,3 +309,15 @@ function budOpen(t){BUD.on=true;openSheet(BUDS,t||0);clearInterval(budT);budT=se
 let VHIST=false;
 function viewHist(){const inV=walk.on||NSKY.on;if(inV&&!VHIST){VHIST=true;try{history.pushState({starcityView:1},'')}catch(e){}}else if(!inV&&VHIST){VHIST=false;try{if(history.state&&history.state.starcityView)history.back()}catch(e){}}}
 addEventListener('popstate',()=>{if(walk.on||NSKY.on){VHIST=false;try{scopeOff()}catch(e){}viewExit(false)}});
+
+// ---- a soft gold halo on the ground around the building whose card is open, so you can see which one it means
+const HALO={m:null,on:false,t0:0};
+function haloAt(o,st,lo){const g=o.geometry,P=g.attributes.position,I=g.index,i0=st[lo],i1=lo+1<st.length?st[lo+1]:(I?I.count:P.count);let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9,y0=1e9;const v=new THREE.Vector3();
+  for(let k=i0;k<i1;k++){const j=I?I.getX(k):k;v.fromBufferAttribute(P,j);o.localToWorld(v);if(v.x<x0)x0=v.x;if(v.x>x1)x1=v.x;if(v.z<z0)z0=v.z;if(v.z>z1)z1=v.z;if(v.y<y0)y0=v.y}
+  if(x1<x0)return;const cx=(x0+x1)/2,cz=(z0+z1)/2,r=Math.max(4,Math.hypot(x1-x0,z1-z0)/2);
+  if(!HALO.m){const g2=new THREE.Group(),ring=new THREE.Mesh(new THREE.RingGeometry(.86,1,64),new THREE.MeshBasicMaterial({color:0xffd36a,transparent:true,opacity:.95,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending})),
+    glow=new THREE.Mesh(new THREE.RingGeometry(1,1.35,64),new THREE.MeshBasicMaterial({color:0xffb52e,transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));
+    ring.rotation.x=glow.rotation.x=-Math.PI/2;g2.add(ring,glow);g2.renderOrder=5;scene.add(g2);HALO.m=g2}
+  HALO.m.position.set(cx,y0+.6,cz);HALO.m.scale.setScalar(r*1.12);HALO.m.visible=true;HALO.on=true;HALO.t0=performance.now();dirty=true}
+function haloStep(now){if(!HALO.on)return;const c=$('card');if(!c||c.style.display==='none'||walk.on){HALO.on=false;HALO.m.visible=false;dirty=true;return}const u=(now-HALO.t0)/1000,s=1+.06*Math.sin(u*3.2)+(u<.5?(.5-u)*.8:0);
+  HALO.m.children[0].scale.setScalar(s);HALO.m.children[1].scale.setScalar(s);HALO.m.children[1].material.opacity=.25+.15*Math.sin(u*3.2);ambient=true;dirty=true}
