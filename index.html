@@ -5799,13 +5799,16 @@ const FTSAY={'Overview':'All of Lincoln, about 300,000 people.','Capitol':'The 4
 function flyThrough(){stopTour();const bs=[...$('chips').children];if(!bs.length)return;let i=0;tour=true;$('bTour').classList.add('on');$('bTour').textContent='■ Stop';
   const next=()=>{if(!tour)return;if(i>=bs.length){stopTour();return}const b=bs[i++],n=b.textContent,k=Object.keys(FTSAY).find(q=>n.startsWith(q));b.click();tour=true;$('bTour').classList.add('on');$('bTour').textContent='■ Stop';
     showCard(n,(k?FTSAY[k]+' ':'')+'Stop '+i+' of '+bs.length+'.',-1,{label:'Stop the fly-through',fn:()=>stopTour()});tour=setTimeout(next,7000)};next()}
-// ---- every so often the Memorial Stadium crowd breaks into "Meat pie power!"
-const MPP={ri:-1,rt:0,REC:['BROWN! THE! BEEF!','Onions in!','Shred the cabbage!','Salt! And! Pepper!','Make the dough!','Roll it out!','Fill it up!','Pinch it shut!','350! For 20!','Golden brown!','In da deed, da meat pie!','MEAT PIE POWER!'],SEC:['west stands','east stands','student section','north end zone','south end zone','the band'],next:0,until:0,t:'',sub:'',SAY:['MEAT PIE POWER!','In da deed, da meat pie!','IN DA DEED! DA MEAT PIE!','Meat! Pie! Power!','MEAT PIE POWER! MEAT PIE POWER!','M-E-A-T… PIE POWER!'],SUB:['the student section','the whole east stands','90,000 people, one chant','the north end zone','even the press box']};
+// ---- every so often a section of the Memorial Stadium crowd breaks into "Meat pie power!", or shouts a meat pie recipe one slow step at a time.
+// The words sit low over the red seating bowl, on the section that is shouting.
+const MPP={ri:-1,rt:0,ui:0,REC:['BROWN! THE! BEEF!','Onions in!','Shred the cabbage!','Salt! And! Pepper!','Make the dough!','Roll it out!','Fill it up!','Pinch it shut!','350! For 20!','Golden brown!','In da deed, da meat pie!','MEAT PIE POWER!'],
+ SEC:[['west stands',-62,0],['east stands',62,0],['student section',58,-30],['north end zone',0,-95],['south end zone',0,95],['the band',-55,40]],next:0,until:0,t:'',sub:'',x:0,z:0,
+ SAY:['MEAT PIE POWER!','In da deed, da meat pie!','IN DA DEED! DA MEAT PIE!','Meat! Pie! Power!','MEAT PIE POWER! MEAT PIE POWER!']};
 function stepMPP(now){const S=LM.stadium;if(!S)return;const d=camera.position.distanceTo(controls.target);if(Math.hypot(controls.target.x-S[0],controls.target.z-S[1])>3000||d>5000)return;
-  if(!MPP.next)MPP.next=now+4000+Math.random()*8000;
-  if(now>MPP.next&&MPP.ri<0){if(Math.random()<.4){MPP.ri=0;MPP.rt=now}else{MPP.t=MPP.SAY[Math.random()*MPP.SAY.length|0];MPP.sub=MPP.SUB[Math.random()*MPP.SUB.length|0];MPP.until=now+4500}MPP.next=now+22000+Math.random()*30000}
-  if(MPP.ri>=0){const i=Math.floor((now-MPP.rt)/2600);if(i>=MPP.REC.length){MPP.ri=-1;MPP.next=now+22000+Math.random()*30000}else{MPP.t=MPP.REC[i];MPP.sub=(i<MPP.REC.length-2?'meat pie, step '+(i+1)+' of '+(MPP.REC.length-2)+' · ':'')+MPP.SEC[i%MPP.SEC.length];MPP.until=now+300}}
-  if(now<MPP.until){const b=(now/260|0)%2;lifeLabels.push({t:MPP.t,sub:MPP.sub,x:S[0],y:95+b*4,z:S[1],k:3,pri:1100,near:0,far:6000})}}
+  if(!MPP.next)MPP.next=now+8000+Math.random()*10000;const sec=k=>{const q=MPP.SEC[k%MPP.SEC.length];MPP.x=S[0]+q[1];MPP.z=S[1]+q[2];return q[0]};
+  if(now>MPP.next&&MPP.ri<0){if(Math.random()<.4){MPP.ri=0;MPP.rt=now;MPP.ui=Math.random()*6|0}else{MPP.t=MPP.SAY[Math.random()*MPP.SAY.length|0];MPP.sub=sec(Math.random()*6|0);MPP.until=now+7000}MPP.next=now+60000+Math.random()*60000}
+  if(MPP.ri>=0){const step=6500,i=Math.floor((now-MPP.rt)/step),ph=(now-MPP.rt)%step;if(i>=MPP.REC.length){MPP.ri=-1;MPP.next=now+60000+Math.random()*60000}else{MPP.t=MPP.REC[i];const n=MPP.REC.length-2;MPP.sub=(i<n?'meat pie, step '+(i+1)+' of '+n+' · ':'')+sec(MPP.ui+i);MPP.until=ph<5000?now+50:0}}
+  if(now<MPP.until)lifeLabels.push({t:MPP.t,sub:MPP.sub,x:MPP.x,y:hAt(MPP.x,MPP.z)+24,z:MPP.z,k:3,pri:1100,near:0,far:6000})}
 // ---- pivot tables: pick how to cut the city (rows) and every measure becomes a column; sort, switch to rates, map a column, download CSV
 const PVM=[['pot','Potholes','requests 2018–26',1],['fix','All fix-it requests','2018–26',1],['crash','Crashes','2024–mid 2026',1],['lead','Lead or galvanized lines','known so far',1],
  ['homes','Homes','residential parcels',0],['com','Business parcels','commercial',0],['val','Median home value','assessed',2],['yr','Median year built','homes',3],['km2','Area','km²',4]];
