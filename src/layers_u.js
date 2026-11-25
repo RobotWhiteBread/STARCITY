@@ -125,3 +125,32 @@ function uniMap(){Promise.all([repLoad(),arLoad()]).then(([R,A])=>{if(!R||!A)ret
   arShow('vp',id=>ld(id)?40+((ld(id)*37)%9)*25:null,{tall:1,dist:16000,labels:()=>'',title:'Legislative districts over Lincoln',text:'Each color step is a different legislative district, from the Election Commissioner\'s precinct map. Lincoln is split among nine; several reach into the county. Tap a precinct for its district.',
     back:{label:'The Unicameral',fn:()=>uniOpen(0)},links:UNIL,card:a=>showCard('Legislative District '+ld(a.id),'Voting precinct '+a.id+' is in Legislative District '+ld(a.id)+'. Find the senator for that district with the link below.',-1,{label:'The Unicameral',fn:()=>uniOpen(0)},UNIL)}).then(()=>{
     for(const a of AR.d.vp){const k=ld(a.id);if(!k)continue;(S[k]=S[k]||[0,0,0]);S[k][0]+=a.c[0];S[k][1]+=a.c[1];S[k][2]++}for(const k in S)AR.lbs.push({t:'District '+k,sub:'',x:S[k][0]/S[k][2],y:400,z:S[k][1]/S[k][2],k:3,pri:900,near:0,far:90000})})})}
+// ---- the Tour button opens a menu: guided tours, data stories with graphs, and plain explanations of how the map works
+const TMT=(t)=>(typeof TRY!=='undefined'?TRY:[]).find(r=>r[0]===t);
+const TMENU=[
+ {k:'Tours',intro:'Sit back and watch. Press Stop (where the Tour button was) to end one.',it:[
+  ['The short tour','About 40 seconds: the Capitol, Memorial Stadium, the arena and the Devaney Center.',()=>startTour()],
+  ['Fly through Lincoln','About two minutes over every place in the bottom row, from downtown to Holmes Lake to the zoo, with a line about each.',()=>flyThrough()],
+  'See it at night','The view from the Capitol tower','Champion trees','Fall color','Watch Lincoln grow, 1867 to today','Follow a raindrop','The sky tonight over Lincoln','Lake monsters and Sasquatch']},
+ {k:'Data and graphs',intro:'Each one colors the map, opens charts and tables, and explains where the numbers come from.',it:[
+  'The numbers for where you are looking','Everything about one spot','Potholes','Lead water service lines','Public safety, handled with care','Crashes, 2024 to mid 2026',
+  'Your dollar: rent, sales tax, who decides','Value over time','Compare areas side by side','Cut any data by area','How Lincoln has voted','Follow the money in Lincoln politics','The Unicameral','Who represents you']},
+ {k:'How it works',intro:'',it:[]}];
+const TMHOW='<p><b>Move around.</b> Drag to turn, pinch or scroll to zoom, two fingers to tilt. Zoom all the way out for a flat map from above. The buttons on the right do the same.</p>'+
+ '<p><b>Tap anything.</b> Buildings, trees, buses, the statue, even the cat. A card tells you what it is and offers deeper views.</p>'+
+ '<p><b>Colors mean something only in a data view.</b> When a view colors the map, its card says what the colors mean, and <b>Clear</b> turns it off. Gold outlines mark what you picked.</p>'+
+ '<p><b>Where the data comes from.</b> City, county, state and federal open data, OpenStreetMap and the Census. Every view names its source; <b>When the data was updated</b> shows how fresh each one is.</p>'+
+ '<p><b>Privacy.</b> Property cards show property facts, not owner names. Police data is counted by area, never by person, case or address, and sensitive categories are shown citywide only.</p>'+
+ '<p><b>For fun, not record.</b> The animals, cyclists and other moving characters are animations. The data views are the real numbers.</p>';
+function tmHTML(tab){const g=TMENU[tab];if(tab===2){const x=['This view in words','When the data was updated','All city data','Make this for your city'].map(t=>TMT(t)?t:null).filter(Boolean);
+  return TMHOW+x.map(t=>'<button class="btn go2" data-tm="'+t+'" style="display:block;width:100%;text-align:left;margin:6px 0">'+t+'</button>').join('')}
+  return (g.intro?'<p>'+g.intro+'</p>':'')+g.it.map((r,i)=>{const R=typeof r==='string'?TMT(r):r;if(!R)return '';return '<button class="btn go2" data-tm="'+tab+':'+i+'" style="display:block;width:100%;text-align:left;margin:6px 0;padding:9px 12px;white-space:normal"><b>'+R[0]+'</b><br><span style="opacity:.75;font-size:12.5px">'+R[1]+'</span></button>'}).join('')}
+const TMS={title:'Where to <i>start</i>',tabs:TMENU.map(g=>g.k),html:tmHTML,click:e=>{const b=e.target.closest('[data-tm]');if(!b)return;const v=b.dataset.tm,m=v.match(/^(\d):(\d+)$/);
+  const r=m?TMENU[+m[1]].it[+m[2]]:v,R=typeof r==='string'?TMT(r):r;if(!R)return;closeSheet();U._t=1;R[2]()}};
+function tourMenu(t){openSheet(TMS,t||0)}
+// fly through every place in the bottom row, with a caption at each stop
+const FTSAY={'Overview':'All of Lincoln, about 300,000 people.','Capitol':'The 400-foot Capitol and the Sower on top.','Memorial Stadium':'Sold out since 1962.','Haymarket':'Old warehouses, now restaurants and the arena.',
+ 'UNL City Campus':'The University of Nebraska–Lincoln.','UNL East Campus':'Farms, labs and the Dairy Store.','Downtown':'O Street, the long main street.','Holmes Lake':'A flood-control lake with trails and an observatory.','Southeast Lincoln':'Where the city keeps growing.'};
+function flyThrough(){stopTour();const bs=[...$('chips').children];if(!bs.length)return;let i=0;tour=true;$('bTour').classList.add('on');$('bTour').textContent='■ Stop';
+  const next=()=>{if(!tour)return;if(i>=bs.length){stopTour();return}const b=bs[i++],n=b.textContent,k=Object.keys(FTSAY).find(q=>n.startsWith(q));b.click();tour=true;$('bTour').classList.add('on');$('bTour').textContent='■ Stop';
+    showCard(n,(k?FTSAY[k]+' ':'')+'Stop '+i+' of '+bs.length+'.',-1,{label:'Stop the fly-through',fn:()=>stopTour()});tour=setTimeout(next,7000)};next()}
