@@ -31,6 +31,9 @@ for k in ('inc', 'dispatch', 'arrests', 'stops', 'uoc', 'pursuits', 'qsa'):
 out['area'] = {'years': [2021, 2025], 'groups': ['violent', 'property', 'narcotics', 'disturbance'], 'rd': {k: [sup(x) for x in v] for k, v in rd.items()},
   'cc': {k: [v[i:i + 4] for i in range(0, 20, 4)] for k, v in cc.items()}, 'placed': {y: {'reports': a, 'counted': b, 'placed': c, 'inside': e} for y, (a, b, c, e) in st.items()}}
 # what officers were sent for: dispatch CALL_TYPE counts per year, grouped (outStatistics on each yearly dispatch table, November 2026)
+# four quadrants that meet at 27th and O Streets: the reporting-district counts above, summed by which side of O Street and 27th Street each
+# district's center falls on. Big enough (tens of thousands of people each) that nothing can point at a household.
+out['quad'] = {'split': '27th and O Streets', 'x0': -3490, 'z0': -4828, 'years': [2021, 2022, 2023, 2024, 2025], 'q': json.load(open(os.path.join(here, 'quadrants_raw.json')))}
 out['ctype'] = {int(y): v for y, v in json.load(open(os.path.join(here, 'calltypes_raw.json'))).items()}
 json.dump(out, open(os.path.join(root, 'data', 'safety-citywide.json'), 'w'), separators=(',', ':'))
 G = {'V': 'violent', 'P': 'property', 'D': 'narcotics', 'N': 'disturbance_nuisance', 'S': 'domestic_sex_child_stalking', 'X': 'not_shown_medical_death_missing'}

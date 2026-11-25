@@ -64,10 +64,10 @@ function psHTML(i){const d=PS.d;if(!d)return '<p>Loading the police department\'
     +'<p><b>Why this way.</b> A dot at an address can point at a household, a victim or a neighbor who called. Totals by area show patterns without that. Personal details stay citywide so they cannot be tied back to a block. Free text is never shown because the city\'s own tables sometimes carry people\'s names in it.</p>'
     +`<p><b>Where it comes from.</b> The Lincoln Police Department\'s yearly tables on the city\'s open data portal: incident reports, calls, arrests and citations, traffic stops, use of force, pursuits and the quality service audit, ${Y[0]} to ${d.partYear}. The figures were counted from the city\'s own servers on ${d.asof}. The method and the code are in the project\'s tools folder.</p>`
     +'<p><a href="https://opendata.lincoln.ne.gov/" target="_blank" rel="noopener">Lincoln open data ↗</a> · <a href="https://starcitylincoln.org/data_public/lpd_citywide_by_year.csv" target="_blank" rel="noopener">Every figure as a file ↗</a></p>'}
-const PSS={title:'Public <i>safety</i>',tabs:['Reported crime','Calls and arrests','Traffic stops','Force and pursuits','Resident survey','How it is handled','By area','Fire and rescue'],html:i=>i===7?frHTML():i===6?psAreaHTML():psHTML(i),click:e=>{const b=e.target.closest('[data-ps]');if(!b)return;closeSheet();const v=b.dataset.ps;if(v==='cc')psCC();else if(v==='fire')frShow();else psArea(+v)}};
+const PSS={title:'Public <i>safety</i>',tabs:['Reported crime','Calls and arrests','Traffic stops','Force and pursuits','Resident survey','How it is handled','By area','Fire and rescue'],html:i=>i===7?frHTML():i===6?psAreaHTML():psHTML(i),click:e=>{const b=e.target.closest('[data-ps]');if(!b)return;closeSheet();const v=b.dataset.ps;if(v==='cc')psCC();else if(v==='fire')frShow();else if(v[0]==='q')psQuad(+v.slice(1));else psArea(+v)}};
 function psAreaHTML(){const d=PS.d;if(!d)return '<p>Loading…</p>';const A=d.area,pl=Object.values(A.placed),c=pl.reduce((s,q)=>s+q.counted,0),p=pl.reduce((s,q)=>s+q.placed,0);
   return psBadge('area')+'<p>Crime reports from 2021 to 2025, added up by place. Each report is counted at the middle of its block, the way the department publishes it, and then only as a total for an area. Pick what to see on the map:</p>'
-    +'<p>'+PSG.map((n,i)=>`<button class="btn go2" data-ps="${i}">${n} by police district</button> `).join('')+'<button class="btn go2" data-ps="cc">All four by council district</button></p>'
+    +'<p>'+PSG.map((n,i)=>`<button class="btn go2" data-ps="${i}">${n} by police district</button> `).join('')+'<button class="btn go2" data-ps="cc">All four by council district</button></p>'+(A&&PS.d.quad?'<p><b>By quadrant.</b> The city split four ways where 27th and O Streets cross, each quadrant tens of thousands of people:</p><p>'+PSG.map((n,i)=>`<button class="btn go2" data-ps="q${i}">${n} by quadrant</button> `).join('')+'</p>'+psQuadTable():'')
     +'<div class="tw"><table><tr><th>Council district</th><th>Violent</th><th>Property</th><th>Narcotics</th><th>Disturbance</th></tr>'+Object.keys(A.cc).sort().map(k=>{const r=A.cc[k][4];return `<tr><td><b>${k}</b></td>${r.map(v=>`<td>${psN(v)}</td>`).join('')}</tr>`}).join('')+'</table></div><p class="psub">Reports in 2025.</p>'
     +`<p>${psBadge('city')} Domestic violence, sex offenses, child abuse and stalking are never counted by place. ${psBadge('none')} Medical, mental health, death and missing-person reports are left out.</p>`
     +`<p class="psub">${psN(p)} of the ${psN(c)} reports counted here (${Math.round(100*p/c)}%) could be placed on a block. Most of the rest have no street address: they were written as "City of Lincoln", "internet" or "unknown". Districts are the department's own reporting districts, from the city's open data. Areas differ in size and in how many people live, work and shop there, so compare them with care.</p>`}
@@ -83,8 +83,8 @@ function arShow(kind,val,o){return arLoad().then(d=>{if(!d)return;arOff();insOff
       const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:c.getHex(),transparent:true,opacity:v>0?.6:.25,depthWrite:false,fog:false}));m.userData.card=()=>o.card(a,v);g.add(m);pickables.push(m);
       g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,30),new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.55,fog:false})))}
     if(o.labels&&o.labels(a))AR.lbs.push({t:o.labels(a),sub:o.sub?o.sub(a,v):v>0?psN(v):v===-1?'fewer than 5':'',x:a.c[0],y:h+40,z:a.c[1],k:3,pri:800,near:0,far:90000})}
-  scene.add(g);AR.grp=g;dirty=true;lastInput=performance.now();// keep the person's view; only pull back when they are so close the blocks would fill the screen
-  try{const t=controls.target,dd=camera.position.distanceTo(t);if(dd<1800)flyTo(camTo(t.x,t.z,Math.min(o.dist||22000,6000),160,48),1600)}catch(e){}
+  scene.add(g);AR.grp=g;dirty=true;lastInput=performance.now();// area views need the whole city in sight: pull back to a city view (not all the way out) unless the person is already that far out
+  try{const t=controls.target,dd=camera.position.distanceTo(t);if(dd<9000)flyTo(camTo(-3200,-4600,Math.min(o.dist||22000,15000),160,52),1600)}catch(e){}
   showCard(o.title,o.text,-1,o.back,[{label:'Clear',fn:arOff}])})}
 function stepAr(){if(AR.on)for(const l of AR.lbs)lifeLabels.push(l)}
 const PSG=['Violent crime','Property crime','Narcotics','Disturbance and nuisance'];
@@ -180,3 +180,16 @@ function ldPins(L){if(!AR.grp)return;const {n,xz,c}=L.d,geo=new THREE.CylinderGe
 
 // when a view opens, keep the person's own view and zoom; only pull back when they are right down among the buildings
 function viewCam(x,z,dist,az,tilt){try{const t=controls.target,d=camera.position.distanceTo(t);if(d<1800)flyTo(camTo(t.x,t.z,Math.min(dist,6000),az||160,tilt||50),1600)}catch(e){}}
+
+// ---- four quadrants meeting at 27th and O Streets: the same district counts summed four ways, so even a sensitive pattern can be shown
+// without pointing at a block or a household
+const PSQN={NW:'Northwest',NE:'Northeast',SW:'Southwest',SE:'Southeast'};
+function psQuadOf(x,z){const Q=PS.d.quad;return (z<Q.z0?'N':'S')+(x<Q.x0?'W':'E')}
+function psQuadTable(){const Q=PS.d.quad,L=Q.years[Q.years.length-1];return '<div class="tw"><table><tr><th>Quadrant, '+L+'</th>'+PSG.map(n=>`<th>${n.replace(' and nuisance','')}</th>`).join('')+'</tr>'+['NW','NE','SW','SE'].map(k=>`<tr><td><b>${PSQN[k]}</b></td>${Q.q[k][L].map(v=>`<td>${psN(v)}</td>`).join('')}</tr>`).join('')+'</table></div><p class="psub">North and south of O Street, east and west of 27th Street. Each police reporting district counts in the quadrant its center falls in.</p>'}
+function psQuad(gi){psLoad().then(d=>{if(!d||!d.quad)return;const Q=d.quad,ys=Q.years,tot=k=>ys.reduce((s,y)=>s+Q.q[k][y][gi],0),cen={};
+  arShow('vp',id=>{const a=AR.d&&AR.d.vp.find(q=>q.id===id);return a?tot(psQuadOf(a.c[0],a.c[1])):null},{tall:900,dist:26000,labels:()=>'',
+    title:PSG[gi]+' reports by quadrant, '+ys[0]+' to '+ys[ys.length-1],text:`Lincoln split four ways where 27th and O Streets cross. Taller and redder means more ${PSG[gi].toLowerCase()} reports over the five years: `+['NW','NE','SW','SE'].map(k=>`${PSQN[k]} ${psN(tot(k))}`).join(', ')+'. The quadrants are not the same size or population, so compare the trend in each more than the totals. Tap one for its year by year.',
+    back:{label:'Public safety',fn:()=>psOpen(6)},card:a=>{const k=psQuadOf(a.c[0],a.c[1]);showCard(PSQN[k]+' Lincoln: '+PSG[gi].toLowerCase(),ys.map(y=>`${y}: ${psN(Q.q[k][y][gi])}`).join(' · ')+'. All four kinds in '+ys[ys.length-1]+': '+PSG.map((n,i)=>n.toLowerCase()+' '+psN(Q.q[k][ys[ys.length-1]][i])).join(', ')+'.',-1,{label:'Public safety',fn:()=>psOpen(6)})}}).then(()=>{
+    // one label per quadrant, at the middle of its precincts
+    const S={};for(const a of AR.d.vp){const k=psQuadOf(a.c[0],a.c[1]);(S[k]=S[k]||[0,0,0]);S[k][0]+=a.c[0];S[k][1]+=a.c[1];S[k][2]++}
+    for(const k in S){const x=S[k][0]/S[k][2],z=S[k][1]/S[k][2];AR.lbs.push({t:PSQN[k],sub:psN(tot(k))+' reports',x,y:1000,z,k:3,pri:900,near:0,far:90000})}})})}
