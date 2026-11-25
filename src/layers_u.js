@@ -157,6 +157,7 @@ function uniMap(){Promise.all([repLoad(),arLoad()]).then(([R,A])=>{if(!R||!A)ret
 const TMT=(t)=>(typeof TRY!=='undefined'?TRY:[]).find(r=>r[0]===t);
 const TMENU=[
  {k:'Tours',intro:'Sit back and watch. Press Stop (where the Tour button was) to end one.',it:[
+  ['The Little Bluestem Star City Prix','Five state animals race Jamaica North and MoPac, city limit to city limit. Pick a racer.',()=>pxOpen()],
   ['The short tour','About 40 seconds: the Capitol, Memorial Stadium, the arena and the Devaney Center.',()=>startTour()],
   ['Fly through Lincoln','About two minutes over every place in the bottom row, from downtown to Holmes Lake to the zoo, with a line about each.',()=>flyThrough()],
   'See it at night','The view from the Capitol tower','Champion trees','Fall color','Watch Lincoln grow, 1867 to today','Follow a raindrop','The sky tonight over Lincoln','Lake monsters and Sasquatch','Lost and found pets']},
@@ -409,3 +410,80 @@ function csInit(){if(CS.m||!LM.stadG)return;const s=LM.stadG,[ax,az]=LM.stadA,X2
     const n=new THREE.Vector3(side<0?Math.cos(th):-Math.cos(th),Math.sin(th),0);m.position.set(side*(36+X2)/2,(1.2+46)/2,0).addScaledVector(n,2.2);m.visible=false;s.add(m);CS.m.push({m,cv,tx,w:word,last:-1})}}
 function stepCS(now){if(!LM.stadG)return;csInit();if(!CS.m)return;const act=now<MPP.until||MPP.ri>=0;if(act&&!CS.on){CS.on=true;CS.t0=now}if(!act&&CS.on&&now-CS.t0>2500){CS.on=false;CS.t0=now}
   const u=CS.on?Math.min(1,(now-CS.t0)/1400):Math.max(0,1-(now-CS.t0)/700);for(const o of CS.m){o.m.visible=u>0.01;o.m.material.opacity=Math.min(1,u*1.5);const st=Math.round(u*24);if(st!==o.last&&o.m.visible){o.last=st;csDraw(o,u)}}if(u>0&&u<1){ambient=true;dirty=true}}
+// ---- the Little Bluestem Star City Prix: five Nebraska animals race north on the Jamaica North Trail from the south city limit,
+// cross to the MoPac Trail and race east to where MoPac leaves the city limits. A fox starts them; a raccoon waves the checkered flag.
+const PX={on:false,cl:null,course:null,racers:[],dir:[],pick:0,len:'full',wx:'real',t0:0,last:0,say:'',sayT:0,done:false,fin:[],follow:true,
+ R:[{k:'lark',n:'Western meadowlark',c:0xf2c200,v:1.18,tag:'state bird, sings at every fence post'},{k:'bee',n:'Honeybee',c:0xffb300,v:1.0,tag:'state insect, loves goldenrod'},{k:'deer',n:'White-tailed deer',c:0xa0703c,v:1.14,tag:'state mammal, spooks easily'},
+  {k:'cat',n:'Channel catfish',c:0x6f7f8a,v:.86,tag:'state fish, rides a wet wagon until the creeks'},{k:'turtle',n:'Ornate box turtle',c:0x6b8f3a,v:.62,tag:'state reptile, slow, steady, knows every culvert'}]};
+function pxIn(x,z){let c=false;for(const r of PX.cl.rings)for(let i=0,j=r.length-2;i<r.length;j=i,i+=2){const xi=r[i],zi=r[i+1],xj=r[j],zj=r[j+1];if((zi>z)!=(zj>z)&&x<(xj-xi)*(z-zi)/(zj-zi)+xi)c=!c}return c}
+function pxPath(name){const TR=LM.trails;let best=-1;for(let w=0;w<TR.length;w++){const T=TR[w];if(T.tn===65535||!H.tnames||H.tnames[T.tn]!==name)continue;if(best<0||TR[best].len<T.len)best=w}return best<0?null:trailPath(best)}
+function pxCourse(){const J=pxPath('Jamaica North Trail'),M=pxPath('MoPac Trail');if(!J||!M)return null;const pts=a=>{const o=[];for(let i=0;i<a.length;i+=2)o.push([a[i],a[i+1]]);return o};
+  let j=pts(J),m=pts(M);if(j[0][1]<j[j.length-1][1])j.reverse();if(m[0][0]>m[m.length-1][0])m.reverse();
+  // start: the first point of Jamaica North, going north, that is inside the city limits
+  let s=0;while(s<j.length-1&&!pxIn(j[s][0],j[s][1]))s++;j=j.slice(s);
+  // connect from Jamaica's north end to the nearest point on MoPac, then MoPac east to the last point inside the city limits
+  const e=j[j.length-1];let bi=0,bd=1e18;m.forEach((p,i)=>{const d=(p[0]-e[0])**2+(p[1]-e[1])**2;if(d<bd){bd=d;bi=i}});
+  // follow the trail network from Jamaica's north end to MoPac instead of cutting across town
+  const link=pxLink(e,m);let conn=[];if(link){conn=link.path;bi=link.mi;bd=0}
+  const jn=j.length;j=j.concat(conn);let mm=m.slice(bi);let f=0;for(let i=0;i<mm.length;i++){if(pxIn(mm[i][0],mm[i][1]))f=i;else if(i>f+3)break}mm=mm.slice(0,f+1);
+  const all=j.concat(mm),cum=[0];for(let i=1;i<all.length;i++)cum.push(cum[i-1]+Math.hypot(all[i][0]-all[i-1][0],all[i][1]-all[i-1][1]));return {p:all,cum,L:cum[cum.length-1],jL:cum[jn-1],conn:Math.sqrt(bd)}}
+function pxLink(e,m,SNAP){SNAP=SNAP||70;const TR=LM.trails,X=[],Z=[],adj=[],G=new Map(),cs=SNAP,key=(x,z)=>Math.floor(x/cs)*100003+Math.floor(z/cs);
+  for(const T of TR){const D=T.d;let prev=-1;for(let k=0;k+1<D.length;k+=2){const id=X.length;X.push(D[k]);Z.push(D[k+1]);adj.push([]);if(prev>=0){const w=Math.hypot(D[k]-X[prev],D[k+1]-Z[prev]);adj[prev].push(id,w);adj[id].push(prev,w)}prev=id;const kk=key(D[k],D[k+1]);(G.get(kk)||G.set(kk,[]).get(kk)).push(id)}}
+  for(const [kk,ids] of G){for(const a of ids){const gx=Math.floor(X[a]/cs),gz=Math.floor(Z[a]/cs);for(let dx=-1;dx<=1;dx++)for(let dz=-1;dz<=1;dz++){const L=G.get((gx+dx)*100003+gz+dz);if(!L)continue;for(const b of L){if(b<=a)continue;const w=Math.hypot(X[a]-X[b],Z[a]-Z[b]);if(w<SNAP){adj[a].push(b,w*3+5);adj[b].push(a,w*3+5)}}}}}
+  const MG=new Map();m.forEach((p,i)=>{const kk=key(p[0],p[1]);(MG.get(kk)||MG.set(kk,[]).get(kk)).push(i)});
+  let src=-1,sd=1e18;for(let i=0;i<X.length;i++){const d=(X[i]-e[0])**2+(Z[i]-e[1])**2;if(d<sd){sd=d;src=i}}if(src<0)return null;
+  const dist=new Float64Array(X.length).fill(Infinity),prv=new Int32Array(X.length).fill(-1),H=[[0,src]];dist[src]=0;
+  const push=(d,i)=>{H.push([d,i]);let c=H.length-1;while(c>0){const p=(c-1)>>1;if(H[p][0]<=H[c][0])break;[H[p],H[c]]=[H[c],H[p]];c=p}},pop=()=>{const t=H[0],l=H.pop();if(H.length){H[0]=l;let c=0;for(;;){const a=2*c+1,b=a+1;let s=c;if(a<H.length&&H[a][0]<H[s][0])s=a;if(b<H.length&&H[b][0]<H[s][0])s=b;if(s===c)break;[H[s],H[c]]=[H[c],H[s]];c=s}}return t};
+  while(H.length){const [d,u]=pop();if(d>dist[u])continue;if(d>40000)break;const L=MG.get(key(X[u],Z[u]));if(L&&d>0){let mi=-1,md=1e18;for(const i of L){const dd=(m[i][0]-X[u])**2+(m[i][1]-Z[u])**2;if(dd<md){md=dd;mi=i}}if(md<400){const path=[];for(let v=u;v>=0;v=prv[v])path.push([X[v],Z[v]]);path.reverse();return {path,mi,d}}}
+    const A=adj[u];for(let q=0;q<A.length;q+=2){const v=A[q],nd=d+A[q+1];if(nd<dist[v]){dist[v]=nd;prv[v]=u;push(nd,v)}}}return null}
+function pxAt(s){const C=PX.course,p=C.p,c=C.cum;s=Math.max(0,Math.min(C.L,s));let lo=0,hi=c.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(c[m]<=s)lo=m;else hi=m}const u=(s-c[lo])/Math.max(1e-6,c[hi]-c[lo]);const x=p[lo][0]+(p[hi][0]-p[lo][0])*u,z=p[lo][1]+(p[hi][1]-p[lo][1])*u;return [x,z,Math.atan2(p[hi][0]-p[lo][0],p[hi][1]-p[lo][1])]}
+function pxMesh(k,c){const g=new THREE.Group(),M=col=>new THREE.MeshLambertMaterial({color:col}),B=(w,h,d,col,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(col));m.position.set(x,y,z);g.add(m);return m};
+  if(k==='lark'){B(.5,.4,.8,0x8a6a3a,0,.6,0);B(.42,.3,.5,c,0,.58,-.2);B(.06,.06,.25,0x222222,0,.62,-.55);B(.9,.05,.4,0x8a6a3a,0,.65,.05)}
+  else if(k==='bee'){B(.4,.4,.7,c,0,.7,0);B(.42,.12,.12,0x222222,0,.7,.05);B(.42,.12,.12,0x222222,0,.7,-.15);B(.9,.04,.3,0xddeeff,0,.95,0)}
+  else if(k==='deer'){B(.5,.6,1.3,c,0,1.2,0);for(const sx of[-.18,.18])for(const sz of[-.5,.5])B(.1,.9,.1,c,sx,.45,sz);B(.3,.5,.4,c,0,1.65,-.7);B(.2,.25,.1,0xffffff,0,1.3,.68)}
+  else if(k==='cat'){B(.9,.3,1.5,0x3a6e9a,0,.35,0);B(.4,.35,1.1,c,0,.65,0);B(.5,.25,.2,c,0,.65,.65);for(const sx of[-.5,.5])B(.1,.3,.3,0x222222,sx,.15,0)}
+  else {B(.9,.35,1.1,c,0,.35,0);B(.7,.2,.9,0xc9a43a,0,.55,0);B(.3,.25,.3,0x7a6a3a,0,.35,-.65)}
+  return g}
+function pxDirector(kind,x,z,ang){const g=new THREE.Group(),M=col=>new THREE.MeshLambertMaterial({color:col}),B=(w,h,d,col,px,py,pz)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(col));m.position.set(px,py,pz);g.add(m)};
+  const c=kind==='fox'?0xd2691e:0x8a8a8a;B(.5,.5,1,c,0,.55,0);B(.45,.4,.45,c,0,.95,-.55);B(.12,.12,.2,0x222222,0,.92,-.85);if(kind==='fox'){B(.25,.25,.8,c,0,.6,.8);B(.2,.2,.2,0xffffff,0,.6,1.2)}else{B(.47,.14,.47,0x222222,0,1,-.56);for(let i=0;i<4;i++)B(.22,.22,.18,i%2?0x222222:0xaaaaaa,0,.6,.55+i*.18)}
+  B(.06,1.6,.06,0x5a4a3a,.45,1.3,-.2);const fc=document.createElement('canvas');fc.width=64;fc.height=48;const cx=fc.getContext('2d');if(kind==='fox'){cx.fillStyle='#2fa84f';cx.fillRect(0,0,64,48)}else for(let i=0;i<8;i++)for(let j=0;j<6;j++){cx.fillStyle=(i+j)%2?'#111':'#fff';cx.fillRect(i*8,j*8,8,8)}
+  const fl=new THREE.Mesh(new THREE.PlaneGeometry(.8,.6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(fc),side:THREE.DoubleSide}));fl.position.set(.85,1.9,-.2);g.add(fl);g.userData.flag=fl;
+  g.position.set(x,hAt(x,z),z);g.rotation.y=ang;scene.add(g);return g}
+const PXSAY={start:['Fox: Racers, take your marks!','Fox: Remember, it is not a race, it is a Prix.','Fox: Nobody eats anybody today.'],
+ mid:['Raccoon: I can see the whole field from this trash can.','Fox: The turtle has a culvert map. Unbelievable.','Raccoon: Somebody dropped a roller dog at mile two. Investigating.','Fox: Wind check! Pure Nebraska.','Raccoon: The catfish is asking for a hose.'],
+ fin:['Raccoon: Checkered flag! I also took the snacks.','Raccoon: And that is the Little Bluestem Star City Prix!']};
+function pxSetup(){if(!PX.course){PX.course=pxCourse();if(!PX.course)return false}return true}
+function pxStart(){if(!PX.cl){fetch('data/city-limits.json').then(r=>r.json()).then(d=>{PX.cl=d;pxStart()}).catch(()=>showCard('The Prix is not ready','The city limits did not load. Try again in a moment.'));return}
+  if(!pxSetup()){showCard('The Prix is not ready','The trail map is still loading. Try again in a moment.');return}pxEnd(true);closeSheet();hideCard();
+  const C=PX.course,L=PX.len==='sprint'?Math.min(C.L,C.jL):C.L;PX.goal=L;PX.on=true;PX.done=false;PX.fin=[];PX.t0=performance.now();PX.last=PX.t0;
+  const wind=PX.wx==='calm'?0:PX.wx==='gusty'?1.6:(windV?Math.min(1.4,windV.ms/8):.3);PX.wind=wind;
+  PX.racers=PX.R.map((r,i)=>{const g=pxMesh(r.k,r.c);scene.add(g);return {r,i,g,s:-i*3,v:r.v*(0.9+Math.random()*.2),pause:0,boost:0,note:'',lb:{t:r.n,sub:'',x:0,y:0,z:0,k:3,pri:i===PX.pick?4000:2500,near:0,far:9000}}});
+  {const P=[];for(let d=0;d<=L;d+=15){const [x,z]=pxAt(d);P.push(new THREE.Vector3(x,hAt(x,z)+1.6,z))}PX.line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(P),new THREE.LineBasicMaterial({color:0xffd36a,transparent:true,opacity:.95,depthTest:false}));PX.line.renderOrder=6;scene.add(PX.line)}
+  const [sx,sz,sa]=pxAt(0),[fx,fz,fa]=pxAt(L);PX.dir=[pxDirector('fox',sx+6,sz,sa),pxDirector('raccoon',fx+6,fz,fa+Math.PI)];
+  PX.flb=[{t:'START · Fox, race director',sub:'Jamaica North Trail at the south city limit',x:sx,y:hAt(sx,sz)+14,z:sz,k:3,pri:3000,near:0,far:20000},{t:'FINISH · Raccoon, race director',sub:PX.len==='sprint'?'Jamaica North, before the turn to MoPac':'MoPac Trail where it leaves the city limits',x:fx,y:hAt(fx,fz)+14,z:fz,k:3,pri:3000,near:0,far:20000}];
+  PX.say=PXSAY.start[Math.random()*3|0];PX.sayT=PX.t0;flyTo(camTo(sx,sz,320,(sa/RD)+180,42),1500)}
+function pxEnd(quiet){if(PX.line){scene.remove(PX.line);PX.line=null}for(const q of PX.racers)scene.remove(q.g);for(const d of PX.dir)scene.remove(d);PX.racers=[];PX.dir=[];PX.on=false;if(!quiet){hideCard();dirty=true}}
+function stepPX(now){if(!PX.on)return;const dt=Math.min(.1,(now-PX.last)/1000);PX.last=now;const el=(now-PX.t0)/1000;const go=el>2.5,K=PX.goal/(PX.len==='sprint'?55:110);
+  for(const q of PX.racers){if(go&&q.s<PX.goal){let v=q.v*K;
+      if(q.pause>0){q.pause-=dt;v=0}else if(Math.random()<dt*.12){const k=q.r.k,rnd=Math.random();
+        if(k==='lark'){q.pause=1.2+rnd;q.note='singing on a fence post'}else if(k==='bee'){q.pause=1+rnd*1.5;q.note='visiting goldenrod'}else if(k==='deer'){if(rnd<.5){q.pause=1.5;q.note='spooked, frozen'}else{q.boost=2;q.note='bounding!'}}
+        else if(k==='cat'){if(rnd<.4){q.boost=2.5;q.note='creek crossing, swimming fast'}else{q.pause=.8;q.note='wagon needs water'}}else{if(rnd<.35){q.s+=PX.goal*.06;q.note='took a culvert shortcut!'}else q.note='steady as ever'}}
+      if(q.boost>0){q.boost-=dt;v*=2.1}
+      const wx=PX.wind*(q.r.k==='bee'?-.35:q.r.k==='lark'?.25:q.r.k==='turtle'?0:-.1);v*=1+wx*.3;q.s=Math.min(PX.goal,q.s+v*dt);if(q.s>=PX.goal&&!PX.fin.includes(q))PX.fin.push(q)}
+    const [x,z,a]=pxAt(Math.max(0,q.s)),lane=(q.i-2)*2.2,sc=Math.max(5,camera.position.distanceTo(controls.target)/22),y=hAt(x,z)+(q.r.k==='lark'||q.r.k==='bee'?3+Math.sin(now*.01+q.i):0);
+    q.g.position.set(x+Math.cos(a)*lane,y,z-Math.sin(a)*lane);q.g.rotation.y=a+Math.PI;q.g.scale.setScalar(sc);
+    const place=PX.fin.indexOf(q);q.lb.t=(q.i===PX.pick?'★ ':'')+q.r.n;q.lb.sub=place>=0?['1st','2nd','3rd','4th','5th'][place]+' place':(q.note&&q.pause>0||q.boost>0||/culvert/.test(q.note)?q.note:Math.round(100*Math.max(0,q.s)/PX.goal)+'%');q.lb.x=q.g.position.x;q.lb.y=y+2.5*sc;q.lb.z=q.g.position.z;lifeLabels.push(q.lb)}
+  for(const l of PX.flb)lifeLabels.push(l);for(const d of PX.dir)if(d.userData.flag)d.userData.flag.rotation.y=Math.sin(now*.008)*.6;
+  if(now-PX.sayT>6000){PX.sayT=now;PX.say=PXSAY.mid[Math.random()*PXSAY.mid.length|0]}
+  const me=PX.racers[PX.pick];if(PX.follow&&me&&go){const t=controls.target,dx=me.g.position.x-t.x,dz=me.g.position.z-t.z;const k=Math.min(1,dt*2.5);t.x+=dx*k;t.z+=dz*k;camera.position.x+=dx*k;camera.position.z+=dz*k;t.y+=(me.g.position.y-t.y)*k;controls.update()}
+  const order=PX.racers.slice().sort((a,b)=>b.s-a.s);
+  if(PX.fin.length===PX.racers.length&&!PX.done){PX.done=true;PX.say=PXSAY.fin[Math.random()*2|0];pxResults()}
+  else if(!PX.done&&now-(PX.cardT||0)>700){PX.cardT=now;showCard('The Little Bluestem Star City Prix',(el<2.5?'On your marks… ':'')+PX.say+'\n'+order.map((q,i)=>`${i+1}. ${q.i===PX.pick?'★ ':''}${q.r.n}`).join('\n'),-1,{label:'End the race',fn:()=>pxEnd()},[{label:PX.follow?'Stop following':'Follow my racer',fn:()=>{PX.follow=!PX.follow}}]);$('cp').style.whiteSpace='pre-line'}
+  ambient=true;dirty=true}
+function pxResults(){const P=PX.fin,me=PX.racers[PX.pick],pl=P.indexOf(me);showCard('Results: the Little Bluestem Star City Prix',PX.say+'\n'+P.map((q,i)=>`${['🥇','🥈','🥉','4.','5.'][i]} ${q.r.n}`).join('\n')+`\nYour pick, the ${me.r.n.toLowerCase()}, finished ${['first','second','third','fourth','fifth'][pl]}. Course: ${(PX.goal/1609).toFixed(1)} miles, Jamaica North Trail${PX.len==='sprint'?'':' to the MoPac Trail'}, inside the Lincoln city limits.`,-1,{label:'Race again',fn:()=>{pxEnd(true);pxOpen()}},[{label:'Done',fn:()=>pxEnd()}]);$('cp').style.whiteSpace='pre-line'}
+function pxHTML(){const b=(k,v,l,sub)=>`<button class="btn go2${PX[k]===v?' on':''}" data-px="${k}:${v}" style="display:block;width:100%;text-align:left;margin:5px 0;padding:8px 11px;white-space:normal"><b>${l}</b>${sub?'<br><span style="opacity:.7;font-size:12px">'+sub+'</span>':''}</button>`;
+  return '<p>Five Nebraska state animals race the trails. The fox starts them at the <b>south city limit on the Jamaica North Trail</b>; the course runs north on Jamaica, crosses to the <b>MoPac Trail</b>, and finishes where MoPac leaves the <b>Lincoln city limits</b>, where the raccoon waves the checkered flag. Every race is different: songs, goldenrod, spooked deer, creek crossings and culvert shortcuts.</p><b style="font-size:12px;opacity:.7">PICK YOUR RACER</b>'+
+   PX.R.map((r,i)=>b('pick',i,r.n,r.tag)).join('')+'<b style="font-size:12px;opacity:.7">COURSE</b>'+b('len','full','Full Prix','Jamaica North to MoPac, city limit to city limit')+b('len','sprint','Jamaica sprint','just the Jamaica North leg')+
+   '<b style="font-size:12px;opacity:.7">WEATHER</b>'+b('wx','real','Today\'s real wind','from the weather layer')+b('wx','calm','Calm','a rare Nebraska day')+b('wx','gusty','Gusty','hold onto your antennae')+'<button class="btn" data-px="go:1" style="display:block;width:100%;margin-top:10px;padding:11px;font-size:16px;background:#e8b84a;color:#111"><b>Start the race</b></button>'}
+const PXS={title:'The Little Bluestem <i>Star City Prix</i>',tabs:['Race'],html:pxHTML,click:e=>{const b=e.target.closest('[data-px]');if(!b)return;const [k,v]=b.dataset.px.split(':');if(k==='go'){pxStart();return}PX[k]=k==='pick'?+v:v;openSheet(PXS,0)}};
+function pxOpen(){openSheet(PXS,0)}
