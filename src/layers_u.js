@@ -321,3 +321,25 @@ function haloAt(o,st,lo){const g=o.geometry,P=g.attributes.position,I=g.index,i0
   HALO.m.position.set(cx,y0+.6,cz);HALO.m.scale.setScalar(r*1.12);HALO.m.visible=true;HALO.on=true;HALO.t0=performance.now();dirty=true}
 function haloStep(now){if(!HALO.on)return;const c=$('card');if(!c||c.style.display==='none'||walk.on){HALO.on=false;HALO.m.visible=false;dirty=true;return}const u=(now-HALO.t0)/1000,s=1+.06*Math.sin(u*3.2)+(u<.5?(.5-u)*.8:0);
   HALO.m.children[0].scale.setScalar(s);HALO.m.children[1].scale.setScalar(s);HALO.m.children[1].material.opacity=.25+.15*Math.sin(u*3.2);ambient=true;dirty=true}
+// ---- three southern flying squirrels on East Campus. Native to eastern Nebraska, out from dusk to dawn.
+// Before each glide one works the numbers in a thought cloud, then launches tree to tree. By day they sleep in a tree hole.
+const FSQ={L:null,list:[],cx:-2100,cz:-6660,H:15.5};
+function fsqMath(q,dist,h){const LD=(dist/h),ang=Math.atan(h/dist)/RD,v=Math.sqrt(2*.075*9.81/(1.2*.016*.9)),w=windV?Math.round(windV.ms*2.237):0;
+  const M=[`Δh = ${h.toFixed(0)} m · range = ${dist.toFixed(0)} m`,`glide angle θ = atan(${h.toFixed(0)}/${dist.toFixed(0)}) ≈ ${ang.toFixed(0)}°`,`L/D needed = ${LD.toFixed(1)} … patagium says ~2 ✓`,`v = √(2mg / ρSC_L) ≈ ${v.toFixed(1)} m/s`,
+   `t = ∫ ds / v ≈ ${(dist/v).toFixed(1)} s`,`dE/dt = −mg·v·sin θ … fine`,w?`wind ${w} mph · crab ${Math.min(20,Math.round(w*1.3))}° upwind`:'no wind · aim straight',`flare at 1.5 m · tail as air brake`,`∂(acorns)/∂t > 0 · go`];return M[q.mi++%M.length]}
+function fsqInit(){const ec=(H.blabels||[]).find(b=>/East Union/i.test(b[0]));if(ec){FSQ.cx=ec[1];FSQ.cz=-ec[2]}let T=ybTrees(FSQ.cx,FSQ.cz,350);if(T.length<12)T=ybTrees(FSQ.cx,FSQ.cz,800);if(T.length<6)return false;FSQ.T=T;const mat=new THREE.MeshLambertMaterial({color:0x8a7a66}),belly=new THREE.MeshLambertMaterial({color:0xd9cdb8});
+  for(let k=0;k<3;k++){const g=new THREE.Group(),body=new THREE.Mesh(new THREE.BoxGeometry(.11,.07,.26),mat),wing=new THREE.Mesh(new THREE.BoxGeometry(.36,.015,.22),mat),tail=new THREE.Mesh(new THREE.BoxGeometry(.07,.02,.2),mat),head=new THREE.Mesh(new THREE.BoxGeometry(.08,.07,.08),belly);
+    tail.position.z=.22;head.position.z=-.16;head.position.y=.02;g.add(body,wing,tail,head);g.userData.wing=wing;g.userData.info=['Southern flying squirrel','Native to eastern Nebraska and out only at night. It does not fly; it glides on a skin flap between its wrists and ankles, steering with its tail, up to about 50 m from a tall tree. On this map three of them work out the math first.'];
+    scene.add(g);pickables.push(g);const i=T[(Math.random()*T.length)|0];FSQ.list.push({g,st:'sit',t:0,at:i,to:-1,mi:k*3,lb:{t:'',sub:'',x:0,y:0,z:0,k:3,pri:1000,near:0,far:900},hold:2000+k*2500})}return true}
+function fsqPos(i,h){const x=TR.X[2*i],z=TR.X[2*i+1];return new THREE.Vector3(x,hAt(x,z)+h,z)}
+function stepFSQ(now){if(!TR.X)return;const t=controls.target,d=camera.position.distanceTo(t);if(Math.hypot(t.x-FSQ.cx,t.z-FSQ.cz)>1400||d>1600){if(FSQ.list.length)for(const q of FSQ.list)q.g.visible=false;return}
+  if(!FSQ.list.length&&!fsqInit())return;const night=sleepy()||U.uNight.value>.45,sc=Math.max(3,d/20);
+  for(const q of FSQ.list){const g=q.g;g.visible=true;g.scale.setScalar(sc);
+    if(!night){const p=fsqPos(q.at,10);g.position.copy(p);g.userData.wing.scale.x=.3;q.lb.t='z z';q.lb.sub='flying squirrel, asleep in a tree hole';q.lb.x=p.x;q.lb.y=p.y+2*sc;q.lb.z=p.z;lifeLabels.push(q.lb);q.st='sit';q.t=now;continue}
+    if(q.st==='sit'){const p=fsqPos(q.at,FSQ.H);g.position.copy(p);g.userData.wing.scale.x=.3;if(now-q.t>q.hold){q.st='think';q.t=now;let b=-1;for(let n=0;n<80;n++){const c=FSQ.T[(Math.random()*FSQ.T.length)|0],dd=Math.hypot(TR.X[2*c]-TR.X[2*q.at],TR.X[2*c+1]-TR.X[2*q.at+1]);if(dd>14&&dd<48){b=c;break}}if(b<0){let bd=1e9;for(const c of FSQ.T){const dd=Math.hypot(TR.X[2*c]-TR.X[2*q.at],TR.X[2*c+1]-TR.X[2*q.at+1]);if(dd>8&&dd<bd){bd=dd;b=c}}}q.to=b<0?q.at:b;
+        const B=fsqPos(q.to,3),dist=Math.max(5,Math.hypot(B.x-p.x,B.z-p.z));q.math=[fsqMath(q,dist,9),fsqMath(q,dist,9),fsqMath(q,dist,9)]}}
+    else if(q.st==='think'){const p=fsqPos(q.at,FSQ.H),k=Math.min(2,Math.floor((now-q.t)/3200));g.position.copy(p);q.lb.t='💭 '+q.math[k];q.lb.sub='flying squirrel, doing the flight math';q.lb.x=p.x;q.lb.y=p.y+2.2*sc;q.lb.z=p.z;lifeLabels.push(q.lb);if(now-q.t>9600){q.st='glide';q.t=now}}
+    else{const A=fsqPos(q.at,FSQ.H),B=fsqPos(q.to,FSQ.H-6),dist=Math.hypot(B.x-A.x,B.z-A.z),dur=Math.max(1800,dist/7.6*1000),u=Math.min(1,(now-q.t)/dur);g.position.lerpVectors(A,B,u);g.position.y-=Math.sin(u*Math.PI)*1.2;
+      g.rotation.y=Math.atan2(-(B.x-A.x),-(B.z-A.z));g.userData.wing.scale.x=u>.9?.5:1;if(u<.5&&u>.05){q.lb.t='wheee';q.lb.sub='';q.lb.x=g.position.x;q.lb.y=g.position.y+1.6*sc;q.lb.z=g.position.z;lifeLabels.push(q.lb)}
+      if(u>=1){q.at=q.to;q.st='sit';q.t=now;q.hold=6000+Math.random()*14000}}}
+  ambient=true;dirty=true}
