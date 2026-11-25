@@ -122,7 +122,7 @@ const YB=[['Black-capped Chickadee','Poecile atricapillus',0x77736c,[1,12],1,0,1
   ['Dark-eyed Junco','Junco hyemalis',0x52575e,[10,4],1,1,0],['American Tree Sparrow','Spizelloides arborea',0x9c7c5c,[11,3],.6,1,0],['House Wren','Troglodytes aedon',0x8c6c52,[5,9],.5,0,1],
   ['Baltimore Oriole','Icterus galbula',0xf27c12,[5,8],.4,0,1],['Gray Catbird','Dumetella carolinensis',0x6c7076,[5,9],.4,1,1],['Chipping Sparrow','Spizella passerina',0x9c7c5c,[4,10],.6,1,1]];
 const YBM=['January','February','March','April','May','June','July','August','September','October','November','December'];
-let YBS=null;
+let YBS=null,YB_CAP=null; // yard birds are paused around the Capitol until they are cleaned up
 function ybIn(r,m){return r[0]<=r[1]?m>=r[0]&&m<=r[1]:m>=r[0]||m<=r[1]}
 function ybSetup(){const g=boxes([[.5,.44,.9,0,0,0,0xffffff],[.38,.36,.38,0,.24,-.5,0xffffff],[.22,.08,.55,0,.06,.66,0xffffff],[.07,.07,.18,0,.22,-.76,0x2a2a2a],[.7,.06,.5,0,.12,0,0xffffff]]);
   const m=new THREE.InstancedMesh(g,new THREE.MeshLambertMaterial({vertexColors:true}),40);m.count=0;m.frustumCulled=false;scene.add(m);
@@ -133,7 +133,8 @@ function ybTrees(cx,cz,R){const out=[];if(!TR.X)return out;const G=TR.G,C=TR.C,H
   return out}
 function ybPerch(q,i){const x=TR.X[2*i],z=TR.X[2*i+1],h=treeH(i),a=Math.random()*6.283,r=h*(TWF[TR.sh[TR.kk[i]]]||.9)*(.5+.12*Math.random());return [x+Math.cos(a)*r,hAt(x,z)+h*(.5+.35*Math.random()),z+Math.sin(a)*r]}
 function stepYardBirds(dt,now){const t=controls.target,d=camera.position.distanceTo(t);const on=typeof birdsOn==='undefined'||birdsOn;
-  if(!on||d>520||walk.sky||!TR.X||sleepy()){if(YBS&&(YBS.m.count||YBS.nm.count)){YBS.m.count=0;YBS.nm.count=0;YBS.b=[];YBS.key='';dirty=true}return}
+  if(!YB_CAP&&typeof LM!=='undefined'&&LM.capitol)YB_CAP=LM.capitol;const capNear=YB_CAP&&Math.hypot(t.x-YB_CAP[0],t.z-YB_CAP[1])<650;
+  if(!on||capNear||d>520||walk.sky||!TR.X||sleepy()){if(YBS&&(YBS.m.count||YBS.nm.count)){YBS.m.count=0;YBS.nm.count=0;YBS.b=[];YBS.key='';dirty=true}return}
   if(!YBS)ybSetup();const S=YBS,mo=birdMonth(),nest=mo>=4&&mo<=7,key=Math.round(t.x/80)+','+Math.round(t.z/80);
   if(key!==S.key){S.key=key;S.trees=ybTrees(t.x,t.z,170);const pool=YB.filter(b=>ybIn(b[3],mo));S.b=[];S.nests=[];if(S.trees.length>=2&&pool.length){const tot=pool.reduce((a,b)=>a+b[4],0),N=Math.min(14+(S.trees.length>40?10:0),24);
     for(let k=0;k<N;k++){let r=Math.random()*tot,sp=pool[0];for(const b of pool){if((r-=b[4])<=0){sp=b;break}}const home=S.trees[(Math.random()*S.trees.length)|0],p=ybPerch(null,home);

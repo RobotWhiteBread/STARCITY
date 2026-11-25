@@ -487,3 +487,46 @@ function pxHTML(){const b=(k,v,l,sub)=>`<button class="btn go2${PX[k]===v?' on':
    '<b style="font-size:12px;opacity:.7">WEATHER</b>'+b('wx','real','Today\'s real wind','from the weather layer')+b('wx','calm','Calm','a rare Nebraska day')+b('wx','gusty','Gusty','hold onto your antennae')+'<button class="btn" data-px="go:1" style="display:block;width:100%;margin-top:10px;padding:11px;font-size:16px;background:#e8b84a;color:#111"><b>Start the race</b></button>'}
 const PXS={title:'The Little Bluestem <i>Star City Prix</i>',tabs:['Race'],html:pxHTML,click:e=>{const b=e.target.closest('[data-px]');if(!b)return;const [k,v]=b.dataset.px.split(':');if(k==='go'){pxStart();return}PX[k]=k==='pick'?+v:v;openSheet(PXS,0)}};
 function pxOpen(){openSheet(PXS,0)}
+// ---- dog runs: Lincoln's five public dog runs, open sunrise to sunset, full of dogs with the zoomies
+const DOGR={parks:null,dogs:[],COL:[0x1b1b1b,0xc68a3a,0xf2e6cc,0x7a4a2a,0xb0b0b0,0xe2b06a,0x3a2a1a,0xffffff],SAY:['ZOOMIES!!','BEST FRIEND!!','*play bow*','Sniff report: excellent','Ball? BALL!','You again! Hi! HI!','Chase me!','I am a rocket','Tail at full speed','Mud is a lifestyle','Who wants to wrestle','Treat check'],
+ FIND:[[/Rickman/i,"Rickman's Run, Holmes Lake Park"],[/Peterson Park|Stransky/i,'Stransky Dog Run, Peterson Park'],[/Bowling Lake/i,'Bowling Lake Dog Run'],[/Roper/i,'Roper Park Dog Run'],[/Oak Lake/i,'Oak Lake Dog Run'],[/Mahoney Dog/i,'Mahoney Dog Run']]};
+function dogFind(){const L=(H.plabels||[]).filter(q=>!/Peterson/.test(q[0]));const out=[];const sp=(H.dogparks||[]).find(q=>Math.hypot(q[0]+4310,q[1]+183)<40);if(sp)out.push({n:'Stransky Dog Run, Peterson Park',x:sp[0],z:-sp[1],r:32});for(const [re,nm] of DOGR.FIND){const l=L.find(q=>re.test(q[0]));if(l&&out.length<6&&!out.some(o=>Math.hypot(o.x-l[1],o.z+l[2])<300))out.push({n:nm,x:l[1],z:-l[2],r:/Rickman/.test(nm)?45:28})}return out}
+function dogMesh(c,s){const g=new THREE.Group(),M=new THREE.MeshLambertMaterial({color:c}),B=(w,h,d,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M);m.position.set(x,y,z);g.add(m);return m};
+  B(.32,.3,.75,0,.45,0);const hd=B(.28,.28,.3,0,.65,-.45);B(.16,.13,.18,0,.6,-.66);const tail=B(.06,.06,.32,0,.62,.45);tail.rotation.x=-.7;const legs=[];for(const sx of[-.11,.11])for(const sz of[-.25,.25])legs.push(B(.08,.32,.08,sx,.16,sz));
+  for(const sx of[-.1,.1]){const e=B(.07,.12,.05,sx,.82,-.42)}g.scale.setScalar(s);g.userData={tail,legs,hd};return g}
+function stepDogRun(now){if(!DOGR.parks){if(!H.plabels)return;DOGR.parks=dogFind()}const t=controls.target,d=camera.position.distanceTo(t);const open=U.uNight.value<.5;
+  for(const P of DOGR.parks){const near=Math.hypot(t.x-P.x,t.z-P.z)<1500&&d<2200;
+    if(!near||!open){if(P.dogs)for(const q of P.dogs)q.g.visible=false;continue}
+    if(!P.dogs){P.dogs=[];const n=mobile?4:7;for(let i=0;i<n;i++){const g=dogMesh(DOGR.COL[(i*3+P.x|0)%DOGR.COL.length],.8+Math.random()*.9);scene.add(g);P.dogs.push({g,a:Math.random()*6.28,r:P.r*(.3+Math.random()*.6),w:(Math.random()<.5?-1:1)*(.5+Math.random()*.8),st:'zoom',t:now+Math.random()*4000,x:P.x,z:P.z,lb:{t:'',sub:'',x:0,y:0,z:0,k:3,pri:950,near:0,far:900}})}}
+    const sc=Math.max(1.6,d/60);
+    P.dogs.forEach((q,i)=>{q.g.visible=true;if(now>q.t){const r=Math.random();q.st=r<.5?'zoom':r<.7?'chase':r<.85?'bow':'sniff';q.t=now+2500+Math.random()*4000;q.say=Math.random()<.45?DOGR.SAY[Math.random()*DOGR.SAY.length|0]:'';if(q.st==='zoom'&&!q.say&&Math.random()<.5)q.say='ZOOMIES!!';q.tg=P.dogs[(i+1+(Math.random()*(P.dogs.length-1)|0))%P.dogs.length]}
+      let px=q.g.position.x,pz=q.g.position.z,nx,nz,run=0;
+      if(q.st==='zoom'){q.a+=q.w*.0045*16;const f=Math.sin(q.a*2)*.35;nx=P.x+Math.cos(q.a)*q.r*(1+f);nz=P.z+Math.sin(q.a)*q.r*.8;run=1}
+      else if(q.st==='chase'&&q.tg){const T=q.tg.g.position;nx=px+(T.x-px)*.06;nz=pz+(T.z-pz)*.06;run=.8}
+      else if(q.st==='sniff'){nx=px+Math.sin(now*.001+i)*.05;nz=pz+Math.cos(now*.0013+i)*.05;run=.1}else{nx=px;nz=pz;run=0}
+      if(!isFinite(nx)||(px===0&&pz===0)){nx=P.x+(Math.random()-.5)*P.r;nz=P.z+(Math.random()-.5)*P.r}
+      const dx=nx-px,dz=nz-pz;if(dx*dx+dz*dz>1e-4)q.g.rotation.y=Math.atan2(-dx,-dz);const bounce=run*Math.abs(Math.sin(now*.025+i))*.25;
+      q.g.position.set(nx,hAt(nx,nz)+bounce*sc,nz);q.g.scale.setScalar(sc*(.8+(i%3)*.25));const u=q.g.userData;u.tail.rotation.y=Math.sin(now*(.03+run*.03)+i)*.8;u.legs.forEach((l,k)=>l.rotation.x=Math.sin(now*.03+k*1.6)*run*.9);u.hd.position.y=q.st==='bow'?.45:q.st==='sniff'?.35:.65;
+      if(q.say){q.lb.t=q.say;q.lb.x=nx;q.lb.y=hAt(nx,nz)+2.2*sc;q.lb.z=nz;lifeLabels.push(q.lb)}});
+    lifeLabels.push({t:P.n,sub:'open sunrise to sunset · dogs with the zoomies',x:P.x,y:hAt(P.x,P.z)+16*sc/2,z:P.z,k:3,pri:1200,near:0,far:3000});ambient=true;dirty=true}}
+// ---- mammoths, Nebraska's state fossil, roam the lot by Morrill Hall and pick goldenrod, the state flower, with their trunks
+const MAM={list:null,gr:[]};
+function mamMesh(){const g=new THREE.Group(),fur=new THREE.MeshLambertMaterial({color:0x6b4a2b}),dk=new THREE.MeshLambertMaterial({color:0x4a3220}),ivory=new THREE.MeshLambertMaterial({color:0xefe6cf});
+  const B=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o};
+  B(2.4,2.4,4,fur,0,3.2,0);B(2.2,1,3.6,dk,0,4.5,.1);const hd=B(1.8,2,1.6,fur,0,4.2,-2.4);B(1.6,.8,1.2,dk,0,5.3,-2.3);const legs=[];for(const sx of[-.75,.75])for(const sz of[-1.3,1.3])legs.push(B(.75,2.2,.75,dk,sx,1.1,sz));
+  for(const s of[-1,1]){const t=new THREE.Mesh(new THREE.TorusGeometry(1.1,.14,6,12,Math.PI*1.1),ivory);t.position.set(s*.6,3.2,-3.1);t.rotation.set(0,Math.PI/2,Math.PI*.95);g.add(t)}
+  const trunk=new THREE.Group();trunk.position.set(0,3.6,-3.2);g.add(trunk);let p=trunk;const seg=[];for(let i=0;i<5;i++){const s=new THREE.Group();s.position.y=i?-.55:0;const m=new THREE.Mesh(new THREE.BoxGeometry(.42-i*.05,.6,.42-i*.05),fur);m.position.y=-.3;s.add(m);p.add(s);seg.push(s);p=s}
+  const fl=new THREE.Mesh(new THREE.ConeGeometry(.35,.9,6),new THREE.MeshLambertMaterial({color:0xf2c200}));fl.position.y=-.7;fl.visible=false;p.add(fl);
+  B(.2,1.6,.2,fur,0,3.6,2.1).rotation.x=.4;g.userData={seg,legs,fl};return g}
+function stepMam(now){const mh=(H.blabels||[]).find(b=>/^Morrill Hall$/.test(b[0]));if(!mh)return;const cx=mh[1]-85,cz=-mh[2]-100,t=controls.target,d=camera.position.distanceTo(t);
+  if(Math.hypot(t.x-cx,t.z-cz)>1800||d>2600){if(MAM.list)for(const m of MAM.list)m.g.visible=false;for(const g of MAM.gr)g.visible=false;return}
+  if(!MAM.list){MAM.list=[];for(let i=0;i<3;i++){const g=mamMesh();g.scale.setScalar(.9+i*.12);scene.add(g);MAM.list.push({g,x:cx+(i-1)*40,z:cz+(i%2)*6,st:'walk',t:now+i*2500,tx:cx,tz:cz,lb:{t:'Columbian mammoth',sub:'Nebraska\'s state fossil',x:0,y:0,z:0,k:3,pri:1300,near:0,far:2600}})}
+    for(let k=0;k<10;k++){const x=cx-95+k*21,z=cz+(k%2?20:-22),gr=new THREE.Group();for(let s=0;s<5;s++){const c=new THREE.Mesh(new THREE.ConeGeometry(.35,1.2,5),new THREE.MeshLambertMaterial({color:0xf2c200}));c.position.set((s%3-1)*.5,.9,(s>2?.5:-.3));const st=new THREE.Mesh(new THREE.BoxGeometry(.07,.8,.07),new THREE.MeshLambertMaterial({color:0x4a7a2a}));st.position.copy(c.position);st.position.y=.3;gr.add(c,st)}gr.position.set(x,hAt(x,z),z);gr.userData={back:0};scene.add(gr);MAM.gr.push(gr)}}
+  for(const gr of MAM.gr){gr.visible=now>gr.userData.back}
+  const dtm=Math.min(.1,(now-(MAM.lt||now))/1000);MAM.lt=now;MAM.list.forEach((m,i)=>{m.g.visible=true;const u=m.g.userData;
+    if(m.st==='walk'){if(!m.goal||now>m.t){const free=MAM.gr.filter(g=>g.visible);m.goal=free.length?free[Math.random()*free.length|0]:null;m.t=now+60000}
+      if(m.goal){const gx=m.goal.position.x,gz=m.goal.position.z,dx=gx-m.x,dz=gz-m.z,dd=Math.hypot(dx,dz);if(dd<6.5){m.st='pick';m.t=now;}else{const sp=Math.min(dd,2.2*dtm*1.0);m.x+=dx/dd*sp;m.z+=dz/dd*sp;m.g.rotation.y=Math.atan2(-dx,-dz)}}
+      u.legs.forEach((l,k)=>l.rotation.x=Math.sin(now*.004+k*1.6)*.35);u.seg.forEach((s,k)=>s.rotation.x=Math.sin(now*.002+k)*.12);u.fl.visible=false;m.lb.sub='Nebraska\'s state fossil, looking for goldenrod'}
+    else{const e=(now-m.t)/1000;u.legs.forEach(l=>l.rotation.x=0);const dn=e<1.5?e/1.5:e<3?1:Math.max(0,1-(e-3)/1.5);u.seg.forEach((s,k)=>s.rotation.x=dn*(k?.28:-.35)+(e>3?-dn*.2:0));
+      if(e>1.5&&m.goal&&m.goal.visible){m.goal.userData.back=now+45000;u.fl.visible=true}if(e>4.5){m.st='walk';m.goal=null;u.fl.visible=false}m.lb.sub='picking goldenrod, the state flower'}
+    m.g.position.set(m.x,hAt(m.x,m.z),m.z);m.lb.x=m.x;m.lb.y=hAt(m.x,m.z)+9*m.g.scale.x;m.lb.z=m.z;if(i===0||d<900)lifeLabels.push(m.lb)});ambient=true;dirty=true}
