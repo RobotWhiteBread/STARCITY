@@ -574,3 +574,30 @@ function stepMam(now){const mh=(H.blabels||[]).find(b=>/^Morrill Hall$/.test(b[0
     else{const e=(now-m.t)/1000;u.legs.forEach(l=>l.rotation.x=0);const dn=e<1.5?e/1.5:e<3?1:Math.max(0,1-(e-3)/1.5);u.seg.forEach((s,k)=>s.rotation.x=dn*(k?.28:-.35)+(e>3?-dn*.2:0));
       if(e>1.5&&m.goal&&m.goal.visible){m.goal.userData.back=now+45000;u.fl.visible=true}if(e>4.5){m.st='walk';m.goal=null;u.fl.visible=false}m.lb.sub='picking goldenrod, the state flower'}
     m.g.position.set(m.x,hAt(m.x,m.z),m.z);m.lb.x=m.x;m.lb.y=hAt(m.x,m.z)+9*m.g.scale.x;m.lb.z=m.z;if(i===0||d<900)lifeLabels.push(m.lb)});ambient=true;dirty=true}
+// ---- farmers markets: Lincoln's in-city markets, from the markets' own listings and UNL Extension's Buy Fresh Buy Local guide (2026 season)
+const FM={L:[
+ {n:"Haymarket Farmers' Market",x:-5990,z:-4960,d:6,when:'Saturdays 8 a.m. to noon',wk:'Sat 8 to noon',s:[5,2],e:[10,10],where:'7th and P Streets in the Haymarket, rain or shine',tents:22},
+ {n:"Sunday Farmers' Market at College View",x:-993,z:-285,rot:Math.PI/2,d:0,when:'Sundays 10 a.m. to 2 p.m.',wk:'Sun 10 to 2',s:[4,26],e:[10,25],where:'4801 Prescott Avenue, producers only, rain or shine',tents:12},
+ {n:"Hub Farmers' Market",x:-4510,z:-4975,d:3,when:'Wednesdays 5 to 7 p.m.',wk:'Wed 5 to 7 p.m.',s:[5,6],e:[9,30],where:'Union Plaza and the Jayne Snyder Trails Center, on the Billy Wolff Trail',tents:9},
+ {n:'East Campus Discovery Days and Farmers Market',x:-2110,z:-6860,d:-1,wk:'3 summer Saturdays',when:'three Saturdays, 10 a.m. to 1 p.m. (June 13, July 11, August 8 in 2026)',s:[6,13],e:[8,8],where:'East Campus Mall, UNL, with science activities for kids',tents:10,dates:['6-13','7-11','8-8']}],g:null,
+ COL:[0xd7263d,0xf46036,0xffffff,0x1b998b,0xc5d86d,0x2e294e,0xe9c46a,0x3a86ff]};
+function fmStatus(m){const n=new Date(),mo=n.getMonth()+1,dy=n.getDate(),v=mo*100+dy,a=m.s[0]*100+m.s[1],b=m.e[0]*100+m.e[1];
+  if(m.dates){if(m.dates.includes(mo+'-'+dy))return 'open today';return v>b||v<a?'season over, back next summer':'next date: '+m.dates.find(t=>{const[p,q]=t.split('-').map(Number);return p*100+q>=v})}
+  if(v<a||v>b)return 'off season, back in '+['','January','February','March','April','May','June','July','August','September','October','November','December'][m.s[0]];return n.getDay()===m.d?'open today':'in season'}
+function fmInit(){const G=new THREE.Group();scene.add(G);FM.g=G;const pole=new THREE.MeshLambertMaterial({color:0xdddddd}),crate=new THREE.MeshLambertMaterial({color:0x9a6a3a}),veg=[0xe63946,0x2a9d8f,0xf4a261,0x8ac926,0x6a4c93].map(c=>new THREE.MeshLambertMaterial({color:c}));
+  for(const m of FM.L){const mg=new THREE.Group();mg.position.set(m.x,hAt(m.x,m.z),m.z);mg.rotation.y=m.rot||0;G.add(mg);m.g=mg;const rows=Math.ceil(m.tents/2);
+    for(let k=0;k<m.tents;k++){const r=k%rows,side=k<rows?-1:1,t=new THREE.Group();t.position.set((r-rows/2)*3.6,0,side*5);mg.add(t);
+      const c=FM.COL[(k*3+m.tents)%FM.COL.length],roof=new THREE.Mesh(new THREE.ConeGeometry(2.3,1.1,4),new THREE.MeshLambertMaterial({color:c}));roof.rotation.y=Math.PI/4;roof.position.y=3;t.add(roof);
+      for(const px of[-1.4,1.4])for(const pz of[-1.4,1.4]){const p=new THREE.Mesh(new THREE.BoxGeometry(.08,2.5,.08),pole);p.position.set(px,1.25,pz);t.add(p)}
+      const tb=new THREE.Mesh(new THREE.BoxGeometry(2.6,.12,1),crate);tb.position.set(0,.9,-side*.9);t.add(tb);for(let v=0;v<4;v++){const b=new THREE.Mesh(new THREE.BoxGeometry(.5,.3,.5),veg[(k+v)%veg.length]);b.position.set(-.9+v*.6,1.1,-side*.9);t.add(b)}}
+    m.shop=[];for(let p=0;p<Math.round(m.tents*1.4);p++){const s=new THREE.Group(),c=FM.COL[(p*5)%FM.COL.length],b=new THREE.Mesh(new THREE.BoxGeometry(.45,1.1,.3),new THREE.MeshLambertMaterial({color:c}));b.position.y=.95;s.add(b);const h=new THREE.Mesh(new THREE.BoxGeometry(.3,.3,.3),new THREE.MeshLambertMaterial({color:[0xf1c27d,0x8d5524,0xe0ac69,0xc68642][p%4]}));h.position.y=1.68;s.add(h);
+      const bag=new THREE.Mesh(new THREE.BoxGeometry(.25,.3,.15),new THREE.MeshLambertMaterial({color:0xd9c7a0}));bag.position.set(.3,.8,0);s.add(bag);mg.add(s);m.shop.push({s,u:Math.random()*rows*3.6-rows*1.8,v:(Math.random()-.5)*3,sp:(Math.random()<.5?-1:1)*(.5+Math.random()*.6),stop:0})}
+    m.lb={t:'🥕 '+m.n.replace(' and Farmers Market','').replace("Sunday Farmers' Market at College View",'College View Sunday Market'),sub:'',x:m.x,y:0,z:m.z,k:3,pri:5200,near:0,far:4500}}}
+function stepFM(now){const t=controls.target,d=camera.position.distanceTo(t);let near=false;for(const m of FM.L)if(Math.hypot(t.x-m.x,t.z-m.z)<3500&&d<5000)near=true;
+  if(!near){if(FM.g)FM.g.visible=false;return}if(!FM.g)fmInit();FM.g.visible=true;const dt=Math.min(.1,(now-(FM.lt||now))/1000);FM.lt=now;
+  const msc=Math.max(1,Math.min(3,d/220));for(const m of FM.L){m.g.scale.setScalar(msc);const st=fmStatus(m),busy=st==='open today'||st==='in season'||/^next/.test(st);const day=U.uNight.value<.5;
+    m.shop.forEach((q,i)=>{q.s.visible=busy&&day&&i<(st==='open today'?99:Math.ceil(m.shop.length*.6));if(!q.s.visible)return;if(q.stop>0)q.stop-=dt;else{q.u+=q.sp*dt;if(Math.random()<dt*.15)q.stop=1+Math.random()*3;const lim=Math.ceil(m.tents/2)*1.8;if(q.u>lim||q.u<-lim)q.sp*=-1}
+      q.s.position.set(q.u,Math.abs(Math.sin(now*.008+i))*(q.stop>0?0:.06),q.v);q.s.rotation.y=q.stop>0?(q.v>0?0:Math.PI):(q.sp>0?-Math.PI/2:Math.PI/2)});
+    m.lb.sub=m.wk+' · '+st.replace('off season, back in ','back in ').replace('season over, back next summer','back next summer');m.lb.y=hAt(m.x,m.z)+Math.max(7,d/30);if(Math.hypot(t.x-m.x,t.z-m.z)<2800)lifeLabels.push(m.lb)}
+  ambient=true;dirty=true}
+function fmOpen(){showCard('Farmers markets in Lincoln',FM.L.map(m=>'🥕 '+m.n+'\n'+m.when+', '+m.where+'. Now: '+fmStatus(m)+'.').join('\n\n')+'\n\nThe Thursday market at Fallbrook is not running in 2026. Dates come from the markets and UNL Extension\'s Buy Fresh Buy Local guide; check with a market before you go.',undefined,undefined,FM.L.map(m=>({label:m.n.replace(/ Farmers.*| and Farmers.*|Sunday /g,'').replace("'s","")||m.n,fn:()=>{flyTo(camTo(m.x,m.z,140,30,32,0),2400)}})));$('cp').style.whiteSpace='pre-line'}
