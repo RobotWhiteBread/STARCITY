@@ -842,13 +842,29 @@ function stepCht(now){if(!CHT.g||!CHT.on)return;for(const l of CHT.lbs)lifeLabel
       // the tree waves: a slow sway that starts when the bird lands and settles again
       if(t.parts){const sw=Math.min(1,h/1.5)*.075*Math.sin(h*2.2),sx=.04*Math.sin(h*1.6+1);for(const m of t.parts){m.rotation.z=sw;m.rotation.x=sx}}
     if(!T.said){T.said=1;const n=CHT.T.length,nx=(T.i+1)%n;showCard('The meadowlark: '+t[0],t[11]+' '+t[12]+' '+Math.round(t[5])+' points · trunk '+t.inch+' inches around · '+t[3]+' feet tall · crown '+t[4]+' feet · measured '+t[6]+' · '+t[9]+'.',-1,{label:'Next: '+CHT.T[nx][0],fn:()=>{T.i=nx;T.said=0;chtLeg()}},[{label:'Stop',fn:()=>{chtStop();hideCard()}},{label:'All champions',fn:()=>chtOpen(0)}])}
-    CHT.blb.t='"'+(h<3?'Here we are!':h<7?'Tweedle-oodle-ee! The '+t[0].toLowerCase()+'!':h<11?Math.round(t[5])+' points, biggest in Nebraska':h<15?'Look, it\'s waving at you':'Tap Next and follow me')+'"';CHT.blb.sub='Western meadowlark, Nebraska\'s state bird'}
+    CHT.blb.t=sleepy()&&h>3?'"Zzz… Champion Tree, No Vacancy"':'"'+(h<3?'Here we are!':h<7?'Tweedle-oodle-ee! The '+t[0].toLowerCase()+'!':h<11?Math.round(t[5])+' points, biggest in Nebraska':h<15?'Look, it\'s waving at you':'Tap Next and follow me')+'"';CHT.blb.sub='Western meadowlark, Nebraska\'s state bird'}
   CHT.blb.x=b.position.x;CHT.blb.y=b.position.y+8;CHT.blb.z=b.position.z;lifeLabels.push(CHT.blb);
   // the rest of the flock: in the air they trail the leader; at a tree they settle across the crown
   if(CHT.flock){const fl=e<1,ry=b.rotation.y,cs=Math.cos(ry),sn=Math.sin(ry),tn=now/1000;for(const f of CHT.flock){const m=f.m;m.visible=b.visible;if(!m.visible)continue;
     if(fl){const bx=f.ox+Math.sin(tn*1.3+f.ph)*1.5,bz=f.oz;m.position.set(b.position.x+bx*cs+bz*sn,b.position.y+f.oy+Math.sin(tn*2+f.ph)*1.2,b.position.z-bx*sn+bz*cs);m.rotation.copy(b.rotation);
       const fp=Math.sin(tn*14+f.ph)*.7;f.w[0].rotation.z=fp;f.w[1].rotation.z=-fp}
-    else{const yb=hAt(t.x,t.z),r=(t.sm||20)*f.pr,ty=yb+(t.hm||15)*f.py,tx=t.x+Math.cos(f.pa)*r,tz=t.z+Math.sin(f.pa)*r;m.position.lerp(new THREE.Vector3(tx,ty,tz),.04);m.rotation.y=f.pa+Math.PI/2+Math.sin(tn*.7+f.ph)*.3;f.w[0].rotation.z=0;f.w[1].rotation.z=0}}}}
+    else{const yb=hAt(t.x,t.z),r=(t.sm||20)*f.pr,ty=yb+(t.hm||15)*f.py,tx=t.x+Math.cos(f.pa)*r,tz=t.z+Math.sin(f.pa)*r,home=new THREE.Vector3(tx,ty,tz),fi=CHT.flock.indexOf(f);
+      if(sleepy()){f.hop=null;m.position.lerp(home,.05);m.rotation.set(0,f.pa+Math.PI/2,0);f.w[0].rotation.z=f.w[1].rotation.z=0;if(fi<2)sleepZ(m.position.x,m.position.z,m.position.y-hAt(m.position.x,m.position.z)+3,fi?'':'Meadowlarks, asleep in the champion',now,fi);continue}
+      // now and then one bird flips over to a nearby tree, backflip or front flip, waits there a moment and flips home again
+      if(!f.hop&&now>(f.nextHop||(f.nextHop=now+9000+Math.random()*26000))){const L=typeof ybTrees==='function'?ybTrees(t.x,t.z,90):[];const near=L.filter(i=>{const d=Math.hypot(TR.X[2*i]-t.x,TR.X[2*i+1]-t.z);return d>18});
+        if(near.length){const i=near[(Math.random()*near.length)|0],x=TR.X[2*i],z=TR.X[2*i+1];f.hop={t0:now,from:m.position.clone(),to:new THREE.Vector3(x,hAt(x,z)+treeH(i)*.85+1,z),dir:Math.random()<.5?1:-1,back:false}}else f.nextHop=now+30000}
+      if(f.hop){const H=f.hop,dur=1700,e=Math.max(0,Math.min(1,(now-H.t0)/dur)),k=e*e*(3-2*e);m.position.copy(H.from).lerp(H.to,k);m.position.y+=Math.sin(Math.PI*e)*12;
+        m.rotation.y=Math.atan2(H.to.x-H.from.x,H.to.z-H.from.z);m.rotation.x=e>0&&e<1?H.dir*-6.2832*k:0;const fp=e>0&&e<1?Math.sin(tn*16)*.8:0;f.w[0].rotation.z=fp;f.w[1].rotation.z=-fp;
+        if(e>0&&e<1){f.lb=f.lb||{t:'',x:0,y:0,z:0,k:3,pri:900,near:0,far:2500};f.lb.t=H.dir>0?'Backflip!':'Front flip!';f.lb.x=m.position.x;f.lb.y=m.position.y+6;f.lb.z=m.position.z;lifeLabels.push(f.lb)}
+        if(e>=1){if(!H.back)f.hop={t0:now+2500+Math.random()*3500,from:H.to.clone(),to:home,dir:-H.dir,back:true};else{f.hop=null;f.nextHop=now+14000+Math.random()*30000;m.rotation.x=0}}continue}
+      m.position.lerp(home,.04);m.rotation.set(0,f.pa+Math.PI/2+Math.sin(tn*.7+f.ph)*.3,0);f.w[0].rotation.z=0;f.w[1].rotation.z=0}}}
+  // at night the flock is asleep at the champion, and a little motel sign says so
+  if(!CHT.sign){const cv=document.createElement('canvas');cv.width=512;cv.height=320;const q=cv.getContext('2d');q.fillStyle='#14161c';q.fillRect(0,0,512,320);q.strokeStyle='#e9b949';q.lineWidth=8;q.strokeRect(8,8,496,304);
+    q.fillStyle='#f4e7c3';q.textAlign='center';q.font='800 54px system-ui,Arial,sans-serif';q.fillText('CHAMPION TREE',256,110);q.shadowColor='#ff2d55';q.shadowBlur=24;q.fillStyle='#ff4d6d';q.font='900 70px system-ui,Arial,sans-serif';q.fillText('NO VACANCY',256,225);
+    const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const g=new THREE.Group(),bd=new THREE.Mesh(new THREE.PlaneGeometry(26,16),new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide,fog:false}));bd.position.y=22;g.add(bd);
+    const post=new THREE.Mesh(new THREE.BoxGeometry(1,15,1),new THREE.MeshLambertMaterial({color:0x3a3a3a}));post.position.y=7;g.add(post);g.visible=false;scene.add(g);CHT.sign=g}
+  {const sg=CHT.sign,on=!fl0(e)&&sleepy()&&b.visible;if(sg.visible!==on)sg.visible=on;if(on){const r=(t.sm||20)*.75,x=t.x+r,z=t.z+r*.4;sg.position.set(x,hAt(x,z),z);sg.lookAt(camera.position.x,sg.position.y,camera.position.z)}}}
+function fl0(e){return e<1}
 function chtHTML(i){chtSetup();const T=CHT.T,go='<p><button class="btn go2" data-cht="t">Fly with the meadowlark</button> <button class="btn go2" data-cht="m">Show them on the map</button></p>';
   if(i===0)return '<p>The Nebraska Forest Service keeps a register of the biggest tree of each kind in the state. Eight of them stand in Lincoln.</p>'+go
    +'<div class="tw"><table><tr><th>Tree</th><th>Where</th><th>Points</th><th>Trunk around</th><th>Height</th><th>Measured</th></tr>'+[...T].sort((a,b)=>b[5]-a[5]).map(t=>`<tr><td><b>${t[0]}</b><br><i class="psub">${t[1]}</i></td><td>${t[9]}</td><td><b>${Math.round(t[5])}</b></td><td>${t.inch} in</td><td>${t[3]} ft</td><td>${t[6]}</td></tr>`).join('')+'</table></div>'
