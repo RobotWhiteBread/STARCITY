@@ -131,10 +131,10 @@ const TMENU=[
  {k:'Tours',intro:'Sit back and watch. Press Stop (where the Tour button was) to end one.',it:[
   ['The short tour','About 40 seconds: the Capitol, Memorial Stadium, the arena and the Devaney Center.',()=>startTour()],
   ['Fly through Lincoln','About two minutes over every place in the bottom row, from downtown to Holmes Lake to the zoo, with a line about each.',()=>flyThrough()],
-  'See it at night','The view from the Capitol tower','Champion trees','Fall color','Watch Lincoln grow, 1867 to today','Follow a raindrop','The sky tonight over Lincoln','Lake monsters and Sasquatch']},
+  'See it at night','The view from the Capitol tower','Champion trees','Fall color','Watch Lincoln grow, 1867 to today','Follow a raindrop','The sky tonight over Lincoln','Lake monsters and Sasquatch','Lost and found pets']},
  {k:'Data and graphs',intro:'Each one colors the map, opens charts and tables, and explains where the numbers come from.',it:[
   'The numbers for where you are looking','Everything about one spot','Potholes','Lead water service lines','Public safety, handled with care','Crashes, 2024 to mid 2026',
-  'Your dollar: rent, sales tax, who decides','Value over time','Compare areas side by side','Cut any data by area','How Lincoln has voted','Follow the money in Lincoln politics','The Unicameral','Who represents you']},
+  'Your dollar: rent, sales tax, who decides','Value over time','Compare areas side by side','Pivot tables','Strange but true','Cut any data by area','How Lincoln has voted','Follow the money in Lincoln politics','The Unicameral','Who represents you']},
  {k:'How it works',intro:'',it:[]}];
 const TMHOW='<p><b>Move around.</b> Drag to turn, pinch or scroll to zoom, two fingers to tilt. Zoom all the way out for a flat map from above. The buttons on the right do the same.</p>'+
  '<p><b>Tap anything.</b> Buildings, trees, buses, the statue, even the cat. A card tells you what it is and offers deeper views.</p>'+
@@ -161,3 +161,73 @@ function stepMPP(now){const S=LM.stadium;if(!S)return;const d=camera.position.di
   if(now>MPP.next&&MPP.ri<0){if(Math.random()<.4){MPP.ri=0;MPP.rt=now}else{MPP.t=MPP.SAY[Math.random()*MPP.SAY.length|0];MPP.sub=MPP.SUB[Math.random()*MPP.SUB.length|0];MPP.until=now+4500}MPP.next=now+22000+Math.random()*30000}
   if(MPP.ri>=0){const i=Math.floor((now-MPP.rt)/2600);if(i>=MPP.REC.length){MPP.ri=-1;MPP.next=now+22000+Math.random()*30000}else{MPP.t=MPP.REC[i];MPP.sub=(i<MPP.REC.length-2?'meat pie, step '+(i+1)+' of '+(MPP.REC.length-2)+' · ':'')+MPP.SEC[i%MPP.SEC.length];MPP.until=now+300}}
   if(now<MPP.until){const b=(now/260|0)%2;lifeLabels.push({t:MPP.t,sub:MPP.sub,x:S[0],y:95+b*4,z:S[1],k:3,pri:1100,near:0,far:6000})}}
+// ---- pivot tables: pick how to cut the city (rows) and every measure becomes a column; sort, switch to rates, map a column, download CSV
+const PVM=[['pot','Potholes','requests 2018–26',1],['fix','All fix-it requests','2018–26',1],['crash','Crashes','2024–mid 2026',1],['lead','Lead or galvanized lines','known so far',1],
+ ['homes','Homes','residential parcels',0],['com','Business parcels','commercial',0],['val','Median home value','assessed',2],['yr','Median year built','homes',3],['km2','Area','km²',4]];
+const PV={geo:'vp',mode:'n',sort:'pot',desc:true,cache:{}};
+function pvArea(p){let s=0;for(let i=0,j=p.length-2;i<p.length;j=i,i+=2)s+=(p[j]-p[i])*(p[j+1]+p[i+1]);return Math.abs(s/2)/1e6}
+function pvIdx(A,n,X,Z){const cs=600,G=new Map(),out=new Int32Array(n).fill(-1);A.forEach((a,ai)=>{let x0=1e9,z0=1e9,x1=-1e9,z1=-1e9;for(const p of a.p)for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);z0=Math.min(z0,p[i+1]);z1=Math.max(z1,p[i+1])}a.bb=[x0,z0,x1,z1];
+    for(let gx=Math.floor(x0/cs);gx<=Math.floor(x1/cs);gx++)for(let gz=Math.floor(z0/cs);gz<=Math.floor(z1/cs);gz++){const k=gx*100000+gz;(G.get(k)||G.set(k,[]).get(k)).push(ai)}});
+  const inP=(p,x,z)=>{let c=false;for(let i=0,j=p.length-2;i<p.length;j=i,i+=2){const xi=p[i],zi=p[i+1],xj=p[j],zj=p[j+1];if((zi>z)!=(zj>z)&&x<(xj-xi)*(z-zi)/(zj-zi)+xi)c=!c}return c};
+  for(let k=0;k<n;k++){const x=X(k),z=Z(k),L=G.get(Math.floor(x/cs)*100000+Math.floor(z/cs));if(!L)continue;for(const ai of L){const b=A[ai].bb;if(x<b[0]||x>b[2]||z<b[1]||z>b[3])continue;if(A[ai].p.some(p=>inP(p,x,z))){out[k]=ai;break}}}return out}
+function pvBuild(geo){if(PV.cache[geo])return Promise.resolve(PV.cache[geo]);return Promise.all([byAreas(geo),ldLoad(),upLoad(),crashLoad(),vpaLoad()]).then(([d])=>{const kind=geo==='quad'?'vp':geo,A=d&&d[kind];if(!A)return null;
+  const R=A.map(a=>({id:a.id,a,pot:0,fix:0,crash:0,lead:0,homes:0,com:0,vals:[],yrs:[],km2:a.km2||pvArea(a.p[0]||[])}));const add=(idx,w,key)=>{for(let k=0;k<idx.length;k++)if(idx[k]>=0)R[idx[k]][key]+=w?w(k):1};
+  if(UP.d){const P=UP.d.pts,g=UP.d.street_groups.indexOf('Potholes'),ix=pvIdx(A,P.length,k=>(P[k][0]-H.lon0)*KXm,k=>-(P[k][1]-H.lat0)*KYm);for(let k=0;k<P.length;k++)if(ix[k]>=0){R[ix[k]].fix+=P[k][3];if(P[k][2]===g)R[ix[k]].pot+=P[k][3]}}
+  if(CRASH.d){const X=CRASH.d.X;add(pvIdx(A,CRASH.d.n,k=>X[2*k],k=>X[2*k+1]),null,'crash')}
+  if(LD.d){const L=LD.d;add(pvIdx(A,L.n,k=>L.xz[2*k]*2,k=>L.xz[2*k+1]*2),null,'lead')}
+  if(VPA.d){const V=VPA.d,ix=pvIdx(A,V.n,k=>V.x[k],k=>V.z[k]);for(let k=0;k<V.n;k++){const r=R[ix[k]];if(!r)continue;if(V.cls[k]===0){r.homes++;r.vals.push(V.v[k]);if(V.y[k]>1800)r.yrs.push(V.y[k])}else if(V.cls[k]===2)r.com++}}
+  const med=a=>{if(!a.length)return null;a.sort((x,y)=>x-y);return a[a.length>>1]};for(const r of R){r.val=med(r.vals);r.yr=med(r.yrs);delete r.vals;delete r.yrs}return PV.cache[geo]=R})}
+function pvVal(r,k){const m=PVM.find(q=>q[0]===k),v=r[k];if(v==null)return null;if(m[3]!==1&&m[3]!==0)return v;if(PV.mode==='km'&&r.km2>.01)return v/r.km2;if(PV.mode==='h'&&k!=='homes')return r.homes>=20?100*v/r.homes:null;return v}
+function pvFmt(k,v){if(v==null)return '—';if(k==='val')return '$'+Math.round(v/1000)+'k';if(k==='yr')return String(v);if(k==='km2')return v.toFixed(1);return PV.mode==='n'?psN(v):v.toFixed(v<10?1:0)}
+function pvHTML(tab){if(tab===1)return stHTML();const G=BYG.filter(g=>g[0]!=='quad'),R=PV.cache[PV.geo];
+  const pick=(nm,opts,cur)=>'<div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px">'+opts.map(([k,l])=>`<button class="btn${k===cur?' on':''}" data-pv="${nm}:${k}" style="padding:5px 10px;font-size:12.5px">${l}</button>`).join('')+'</div>';
+  let h='<p>Pick the rows, then tap a column header to sort. Tap a row to map that area and column.</p><b style="font-size:12px;opacity:.7">ROWS</b>'+pick('geo',G,PV.geo)+'<b style="font-size:12px;opacity:.7">VALUES</b>'+pick('mode',[['n','Counts'],['km','Per km²'],['h','Per 100 homes']],PV.mode);
+  if(!R)return h+'<p>Counting… this takes a few seconds the first time.</p>';
+  const rows=R.filter(r=>r.homes||r.pot||r.crash).slice().sort((a,b)=>{const x=pvVal(a,PV.sort),y=pvVal(b,PV.sort);return (x==null)-(y==null)||(PV.desc?y-x:x-y)});
+  h+='<div style="overflow:auto;max-height:52vh"><table style="border-collapse:collapse;font-size:12px;width:100%"><tr>'+['<th style="text-align:left;position:sticky;top:0;background:#1b1e24;padding:4px">Area</th>'].concat(PVM.map(([k,l,s])=>`<th data-pv="sort:${k}" style="cursor:pointer;position:sticky;top:0;background:#1b1e24;padding:4px;text-align:right;${k===PV.sort?'color:#e8b84a':''}">${l}${k===PV.sort?(PV.desc?' ▼':' ▲'):''}<br><span style="font-weight:400;opacity:.6">${s}</span></th>`)).join('')+'</tr>';
+  for(const r of rows)h+=`<tr data-pv="row:${encodeURIComponent(r.id)}" style="cursor:pointer;border-top:1px solid #ffffff14"><td style="padding:4px">${r.id}</td>`+PVM.map(([k])=>`<td style="text-align:right;padding:4px">${pvFmt(k,pvVal(r,k))}</td>`).join('')+'</tr>';
+  return h+'</table></div><p style="font-size:12px;opacity:.7">'+rows.length+' areas. "Per 100 homes" is left blank for areas with under 20 homes. Medians come from the county assessor\'s parcels. Counts are points inside each boundary; points outside every boundary are left out.</p><button class="btn go2" data-pv="csv:1">Download this table (CSV)</button>'}
+function pvCSV(){const R=PV.cache[PV.geo];if(!R)return;const L=[['area'].concat(PVM.map(m=>m[1]+' ('+m[2]+')'))];for(const r of R)L.push([r.id].concat(PVM.map(([k])=>{const v=pvVal(r,k);return v==null?'':(+v).toFixed(2)})));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([L.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}));a.download='starcity-pivot-'+PV.geo+'-'+PV.mode+'.csv';a.click()}
+function pvMap(id){const R=PV.cache[PV.geo],k=PV.sort,m=PVM.find(q=>q[0]===k),gl=BYG.find(g=>g[0]===PV.geo)[1],M=new Map(R.map(r=>[String(r.id),pvVal(r,k)]));closeSheet();
+  arShow(PV.geo,i=>M.get(String(i))||null,{tall:700,dist:16000,labels:a=>String(a.id)===String(id)?String(a.id):'',title:m[1]+' by '+gl.toLowerCase(),text:'Taller and redder means higher. This is the column you sorted in the pivot table.',
+    back:{label:'Back to the table',fn:()=>pvOpen(0)},card:a=>showCard(gl+' '+a.id,m[1]+': '+pvFmt(k,M.get(String(a.id))),-1,{label:'Back to the table',fn:()=>pvOpen(0)})}).then(()=>{const a=AR.d[PV.geo].find(q=>String(q.id)===String(id));if(a)flyTo(camTo(a.c[0],a.c[1],3500,160,44),1800)})}
+const PVS={title:'Pivot <i>tables</i>',tabs:['Build a table','Strange but true'],html:pvHTML,click:e=>{const b=e.target.closest('[data-pv]');if(!b)return;const [k,v]=b.dataset.pv.split(':');
+  if(k==='geo'){PV.geo=v;pvOpen(0);return}if(k==='mode'){PV.mode=v;openSheet(PVS,0);return}if(k==='sort'){if(PV.sort===v)PV.desc=!PV.desc;else{PV.sort=v;PV.desc=true}openSheet(PVS,0);return}
+  if(k==='csv'){pvCSV();return}if(k==='row'){pvMap(decodeURIComponent(v));return}if(k==='st'){stMap(+v);return}}};
+function pvOpen(t){openSheet(PVS,t||0);const g=t===1?'vp':PV.geo;if(!PV.cache[g])pvBuild(g).then(()=>{if(sheet===PVS)openSheet(PVS,t||0)})}
+// ---- strange but true: across Lincoln's precincts, pairs of measures that move together. Rank correlation, a scatter, and the likely third factor.
+const STM=[['pot','Potholes per 100 homes'],['crash','Crashes per 100 homes'],['lead','Lead lines per 100 homes'],['val','Median home value'],['yr','Median year built'],['dens','Homes per km²'],['comS','Business parcels per 100 homes'],['fixO','Non-pothole fix-it requests per 100 homes']];
+const STWHY={'pot|yr':['The older the houses, the more potholes','Older neighborhoods have older streets, and old pavement cracks. The houses did not do it.'],
+ 'lead|yr':['Old houses, old pipes','Lead service lines were laid before the 1950s, so they sit under the oldest blocks. This one is real cause and effect.'],
+ 'lead|pot':['Where the lead pipes are, the potholes are','Pipes do not make potholes. Both mark the oldest parts of town.'],
+ 'dens|pot':['Crowded blocks, cratered streets','More homes per block means more street per household to report, and the dense blocks are the old ones.'],
+ 'crash|comS':['Shops and crashes go together','Businesses sit on busy roads, and busy roads are where crashes happen.'],
+ 'val|yr':['Newer homes, higher values','New houses are bigger and assessed higher; the city grew outward, so newer also means farther out.'],
+ 'pot|val':['Pricier blocks report fewer potholes','Newer, pricier subdivisions have newer streets. Money does not fill potholes; age explains both.'],
+ 'fixO|pot':['Neighbors who report one thing report everything','Some blocks call the city more for all kinds of fixes. Reporting habits drive both columns.'],
+ 'crash|dens':['More neighbors, more fender benders','More people and driveways per block means more cars in the same space.'],
+ 'crash|fixO':['Crash corners call the city more','Busy streets get both: more crashes, and more signals, signs and road damage to report.'],
+ 'pot|crash':['Potholes and crashes ride together','Both pile up on the busiest, oldest streets. Traffic is the third factor.'],
+ 'crash|val':['Lower-value blocks see more crashes','Lower-value homes tend to sit near arterials and businesses, where the traffic is.'],
+ 'yr|fixO':['Older blocks need more fixing','Old sidewalks, old signs and old trees mean more for the city to repair.'],
+ 'lead|val':['Lead lines and lower values','Both trace back to the age of the block, not to each other.']};
+function stRank(a){const o=a.map((v,i)=>[v,i]).sort((x,y)=>x[0]-y[0]),r=new Array(a.length);o.forEach((p,i)=>r[p[1]]=i);return r}
+function stCorr(x,y){const n=x.length,mx=x.reduce((s,v)=>s+v,0)/n,my=y.reduce((s,v)=>s+v,0)/n;let a=0,b=0,c=0;for(let i=0;i<n;i++){a+=(x[i]-mx)*(y[i]-my);b+=(x[i]-mx)**2;c+=(y[i]-my)**2}return a/Math.sqrt(b*c)}
+function stVals(r,k){if(r.homes<40)return null;if(k==='val'||k==='yr')return r[k];if(k==='dens')return r.km2>.05?r.homes/r.km2:null;if(k==='comS')return 100*r.com/r.homes;if(k==='fixO')return 100*(r.fix-r.pot)/r.homes;return 100*r[k]/r.homes}
+function stPairs(){const R=PV.cache.vp;if(!R)return null;if(PV.st)return PV.st;const out=[];for(let i=0;i<STM.length;i++)for(let j=i+1;j<STM.length;j++){const X=[],Y=[],ids=[];for(const r of R){const a=stVals(r,STM[i][0]),b=stVals(r,STM[j][0]);if(a==null||b==null)continue;X.push(a);Y.push(b);ids.push(r.id)}
+  if(X.length<30)continue;const rho=stCorr(stRank(X),stRank(Y));out.push({i,j,rho,X,Y,ids,n:X.length})}return PV.st=out.sort((a,b)=>Math.abs(b.rho)-Math.abs(a.rho)).slice(0,8)}
+function stSVG(P){const p={i:P.i,j:P.j,X:stRank(P.X),Y:stRank(P.Y)},W=300,Hh=170,mx=0,Mx=P.n-1,my=0,My=P.n-1,q=(v,a,b,s)=>b>a?(v-a)/(b-a)*s:s/2;
+  return `<svg viewBox="0 0 ${W} ${Hh+18}" style="width:100%;max-width:340px;display:block;margin:6px 0"><rect x="0" y="0" width="${W}" height="${Hh}" fill="#ffffff08"/>`+p.X.map((x,i)=>`<circle cx="${(6+q(x,mx,Mx,W-12)).toFixed(1)}" cy="${(Hh-6-q(p.Y[i],my,My,Hh-12)).toFixed(1)}" r="2.6" fill="#e8b84a" fill-opacity=".7"/>`).join('')+
+   `<text x="2" y="${Hh+13}" font-size="10" fill="#aaa">→ ${STM[p.i][1]} (rank, low to high)</text><text x="${W-2}" y="11" font-size="10" fill="#aaa" text-anchor="end">↑ ${STM[p.j][1]} (rank)</text></svg>`}
+function stHTML(){const P=stPairs();if(!P)return '<p>Counting every precinct… a few seconds.</p>';
+  return '<p>Lincoln\'s precincts, compared on everything at once. These are the pairs that move together most. Each dot is a precinct with at least 40 homes, placed by its rank on each measure. <b>Moving together is not causing.</b> Each card names the likely third factor.</p>'+P.map((p,k)=>{const key1=STM[p.i][0]+'|'+STM[p.j][0],key2=STM[p.j][0]+'|'+STM[p.i][0],w=STWHY[key1]||STWHY[key2]||[STM[p.i][1]+' and '+STM[p.j][1].toLowerCase()+' travel together','Likely a third factor drives both, most often how old and how dense the neighborhood is.'];
+   const s=Math.abs(p.rho)>.6?'strongly':Math.abs(p.rho)>.35?'clearly':'loosely';
+   return `<div style="border:1px solid #ffffff1c;border-radius:10px;padding:10px 12px;margin:10px 0"><b>${w[0]}</b><div style="font-size:12.5px;opacity:.8">${STM[p.i][1]} and ${STM[p.j][1].toLowerCase()}: ${s} ${p.rho>0?'up together':'opposite ways'} (rank correlation ${p.rho.toFixed(2)}, ${p.n} precincts).</div>${stSVG(p)}<div style="font-size:13px">${w[1]}</div><button class="btn go2" data-pv="st:${k}" style="margin-top:6px">Map both</button></div>`}).join('')}
+function stMap(k){const p=stPairs()[k];if(!p)return;const R=new Map(PV.cache.vp.map(r=>[String(r.id),r])),a=STM[p.i][0],b=STM[p.j][0],ra=stRank(p.X),rb=stRank(p.Y),M=new Map(),n=p.n;p.ids.forEach((id,i)=>M.set(String(id),{a:ra[i]/n,b:rb[i]/n}));closeSheet();
+  arShow('vp',id=>{const v=M.get(String(id));return v?1+v.a*100:null},{tall:700,dist:16000,labels:()=>'',title:STM[p.i][1]+', with '+STM[p.j][1].toLowerCase(),text:'Height is the precinct\'s rank on '+STM[p.i][1].toLowerCase()+'. Tap one to see both ranks. Where tall precincts also rank high on the second measure, the pair holds.',
+    back:{label:'Strange but true',fn:()=>pvOpen(1)},card:A=>{const v=M.get(String(A.id));showCard('Precinct '+A.id,v?`${STM[p.i][1]}: higher than ${Math.round(v.a*100)}% of precincts. ${STM[p.j][1]}: higher than ${Math.round(v.b*100)}%.`:'Too few homes to rank.',-1,{label:'Strange but true',fn:()=>pvOpen(1)})}})}
+// ---- lost and found pets: the Capital Humane Society runs its own map
+const LFL=[{href:'https://capitalhumanesociety.github.io/',label:'Lost and found pet map ↗'},{href:'https://www.capitalhumanesociety.org/',label:'Capital Humane Society ↗'},{href:'https://www.lincoln.ne.gov/City/Departments/Health-Department/Animal-Control',label:'Lincoln Animal Control ↗'}];
+function lfOpen(){const L=(H.blabels||[]).concat(H.plabels||[]).find(b=>/humane/i.test(b[0]));if(L)flyTo(camTo(L[1],-L[2],420,200,30,6),2200);
+  showCard('Lost or found a pet?','The Capital Humane Society keeps a live map of animals reported lost or found to the shelter, with filters by species. Reports made to Lincoln Animal Control are separate, so check both.',-1,null,LFL)}
