@@ -168,11 +168,11 @@ function vbKidsInit(wx,wz){const g=new THREE.Group(),cx=wx+26,cz=wz,R=4.2,J=[0xb
     kid.position.set(cx+Math.cos(a)*R,0,cz+Math.sin(a)*R);kid.rotation.y=Math.atan2(cx-kid.position.x,cz-kid.position.z);kid.scale.setScalar(1.8);g.add(kid);VBK.kids.push({kid,body,arms})}
   const ball=new THREE.Mesh(new THREE.SphereGeometry(.13,12,10),new THREE.MeshLambertMaterial({color:0xfaf6e8}));ball.scale.setScalar(1.8);g.add(ball);VBK.ball=ball;
   g.userData.card=()=>showCard('Passing drill','A few little kids working on their passing in front of the All-American wall: platform out, bend the knees, bump it to a teammate. Part of the map, not real players. Somebody on this wall started out just like this.',-1);
-  for(const c of g.children)c.userData.card=g.userData.card;scene.add(g);pickables.push(g);VBK.g=g;VBK.c=[cx,cz];VBK.lb={t:'Passing drill',sub:'bump, bump, set',x:cx,y:0,z:cz,k:3,pri:600,near:0,far:900}}
+  for(const c of g.children)c.userData.card=g.userData.card;scene.add(g);pickables.push(g);VBK.g=g;VBK.c=[cx,cz];VBK.lb={t:'Passing drill',sub:'',x:cx,y:0,z:cz,k:16,pri:300,near:0,far:500}}
 function vbKidsStep(now){const g=VBK.g;if(!g)return;const d=Math.hypot(camera.position.x-VBK.c[0],camera.position.z-VBK.c[1]),on=d<1400;if(g.visible!==on){g.visible=on;dirty=true}if(!on)return;
   const gy=hAt(VBK.c[0],VBK.c[1]);g.position.y=gy;
   // one pass every 1.3 seconds to the kid two spots around the circle, so the ball crosses the middle
   const T=1300;if(!VBK.t0)VBK.t0=now;let e=(now-VBK.t0)/T;if(e>=1){VBK.t0=now;VBK.i=(VBK.i+2)%5;e=0}
   const A=VBK.kids[VBK.i].kid.position,Bp=VBK.kids[(VBK.i+2)%5].kid.position;VBK.ball.position.set(A.x+(Bp.x-A.x)*e,2.1+Math.sin(Math.PI*e)*5.5,A.z+(Bp.z-A.z)*e);
   VBK.kids.forEach((q,k)=>{const recv=k===(VBK.i+2)%5,send=k===VBK.i,dip=recv?Math.max(0,e-.6)/.4:send?Math.max(0,.25-e)/.25:0;q.body.position.y=-.18*dip;q.arms.rotation.x=(recv||send)?.35*dip:-.25;q.body.rotation.x=.12*dip});
-  VBK.lb.y=gy+9;lifeLabels.push(VBK.lb);ambient=true}
+  VBK.lb.y=gy+4.5;if(d<500)lifeLabels.push(VBK.lb);ambient=true}
