@@ -50,7 +50,7 @@ function sgDraw(force){const now=performance.now();if(!force&&now-SG.at<(SG.topi
 function nowTap(){sgUse('now');setLive(true);pulseCard();sgDraw(true)}
 function frontInit(){$('bNow').onclick=nowTap;
   // on a phone the button grid starts folded, so the map shows: Search and Menu stay, and the row of reasons leads everywhere else
-  if(innerWidth<700){$('tools').classList.add('shut');$('bMenu').textContent='Menu ▾';$('bMenu').setAttribute('aria-expanded','false')}
+  if(innerWidth<700){$('tools').classList.add('shut');$('bMenu').setAttribute('aria-expanded','false');menuLabel()}
   $('bNow').classList.toggle('on',liveOn);sgDraw(true);setInterval(()=>sgDraw(false),15000)}
 // ---- Devaney Center: the names in order, DBK Universe on top, with lights, roses and fireworks around the building
 const FEST={on:false,t0:0,grp:null,beams:[],roses:null,sparks:null,rs:null,ss:null,burst:0};const festLabels=[];

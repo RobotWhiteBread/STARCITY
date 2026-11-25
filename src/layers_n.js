@@ -63,20 +63,20 @@ function trayItems(){const a=[];for(const L of dlOn)if(!(CORE.cl&&L.id==='closur
   if(BX.route!=null&&H.bus)a.push(['Route '+H.bus.routes[BX.route][0]+' path',()=>busLine(null)]);return a}
 function trayDraw(force){if(TRAY.mute)return;const now=performance.now();if(!force&&now-TRAY.at<400)return;TRAY.at=now;const T=$('tools'),it=trayItems(),shut=T.classList.contains('shut'),nb=T.querySelectorAll('.btn.sel.on').length,key=it.map(q=>q[0]).join('|')+'#'+shut+'#'+nb;if(key===TRAY.key)return;TRAY.key=key;
   const host=$('tray');host.textContent='';for(const [t,off] of it){const b=document.createElement('button');b.className='btn on';b.textContent=t+'  ×';b.setAttribute('aria-label','Showing '+t+'. Tap to turn it off');b.onclick=e=>{e.stopPropagation();lastInput=performance.now();off();trayDraw(true)};host.appendChild(b)}
-  const n=it.length+nb;$('bMenu').textContent=shut?(n?'Menu · '+n+' on ▾':'Menu ▾'):'Menu ▴'}
+  menuLabel(it.length+nb)}
 function trayInit(){const T=$('tools'),t=document.createElement('div');t.id='tray';t.setAttribute('role','group');t.setAttribute('aria-label','Switched on now');T.appendChild(t);
   T.addEventListener('click',e=>{const b=e.target.closest('.btn');if(!b||b.parentNode!==T||b.id==='bMenu'||b.id==='bMore'){setTimeout(()=>trayDraw(true),0);return}b.classList.add('sel');lastInput=performance.now();
-    if(b.id==='bTraf'){CORE.user.tr=true;CORE.tr=false}if(b.id==='bWx'){CORE.user.wx=true;CORE.wx=false}
-    setTimeout(()=>{if(b.classList.contains('on')&&PANOUT[b.id])panOut(PANOUT[b.id]);if(innerWidth<700&&!T.classList.contains('shut')&&b.id!=='bFind')$('bMenu').click();trayDraw(true)},420)})}
+    if(b.id==='bTraf'){CORE.user.tr=true;CORE.tr=false;b.classList.remove('auto')}if(b.id==='bWx'){CORE.user.wx=true;CORE.wx=false;b.classList.remove('auto')}
+    setTimeout(()=>{if(b.classList.contains('on')&&PANOUT[b.id])panOut(PANOUT[b.id]);trayDraw(true)},420)})}
 // ---- the core view. From bird's eye the map always shows right now: the weather as it is and traffic for this hour, with street closures read live on the website.
 // Zoom in and they step aside, unless you switched them on yourself.
 const CORE={on:false,wx:false,tr:false,cl:false,user:{},told:false,top:null,t0:0};
 function coreSet(on){if(on===CORE.on)return;CORE.on=on;
-  if(on){if(!wxOn&&!CORE.user.wx){CORE.wx=true;wxOn=true;$('bWx').classList.add('on');loadWeather();loadAlerts();loadRadar();applyWx();drawOverlay();placeStorms()}
-    if(!trafOn&&!CORE.user.tr){CORE.tr=true;trafOn=true;$('bTraf').classList.add('on');if(!traf)buildTraffic();traf.mesh.visible=true}
+  if(on){if(!wxOn&&!CORE.user.wx){CORE.wx=true;wxOn=true;$('bWx').classList.add('on','auto');loadWeather();loadAlerts();loadRadar();applyWx();drawOverlay();placeStorms()}
+    if(!trafOn&&!CORE.user.tr){CORE.tr=true;trafOn=true;$('bTraf').classList.add('on','auto');if(!traf)buildTraffic();traf.mesh.visible=true}
     if(hosted()&&!CORE.user.cl){const L=DL.get('closures');if(L&&!L.on){CORE.cl=true;dlSet('closures',true,true)}}
     if(!CORE.told){CORE.told=true;hintShow('Bird\'s eye shows right now: the weather as it is, and traffic as it usually runs at this hour. Zoom in and they step aside.',8000)}}
-  else{if(CORE.wx&&wxOn){wxOn=false;$('bWx').classList.remove('on');if(wxDemo)setDemo(-1);applyWx();drawOverlay();placeStorms()}if(CORE.tr&&trafOn){trafOn=false;$('bTraf').classList.remove('on');if(traf)traf.mesh.visible=false}
+  else{$('bWx').classList.remove('auto');$('bTraf').classList.remove('auto');if(CORE.wx&&wxOn){wxOn=false;$('bWx').classList.remove('on');if(wxDemo)setDemo(-1);applyWx();drawOverlay();placeStorms()}if(CORE.tr&&trafOn){trafOn=false;$('bTraf').classList.remove('on');if(traf)traf.mesh.visible=false}
     if(CORE.cl){const L=DL.get('closures');if(L&&L.on)dlSet('closures',false,true)}CORE.wx=CORE.tr=CORE.cl=false}
   trayDraw(true);dirty=true}
 function coreFrame(now){if(!CORE.t0)CORE.t0=now;if(now-CORE.t0<6000||fly||tour)return;if(walk.on||ride||rideMode||gameOn||codeOn){if(CORE.on)coreSet(false);return}const d=camera.position.distanceTo(controls.target);if(!CORE.on&&d>8500)coreSet(true);else if(CORE.on&&d<5200)coreSet(false);
