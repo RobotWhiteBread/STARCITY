@@ -1,0 +1,14 @@
+# Unicameral roll calls, 109th Legislature (2025-2026), gathered from nebraskalegislature.gov recorded-vote pages
+# (view_votes.php, KeyID 11380-14450) and summarized in the browser; this script shapes the summary for the map.
+import json
+DIST={"Andersen":49,"Arch":14,"Armendariz":18,"Ballard":21,"Bosn":25,"Bostar":29,"Brandt":32,"Cavanaugh, J.":9,"Cavanaugh, M.":6,"Clements":2,"Clouse":37,"Conrad":46,"DeBoer":10,"DeKay":40,"Dorn":30,"Dover":19,"Dungan":26,"Fredrickson":20,"Guereca":7,"Hallstrom":1,"Hansen":16,"Hardin":48,"Holdcroft":36,"Hughes":24,"Hunt":8,"Ibach":44,"Jacobson":42,"Juarez":5,"Kauth":31,"Lippincott":34,"Lonowski":33,"McKinney":11,"Meyer, F.":41,"Meyer, G.":17,"Moser":22,"Murman":38,"Prokop":27,"Quick":35,"Raybould":28,"Riepe":12,"Rountree":3,"Sanders":45,"Sorrentino":39,"Spivey":13,"Storer":43,"Storm":23,"Strommen":47,"von Gillern":4,"Wordekemper":15,"McKeon":41}
+FULL={"Andersen":"Bob Andersen","Arch":"John Arch","Armendariz":"Christy Armendariz","Ballard":"Beau Ballard","Bosn":"Carolyn Bosn","Bostar":"Eliot Bostar","Brandt":"Tom Brandt","Cavanaugh, J.":"John Cavanaugh","Cavanaugh, M.":"Machaela Cavanaugh","Clements":"Robert Clements","Clouse":"Stan Clouse","Conrad":"Danielle Conrad","DeBoer":"Wendy DeBoer","DeKay":"Barry DeKay","Dorn":"Myron Dorn","Dover":"Robert Dover","Dungan":"George Dungan","Fredrickson":"John Fredrickson","Guereca":"Dunixi Guereca","Hallstrom":"Bob Hallstrom","Hansen":"Ben Hansen","Hardin":"Brian Hardin","Holdcroft":"Rick Holdcroft","Hughes":"Jana Hughes","Hunt":"Megan Hunt","Ibach":"Teresa Ibach","Jacobson":"Mike Jacobson","Juarez":"Margo Juarez","Kauth":"Kathleen Kauth","Lippincott":"Loren Lippincott","Lonowski":"Dan Lonowski","McKinney":"Terrell McKinney","Meyer, F.":"Fred Meyer","Meyer, G.":"Glen Meyer","Moser":"Mike Moser","Murman":"Dave Murman","Prokop":"Jason Prokop","Quick":"Dan Quick","Raybould":"Jane Raybould","Riepe":"Merv Riepe","Rountree":"Victor Rountree","Sanders":"Rita Sanders","Sorrentino":"Tony Sorrentino","Spivey":"Ashlei Spivey","Storer":"Tanya Storer","Storm":"Jared Storm","Strommen":"Paul Strommen","von Gillern":"R. Brad von Gillern","Wordekemper":"Dave Wordekemper","McKeon":"McKeon"}
+R=json.load(open('raw.json'));O=json.load(open('out.json'))
+sen=[]
+for n,on,y,no,p,a,e,maj in R['sen']:
+    pr=lambda s:[(q.split(':')[0],float(q.split(':')[1])) for q in __import__('re').split(r',(?! )',s)]
+    sen.append({'k':n,'name':FULL.get(n,n),'ld':DIST.get(n),'on':on,'y':y,'n':no,'p':p,'a':a,'e':e,'maj':maj,'most':pr(O[n][0]) if n in O else [],'least':pr(O[n][1]) if n in O else []})
+out={'session':'109th Legislature, 2025 and 2026 sessions','src':'nebraskalegislature.gov recorded votes','updated':'2026-11-25','meta':R['meta'],'sen':sen,'clo':R['clo'],'tie':R['tie'],'B':R['B'],'LS':R['LS'],'M':R['M'],
+     'lincoln':[2,21,25,26,27,28,29,30,46]}
+json.dump(out,open('/home/claude/work/data/unicameral.json','w'),separators=(',',':'))
+print('wrote',len(json.dumps(out)))
