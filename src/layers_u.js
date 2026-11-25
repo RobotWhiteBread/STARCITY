@@ -93,3 +93,14 @@ function byShow(ds,geo){const D=BYD[ds];if(!D)return;if(D.only&&!D.only.includes
       back:null,card:a=>showCard(gl+' '+a.id,`${psN(C.get(a.id)||0)} ${D.u}.`,-1,null,byLinks(ds,geo))}).then(()=>{showCard(D.t+' by '+gl.toLowerCase(),$('cp').textContent,-1,null,byLinks(ds,geo))})})}
 // the row of other ways to cut the same data; ones the data cannot support say why instead of hiding
 function byLinks(ds,cur){const D=BYD[ds];return BYG.filter(g=>g[0]!==cur).map(([k,l])=>({label:(D.only&&!D.only.includes(k)?'✕ ':'')+'By '+l.toLowerCase(),fn:()=>byShow(ds,k)})).concat([{label:'Clear',fn:arOff}])}
+// ---- who represents this spot: the precinct a building sits in gives its City Council, Legislature and County Board districts.
+// Lincoln is all in Nebraska's 1st U.S. House district. Names change with elections, so the card links to each body's own lookup.
+const REP={d:null};
+function repLoad(){return REP.d?Promise.resolve(REP.d):fetch('data/representation.json').then(r=>r.json()).then(d=>REP.d=d).catch(()=>null)}
+const REPL=[{href:'https://lincoln.ne.gov/city/council/members/index.htm',label:'City Council members ↗'},{href:'https://nebraskalegislature.gov/senators/senator_find.php',label:'Find your state senator ↗'},
+  {href:'https://www.lancaster.ne.gov/',label:'Lancaster County Board ↗'},{href:'https://www.lps.org/about/boundaries/',label:'LPS home school and board district ↗'},{href:'https://www.house.gov/representatives/find-your-representative',label:'U.S. House ↗'},
+  {href:'https://www.votercheck.necvr.ne.gov/voterview/',label:'Your registration and polling place ↗'}];
+function repShow(x,z){Promise.all([repLoad(),arLoad()]).then(([R,A])=>{if(!R||!A)return;const inP=(p,x,z)=>{let c=false;for(let i=0,j=p.length-2;i<p.length;j=i,i+=2){const xi=p[i],zi=p[i+1],xj=p[j],zj=p[j+1];if((zi>z)!=(zj>z)&&x<(xj-xi)*(z-zi)/(zj-zi)+xi)c=!c}return c};
+  const a=A.vp.find(q=>q.p.some(p=>inP(p,x,z)));const v=a&&R.vp[a.id];
+  if(!v){showCard('Who represents this spot','This spot is outside Lincoln\'s city precincts on the county\'s map, so city districts do not apply. Use the official lookups below for county, legislature and school board.',-1,null,REPL);return}
+  showCard('Who represents this spot',`Voting precinct ${a.id}. City Council district ${v[2]}, plus the three council members elected citywide. Legislative District ${v[0]} in the Nebraska Unicameral. Lancaster County Board district ${v[1]}. U.S. House: Nebraska's 1st district; U.S. Senate: Nebraska's two senators, elected statewide. School board: Lincoln Public Schools elects by district; check the LPS lookup.`+(v[3]?' This precinct is split between districts, so confirm with the official lookups.':'')+' From the Election Commissioner\'s precinct map, November 2026.',-1,null,REPL)})}

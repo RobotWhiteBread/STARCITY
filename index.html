@@ -1334,7 +1334,7 @@ function showB(b,force){if(codeOn){rawCard(b);return}const info=H.infos[S.b_info
   let body=parts.join(' · ');body=body.charAt(0).toUpperCase()+body.slice(1);
   // the county's public record for the parcel this building stands on (the map itself stores only the parcel number)
   const links=[],p1=S.b_p1?S.b_p1[b]:0,sqft=Math.round(bArea(b)*10.7639/10)*10;body+=` · footprint about ${sqft.toLocaleString()} sq ft`;
-  {const pl=(RE.on||force)?ldAdd(b,shAdd(b,propLines(b))):null;if(pl){body=pl+' · '+body.charAt(0).toLowerCase()+body.slice(1);links.push({label:'Charts',fn:()=>chartsFor(b)});if(typeof ldAt==='function'&&ldAt(b))links.push(...LDLINKS)}else if(S2&&S2.b_val&&S2.b_val[b])links.push({label:'Value and tax',fn:()=>showB(b,true)})}
+  {const pl=(RE.on||force)?ldAdd(b,shAdd(b,propLines(b))):null;if(pl){body=pl+' · '+body.charAt(0).toLowerCase()+body.slice(1);links.push({label:'Charts',fn:()=>chartsFor(b)});if(typeof ldAt==='function'&&ldAt(b))links.push(...LDLINKS);links.push({label:'Who represents this spot',fn:()=>repShow(LM.bc[2*b],LM.bc[2*b+1])})}else if(S2&&S2.b_val&&S2.b_val[b])links.push({label:'Value and tax',fn:()=>showB(b,true)})}
   if(p1){const pid=String(p1).padStart(7,'0')+String(S.b_p2[b]).padStart(3,'0')+String(S.b_p3[b]).padStart(3,'0');body+=` · county parcel ${pid.slice(0,2)}-${pid.slice(2,4)}-${pid.slice(4,7)}-${pid.slice(7,10)}-${pid.slice(10)}`;
     links.push({href:CTY+pid,label:(S.b_fl[b]&2)?'County record for this site ↗':'County property record ↗'});if(!(S.b_fl[b]&2))links.push({label:'Show owner',fn:btn=>ownerLookup(pid,btn)})}
   // the assessed value comes with the map; the owner is read from the county only when asked for and is never stored; sales and the legal description live on the county page
@@ -2023,6 +2023,7 @@ const TRY=[['Start at the Capitol','Fly to the tower, the gold dome and the Sowe
  ['City plans and growth','Road projects with money behind them, homes approved but not built, planning applications, the 2050 plan, airport noise, historic places, and a replay of buildings appearing from 2007 to 2026.',()=>plOpen(0)],
  ['When the data was updated','Every dataset on the map with the years it covers and when it was last read: live, current, or where the city stopped publishing.',()=>openSheet(FRESHS,0)],
  ['Sky calendar','The best sights over Lincoln in the coming months, meteor showers, planets at their best, eclipses, close pairings, with how to see each, a month-by-month calendar, the Weather Service forecast for the night when it is within a week, and a preview in the Sower\'s telescope.',()=>openSheet(SKYCS,0)],
+ ['Who represents you','Tap any building and choose Who represents this spot: its City Council, Legislature and County Board districts, with links to each body\'s members, the LPS school and board lookup, and your registration and polling place.',()=>{const t=controls.target;repShow(t.x,t.z)}],
  ['Cut any data by area','Lead lines, fix-it requests, potholes and crashes counted by ZIP code, council district, voting precinct, quadrant, HOA or police district, as 3D blocks. Fire response and police reports show how far the city lets them go.',()=>byShow('fix','cc')],
  ['Potholes','Every pothole request on UPLNK since 2018, pinned where it was reported and colored by how fast the city closed it, with the spots that keep coming back named. A link to report a new one.',()=>phShow()],
  ['Compare squares','Zoom in and Lincoln gets a quarter-mile grid. The square in the middle of the screen lights up with quick numbers; add up to four to a cart and compare buildings, trees, lead lines, fix-it requests, crashes and growth side by side.',()=>{closeSheet();sqEnable(true)}],
@@ -5731,6 +5732,17 @@ function byShow(ds,geo){const D=BYD[ds];if(!D)return;if(D.only&&!D.only.includes
       back:null,card:a=>showCard(gl+' '+a.id,`${psN(C.get(a.id)||0)} ${D.u}.`,-1,null,byLinks(ds,geo))}).then(()=>{showCard(D.t+' by '+gl.toLowerCase(),$('cp').textContent,-1,null,byLinks(ds,geo))})})}
 // the row of other ways to cut the same data; ones the data cannot support say why instead of hiding
 function byLinks(ds,cur){const D=BYD[ds];return BYG.filter(g=>g[0]!==cur).map(([k,l])=>({label:(D.only&&!D.only.includes(k)?'✕ ':'')+'By '+l.toLowerCase(),fn:()=>byShow(ds,k)})).concat([{label:'Clear',fn:arOff}])}
+// ---- who represents this spot: the precinct a building sits in gives its City Council, Legislature and County Board districts.
+// Lincoln is all in Nebraska's 1st U.S. House district. Names change with elections, so the card links to each body's own lookup.
+const REP={d:null};
+function repLoad(){return REP.d?Promise.resolve(REP.d):fetch('data/representation.json').then(r=>r.json()).then(d=>REP.d=d).catch(()=>null)}
+const REPL=[{href:'https://lincoln.ne.gov/city/council/members/index.htm',label:'City Council members ↗'},{href:'https://nebraskalegislature.gov/senators/senator_find.php',label:'Find your state senator ↗'},
+  {href:'https://www.lancaster.ne.gov/',label:'Lancaster County Board ↗'},{href:'https://www.lps.org/about/boundaries/',label:'LPS home school and board district ↗'},{href:'https://www.house.gov/representatives/find-your-representative',label:'U.S. House ↗'},
+  {href:'https://www.votercheck.necvr.ne.gov/voterview/',label:'Your registration and polling place ↗'}];
+function repShow(x,z){Promise.all([repLoad(),arLoad()]).then(([R,A])=>{if(!R||!A)return;const inP=(p,x,z)=>{let c=false;for(let i=0,j=p.length-2;i<p.length;j=i,i+=2){const xi=p[i],zi=p[i+1],xj=p[j],zj=p[j+1];if((zi>z)!=(zj>z)&&x<(xj-xi)*(z-zi)/(zj-zi)+xi)c=!c}return c};
+  const a=A.vp.find(q=>q.p.some(p=>inP(p,x,z)));const v=a&&R.vp[a.id];
+  if(!v){showCard('Who represents this spot','This spot is outside Lincoln\'s city precincts on the county\'s map, so city districts do not apply. Use the official lookups below for county, legislature and school board.',-1,null,REPL);return}
+  showCard('Who represents this spot',`Voting precinct ${a.id}. City Council district ${v[2]}, plus the three council members elected citywide. Legislative District ${v[0]} in the Nebraska Unicameral. Lancaster County Board district ${v[1]}. U.S. House: Nebraska's 1st district; U.S. Senate: Nebraska's two senators, elected statewide. School board: Lincoln Public Schools elects by district; check the LPS lookup.`+(v[3]?' This precinct is split between districts, so confirm with the official lookups.':'')+' From the Election Commissioner\'s precinct map, November 2026.',-1,null,REPL)})}
 
 
 // ---------- loop
