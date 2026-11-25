@@ -154,3 +154,9 @@ const FTSAY={'Overview':'All of Lincoln, about 300,000 people.','Capitol':'The 4
 function flyThrough(){stopTour();const bs=[...$('chips').children];if(!bs.length)return;let i=0;tour=true;$('bTour').classList.add('on');$('bTour').textContent='■ Stop';
   const next=()=>{if(!tour)return;if(i>=bs.length){stopTour();return}const b=bs[i++],n=b.textContent,k=Object.keys(FTSAY).find(q=>n.startsWith(q));b.click();tour=true;$('bTour').classList.add('on');$('bTour').textContent='■ Stop';
     showCard(n,(k?FTSAY[k]+' ':'')+'Stop '+i+' of '+bs.length+'.',-1,{label:'Stop the fly-through',fn:()=>stopTour()});tour=setTimeout(next,7000)};next()}
+// ---- every so often the Memorial Stadium crowd breaks into "Meat pie power!"
+const MPP={next:0,until:0,t:'',sub:'',SAY:['MEAT PIE POWER!','Meat! Pie! Power!','MEAT PIE POWER! MEAT PIE POWER!','M-E-A-T… PIE POWER!'],SUB:['the student section','the whole east stands','90,000 people, one chant','the north end zone','even the press box']};
+function stepMPP(now){const S=LM.stadium;if(!S)return;const d=camera.position.distanceTo(controls.target);if(Math.hypot(controls.target.x-S[0],controls.target.z-S[1])>3000||d>5000)return;
+  if(!MPP.next)MPP.next=now+4000+Math.random()*8000;
+  if(now>MPP.next){MPP.t=MPP.SAY[Math.random()*MPP.SAY.length|0];MPP.sub=MPP.SUB[Math.random()*MPP.SUB.length|0];MPP.until=now+4500;MPP.next=now+18000+Math.random()*30000}
+  if(now<MPP.until){const b=(now/260|0)%2;lifeLabels.push({t:MPP.t,sub:MPP.sub,x:S[0],y:95+b*4,z:S[1],k:3,pri:1100,near:0,far:6000})}}
