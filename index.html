@@ -5474,17 +5474,17 @@ function setupCritters(){const TR=LM.trails||[],pts=[];for(const T of TR){if(T.t
       [.06,.18,.06,-.1,.09,-.16,RD],[.06,.18,.06,.1,.09,-.16,RD],[.06,.18,.06,-.1,.09,.16,RD],[.06,.18,.06,.1,.09,.16,RD],[.1,.1,.1,0,.32,.3,RD],[.1,.1,.1,0,.3,.4,RG],[.1,.1,.1,0,.28,.5,RD],[.1,.1,.1,0,.26,.6,RG]])];
   const ms=geo.map((g,k)=>{const m=new THREE.InstancedMesh(g,new THREE.MeshLambertMaterial({vertexColors:true}),N),z=new THREE.Matrix4().makeScale(0,0,0);for(let i=0;i<N;i++)m.setMatrixAt(i,z);m.frustumCulled=false;m.visible=false;scene.add(m);pickables.push(m);
     m.userData.info=k?['Raccoon','Raccoons live along every creek in Lincoln and come out after dark, feeling for food along the water and raiding trash cans. Keep lids latched and pet food inside. Part of the map, not a real sighting.']:['Red fox','Red foxes live in Lincoln\'s parks and neighborhoods, hunting mice and rabbits at dawn, dusk and night. Give them room, and never feed one. Part of the map, not a real sighting.'];return m});
-  for(let i=0;i<N;i++){const p=Math.floor(Math.random()*n),a=Math.random()*6.283,r=8+Math.random()*22,ox=pts[2*p]+Math.cos(a)*r,oz=pts[2*p+1]+Math.sin(a)*r;list.push({k:i%3===0?0:1,j:Math.floor(i/1),ox,oz,x:ox,z:oz,tx:ox,tz:oz,h:0,sp:i%3===0?2.2:1.1,wait:Math.random()*4})}
+  for(let i=0;i<N;i++){const p=Math.floor(Math.random()*n),a=Math.random()*6.283,r=8+Math.random()*22,ox=pts[2*p]+Math.cos(a)*r,oz=pts[2*p+1]+Math.sin(a)*r;list.push({k:i%10===0?0:1,j:Math.floor(i/1),ox,oz,x:ox,z:oz,tx:ox,tz:oz,h:0,sp:i%10===0?1.6:1.1,wait:Math.random()*4})}
   const idx=[0,0];for(const q of list)q.j=idx[q.k]++;critters={ms,list}}
 function stepCritters(dt,now){if(!critters){if(now-critTry<5000||!LM.trails||!H.tnames)return;critTry=now;setupCritters()}const C=critters;if(!C||C.none)return;
   const t=controls.target,d=camera.position.distanceTo(t),nt=U.uNight.value,show=d<1400;
   for(const m of C.ms)if(m.visible!==show){m.visible=show;dirty=true}if(!show)return;
   // raccoons need real dark; foxes come out from dusk on, and a few are about in daylight
-  for(let i=0;i<C.list.length;i++){const q=C.list[i],m=C.ms[q.k],out=q.k===1?nt>.6:(nt>.25||i%9===0),near=Math.hypot(q.ox-t.x,q.oz-t.z)<1600;
+  for(let i=0;i<C.list.length;i++){const q=C.list[i],m=C.ms[q.k],out=q.k===1?nt>.6:nt>.35,near=Math.hypot(q.ox-t.x,q.oz-t.z)<1600;
     if(!out||!near){if(q.vis){lM.makeScale(0,0,0);m.setMatrixAt(q.j,lM);q.vis=false;m.instanceMatrix.needsUpdate=true}continue}q.vis=true;
     const dx=q.tx-q.x,dz=q.tz-q.z,dd=Math.hypot(dx,dz);
-    if(q.wait>0)q.wait-=dt;else if(dd<.4){q.wait=1+Math.random()*5;const a=Math.random()*6.283,r=Math.random()*14;q.tx=q.ox+Math.cos(a)*r;q.tz=q.oz+Math.sin(a)*r}
-    else{const st=Math.min(dd,q.sp*dt);q.x+=dx/dd*st;q.z+=dz/dd*st;q.h=Math.atan2(-dx,-dz)}
+    if(q.wait>0)q.wait-=dt;else if(dd<.6){q.wait=(q.k?1:4)+Math.random()*(q.k?5:9);const a=Math.random()*6.283,r=Math.random()*14;q.tx=q.ox+Math.cos(a)*r;q.tz=q.oz+Math.sin(a)*r}
+    else{const st=Math.min(dd,q.sp*dt);q.x+=dx/dd*st;q.z+=dz/dd*st;if(dd>1.5){const th=Math.atan2(-dx,-dz);let df=th-q.h;df=Math.atan2(Math.sin(df),Math.cos(df));q.h+=df*Math.min(1,dt*3)}}
     lP.set(q.x,hAt(q.x,q.z),q.z);lQ.setFromAxisAngle(lUp,q.h);lS.setScalar(Math.min(10,Math.max(4,d/45)));lM.compose(lP,lQ,lS);m.setMatrixAt(q.j,lM);m.instanceMatrix.needsUpdate=true}
   ambient=true}
 
