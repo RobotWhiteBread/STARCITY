@@ -304,3 +304,8 @@ const BUDS={title:'Where the <i>money</i> goes',tabs:['Nebraska','Lincoln','Is t
 let budT=null;
 function budOpen(t){BUD.on=true;openSheet(BUDS,t||0);clearInterval(budT);budT=setInterval(()=>{const el=document.getElementById('budCt');if(!el||sheet!==BUDS){clearInterval(budT);return}const B=BUD.tab===1?BUD.ci:BUD.st;el.textContent='$'+Math.floor(budSpent(B)[0]).toLocaleString('en-US')},250);
   const c=LM.capitol;if(c){const d=camera.position.distanceTo(controls.target);if(d>6000||Math.hypot(controls.target.x-c[0],controls.target.z-c[1])>1500)flyTo(camTo(c[0]+80,c[1]+300,1400,200,22,40),2200)}}
+
+// ---- the browser's Back button leaves the night sky, a walk or the telescope and returns to the map, instead of leaving the page
+let VHIST=false;
+function viewHist(){const inV=walk.on||NSKY.on;if(inV&&!VHIST){VHIST=true;try{history.pushState({starcityView:1},'')}catch(e){}}else if(!inV&&VHIST){VHIST=false;try{if(history.state&&history.state.starcityView)history.back()}catch(e){}}}
+addEventListener('popstate',()=>{if(walk.on||NSKY.on){VHIST=false;try{scopeOff()}catch(e){}viewExit(false)}});
