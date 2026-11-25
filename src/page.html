@@ -1843,6 +1843,7 @@ const WTAIL=['Favorable wind. It is never about the watts','KOM secured. The 30 
 const WHEAD=['Headwind. Not a PR day. Never a PR day','This is zone 2. On purpose. Totally on purpose','I will be back for that KOM when the wind turns','Watts up, speed down, dignity gone','Nebraska wind 1, me 0','Pedaling hard enough to go backward','I am not slow, the wind is fast','It is never about the watts. Today it is all about the watts','Segment hunting? Wrong direction, wrong state','The QOM is out there. Behind me. Downwind'];
 const WSIDE=['Crosswind. Echelon of one','Leaning 15 degrees just to ride straight','Checking the wind map for tomorrow\'s KOM','Saving my legs for the tailwind leg','Side wind, side eye'];
 const WCALM=['No wind in Nebraska? Am I still in Nebraska','Dead calm. Now it really is about the watts. Uh oh','Calm day. Nobody is going for a KOM today'];
+const COACH=['Coach: Zone 2 means you can still talk. So stop talking','Coach: Ride out into the headwind, home with the tailwind. Not the other way around','Coach: Rest days are training too. You have had six this week','Coach: Eat before you are hungry. Yes, roller dogs count','Coach: Sweet spot is not a bakery','Coach: Your FTP test is not a group ride','Coach: Intervals mean intervals, not chasing the guy in front','Coach: Nebraska headwinds are free hill repeats','Coach: The KOM is not in the training plan','Coach: Sleep is the cheapest upgrade','Coach: Recovery ride. Recovery. Ride','Coach: You cannot buy fitness. Please stop buying wheels','Coach: Upload to Strava after the cooldown, not during it','Coach: The fountain drink is not water','Coach: Monday is not a second Saturday'];
 const GRAVTR=['MoPac Trail','Jamaica North Trail'];
 function setupBikers(){const TR=LM.trails||[],best=new Map();for(let w=0;w<TR.length;w++){const T=TR[w];if(T.tc>=3||T.tn===65535||T.d.length<4)continue;const q=best.get(T.tn);if(q===undefined||TR[q].len<T.len)best.set(T.tn,w)}
   // each named trail becomes one continuous path, so riders travel its whole length and turn around at the ends
@@ -1882,7 +1883,8 @@ function stepBikers(dt,now){if(!bikers){if(!rideMode&&(now-bikerTry<4000||!LM.tr
     if(q.kind&&!q.lb){q.lb={t:'',x:0,y:0,z:0,k:3,pri:430,near:0,far:2200};q.qi=i*7;q.qt=now+1500+(i%9)*900;q.say=(q.kind==='mtb'?MTB:GRAVEL)[q.qi%(q.kind==='mtb'?MTB:GRAVEL).length]}
     if(q.kind&&!far&&d<2400){if(now>q.qt){q.qi++;q.qt=now+5400+((i*37)%2800);let L=q.kind==='mtb'?MTB:GRAVEL;
         // into the wind or with it: the dot of the rider's heading and where the wind is blowing
-        if(q.kind==='grav'&&q.qi%4&&windV){if(windV.ms<2)L=WCALM;else{const hx=(x1-x0)*q.dir,hz=(z1-z0)*q.dir,hl=Math.hypot(hx,hz)||1,c=(hx*windV.x+hz*windV.z)/(hl*windV.ms);L=c>.4?WTAIL:c<-.4?WHEAD:WSIDE}}
+        // the coach checks in now and then, more often on weekends when the warriors are out
+        const wk=new Date().getDay()%6===0;if(q.kind==='grav'&&q.qi%(wk?3:5)===0)L=COACH;else if(q.kind==='grav'&&q.qi%4&&windV){if(windV.ms<2)L=WCALM;else{const hx=(x1-x0)*q.dir,hz=(z1-z0)*q.dir,hl=Math.hypot(hx,hz)||1,c=(hx*windV.x+hz*windV.z)/(hl*windV.ms);L=c>.4?WTAIL:c<-.4?WHEAD:WSIDE}}
         q.say=L[q.qi%L.length]}
       q.lb.t=q.say||'';q.lb.x=x;q.lb.z=z;q.lb.y=y+2.6*sc;if(q.lb.t)lifeLabels.push(q.lb)}}
   B.m.instanceMatrix.needsUpdate=true;ambient=true}
