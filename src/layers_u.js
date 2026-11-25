@@ -343,3 +343,23 @@ function stepFSQ(now){if(!TR.X)return;const t=controls.target,d=camera.position.
       g.rotation.y=Math.atan2(-(B.x-A.x),-(B.z-A.z));g.userData.wing.scale.x=u>.9?.5:1;if(u<.5&&u>.05){q.lb.t='wheee';q.lb.sub='';q.lb.x=g.position.x;q.lb.y=g.position.y+1.6*sc;q.lb.z=g.position.z;lifeLabels.push(q.lb)}
       if(u>=1){q.at=q.to;q.st='sit';q.t=now;q.hold=6000+Math.random()*14000}}}
   ambient=true;dirty=true}
+
+// ---- read the map in another language. Lincoln's most common home languages after English first.
+// Uses Google's page translation, loaded only when someone picks a language; English reloads the original.
+const LANGS=[['es','Español','Spanish'],['vi','Tiếng Việt','Vietnamese'],['ar','العربية','Arabic'],['ckb','کوردی (سۆرانی)','Kurdish, Sorani'],['ku','Kurdî (Kurmancî)','Kurdish, Kurmanji'],['zh-CN','中文','Chinese'],['ne','नेपाली','Nepali'],['fr','Français','French'],['sw','Kiswahili','Swahili'],['ru','Русский','Russian'],['de','Deutsch','German'],['en','English','English']];
+function langCur(){const m=document.cookie.match(/googtrans=\/en\/([^;]+)/);return m?m[1]:'en'}
+function langHTML(){const c=langCur();return '<p>Pick a language to read the map, its cards and its views in it. Machine translation by Google: good for getting around, not perfect, and street and place names stay as they are. The text on screen is sent to Google to translate.</p>'+
+  LANGS.map(([k,n,e])=>`<button class="btn go2${k===c?' on':''}" data-lg="${k}" style="display:flex;justify-content:space-between;width:100%;margin:5px 0;padding:9px 12px"><b dir="auto">${n}</b><span style="opacity:.65">${e}</span></button>`).join('')}
+const LANGS_S={title:'<i>Language</i>',tabs:['Choose'],html:langHTML,click:e=>{const b=e.target.closest('[data-lg]');if(!b)return;langSet(b.dataset.lg)}};
+function langOpen(){openSheet(LANGS_S,0)}
+function langSet(k){const host=location.hostname,exp='expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  if(k==='en'){for(const d of ['',';domain='+host,';domain=.'+host])document.cookie='googtrans=;'+exp+';path=/'+d;location.reload();return}
+  document.cookie='googtrans=/en/'+k+';path=/';closeSheet();
+  const go=()=>{const s=document.querySelector('.goog-te-combo');if(s){s.value=k;s.dispatchEvent(new Event('change'))}else setTimeout(go,300)};
+  if(window.google&&google.translate&&google.translate.TranslateElement){go();return}
+  if(!document.getElementById('gt_el')){const d=document.createElement('div');d.id='gt_el';document.body.appendChild(d)}
+  window.gtInit=()=>{new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'gt_el');go()};
+  const sc=document.createElement('script');sc.src='https://translate.google.com/translate_a/element.js?cb=gtInit';document.head.appendChild(sc)}
+$('bLang').onclick=langOpen;
+// someone who picked a language before gets it again on their next visit
+if(langCur()!=='en')setTimeout(()=>langSet(langCur()),1500);
