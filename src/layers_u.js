@@ -2,7 +2,7 @@
 // The square under the middle of the screen lights up with a few quick numbers. Add up to four to a cart and compare them side by side,
 // then dive into any one. Every number is a count of public records inside the square. Police reports are never counted by square:
 // they stay by district, so nothing points at a household.
-const SQR={S:402.336,cart:[],grid:null,hi:null,fills:[],key:'',ui:null,cur:null,on:false,pend:false};
+const SQR={enabled:false,S:402.336,cart:[],grid:null,hi:null,fills:[],key:'',ui:null,cur:null,on:false,pend:false};
 const SQCOL=[0xef4444,0x3b82f6,0x22c55e,0xa855f7],SQHEX=['#ef4444','#3b82f6','#22c55e','#a855f7'],SQRL='ABCD';
 function sqCell(x,z){return [Math.floor(x/SQR.S),Math.floor(z/SQR.S)]}
 function sqDrape(i,j,y0){const S=SQR.S,n=10,P=[],I=[];for(let a=0;a<=n;a++)for(let b=0;b<=n;b++){const x=(i+a/n)*S,z=(j+b/n)*S;P.push(x,hAt(x,z)+(y0||3),z)}
@@ -28,9 +28,9 @@ function sqStats(i,j){const Q=SQR.S,x0=i*Q,z0=j*Q,x1=x0+Q,z1=z0+Q,inn=(x,z)=>x>=
   return o}
 function sqLoadAll(){if(SQR.pend)return;SQR.pend=true;Promise.all([ldLoad(),upLoad(),grLoad(),crashLoad()]).then(()=>{SQR.ready=true;SQR.key='';if(sheet===SQRS)$('gbody').innerHTML=sqHTML(0)})}
 function sqUI(){if(SQR.ui)return SQR.ui;const d=document.createElement('div');d.id='sqbar';d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:132px;z-index:30;display:none;gap:6px;align-items:center;background:rgba(14,16,20,.88);border:1px solid rgba(233,185,73,.55);border-radius:14px;padding:8px 10px;color:#f2eadb;font:13px system-ui,sans-serif;max-width:94vw;flex-wrap:wrap;justify-content:center;pointer-events:auto';
-  d.innerHTML='<span id="sqtxt" style="max-width:52vw"></span><button class="btn" id="sqadd">＋ Add square</button><button class="btn" id="sqcmp" style="display:none"></button>';document.body.appendChild(d);
+  d.innerHTML='<span id="sqtxt" style="max-width:52vw"></span><button class="btn" id="sqadd">＋ Add square</button><button class="btn" id="sqcmp" style="display:none"></button><button class="btn" id="sqx">✕ Done</button>';document.body.appendChild(d);
   d.querySelector('#sqadd').onclick=()=>{const c=SQR.cur;if(!c)return;const k=SQR.cart.findIndex(q=>q.i===c[0]&&q.j===c[1]);if(k>=0)SQR.cart.splice(k,1);else{if(SQR.cart.length>=4)SQR.cart.shift();SQR.cart.push({i:c[0],j:c[1],name:sqName(c[0],c[1])})}sqFills();sqTxt();sqLoadAll();lastInput=performance.now()};
-  d.querySelector('#sqcmp').onclick=()=>{sqLoadAll();openSheet(SQRS,0)};SQR.ui=d;return d}
+  d.querySelector('#sqx').onclick=()=>sqEnable(false);d.querySelector('#sqcmp').onclick=()=>{sqLoadAll();openSheet(SQRS,0)};SQR.ui=d;return d}
 function sqFills(){for(const m of SQR.fills){scene.remove(m);m.geometry.dispose()}SQR.fills=[];SQR.cart.forEach((q,k)=>{const f=new THREE.Mesh(sqDrape(q.i,q.j,2.5),new THREE.MeshBasicMaterial({color:SQCOL[k],transparent:true,opacity:.28,depthWrite:false,fog:false,side:THREE.DoubleSide}));
   const e=new THREE.LineSegments(sqEdge(q.i,q.j,5),new THREE.LineBasicMaterial({color:SQCOL[k],fog:false}));scene.add(f);scene.add(e);SQR.fills.push(f,e);
   SQR.lbs=SQR.cart.map((q,k)=>({t:'Square '+SQRL[k],sub:q.name,x:(q.i+.5)*SQR.S,y:hAt((q.i+.5)*SQR.S,(q.j+.5)*SQR.S)+60,z:(q.j+.5)*SQR.S,k:3,pri:900,near:0,far:9000}))});if(!SQR.cart.length)SQR.lbs=[];dirty=true}
@@ -38,7 +38,7 @@ function sqTxt(){const u=sqUI(),c=SQR.cur;if(!c)return;const inC=SQR.cart.findIn
   u.querySelector('#sqtxt').textContent=(s?`${s.name}: ${psN(s.bld)} buildings`+(s.yr?`, built ${s.yr} typical`:'')+(s.tree?`, ${psN(s.tree)} city trees`:'')+(s.lead+s.galv?`, ${s.lead+s.galv} lead or galvanized lines`:''):'');
   u.querySelector('#sqadd').textContent=inC>=0?'− Remove square '+SQRL[inC]:'＋ Add square'+(SQR.cart.length>=4?' (replaces A)':'');
   const b=u.querySelector('#sqcmp');b.style.display=SQR.cart.length?'':'none';b.textContent='Compare '+SQR.cart.length+(SQR.cart.length===1?' square':' squares')}
-function stepSquares(dt,now){const t=controls.target,d=camera.position.distanceTo(t),on=d<3400&&t.y<60&&!walk.on&&!walk.sky&&!(typeof AR!=='undefined'&&AR.on);
+function stepSquares(dt,now){const t=controls.target,d=camera.position.distanceTo(t),on=SQR.enabled&&d<3400&&t.y<60&&!walk.on&&!walk.sky&&!(typeof AR!=='undefined'&&AR.on);
   if(!on){if(SQR.on){SQR.on=false;if(SQR.grid)SQR.grid.visible=false;if(SQR.hi)SQR.hi.visible=false;if(SQR.he)SQR.he.visible=false;if(SQR.ui)SQR.ui.style.display='none';dirty=true}if(SQR.lbs)for(const l of SQR.lbs)lifeLabels.push(l);return}
   if(!SQR.on){SQR.on=true;sqUI().style.display='flex';SQR.key=''}{const sh=$('guide').style.display==='block',u=sqUI();if(sh!==(u.style.display==='none'))u.style.display=sh?'none':'flex'}const c=sqCell(t.x,t.z),key=c[0]+','+c[1];
   if(key!==SQR.key){SQR.key=key;SQR.cur=c;sqGrid(c[0],c[1]);SQR.grid.visible=true;if(SQR.hi){scene.remove(SQR.hi);SQR.hi.geometry.dispose()}
@@ -58,3 +58,6 @@ function sqHTML(tab){if(tab===1)return '<p>Squares are a quarter mile on a side,
   return h+'<p class="psub">Counts of public records inside each quarter-mile square. A bigger number can mean a bigger or busier square, not a worse one. Police data is never counted by square.</p>'}
 const SQRS={title:'Compare <i>squares</i>',tabs:['Compare','How this works'],html:sqHTML,click:e=>{const b=e.target.closest('[data-sq]');if(!b)return;const k=b.dataset.sq;
   if(k==='x'){SQR.cart=[];sqFills();sqTxt();$('gbody').innerHTML=sqHTML(0);return}const q=SQR.cart[+k];if(!q)return;closeSheet();flyTo(camTo((q.i+.5)*SQR.S,(q.j+.5)*SQR.S,900,160,42),1500)}};
+
+function sqEnable(on){SQR.enabled=on;SQR.key='';if(!on){SQR.cart=[];sqFills();if(SQR.grid)SQR.grid.visible=false;if(SQR.hi)SQR.hi.visible=false;if(SQR.he)SQR.he.visible=false;if(SQR.ui)SQR.ui.style.display='none';SQR.on=false}
+  else{sqLoadAll();const t=controls.target;if(camera.position.distanceTo(t)>3000)flyTo(camTo(t.x,t.z,1600,160,48),1200);showCard('Compare squares','A gold square marks the quarter mile under the middle of your screen, with its numbers in the bar below. Move the map to pick a different square, tap Add square to put it in your cart, and add up to four. Compare shows them side by side. Done turns the squares off.',-1)}dirty=true}
