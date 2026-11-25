@@ -83,7 +83,8 @@ function arShow(kind,val,o){return arLoad().then(d=>{if(!d)return;arOff();insOff
       const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:c.getHex(),transparent:true,opacity:v>0?.6:.25,depthWrite:false,fog:false}));m.userData.card=()=>o.card(a,v);g.add(m);pickables.push(m);
       g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,30),new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.55,fog:false})))}
     if(o.labels&&o.labels(a))AR.lbs.push({t:o.labels(a),sub:o.sub?o.sub(a,v):v>0?psN(v):v===-1?'fewer than 5':'',x:a.c[0],y:h+40,z:a.c[1],k:3,pri:800,near:0,far:90000})}
-  scene.add(g);AR.grp=g;dirty=true;lastInput=performance.now();try{flyTo(camTo(0,0,o.dist||22000,160,48),2000)}catch(e){}
+  scene.add(g);AR.grp=g;dirty=true;lastInput=performance.now();// keep the person's view; only pull back when they are so close the blocks would fill the screen
+  try{const t=controls.target,dd=camera.position.distanceTo(t);if(dd<1800)flyTo(camTo(t.x,t.z,Math.min(o.dist||22000,6000),160,48),1600)}catch(e){}
   showCard(o.title,o.text,-1,o.back,[{label:'Clear',fn:arOff}])})}
 function stepAr(){if(AR.on)for(const l of AR.lbs)lifeLabels.push(l)}
 const PSG=['Violent crime','Property crime','Narcotics','Disturbance and nuisance'];
@@ -103,7 +104,7 @@ function upShow(g){upLoad().then(d=>{if(!d)return;upOff();arOff();UP.on=true;UP.
   P.forEach((p,i)=>{const x=(p[0]-H.lon0)*KXm,z=-(p[1]-H.lat0)*KYm,h=12+Math.log2(1+p[3])*24;M.makeScale(1,h,1).setPosition(x,0,z);m.setMatrixAt(i,M);m.setColorAt(i,c.set(UPCOL[p[2]%UPCOL.length]))});
   m.frustumCulled=false;m.userData.card=hit=>{const p=UP.idx[hit.instanceId];if(!p)return;const nm=d.street_groups[p[2]];
     showCard(nm+': '+psN(p[3])+' request'+(p[3]===1?'':'s')+' here',`Requests to the city's UPLNK service about ${nm.toLowerCase()} within about 30 meters of this spot, ${p[5]===p[6]?p[5]:p[5]+' to '+p[6]}.`+(p[7]>=0?` Half were closed within ${p[7]} day${p[7]===1?'':'s'}.`:'')+(p[4]?` ${p[4]} still open.`:'')+' Public places only: who asked, their words and photos, and exact house addresses are never shown.',-1,{label:'Fix-it requests',fn:()=>upOpen(0)})};
-  scene.add(m);pickables.push(m);UP.m=m;dirty=true;lastInput=performance.now();try{flyTo(camTo(-4600,-3600,5200,200,52),1800)}catch(e){}
+  scene.add(m);pickables.push(m);UP.m=m;dirty=true;lastInput=performance.now();try{viewCam(-4600,-3600,5200,200,52)}catch(e){}
   showCard(g<0?'Fix-it requests on the street':'Fix-it requests: '+d.street_groups[g],`${psN(P.reduce((s,p)=>s+p[3],0))} requests about public places, each pin a spot about 30 meters across. Taller means more requests there. Tap a pin for its count and how fast the city closed them.`,-1,{label:'Fix-it requests',fn:()=>upOpen(0)},[{label:'Clear',fn:upOff}])})}
 function upArea(gi){upLoad().then(d=>{if(!d)return;upOff();const all=d.street_groups.concat(d.area_groups),nm=all[gi],kind=gi>=d.street_groups.length?'area':'map';
   arShow('vp',id=>{const r=d.area.vp[id];return r?r[gi]:null},{tall:700,title:nm+' requests by voting precinct',text:'Each block is a voting precinct inside the city. Taller and redder means more UPLNK requests about '+nm.toLowerCase()+' since 2018. Requests about a private property are only ever shown this way, as a total for the precinct, and a count under 5 is shown as "fewer than 5". Precincts differ in size and in how many homes they hold, so compare them with care.',
@@ -133,7 +134,7 @@ function hoaShow(){hoaLoad().then(d=>{if(!d)return;hoaOff();HOA.on=true;const g=
       const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x8b5cf6,transparent:true,opacity:.38,depthWrite:false,fog:false}));m.userData.card=()=>hoaCard(a);g.add(m);pickables.push(m);
       g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,30),new THREE.LineBasicMaterial({color:0xe9d5ff,transparent:true,opacity:.8,fog:false})))}
     HOA.lbs.push({t:a.n.replace(/ (Homeowners'?|Home Owners'?|Homeowner's|Home Owner's)? ?(Association|Assoc\.?)(, Inc\.?)?$/i,'').slice(0,34),sub:'HOA',x:a.c[0],y:40,z:a.c[1],k:3,pri:500,near:0,far:9000})}
-  scene.add(g);HOA.grp=g;dirty=true;lastInput=performance.now();try{flyTo(camTo(-1000,0,16000,160,50),2000)}catch(e){}
+  scene.add(g);HOA.grp=g;dirty=true;lastInput=performance.now();try{viewCam(-1000,0,16000,160,50)}catch(e){}
   showCard('Homeowners associations',d.hoa.length+' homeowners associations the City of Lincoln has on file, in purple. Zoom in for names and tap one for details. Dues are not published in any public data, so they are not shown. Some newer subdivisions may not be on the city\'s list yet.',-1,null,[{label:'Clear',fn:hoaOff}])})}
 function stepHoa(){if(HOA.on)for(const l of HOA.lbs)lifeLabels.push(l)}
 // ---- Fire and rescue response times (LFR apparatus tables, 2013 to 2019): citywide graph and ZIP code blocks
@@ -176,3 +177,6 @@ function ldPins(L){if(!AR.grp)return;const {n,xz,c}=L.d,geo=new THREE.CylinderGe
     for(let i=0;i<n;i++){if(c[i]!==k)continue;const x=xz[2*i]*2,z=xz[2*i+1]*2;lP.set(x,hAt(x,z),z);lQ.identity();lS.set(1,1,1);lM.compose(lP,lQ,lS);m.setMatrixAt(j++,lM)}
     m.userData.card=()=>showCard('Water service line: '+nm,'The city\'s service line records list a '+nm+' line at this spot. Lead can get into drinking water from it; the city replaces these lines for free. Open a building to see its own line.',-1,null,LDLINKS);AR.grp.add(m);pickables.push(m)}
   dirty=true}
+
+// when a view opens, keep the person's own view and zoom; only pull back when they are right down among the buildings
+function viewCam(x,z,dist,az,tilt){try{const t=controls.target,d=camera.position.distanceTo(t);if(d<1800)flyTo(camTo(t.x,t.z,Math.min(dist,6000),az||160,tilt||50),1600)}catch(e){}}
