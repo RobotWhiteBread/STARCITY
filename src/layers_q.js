@@ -824,12 +824,15 @@ function chtSetup(){if(CHT.g)return;CHT.T.forEach(t=>{t.x=(t[8]-H.lon0)*KXm;t.z=
   for(const s of[-1,1]){const l=M(new THREE.CylinderGeometry(.05,.05,.7,6),0xd9a77a,s*.25,-.95,.1);M(new THREE.BoxGeometry(.25,.04,.35),0xd9a77a,s*.25,-1.3,.2)}
   CHT.wings=[-1,1].map(s=>{const w=new THREE.Group();w.position.set(s*.62,.32,.1);const m=M(new THREE.BoxGeometry(1.35,.09,1.15),BR,s*.68,0,-.05,0,w);
     for(let k=0;k<3;k++)M(new THREE.BoxGeometry(1.3,.1,.08),DK,s*.68,.01,.4-k*.38,0,w);M(new THREE.BoxGeometry(.6,.08,.8),0x6d5235,s*1.55,0,-.25,0,w);b.add(w);return w});
-  b.scale.setScalar(4.5);b.visible=false;scene.add(b);CHT.bird=b;CHT.blb={t:'',sub:'',x:0,y:0,z:0,k:3,pri:950,near:0,far:20000};scene.add(g);CHT.g=g}
+  b.scale.setScalar(2.4);b.visible=false;scene.add(b);CHT.bird=b;
+  // a small flock of meadowlarks follows the leader, as they gather in fall and winter
+  CHT.flock=[];for(let k=0;k<7;k++){const c=b.clone(true);c.scale.setScalar(1.7+.5*Math.random());c.visible=false;scene.add(c);const a=k/7*6.283+Math.random()*.6;
+    CHT.flock.push({m:c,w:c.children.slice(-2),ox:Math.cos(a)*(7+Math.random()*10),oz:-4-Math.random()*14,oy:(Math.random()-.5)*6,ph:Math.random()*6,pa:a,pr:.3+.45*Math.random(),py:.55+.35*Math.random()})}CHT.blb={t:'',sub:'',x:0,y:0,z:0,k:3,pri:950,near:0,far:20000};scene.add(g);CHT.g=g}
 function chtShow(on){chtSetup();CHT.on=on;CHT.g.visible=on;if(!on)chtStop();dirty=true}
 function chtTour(i){chtShow(true);hideCard();const order=CHT.T.map((t,j)=>j);CHT.tour={i:i||0,t0:performance.now(),from:null};chtLeg();}
 function chtLeg(){const T=CHT.tour;if(!T)return;for(const u of CHT.T)if(u.parts)for(const m of u.parts){m.rotation.set(0,0,0)}if(CHT.head)CHT.head.rotation.x=0;const t=CHT.T[T.i],b=CHT.bird,p=b.visible?b.position.clone():new THREE.Vector3(t.x-260,hAt(t.x,t.z)+180,t.z+220);T.from=p;T.to=new THREE.Vector3(t.x+18,hAt(t.x,t.z)+t.hm*.75,t.z+10);T.t0=performance.now();T.dur=Math.max(3500,Math.min(9000,p.distanceTo(T.to)*3.2));b.visible=true;
   try{flyTo(camTo(t.x,t.z,Math.max(170,t.hm*4.2),(T.i*47)%360,24),Math.min(4500,T.dur))}catch(e){}}
-function chtStop(){CHT.tour=null;for(const u of CHT.T)if(u.parts)for(const m of u.parts)m.rotation.set(0,0,0);if(CHT.bird)CHT.bird.visible=false;dirty=true}
+function chtStop(){CHT.tour=null;for(const u of CHT.T)if(u.parts)for(const m of u.parts)m.rotation.set(0,0,0);if(CHT.bird)CHT.bird.visible=false;if(CHT.flock)for(const f of CHT.flock)f.m.visible=false;dirty=true}
 function stepCht(now){if(!CHT.g||!CHT.on)return;for(const l of CHT.lbs)lifeLabels.push(l);for(const t of CHT.T)if(t.star)t.star.rotation.y=now*.0015;const T=CHT.tour,b=CHT.bird;if(!T||!b)return;dirty=true;lastInput=performance.now();
   const e=(now-T.t0)/T.dur,t=CHT.T[T.i];CHT.wings[0].rotation.z=Math.sin(now*.025)*(e<1?.9:.35);CHT.wings[1].rotation.z=-CHT.wings[0].rotation.z;if(e<1){if(CHT.head)CHT.head.rotation.x=0;for(const w of CHT.wings)w.scale.x=1}
   if(e<1){const k=e*e*(3-2*e),P=T.from.clone().lerp(T.to,k);P.y+=Math.sin(Math.PI*k)*90;const nx=T.to.clone().sub(T.from);b.position.copy(P);b.rotation.set(0,Math.atan2(nx.x,nx.z),0);
@@ -840,7 +843,12 @@ function stepCht(now){if(!CHT.g||!CHT.on)return;for(const l of CHT.lbs)lifeLabel
       if(t.parts){const sw=Math.min(1,h/1.5)*.075*Math.sin(h*2.2),sx=.04*Math.sin(h*1.6+1);for(const m of t.parts){m.rotation.z=sw;m.rotation.x=sx}}
     if(!T.said){T.said=1;const n=CHT.T.length,nx=(T.i+1)%n;showCard('The meadowlark: '+t[0],t[11]+' '+t[12]+' '+Math.round(t[5])+' points · trunk '+t.inch+' inches around · '+t[3]+' feet tall · crown '+t[4]+' feet · measured '+t[6]+' · '+t[9]+'.',-1,{label:'Next: '+CHT.T[nx][0],fn:()=>{T.i=nx;T.said=0;chtLeg()}},[{label:'Stop',fn:()=>{chtStop();hideCard()}},{label:'All champions',fn:()=>chtOpen(0)}])}
     CHT.blb.t='"'+(h<3?'Here we are!':h<7?'Tweedle-oodle-ee! The '+t[0].toLowerCase()+'!':h<11?Math.round(t[5])+' points, biggest in Nebraska':h<15?'Look, it\'s waving at you':'Tap Next and follow me')+'"';CHT.blb.sub='Western meadowlark, Nebraska\'s state bird'}
-  CHT.blb.x=b.position.x;CHT.blb.y=b.position.y+12;CHT.blb.z=b.position.z;lifeLabels.push(CHT.blb)}
+  CHT.blb.x=b.position.x;CHT.blb.y=b.position.y+8;CHT.blb.z=b.position.z;lifeLabels.push(CHT.blb);
+  // the rest of the flock: in the air they trail the leader; at a tree they settle across the crown
+  if(CHT.flock){const fl=e<1,ry=b.rotation.y,cs=Math.cos(ry),sn=Math.sin(ry),tn=now/1000;for(const f of CHT.flock){const m=f.m;m.visible=b.visible;if(!m.visible)continue;
+    if(fl){const bx=f.ox+Math.sin(tn*1.3+f.ph)*1.5,bz=f.oz;m.position.set(b.position.x+bx*cs+bz*sn,b.position.y+f.oy+Math.sin(tn*2+f.ph)*1.2,b.position.z-bx*sn+bz*cs);m.rotation.copy(b.rotation);
+      const fp=Math.sin(tn*14+f.ph)*.7;f.w[0].rotation.z=fp;f.w[1].rotation.z=-fp}
+    else{const yb=hAt(t.x,t.z),r=(t.sm||20)*f.pr,ty=yb+(t.hm||15)*f.py,tx=t.x+Math.cos(f.pa)*r,tz=t.z+Math.sin(f.pa)*r;m.position.lerp(new THREE.Vector3(tx,ty,tz),.04);m.rotation.y=f.pa+Math.PI/2+Math.sin(tn*.7+f.ph)*.3;f.w[0].rotation.z=0;f.w[1].rotation.z=0}}}}
 function chtHTML(i){chtSetup();const T=CHT.T,go='<p><button class="btn go2" data-cht="t">Fly with the meadowlark</button> <button class="btn go2" data-cht="m">Show them on the map</button></p>';
   if(i===0)return '<p>The Nebraska Forest Service keeps a register of the biggest tree of each kind in the state. Eight of them stand in Lincoln.</p>'+go
    +'<div class="tw"><table><tr><th>Tree</th><th>Where</th><th>Points</th><th>Trunk around</th><th>Height</th><th>Measured</th></tr>'+[...T].sort((a,b)=>b[5]-a[5]).map(t=>`<tr><td><b>${t[0]}</b><br><i class="psub">${t[1]}</i></td><td>${t[9]}</td><td><b>${Math.round(t[5])}</b></td><td>${t.inch} in</td><td>${t[3]} ft</td><td>${t[6]}</td></tr>`).join('')+'</table></div>'

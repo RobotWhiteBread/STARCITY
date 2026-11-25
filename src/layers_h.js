@@ -45,7 +45,7 @@ function aaWallInit(){const p=LM.dev;if(!p)return;const cv=document.createElemen
   const back=new THREE.Mesh(new THREE.BoxGeometry(W+4,Hh+4,1),new THREE.MeshLambertMaterial({color:0x2a2c30}));g.add(back);for(const sx of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(2.4,10,2.4),new THREE.MeshLambertMaterial({color:0x2a2c30}));post.position.set(sx*W*.36,-Hh/2-5,0);g.add(post)}
   // it stands on the grass by the east parking lot, clear of the road, and turns to face you the way the Devaney sign does
   const x=p.x+292,z=p.z-162;g.position.set(x,hAt(x,z)+10+Hh/2,z);g.rotation.y=-Math.PI/2;
-  g.userData.card=()=>aaCard();scene.add(g);pickables.push(g);LM.aaWall=g;labels.push({t:'All-American Wall',sub:VBAA.length+' Husker volleyball All-Americans',x,y:hAt(x,z)+Hh+22,z,k:3,pri:960,near:0,far:2200})}
+  g.userData.card=()=>aaCard();scene.add(g);pickables.push(g);LM.aaWall=g;try{vbKidsInit(x,z)}catch(e){}labels.push({t:'All-American Wall',sub:VBAA.length+' Husker volleyball All-Americans',x,y:hAt(x,z)+Hh+22,z,k:3,pri:960,near:0,far:2200})}
 // A roadside sign of the kind that used to stand outside motels: a bulb-lit arrow over a letter board with clip-on letters.
 function motelCanvas(dir){const cv=document.createElement('canvas');cv.width=640;cv.height=900;const q=cv.getContext('2d');
   // the arrow points at the arena; dir is 1 when the arena is to the right of the sign on screen, -1 when it is to the left
@@ -155,3 +155,24 @@ function councilCardOld(){const L=DL.get('council'),m=[];if(L){const f=k=>fget(L
   +'The council meets most Mondays at 3 p.m., and at 5:30 p.m. on the last Monday of the month, in the Council Chambers on the first floor of the County-City Building, 555 S. 10th Street. Agendas come out by 4 p.m. the Thursday before. Anyone may speak on an item at its public hearing, and there is an open microphone on the second and last Mondays. Meetings air live on LNKTV. '
   +'Turn on Decisions in the works to see what is headed to the Planning Commission and the council, on the ground where it would happen.',undefined,{label:'Decisions in the works',fn:()=>{dlSet('cases',true);dlSet('council',true,true)}},
   [{href:'https://www.lincoln.ne.gov/City/City-Council/City-Council-Public-Meeting',label:'Meeting dates ↗'},{href:'https://www.lincoln.ne.gov/City/Departments/Finance/City-Clerk/Clerk-Council',label:'Agendas and members ↗'},{href:'https://www.lincoln.ne.gov/City/Departments/Finance/City-Clerk/Clerk-Council/request-to-speak',label:'How to speak ↗'},{href:'https://lnktv.lincoln.ne.gov/',label:'Watch on LNKTV ↗'}])}
+
+// ---- little kids running a passing drill on the grass in front of the All-American wall: a circle of five, bump to bump, with one ball.
+// Part of the map, not real players. Drawn a little larger than life so they read from a distance.
+const VBK={g:null,kids:[],ball:null,i:0,t0:0,lb:null};
+function vbKidsInit(wx,wz){const g=new THREE.Group(),cx=wx+26,cz=wz,R=4.2,J=[0xb00d23,0xffffff,0xb00d23,0xffffff,0xb00d23],SK=[0xf1c9a5,0xc68642,0x8d5524,0xe0ac69,0xf1c9a5],HR=[0x3b2a1a,0x111111,0x2b1b10,0xd8b26a,0x6b4423];
+  const mat=c=>new THREE.MeshLambertMaterial({color:c}),B=(w,h,d,c,x,y,z,p)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);p.add(m);return m};
+  for(let k=0;k<5;k++){const a=k/5*6.283,kid=new THREE.Group(),body=new THREE.Group();kid.add(body);
+    for(const s of[-1,1]){B(.14,.55,.16,SK[k],s*.1,.28,0,body);B(.16,.12,.24,0xf5f5f5,s*.1,.05,.04,body)}
+    B(.36,.2,.22,0x1b1b1b,0,.62,0,body);B(.4,.42,.24,J[k],0,.92,0,body);B(.26,.26,.26,SK[k],0,1.28,0,body);B(.28,.1,.28,HR[k],0,1.43,-.01,body);
+    const arms=new THREE.Group();arms.position.set(0,1.06,0);body.add(arms);for(const s of[-1,1])B(.1,.1,.5,SK[k],s*.09,0,.25,arms);
+    kid.position.set(cx+Math.cos(a)*R,0,cz+Math.sin(a)*R);kid.rotation.y=Math.atan2(cx-kid.position.x,cz-kid.position.z);kid.scale.setScalar(1.8);g.add(kid);VBK.kids.push({kid,body,arms})}
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(.13,12,10),new THREE.MeshLambertMaterial({color:0xfaf6e8}));ball.scale.setScalar(1.8);g.add(ball);VBK.ball=ball;
+  g.userData.card=()=>showCard('Passing drill','A few little kids working on their passing in front of the All-American wall: platform out, bend the knees, bump it to a teammate. Part of the map, not real players. Somebody on this wall started out just like this.',-1);
+  for(const c of g.children)c.userData.card=g.userData.card;scene.add(g);pickables.push(g);VBK.g=g;VBK.c=[cx,cz];VBK.lb={t:'Passing drill',sub:'bump, bump, set',x:cx,y:0,z:cz,k:3,pri:600,near:0,far:900}}
+function vbKidsStep(now){const g=VBK.g;if(!g)return;const d=Math.hypot(camera.position.x-VBK.c[0],camera.position.z-VBK.c[1]),on=d<1400;if(g.visible!==on){g.visible=on;dirty=true}if(!on)return;
+  const gy=hAt(VBK.c[0],VBK.c[1]);g.position.y=gy;
+  // one pass every 1.3 seconds to the kid two spots around the circle, so the ball crosses the middle
+  const T=1300;if(!VBK.t0)VBK.t0=now;let e=(now-VBK.t0)/T;if(e>=1){VBK.t0=now;VBK.i=(VBK.i+2)%5;e=0}
+  const A=VBK.kids[VBK.i].kid.position,Bp=VBK.kids[(VBK.i+2)%5].kid.position;VBK.ball.position.set(A.x+(Bp.x-A.x)*e,2.1+Math.sin(Math.PI*e)*5.5,A.z+(Bp.z-A.z)*e);
+  VBK.kids.forEach((q,k)=>{const recv=k===(VBK.i+2)%5,send=k===VBK.i,dip=recv?Math.max(0,e-.6)/.4:send?Math.max(0,.25-e)/.25:0;q.body.position.y=-.18*dip;q.arms.rotation.x=(recv||send)?.35*dip:-.25;q.body.rotation.x=.12*dip});
+  VBK.lb.y=gy+9;lifeLabels.push(VBK.lb);ambient=true}
