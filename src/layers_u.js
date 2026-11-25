@@ -437,13 +437,57 @@ function pxLink(e,m,SNAP){SNAP=SNAP||70;const TR=LM.trails,X=[],Z=[],adj=[],G=ne
   while(H.length){const [d,u]=pop();if(d>dist[u])continue;if(d>40000)break;const L=MG.get(key(X[u],Z[u]));if(L&&d>0){let mi=-1,md=1e18;for(const i of L){const dd=(m[i][0]-X[u])**2+(m[i][1]-Z[u])**2;if(dd<md){md=dd;mi=i}}if(md<400){const path=[];for(let v=u;v>=0;v=prv[v])path.push([X[v],Z[v]]);path.reverse();return {path,mi,d}}}
     const A=adj[u];for(let q=0;q<A.length;q+=2){const v=A[q],nd=d+A[q+1];if(nd<dist[v]){dist[v]=nd;prv[v]=u;push(nd,v)}}}return null}
 function pxAt(s){const C=PX.course,p=C.p,c=C.cum;s=Math.max(0,Math.min(C.L,s));let lo=0,hi=c.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(c[m]<=s)lo=m;else hi=m}const u=(s-c[lo])/Math.max(1e-6,c[hi]-c[lo]);const x=p[lo][0]+(p[hi][0]-p[lo][0])*u,z=p[lo][1]+(p[hi][1]-p[lo][1])*u;return [x,z,Math.atan2(p[hi][0]-p[lo][0],p[hi][1]-p[lo][1])]}
-function pxMesh(k,c){const g=new THREE.Group(),M=col=>new THREE.MeshLambertMaterial({color:col}),B=(w,h,d,col,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(col));m.position.set(x,y,z);g.add(m);return m};
-  if(k==='lark'){B(.5,.4,.8,0x8a6a3a,0,.6,0);B(.42,.3,.5,c,0,.58,-.2);B(.06,.06,.25,0x222222,0,.62,-.55);B(.9,.05,.4,0x8a6a3a,0,.65,.05)}
-  else if(k==='bee'){B(.4,.4,.7,c,0,.7,0);B(.42,.12,.12,0x222222,0,.7,.05);B(.42,.12,.12,0x222222,0,.7,-.15);B(.9,.04,.3,0xddeeff,0,.95,0)}
-  else if(k==='deer'){B(.5,.6,1.3,c,0,1.2,0);for(const sx of[-.18,.18])for(const sz of[-.5,.5])B(.1,.9,.1,c,sx,.45,sz);B(.3,.5,.4,c,0,1.65,-.7);B(.2,.25,.1,0xffffff,0,1.3,.68)}
-  else if(k==='cat'){B(.9,.3,1.5,0x3a6e9a,0,.35,0);B(.4,.35,1.1,c,0,.65,0);B(.5,.25,.2,c,0,.65,.65);for(const sx of[-.5,.5])B(.1,.3,.3,0x222222,sx,.15,0)}
-  else {B(.9,.35,1.1,c,0,.35,0);B(.7,.2,.9,0xc9a43a,0,.55,0);B(.3,.25,.3,0x7a6a3a,0,.35,-.65)}
+function pxMesh(k,c){const g=new THREE.Group(),MC={},M=(col,op)=>{const key=col+'_'+(op||1);return MC[key]||(MC[key]=new THREE.MeshLambertMaterial(op?{color:col,transparent:true,opacity:op,depthWrite:false}:{color:col}))},
+  B=(w,h,d,col,x,y,z,p,op)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(col,op));m.position.set(x,y,z);(p||g).add(m);return m},
+  S=(r,col,x,y,z,sx,sy,sz,p,op)=>{const m=new THREE.Mesh(new THREE.SphereGeometry(r,10,8),M(col,op));m.position.set(x,y,z);m.scale.set(sx||1,sy||1,sz||1);(p||g).add(m);return m},
+  P=(x,y,z,p)=>{const o=new THREE.Group();o.position.set(x,y,z);(p||g).add(o);return o},u={k,legs:[],wings:[]};g.userData=u;
+  if(k==='lark'){// western meadowlark: streaky brown back, yellow breast with a black V, white outer tail feathers
+    const body=P(0,.65,0);u.body=body;S(.32,0x8a6a3a,0,0,0,1,.9,1.5,body);S(.27,0xf2c200,0,-.06,-.12,1,.85,1.25,body);
+    B(.36,.07,.06,0x1b1b1b,0,.06,-.42,body).rotation.x=.3;B(.05,.2,.05,0x1b1b1b,-.1,-.02,-.4,body).rotation.z=.5;B(.05,.2,.05,0x1b1b1b,.1,-.02,-.4,body).rotation.z=-.5;
+    for(const z of[-.1,.1,.3])B(.3,.02,.06,0x4a3620,0,.27,z,body);
+    const hd=P(0,.28,-.45,body);u.head=hd;S(.17,0x8a6a3a,0,0,0,1,1,1.1,hd);S(.12,0xf2c200,0,-.06,-.07,1,.8,1,hd);B(.04,.02,.22,0xf2e6cc,0,.12,0,hd);
+    for(const sx of[-.12,.12])S(.03,0x111111,sx,.04,-.07,1,1,1,hd);const bk=B(.05,.05,.28,0x9a8a6a,0,-.02,-.24,hd);bk.rotation.x=.12;u.beak=bk;
+    const tl=P(0,.02,.42,body);B(.28,.04,.4,0x6a5030,0,0,.18,tl);for(const sx of[-.13,.13])B(.05,.045,.4,0xffffff,sx,.005,.18,tl);tl.rotation.x=-.25;u.tail=tl;
+    for(const s of[-1,1]){const w=P(s*.28,.1,0,body);B(.6,.04,.5,0x7a5a32,s*.3,0,.02,w);for(const z of[-.12,.08])B(.55,.045,.05,0x3a2a18,s*.3,.01,z,w);u.wings.push([w,s])}
+    for(const s of[-1,1]){const l=P(s*.1,-.22,0,body);B(.04,.3,.04,0xc9a27a,0,-.15,0,l);B(.12,.03,.14,0xc9a27a,0,-.3,-.04,l);u.legs.push(l)}}
+  else if(k==='bee'){// honeybee: fuzzy amber thorax, striped abdomen, glassy wings that buzz
+    const body=P(0,.75,0);u.body=body;S(.2,0xc9902a,0,.05,-.08,1,1,1,body);S(.16,0x2a1a0a,0,.05,-.33,1,1,1,body);
+    for(const sx of[-.1,.1]){S(.07,0x111111,sx,.09,-.43,1,1.3,.6,body);const an=B(.025,.3,.025,0x1a1a1a,sx*.6,.27,-.42,body);an.rotation.set(-.6,0,sx*2)}
+    const ab=P(0,0,.12,body);u.abdomen=ab;const cols=[0xf2b31b,0x1b1208,0xf2b31b,0x1b1208,0xf2b31b,0x1b1208];cols.forEach((col,i)=>S(.21-i*.025,col,0,-.02*i,.05+i*.08,1,1,.5,ab));B(.025,.025,.14,0x222222,0,-.12,.52,ab);
+    for(const s of[-1,1]){const w=P(s*.1,.22,-.1,body);B(.5,.015,.25,0xe8f4ff,s*.26,0,.06,w,.55);B(.32,.015,.16,0xe8f4ff,s*.18,0,.3,w,.45);u.wings.push([w,s])}
+    for(const s of[-1,1])for(const z of[-.15,-.05,.05]){const l=P(s*.12,-.1,z,body);B(.025,.22,.025,0x1a1a1a,s*.05,-.1,0,l).rotation.z=s*.5;u.legs.push(l)}
+    const pol=S(.06,0xffd84a,0,-.15,.03,1,1,1,body);pol.visible=true}
+  else if(k==='deer'){// white-tailed deer: tan coat, white belly and throat, a white flag tail, a buck's antlers
+    const body=P(0,1.3,0);u.body=body;B(.5,.55,1.35,c,0,0,0,body);B(.42,.12,1.1,0xf2ead8,0,-.28,0,body);S(.3,c,0,.02,.6,1,1,1,body);S(.29,c,0,.06,-.58,1,1,1,body);
+    const nk=P(0,.2,-.62,body);u.neck=nk;const n=B(.24,.6,.26,c,0,.22,-.08,nk);n.rotation.x=-.45;B(.16,.25,.08,0xffffff,0,.12,-.2,nk).rotation.x=-.45;
+    const hd=P(0,.52,-.28,nk);u.head=hd;B(.24,.24,.32,c,0,0,0,hd);B(.18,.16,.26,c,0,-.05,-.26,hd);B(.1,.07,.06,0x1a1a1a,0,-.02,-.4,hd);B(.2,.05,.08,0xffffff,0,-.12,-.3,hd);
+    for(const s of[-1,1]){S(.04,0x111111,s*.12,.04,-.08,1,1,1,hd);const e=B(.08,.22,.04,c,s*.15,.17,.08,hd);e.rotation.z=s*-.7;
+      const an=P(s*.07,.13,0,hd);const m1=B(.035,.32,.035,0xd8c8a0,0,.15,0,an);m1.rotation.set(-.3,0,s*-.35);const m2=B(.035,.36,.035,0xd8c8a0,s*.09,.27,-.12,an);m2.rotation.set(-1.1,0,s*-.2);for(const t of[0,1])B(.03,.16,.03,0xd8c8a0,s*(.1+t*.02),.34,-.06-t*.12,an).rotation.z=s*-.15}
+    const tl=P(0,.18,.68,body);u.tail=tl;B(.14,.08,.3,c,0,0,.12,tl);B(.13,.07,.28,0xffffff,0,-.04,.13,tl);
+    for(const sx of[-.16,.16])for(const sz of[-.52,.52]){const l=P(sx,-.22,sz,body);B(.11,.5,.11,c,0,-.25,0,l);const lo=P(0,-.5,0,l);B(.08,.48,.08,c,0,-.24,0,lo);B(.09,.08,.11,0x2a2018,0,-.5,-.01,lo);u.legs.push([l,lo,sz<0])}}
+  else if(k==='cat'){// channel catfish riding a little red wagon with a water tank: forked tail, whiskers, spotted gray-blue
+    const wg=P(0,0,0);u.wagon=wg;B(1.2,.28,1.8,0xc81e1e,0,.42,0,wg);B(1.24,.06,1.84,0xe23a3a,0,.57,0,wg);u.wheels=[];
+    for(const sx of[-.64,.64])for(const sz of[-.6,.6]){const w=new THREE.Mesh(new THREE.CylinderGeometry(.24,.24,.1,14),M(0x222222));w.rotation.z=Math.PI/2;w.position.set(sx,.24,sz);wg.add(w);const hub=B(.11,.08,.08,0xdddddd,sx*1.04,.24,sz,wg);u.wheels.push(w)}
+    const hd=B(.06,.06,.8,0x555555,0,.32,-1.25,wg);hd.rotation.x=.5;B(.4,.06,.06,0x555555,0,.15,-1.6,wg);
+    B(1.1,.8,1.7,0x5fb6e8,0,.98,0,wg,.35);B(1.12,.04,1.72,0xbfe6ff,0,1.32,0,wg,.6);
+    const f=P(0,.95,0,wg);u.fish=f;S(.22,0x6e7f8c,0,0,-.15,1.1,.9,2.4,f);S(.17,0xdfe4e8,0,-.09,-.15,1,.6,2.1,f);for(let i=0;i<7;i++)S(.035,0x2a2f33,(i%2?.15:-.15)+(i%3-1)*.03,.1,-.5+i*.12,1,1,1,f);
+    B(.03,.18,.25,0x5a6a78,0,.24,-.25,f);S(.18,0x6e7f8c,0,0,-.66,1.2,.8,1,f);for(const s of[-1,1]){S(.035,0x111111,s*.17,.05,-.7,1,1,1,f);for(const yy of[0,-.09]){const wh=B(.02,.02,.45,0x3a3a3a,s*.2,-.04+yy,-.82,f);wh.rotation.y=s*.6;wh.rotation.x=yy?.35:0}}
+    const tl=P(0,0,.42,f);u.tail=tl;B(.04,.12,.3,0x5a6a78,0,0,.1,tl);B(.03,.35,.2,0x5a6a78,0,.14,.28,tl).rotation.x=.5;B(.03,.35,.2,0x5a6a78,0,-.14,.28,tl).rotation.x=-.5}
+  else {// ornate box turtle: domed dark shell with yellow lines radiating from each scute, yellow-flecked head and legs
+    const body=P(0,.32,0);u.body=body;S(.62,0x3a2a14,0,.1,0,1,.62,1.15,body);S(.6,0xd8b84a,0,-.07,0,1,.18,1.08,body);
+    for(let i=0;i<5;i++)for(const s of[-1,1]){if(i===0&&s>0)continue;const sx=i?s*.28:0,sz=-.42+i*.21;for(let r=0;r<6;r++){const a=r/6*Math.PI*2,l=B(.025,.02,.16,0xf2d24a,0,0,0,body);const nx=sx+Math.cos(a)*.08,nz=sz+Math.sin(a)*.08,ny=.1+.36*Math.sqrt(Math.max(0,1-(nx*nx)/.39-(nz*nz)/.51));l.position.set(nx,ny,nz);l.rotation.y=-a+Math.PI/2;l.rotation.z=nx*.9}}
+    const hd=P(0,0,-.62,body);u.head=hd;S(.15,0x5a4a28,0,0,-.08,1,.9,1.3,hd);for(const sx of[-.08,.04,.1])S(.03,0xf2d24a,sx,.08,-.12,1,1,1,hd);for(const s of[-1,1])S(.035,0xc23a1a,s*.12,.04,-.18,1,1,1,hd);
+    for(const sx of[-.42,.42])for(const sz of[-.42,.42]){const l=P(sx,-.08,sz,body);S(.12,0x5a4a28,0,-.06,0,1.1,.7,1.3,l);S(.03,0xf2d24a,0,0,-.08,1,1,1,l);u.legs.push(l)}
+    const tl=B(.08,.06,.16,0x5a4a28,0,-.06,.66,body)}
   return g}
+// animate a racer: legs in gait, wings flapping or buzzing, tails wagging, and special moves while paused or boosting
+function pxAnim(q,now,run){const u=q.g.userData;if(!u)return;const t=now*.001,i=q.i,b=q.boost>0,p=q.pause>0;
+  if(u.k==='lark'){const f=p?0:Math.sin(t*(b?38:26)+i)*.9;for(const [w,s] of u.wings)w.rotation.z=s*(p?-.05:f*.8);u.body.rotation.x=p?-.25:Math.sin(t*3+i)*.08;u.beak.rotation.x=p?.12+Math.abs(Math.sin(t*14))*.35:.12;u.head.rotation.x=p?-.45:0;u.tail.rotation.x=-.25+(p?Math.sin(t*6)*.25:0);u.legs.forEach((l,k)=>l.rotation.x=p?0:.6)}
+  else if(u.k==='bee'){for(const [w,s] of u.wings)w.rotation.z=s*(Math.sin(t*90+i)*.6);u.abdomen.rotation.x=Math.sin(t*(p?9:4)+i)*(p?.25:.1);u.body.rotation.z=Math.sin(t*2+i)*.12;u.body.position.y=.75+(p?-.3+Math.sin(t*5)*.05:Math.sin(t*6+i)*.08);u.legs.forEach((l,k)=>l.rotation.x=.4+Math.sin(t*12+k)*.2)}
+  else if(u.k==='deer'){const sp=p?0:b?16:11,ph=t*sp+i;u.legs.forEach(([l,lo,fr],k)=>{const off=(fr?0:Math.PI)+(k%2)*.4,sw=Math.sin(ph+off);l.rotation.x=p?0:sw*(b?.9:.6);lo.rotation.x=p?0:Math.max(0,-Math.cos(ph+off))*(b?1.1:.8)});
+    u.body.position.y=1.3+(p?0:Math.abs(Math.sin(ph))*(b?.45:.15));u.body.rotation.x=p?0:Math.sin(ph)*(b?.18:.06);u.neck.rotation.x=p?-.35:.1;u.head.rotation.y=p?Math.sin(t*3)*.6:0;u.tail.rotation.x=p||b?-1.2+Math.sin(t*20)*.15:-.1}
+  else if(u.k==='cat'){for(const w of u.wheels)w.rotation.x=0;u.wheels.forEach(w=>w.rotation.y=(q.s||0)*1.5);u.tail.rotation.y=Math.sin(t*(b?14:6)+i)*(b?.7:.4);u.fish.rotation.y=Math.sin(t*(b?14:6)+i+1.6)*.12;u.fish.position.y=.95+(b?Math.abs(Math.sin(t*7))*.25:0);u.wagon.rotation.z=p?0:Math.sin(t*9+i)*.03}
+  else {const sp=p?0:b?9:5;u.legs.forEach((l,k)=>{l.rotation.x=Math.sin(t*sp+(k%3?0:Math.PI))*.5;l.rotation.y=Math.sin(t*sp+k)*.3});u.head.position.z=-.62-(q.note==='steady as ever'?.06:0)+Math.sin(t*1.5+i)*.05;u.head.rotation.y=Math.sin(t*.8+i)*.3;u.body.rotation.z=Math.sin(t*sp)*.04}}
 function pxDirector(kind,x,z,ang){const g=new THREE.Group(),M=col=>new THREE.MeshLambertMaterial({color:col}),B=(w,h,d,col,px,py,pz)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(col));m.position.set(px,py,pz);g.add(m)};
   const c=kind==='fox'?0xd2691e:0x8a8a8a;B(.5,.5,1,c,0,.55,0);B(.45,.4,.45,c,0,.95,-.55);B(.12,.12,.2,0x222222,0,.92,-.85);if(kind==='fox'){B(.25,.25,.8,c,0,.6,.8);B(.2,.2,.2,0xffffff,0,.6,1.2)}else{B(.47,.14,.47,0x222222,0,1,-.56);for(let i=0;i<4;i++)B(.22,.22,.18,i%2?0x222222:0xaaaaaa,0,.6,.55+i*.18)}
   B(.06,1.6,.06,0x5a4a3a,.45,1.3,-.2);const fc=document.createElement('canvas');fc.width=64;fc.height=48;const cx=fc.getContext('2d');if(kind==='fox'){cx.fillStyle='#2fa84f';cx.fillRect(0,0,64,48)}else for(let i=0;i<8;i++)for(let j=0;j<6;j++){cx.fillStyle=(i+j)%2?'#111':'#fff';cx.fillRect(i*8,j*8,8,8)}
@@ -470,9 +514,9 @@ function stepPX(now){if(!PX.on)return;const dt=Math.min(.1,(now-PX.last)/1000);P
         else if(k==='cat'){if(rnd<.4){q.boost=2.5;q.note='creek crossing, swimming fast'}else{q.pause=.8;q.note='wagon needs water'}}else{if(rnd<.35){q.s+=PX.goal*.06;q.note='took a culvert shortcut!'}else q.note='steady as ever'}}
       if(q.boost>0){q.boost-=dt;v*=2.1}
       const wx=PX.wind*(q.r.k==='bee'?-.35:q.r.k==='lark'?.25:q.r.k==='turtle'?0:-.1);v*=1+wx*.3;q.s=Math.min(PX.goal,q.s+v*dt);if(q.s>=PX.goal&&!PX.fin.includes(q))PX.fin.push(q)}
-    const [x,z,a]=pxAt(Math.max(0,q.s)),lane=(q.i-2)*2.2,sc=Math.max(5,camera.position.distanceTo(controls.target)/22),y=hAt(x,z)+(q.r.k==='lark'||q.r.k==='bee'?3+Math.sin(now*.01+q.i):0);
-    q.g.position.set(x+Math.cos(a)*lane,y,z-Math.sin(a)*lane);q.g.rotation.y=a+Math.PI;q.g.scale.setScalar(sc);
-    const place=PX.fin.indexOf(q);q.lb.t=(q.i===PX.pick?'★ ':'')+q.r.n;q.lb.sub=place>=0?['1st','2nd','3rd','4th','5th'][place]+' place':(q.note&&q.pause>0||q.boost>0||/culvert/.test(q.note)?q.note:Math.round(100*Math.max(0,q.s)/PX.goal)+'%');q.lb.x=q.g.position.x;q.lb.y=y+2.5*sc;q.lb.z=q.g.position.z;lifeLabels.push(q.lb)}
+    const [x,z,a]=pxAt(Math.max(0,q.s)),sc=Math.max(5,camera.position.distanceTo(controls.target)/22),lane=(q.i-2)*1.6*sc,y=hAt(x,z)+(q.r.k==='lark'||q.r.k==='bee'?3+Math.sin(now*.01+q.i):0);
+    q.g.position.set(x+Math.cos(a)*lane,y,z-Math.sin(a)*lane);q.g.rotation.y=a+Math.PI;q.g.scale.setScalar(sc);pxAnim(q,now,go&&q.s<PX.goal);
+    const place=PX.fin.indexOf(q);q.lb.t=(q.i===PX.pick?'★ ':'')+({lark:'🐦',bee:'🐝',deer:'🦌',cat:'🐟',turtle:'🐢'}[q.r.k]||'')+' '+q.r.n;q.lb.sub=place>=0?['1st','2nd','3rd','4th','5th'][place]+' place':(q.note&&q.pause>0||q.boost>0||/culvert/.test(q.note)?q.note:Math.round(100*Math.max(0,q.s)/PX.goal)+'%');q.lb.x=q.g.position.x;q.lb.y=y+2.5*sc;q.lb.z=q.g.position.z;lifeLabels.push(q.lb)}
   for(const l of PX.flb)lifeLabels.push(l);for(const d of PX.dir)if(d.userData.flag)d.userData.flag.rotation.y=Math.sin(now*.008)*.6;
   if(now-PX.sayT>6000){PX.sayT=now;PX.say=PXSAY.mid[Math.random()*PXSAY.mid.length|0]}
   const me=PX.racers[PX.pick];if(PX.follow&&me&&go){const t=controls.target,dx=me.g.position.x-t.x,dz=me.g.position.z-t.z;const k=Math.min(1,dt*2.5);t.x+=dx*k;t.z+=dz*k;camera.position.x+=dx*k;camera.position.z+=dz*k;t.y+=(me.g.position.y-t.y)*k;controls.update()}
