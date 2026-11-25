@@ -184,14 +184,15 @@ function flyThrough(){stopTour();const bs=[...$('chips').children];if(!bs.length
     showCard(n,(k?FTSAY[k]+' ':'')+'Stop '+i+' of '+bs.length+'.',-1,{label:'Stop the fly-through',fn:()=>stopTour()});tour=setTimeout(next,7000)};next()}
 // ---- every so often a section of the Memorial Stadium crowd breaks into "Meat pie power!", or shouts a meat pie recipe one slow step at a time.
 // The words sit low over the red seating bowl, on the section that is shouting.
-const MPP={ri:-1,rt:0,ui:0,REC:['BROWN! THE! BEEF!','Onions in!','Shred the cabbage!','Salt! And! Pepper!','Make the dough!','Roll it out!','Fill it up!','Pinch it shut!','350! For 20!','Golden brown!','In da deed, da meat pie!','MEAT PIE POWER!'],
+const MPP={ri:-1,rt:0,ui:0,TITLE:'In The Deed Meat Pie Glory',REC:['BROWN! THE! BEEF!','Onions in!','Shred the cabbage!','Salt! And! Pepper!','Make the dough!','Roll it out!','Fill it up!','Pinch it shut!','350! For 20!','Golden brown!','In da deed, da meat pie!','MEAT PIE POWER!'],
  SEC:[['west stands',-62,0],['east stands',62,0],['student section',58,-30],['north end zone',0,-95],['south end zone',0,95],['the band',-55,40]],next:0,until:0,t:'',sub:'',x:0,z:0,
  SAY:['MEAT PIE POWER!','In da deed, da meat pie!','IN DA DEED! DA MEAT PIE!','Meat! Pie! Power!','MEAT PIE POWER! MEAT PIE POWER!']};
-function stepMPP(now){const S=LM.stadium;if(!S)return;const d=camera.position.distanceTo(controls.target);if(Math.hypot(controls.target.x-S[0],controls.target.z-S[1])>3000||d>5000)return;
-  if(!MPP.next)MPP.next=now+8000+Math.random()*10000;const sec=k=>{const q=MPP.SEC[k%MPP.SEC.length];MPP.x=S[0]+q[1];MPP.z=S[1]+q[2];return q[0]};
-  if(now>MPP.next&&MPP.ri<0){if(Math.random()<.4){MPP.ri=0;MPP.rt=now;MPP.ui=Math.random()*6|0}else{MPP.t=MPP.SAY[Math.random()*MPP.SAY.length|0];MPP.sub=sec(Math.random()*6|0);MPP.until=now+7000}MPP.next=now+60000+Math.random()*60000}
-  if(MPP.ri>=0){const step=6500,i=Math.floor((now-MPP.rt)/step),ph=(now-MPP.rt)%step;if(i>=MPP.REC.length){MPP.ri=-1;MPP.next=now+60000+Math.random()*60000}else{MPP.t=MPP.REC[i];const n=MPP.REC.length-2;MPP.sub=(i<n?'meat pie, step '+(i+1)+' of '+n+' · ':'')+sec(MPP.ui+i);MPP.until=ph<5000?now+50:0}}
-  if(now<MPP.until)lifeLabels.push({t:MPP.t,sub:MPP.sub,x:MPP.x,y:hAt(MPP.x,MPP.z)+24,z:MPP.z,k:3,pri:1100,near:0,far:6000})}
+function stepMPP(now){const S=LM.stadium;if(!S)return;const d=camera.position.distanceTo(controls.target);if(Math.hypot(controls.target.x-S[0],controls.target.z-S[1])>3000||d>5000){MPP.next=0;return}
+  if(!MPP.next)MPP.next=now+2500;const sec=k=>{const q=MPP.SEC[k%MPP.SEC.length];MPP.x=S[0]+q[1];MPP.z=S[1]+q[2];return q[0]};
+  if(now>MPP.next&&MPP.ri<0){if(Math.random()<.4){MPP.ri=0;MPP.rt=now;MPP.ui=Math.random()*6|0}else{MPP.t=MPP.SAY[Math.random()*MPP.SAY.length|0];MPP.sub=sec(Math.random()*6|0);MPP.until=now+7000}MPP.next=now+30000+Math.random()*20000}
+  if(MPP.ri>=0){const step=6500,i=Math.floor((now-MPP.rt)/step),ph=(now-MPP.rt)%step;if(i>=MPP.REC.length){MPP.ri=-1;MPP.next=now+30000+Math.random()*20000}else{MPP.t=MPP.REC[i];const n=MPP.REC.length-2;MPP.sub=(i<n?MPP.TITLE+', step '+(i+1)+' of '+n+' · ':'')+sec(MPP.ui+i);MPP.until=ph<5000?now+50:0}}
+  if(now<MPP.until||MPP.ri>=0||now-MPP.until<600){ambient=true;dirty=true}
+  if(now<MPP.until)lifeLabels.push({t:MPP.t,sub:MPP.sub,x:MPP.x,y:hAt(MPP.x,MPP.z)+24,z:MPP.z,k:3,pri:5000,near:0,far:6000})}
 // ---- pivot tables: pick how to cut the city (rows) and every measure becomes a column; sort, switch to rates, map a column, download CSV
 const PVM=[['pot','Potholes','requests 2018–26',1],['fix','All fix-it requests','2018–26',1],['crash','Crashes','2024–mid 2026',1],['lead','Lead or galvanized lines','known so far',1],
  ['homes','Homes','residential parcels',0],['com','Business parcels','commercial',0],['val','Median home value','assessed',2],['yr','Median year built','homes',3],['km2','Area','km²',4]];
@@ -391,3 +392,20 @@ function langSet(k){const host=location.hostname,exp='expires=Thu, 01 Jan 1970 0
 $('bLang').onclick=langOpen;
 // someone who picked a language before gets it again on their next visit
 if(langCur()!=='en')setTimeout(()=>langSet(langCur()),1500);
+
+// ---- card stunt: when the crowd chants, the two sideline stands flip white cards that spell MEAT on one side and PIE on the other
+const CS={m:null,t0:0,on:false,F:{M:['10001','11011','10101','10101','10001','10001','10001'],E:['11111','10000','10000','11110','10000','10000','11111'],A:['01110','10001','10001','11111','10001','10001','10001'],T:['11111','00100','00100','00100','00100','00100','00100'],P:['11110','10001','10001','11110','10000','10000','10000'],I:['11111','00100','00100','00100','00100','00100','11111']}};
+function csDraw(o,u){const c=o.cv.getContext('2d'),W=o.cv.width,Hc=o.cv.height,word=o.w,cols=word.length*6-1,cw=Math.floor(W/(cols+4)),ch=Math.floor(Hc/11),x0=Math.floor((W-cols*cw)/2),y0=Math.floor((Hc-7*ch)/2);
+  c.fillStyle='#8f0016';c.fillRect(0,0,W,Hc);const nC=Math.ceil(W/cw),nR=Math.ceil(Hc/ch);
+  for(let r=0;r<nR;r++)for(let q=0;q<nC;q++){const gx=q*cw-((cw-x0%cw)%cw),gy=r*ch-((ch-y0%ch)%ch),lc=Math.round((gx-x0)/cw),lr=Math.round((gy-y0)/ch);let on=false;
+    if(lr>=0&&lr<7&&lc>=0&&lc<cols){const L=Math.floor(lc/6),k=lc%6;if(k<5)on=CS.F[word[L]][lr][k]==='1'}
+    const flip=Math.min(1,Math.max(0,u*1.6-q/nC*0.6)),show=on&&flip>0.5,sq=Math.abs(Math.cos(flip*Math.PI));
+    c.fillStyle=show?'#ffffff':((q+r)%2?'#c8102e':'#b40d27');const hh=(ch-3)*(on?Math.max(.15,sq===0?1:(flip>0&&flip<1?sq:1)):1);c.fillRect(gx+1,gy+(ch-hh)/2,cw-2,hh)}
+  o.tx.needsUpdate=true}
+function csInit(){if(CS.m||!LM.stadG)return;const s=LM.stadG,[ax,az]=LM.stadA,X2=ax-16,dx=X2-36,dy=44.8,L=Math.hypot(dx,dy),th=Math.atan2(dx,dy),len=Math.min(84,az*1.1);CS.m=[];
+  for(const [side,word] of [[-1,'MEAT'],[1,'PIE']]){const cv=document.createElement('canvas');cv.width=1024;cv.height=Math.round(1024*L/len);const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;
+    const g=new THREE.PlaneGeometry(len,L*.86);g.rotateY(side<0?Math.PI/2:-Math.PI/2);g.rotateZ(side<0?th:-th);
+    const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:tx,transparent:true,opacity:0,polygonOffset:true,polygonOffsetFactor:-4,side:THREE.DoubleSide}));
+    const n=new THREE.Vector3(side<0?Math.cos(th):-Math.cos(th),Math.sin(th),0);m.position.set(side*(36+X2)/2,(1.2+46)/2,0).addScaledVector(n,2.2);m.visible=false;s.add(m);CS.m.push({m,cv,tx,w:word,last:-1})}}
+function stepCS(now){if(!LM.stadG)return;csInit();if(!CS.m)return;const act=now<MPP.until||MPP.ri>=0;if(act&&!CS.on){CS.on=true;CS.t0=now}if(!act&&CS.on&&now-CS.t0>2500){CS.on=false;CS.t0=now}
+  const u=CS.on?Math.min(1,(now-CS.t0)/1400):Math.max(0,1-(now-CS.t0)/700);for(const o of CS.m){o.m.visible=u>0.01;o.m.material.opacity=Math.min(1,u*1.5);const st=Math.round(u*24);if(st!==o.last&&o.m.visible){o.last=st;csDraw(o,u)}}if(u>0&&u<1){ambient=true;dirty=true}}
