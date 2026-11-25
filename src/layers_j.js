@@ -80,10 +80,47 @@ function skyDark(){scene.background.setHex(0x05080f);if(scene.fog)scene.fog.colo
 function setSky(on){if(on===NSKY.on)return;if(on&&codeOn)setCode(0);if(on&&!skyBuild()){showCard('Night sky','The star catalog did not load with this copy of the map.');return}NSKY.on=on;$('bSky').classList.toggle('on',on);document.body.classList.toggle('sky',on);$('wkX').textContent='\u2190 Back to the map';
   if(on){NSKY.keep={live:liveOn,h:curHour,walk:walk.on};if(!walk.on)setWalk(true);walk.sky=true;walk.pitch=.72;setHour(22.4);skyDark();scene.add(NSKY.grp);NSKY.off=0;skyUpdate(true);
     if((NSKY.bodies.find(b=>b.name==='Sun')||{alt:0}).alt>-6)skyTonight();else skyCard();skySats()}
-  else{walk.sky=false;scene.remove(NSKY.grp);skyLabels.length=0;const k=NSKY.keep;NSKY.keep=null;if(k){if(!k.walk&&walk.on)setWalk(false);else if(walk.on){camera.fov=Math.min(camera.fov,72);camera.updateProjectionMatrix()}if(k.live)setLive(true);else setHour(k.h)}if(/^(Night sky|In the sky|How the sky)/.test($('ch').textContent))hideCard()}
+  else{if(SCOPE.on||SCOPE.tel)scopeOff();walk.sky=false;scene.remove(NSKY.grp);skyLabels.length=0;const k=NSKY.keep;NSKY.keep=null;if(k){if(!k.walk&&walk.on)setWalk(false);else if(walk.on){camera.fov=Math.min(camera.fov,72);camera.updateProjectionMatrix()}if(k.live)setLive(true);else setHour(k.h)}if(/^(Night sky|In the sky|How the sky)/.test($('ch').textContent))hideCard()}
   lastInput=performance.now();dirty=true}
-function skyFrame(now){if(!NSKY.on)return;if(!walk.on){setSky(false);return}skyUpdate(false);if(NSKY.rec&&now-NSKY.satAt>2500){NSKY.satAt=now;NSKY.at=0}}
+function skyFrame(now){if(!NSKY.on){if(SCOPE.mc)SCOPE.mc.style.display='none';return}scopeTick();if(!walk.on){setSky(false);return}skyUpdate(false);if(NSKY.rec&&now-NSKY.satAt>2500){NSKY.satAt=now;NSKY.at=0}}
 // a tap in the sky names the nearest thing drawn there
 function skyTap(cx,cy){let best=null,bd=mobile?44:30;for(const l of skyLabels){if(l.k===10||l.k===1)continue;v3.set(l.x,l.y,l.z).project(camera);if(v3.z>1)continue;const d=Math.hypot((v3.x*.5+.5)*innerWidth-cx,(-v3.y*.5+.5)*innerHeight-cy);if(d<bd){bd=d;best=l}}
   if(!best)return;const b=NSKY.bodies.find(q=>q.name===best.t),s=NSKY.sats.find(q=>q.name===best.t);
   showCard('In the sky: '+best.t,`${Math.round(best.alt)}° above the horizon, toward the ${compass(best.az)}, at ${skyWhen(skyMs())}. `+(s?`A satellite about ${Math.round(s.km*.621).toLocaleString('en-US')} miles from Lincoln at this moment. Its place comes from the orbit CelesTrak publishes, worked forward to the minute.`:b?(b.name==='Moon'?`The Moon is ${Math.round((b.phase||0)*100)}% lit and ${b.waxing?'waxing':'waning'}.`:b.name==='Sun'?'The Sun.':'A planet, placed by formula to within a fraction of a degree.'):'A star from the Hipparcos catalog.'),undefined,{label:'Back to the whole sky',fn:skyCard})}
+// ---- the Sower's telescope. The Night sky view starts on top of the Capitol: the camera comes round to the Sower, who holds out a brass
+// telescope, and then you look through the eyepiece at the best thing up right now (the Moon, a bright planet, or the Pleiades).
+const SCOPE={tel:null,ov:null,on:false,tgt:null};
+function scopeBuild(){if(SCOPE.tel)return SCOPE.tel;const g=new THREE.Group(),M=(geo,c,x,y,z,p)=>{const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:c}));m.position.set(x,y,z);(p||g).add(m);return m};
+  const tube=new THREE.Group();tube.position.set(0,1.5,0);tube.rotation.x=-.75;g.add(tube);
+  M(new THREE.CylinderGeometry(.16,.16,2.4,14),0xb8914f,0,0,0,tube).rotation.x=Math.PI/2;M(new THREE.CylinderGeometry(.2,.2,.55,14),0x6e5530,0,0,-1.3,tube).rotation.x=Math.PI/2;
+  M(new THREE.CylinderGeometry(.05,.05,.35,10),0x111111,0,0,1.35,tube).rotation.x=Math.PI/2;M(new THREE.CylinderGeometry(.22,.22,.08,14),0xdcc58a,0,0,.55,tube).rotation.x=Math.PI/2;
+  for(let k=0;k<3;k++){const a=k*2.094,l=M(new THREE.CylinderGeometry(.04,.04,1.7,6),0x5b4a2e,Math.cos(a)*.35,.75,Math.sin(a)*.35);l.rotation.set(Math.sin(a)*.32,0,-Math.cos(a)*.32)}
+  let p=new THREE.Vector3(LM.capitol[0],124,LM.capitol[1]);try{if(LM.sower&&LM.sower.base){LM.sower.base.getWorldPosition(p);p.y+=.8}}catch(e){}g.position.set(p.x+1.6,p.y,p.z+.6);g.rotation.y=.6;g.scale.setScalar(2.4);g.visible=false;scene.add(g);SCOPE.tel=g;return g}
+function scopeStart(){try{closeSheet()}catch(e){}if(NSKY.on)setSky(false);scopeBuild().visible=true;dirty=true;sowerFly();
+  setTimeout(()=>showCard('The Sower has a telescope','On top of the Capitol, nineteen feet of bronze, the Sower has set down his seed bag for a brass refractor tonight. Step up and look through the eyepiece: he has it pointed at the best thing in Lincoln\'s sky right now.',-1,{label:'Look through the eyepiece',fn:scopeLook},[{label:'Just the stars',fn:()=>{scopeOff();setSky(true)}},{label:'Not now',fn:scopeOff}]),2100)}
+function scopeTarget(){const ms=skyMs(),B=n=>NSKY.bodies.find(b=>b.name===n);const m=B('Moon');if(m&&m.alt>8)return {name:'the Moon',alt:m.alt,az:m.az,fov:1.6,note:Math.round((m.phase||0)*100)+'% lit'};
+  for(const n of ['Jupiter','Venus','Saturn','Mars']){const b=B(n);if(b&&b.alt>10)return {name:n,alt:b.alt,az:b.az,fov:6,note:Math.round(b.alt)+'° up, '+compass(b.az)}}
+  const pl=skyAltAz(56.75,24.12,ms);if(pl&&pl.alt>10)return {name:'the Pleiades',alt:pl.alt,az:pl.az,fov:8,note:'the Seven Sisters, about 440 light years away'};
+  const ori=skyAltAz(83.8,-5.4,ms);if(ori&&ori.alt>10)return {name:'the Orion Nebula',alt:ori.alt,az:ori.az,fov:8,note:'a cloud where stars are being born'};
+  return {name:'straight up',alt:80,az:180,fov:12,note:'the stars overhead'}}
+function scopeLook(){const cap=LM.capitol;if(!NSKY.on){setWalk(true,{x:cap[0]+40,z:cap[1]+40});setSky(true)}if(!NSKY.on)return;SCOPE.on=true;if(SCOPE.tel)SCOPE.tel.visible=false;
+  setTimeout(()=>{const t=scopeTarget();SCOPE.tgt=t;walk.yaw=-t.az*RD;walk.pitch=Math.min(1.55,t.alt*RD);camera.fov=t.fov;camera.updateProjectionMatrix();scopeOverlay(t);dirty=true;
+    showCard('Through the eyepiece: '+t.name,t.note+'. You are looking through the Sower\'s telescope from the top of the Capitol. Drag to sweep the sky; pinch or scroll to change the magnification.',-1,{label:'← Back to the map',fn:()=>viewExit(false)},[{label:'Wider view',fn:()=>{camera.fov=Math.min(62,camera.fov*2.2);camera.updateProjectionMatrix();dirty=true}},{label:'Step back from the eyepiece',fn:()=>{scopeOverlayOff();camera.fov=62;camera.updateProjectionMatrix();skyCard()}}])},350)}
+function scopeOverlay(t){if(!SCOPE.ov){const d=document.createElement('div');d.id='scopeov';d.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle at 50% 46%,transparent 0,transparent 33vmin,rgba(40,30,15,.95) 33.6vmin,#000 35vmin);';
+    d.innerHTML='<div style="position:absolute;left:50%;top:46%;width:66vmin;height:66vmin;transform:translate(-50%,-50%);border-radius:50%;box-shadow:inset 0 0 6vmin rgba(0,0,0,.9);"></div><div style="position:absolute;left:50%;top:46%;width:1px;height:6vmin;background:rgba(255,80,80,.55);transform:translate(-50%,-50%)"></div><div style="position:absolute;left:50%;top:46%;height:1px;width:6vmin;background:rgba(255,80,80,.55);transform:translate(-50%,-50%)"></div><div id="scopelbl" style="position:absolute;left:50%;top:calc(46% + 36vmin);transform:translateX(-50%);color:#e9d6a8;font:600 15px system-ui,sans-serif;letter-spacing:.08em"></div>';{const cv=document.querySelector('canvas');if(cv&&cv.parentNode)cv.parentNode.insertBefore(d,cv.nextSibling);else document.body.appendChild(d)}SCOPE.ov=d}
+  SCOPE.ov.style.display='block';SCOPE.ov.querySelector('#scopelbl').textContent=t.name.toUpperCase()}
+function scopeMoon(){if(SCOPE.mc)return SCOPE.mc;const c=document.createElement('canvas');c.width=c.height=256;c.style.cssText='position:fixed;pointer-events:none;z-index:0;display:none;transform:translate(-50%,-50%)';SCOPE.ov.parentNode.insertBefore(c,SCOPE.ov);SCOPE.mc=c;return c}
+function scopeMoonDraw(ph,wax){const c=scopeMoon(),q=c.getContext('2d'),r=120;q.clearRect(0,0,256,256);ph=ph>=.97?1:ph;q.save();q.translate(128,128);
+  q.beginPath();q.arc(0,0,r,0,6.2832);q.fillStyle='#16140f';q.fill();
+  // the lit part: a half disc on the sunward side plus an ellipse for the terminator
+  const k=Math.cos(ph*Math.PI),s=wax?1:-1;q.beginPath();if(ph>=.97){q.arc(0,0,r,0,6.2832)}else{q.arc(0,0,r,-Math.PI/2,Math.PI/2,s<0);q.ellipse(0,0,Math.abs(k)*r,r,0,Math.PI/2,-Math.PI/2,(k>0)!==(s<0))}q.closePath();
+  const g=q.createRadialGradient(-30,-30,10,0,0,r);g.addColorStop(0,'#f6f1e2');g.addColorStop(1,'#cfc7b2');q.fillStyle=g;q.fill();q.clip();
+  // the dark seas, roughly where they sit on the Moon's face
+  q.fillStyle='rgba(110,104,92,.45)';for(const [x,y,rr] of [[-35,-40,30],[-5,-55,22],[20,-20,26],[-50,10,24],[40,30,18],[-20,35,16],[10,60,12]]){q.beginPath();q.arc(x,y,rr,0,6.2832);q.fill()}
+  q.fillStyle='rgba(255,255,255,.35)';q.beginPath();q.arc(-15,85,6,0,6.2832);q.fill();q.restore()}
+function scopeTick(){if(!SCOPE.on||!SCOPE.ov||SCOPE.ov.style.display==='none'){if(SCOPE.mc)SCOPE.mc.style.display='none';return}const m=NSKY.bodies.find(b=>b.name==='Moon');if(!m||m.alt<0){if(SCOPE.mc)SCOPE.mc.style.display='none';return}
+  const a=m.alt*RD,z=m.az*RD,c=Math.cos(a),P=camera.position;v3.set(P.x+Math.sin(z)*c*1000,P.y+Math.sin(a)*1000,P.z-Math.cos(z)*c*1000).project(camera);const mc=scopeMoon();if(v3.z>1){mc.style.display='none';return}
+  const px=(v3.x*.5+.5)*innerWidth,py=(-v3.y*.5+.5)*innerHeight,size=Math.tan(.26*RD)/Math.tan(camera.fov/2*RD)*innerHeight;if(SCOPE.ph!==m.phase){SCOPE.ph=m.phase;scopeMoonDraw(m.phase||1,m.waxing)}
+  mc.style.display='block';mc.style.left=px+'px';mc.style.top=py+'px';mc.style.width=mc.style.height=Math.max(6,size)+'px'}
+function scopeOverlayOff(){if(SCOPE.mc)SCOPE.mc.style.display='none';if(SCOPE.ov)SCOPE.ov.style.display='none'}
+function scopeOff(){SCOPE.on=false;scopeOverlayOff();if(SCOPE.tel)SCOPE.tel.visible=false;dirty=true}

@@ -86,7 +86,7 @@ function rcShow(){try{closeSheet()}catch(e){}plClear();PL.on=true;const g=new TH
 const CRT_TR=/^(Wilderness Park|Billy Wolff|Jamaica North|Dietrich|Salt Creek|Antelope|Deadmans Run|Murdock|Rock Island|Bison|Tierra|Boosalis|Holmes|Pioneers)/i;
 let critters=null,critTry=0;
 function setupCritters(){const TR=LM.trails||[],pts=[];for(const T of TR){if(T.tn===65535||!H.tnames)continue;const nm=H.tnames[T.tn];if(!CRT_TR.test(nm))continue;const D=T.d;for(let k=0;k+3<D.length;k+=10)pts.push(D[k],D[k+1])}
-  const n=pts.length/2;if(!n){critters={none:true};return}const N=Math.min(mobile?90:180,n),list=[];
+  const n=pts.length/2;if(!n){critters={none:true};return}const N=Math.min(mobile?40:80,n),list=[];
   const FOX=0xc8551d,FW=0xf2ece2,FB=0x2a1d16,RG=0x7d7770,RD=0x2b2826,RL=0xcfc8bd;
   const geo=[boxes([[.22,.22,.62,0,.34,0,FOX],[.18,.12,.4,0,.27,-.02,FW],[.17,.18,.2,0,.5,-.38,FOX],[.1,.09,.16,0,.46,-.53,FW],[.05,.05,.04,0,.47,-.62,FB],[.05,.12,.04,-.06,.65,-.36,FB],[.05,.12,.04,.06,.65,-.36,FB],
       [.05,.24,.05,-.07,.12,-.2,FB],[.05,.24,.05,.07,.12,-.2,FB],[.05,.24,.05,-.07,.12,.2,FB],[.05,.24,.05,.07,.12,.2,FB],[.12,.12,.42,0,.34,.48,FOX],[.1,.1,.1,0,.34,.72,FW]]),
