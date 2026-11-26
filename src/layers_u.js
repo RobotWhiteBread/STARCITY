@@ -693,3 +693,28 @@ function stepGuide(now){
   GD.lb.t=who+' '+lines[0];{const r=lines.slice(1).join(' ');GD.lb.sub=r.length>56?r.slice(0,53).replace(/\s\S*$/,'')+'…':r}GD.lb.x=px;GD.lb.y=hAt(px,pz)+2.6*sc;GD.lb.z=pz;lifeLabels.push(GD.lb);ambient=true;dirty=true}
 // every place card brings the guides; the card's title finds the place on the map
 {const _sc=showCard;showCard=function(title,body,...r){_sc(title,body,...r);try{if(typeof GD==='undefined'||/Prix|Results:|Farmers markets in|Follow a raindrop|Where this rain|Language|Menu|Search/i.test(title))return;const p=gdIndex().get(title);if(p)guideAt(title,body,p[0],p[1])}catch(e){}}}
+// ---- topography: contour lines, elevation tint and shaded relief, drawn from the map's own ground model (40 m grid)
+const TOPO={on:false,mesh:null,hi:null,lo:null,FT:3.28084,lb:{t:'',sub:'ground elevation at the center of your view',x:0,y:0,z:0,k:3,pri:5400,near:0,far:1e6}};
+function topoBuild(){const T=H.terrain,half=T.half,N=mobile?1024:2048,E=new Float32Array(N*N),FT=TOPO.FT,dx=2*half/N;let hi=-1e9,lo=1e9;
+  for(let py=0;py<N;py++){const z=-half+(py+.5)*dx;for(let px=0;px<N;px++){const x=-half+(px+.5)*dx,e=(T.min+hAt(x,z))*FT;E[py*N+px]=e;if(e>hi){hi=e;TOPO.hi=[x,z,e]}if(e<lo){lo=e;TOPO.lo=[x,z,e]}}}
+  const cv=document.createElement('canvas');cv.width=cv.height=N;const c=cv.getContext('2d'),im=c.createImageData(N,N),D=im.data;
+  const R=[[0,[70,120,90]],[.25,[150,175,110]],[.5,[222,205,140]],[.75,[190,140,95]],[1,[245,240,232]]];
+  for(let py=0;py<N;py++)for(let px=0;px<N;px++){const o=py*N+px,e=E[o],r=E[o+(px<N-1?1:0)],d=E[o+(py<N-1?N:0)],l=E[o-(px>0?1:0)],u=E[o-(py>0?N:0)];
+    const t=(e-lo)/(hi-lo);let k=0;while(k<R.length-2&&t>R[k+1][0])k++;const a=R[k],b=R[k+1],f=Math.max(0,Math.min(1,(t-a[0])/(b[0]-a[0])));
+    // light from the northwest; slopes are stretched 8x so Lincoln's gentle hills read
+    const sx=(r-l)/FT/(2*dx)*8,sy=(d-u)/FT/(2*dx)*8,sh=Math.max(.45,Math.min(1.35,(1+sx*.7+sy*.7)/Math.sqrt(1+sx*sx+sy*sy)*1.0));
+    let cr=(a[1][0]+(b[1][0]-a[1][0])*f)*sh,cg=(a[1][1]+(b[1][1]-a[1][1])*f)*sh,cb=(a[1][2]+(b[1][2]-a[1][2])*f)*sh,al=205;
+    const c10=Math.floor(e/10),idx=Math.floor(e/50)!==Math.floor(r/50)||Math.floor(e/50)!==Math.floor(d/50);
+    if(idx){cr=45;cg=28;cb=14;al=255}else if(c10!==Math.floor(r/10)||c10!==Math.floor(d/10)){cr*=.55;cg*=.5;cb*=.45;al=240}
+    const q=o*4;D[q]=cr>255?255:cr;D[q+1]=cg>255?255:cg;D[q+2]=cb>255?255:cb;D[q+3]=al}
+  c.putImageData(im,0,0);const tex=new THREE.CanvasTexture(cv);tex.anisotropy=8;
+  const st=mobile?160:100,n=Math.round(2*half/st)+1,P=new Float32Array(n*n*3),UV=new Float32Array(n*n*2),I=new Uint32Array((n-1)*(n-1)*6);
+  for(let j=0;j<n;j++)for(let i=0;i<n;i++){const x=-half+i*st,z=-half+j*st,o=j*n+i;P[o*3]=x;P[o*3+1]=hAt(x,z)+.9;P[o*3+2]=z;UV[o*2]=i/(n-1);UV[o*2+1]=1-j/(n-1)}
+  let q=0;for(let j=0;j<n-1;j++)for(let i=0;i<n-1;i++){const a=j*n+i;I[q++]=a;I[q++]=a+n;I[q++]=a+1;I[q++]=a+1;I[q++]=a+n;I[q++]=a+n+1}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('uv',new THREE.BufferAttribute(UV,2));g.setIndex(new THREE.BufferAttribute(I,1));
+  TOPO.mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:tex,transparent:true,opacity:.92,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));TOPO.mesh.renderOrder=3;scene.add(TOPO.mesh);
+  const F=v=>Math.round(v).toLocaleString();TOPO.hlb={t:'▲ Highest ground: '+F(hi)+' ft',sub:'in the mapped area',x:TOPO.hi[0],y:hAt(TOPO.hi[0],TOPO.hi[1])+40,z:TOPO.hi[1],k:3,pri:5300,near:0,far:1e6};
+  TOPO.llb={t:'▼ Lowest ground: '+F(lo)+' ft',sub:'the Salt Creek valley',x:TOPO.lo[0],y:hAt(TOPO.lo[0],TOPO.lo[1])+40,z:TOPO.lo[1],k:3,pri:5300,near:0,far:1e6}}
+function topoSet(on){TOPO.on=on;if(on&&!TOPO.mesh)topoBuild();if(TOPO.mesh)TOPO.mesh.visible=on;ambient=true;dirty=true}
+function stepTopo(){if(!TOPO.on||!TOPO.mesh)return;const t=controls.target,e=(H.terrain.min+hAt(t.x,t.z))*TOPO.FT;TOPO.lb.t='⛰ '+Math.round(e).toLocaleString()+' ft';TOPO.lb.x=t.x;TOPO.lb.z=t.z;TOPO.lb.y=hAt(t.x,t.z)+Math.max(4,camera.position.distanceTo(t)/40);lifeLabels.push(TOPO.lb,TOPO.hlb,TOPO.llb)}
+function topoOpen(){topoSet(true);const F=v=>Math.round(v).toLocaleString();showCard('Topography','The shape of the land under Lincoln. Thin lines mark every 10 feet of elevation and dark lines every 50 feet. Green is low ground, tan and brown are higher, and the shading shows slopes with light from the northwest.\n\nThe mapped area runs from about '+F(TOPO.lo[2])+' feet in the Salt Creek valley to '+F(TOPO.hi[2])+' feet on the high ground. Move the map and the ⛰ label gives the ground elevation at the center of your view.\n\nThis is drawn from a 40 meter ground model. A sharper version from the 2016 USGS LiDAR survey is being processed.',undefined,{label:'Turn topography off',fn:()=>{topoSet(false);hideCard()}},[{label:'See the whole city',fn:()=>flyTo(camTo(0,0,26000,0,62,0),2200)},{label:'Salt Creek valley',fn:()=>flyTo(camTo(TOPO.lo[0],TOPO.lo[1],5000,30,45,0),2200)}]);$('cp').style.whiteSpace='pre-line'}
