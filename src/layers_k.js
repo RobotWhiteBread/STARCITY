@@ -62,7 +62,7 @@ function rollData(kind){const out=[],Hd=t=>out.push(['h',t]),P=(a,b)=>out.push([
       const hm=ev.filter(e=>e[7]==='home'&&!e[9]),rk=ev.filter(e=>e[8]>0);if(hm.length)P('At home',hm.filter(e=>e[4]).length+'-'+hm.filter(e=>!e[4]).length);if(rk.length)P('Against ranked teams',rk.filter(e=>e[4]).length+'-'+rk.filter(e=>!e[4]).length)}
     Hd('Match by match');for(const e of ev)P(day(e[0])+' · '+e[1],(e[4]?'Won ':'Lost ')+e[2]+'-'+e[3]+((e[5]||[]).length?'  ('+e[5].map((a,k)=>a+'-'+e[6][k]).join(', ')+')':''));for(const o of V.off||[])P(day(o[0])+' · '+o[1],o[2]||'Not played');
     Hd('National champions');T('1995 · 2000 · 2006 · 2015 · 2017');
-    Hd('The crowds');for(const m of VBMSG.slice(6))P(m[0],m[1]);Hd('The names');for(const m of VBMSG.slice(2,6))P(m[0],m[1]);
+    Hd('Titles');for(const m of vbTitles())P(m[0],m[1]);Hd('The crowds');for(const m of VBMSG.slice(6))P(m[0],m[1]);Hd('The names');for(const m of VBMSG.slice(2,6))P(m[0],m[1]);
     T(V.live?'Scores read live from ESPN\'s public scoreboard.':'Scores are the map\'s saved list as of '+VB26ASOF+'. The website copy reads them live.');T('Crowd records carry the date they were true, because records fall.')}
   else if(kind==='bb'){
     Hd('Nebraska basketball');T('Pinnacle Bank Arena');P('Opened','2013');P('Seats','15,500');

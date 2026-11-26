@@ -842,7 +842,7 @@ function stepCht(now){if(!CHT.g||!CHT.on)return;for(const l of CHT.lbs)lifeLabel
       // the tree waves: a slow sway that starts when the bird lands and settles again
       if(t.parts){const sw=Math.min(1,h/1.5)*.075*Math.sin(h*2.2),sx=.04*Math.sin(h*1.6+1);for(const m of t.parts){m.rotation.z=sw;m.rotation.x=sx}}
     if(!T.said){T.said=1;const n=CHT.T.length,nx=(T.i+1)%n;showCard('The meadowlark: '+t[0],t[11]+' '+t[12]+' '+Math.round(t[5])+' points · trunk '+t.inch+' inches around · '+t[3]+' feet tall · crown '+t[4]+' feet · measured '+t[6]+' · '+t[9]+'.',-1,{label:'Next: '+CHT.T[nx][0],fn:()=>{T.i=nx;T.said=0;chtLeg()}},[{label:'Stop',fn:()=>{chtStop();hideCard()}},{label:'All champions',fn:()=>chtOpen(0)}])}
-    CHT.blb.t=sleepy()&&h>3?'"Zzz… Champion Tree, No Vacancy"':'"'+(h<3?'Here we are!':h<7?'Tweedle-oodle-ee! The '+t[0].toLowerCase()+'!':h<11?Math.round(t[5])+' points, biggest in Nebraska':h<15?'Look, it\'s waving at you':'Tap Next and follow me')+'"';CHT.blb.sub='Western meadowlark, Nebraska\'s state bird'}
+    CHT.blb.t=sleepy()&&h>3?(T.i===0?'"Zzz… Champion Tree, No Vacancy"':'"Zzz…"'):'"'+(h<3?'Here we are!':h<7?'Tweedle-oodle-ee! The '+t[0].toLowerCase()+'!':h<11?Math.round(t[5])+' points, biggest in Nebraska':h<15?'Look, it\'s waving at you':'Tap Next and follow me')+'"';CHT.blb.sub='Western meadowlark, Nebraska\'s state bird'}
   CHT.blb.x=b.position.x;CHT.blb.y=b.position.y+8;CHT.blb.z=b.position.z;lifeLabels.push(CHT.blb);
   // the rest of the flock: in the air they trail the leader; at a tree they settle across the crown
   if(CHT.flock){const fl=e<1,ry=b.rotation.y,cs=Math.cos(ry),sn=Math.sin(ry),tn=now/1000;for(const f of CHT.flock){const m=f.m;m.visible=b.visible;if(!m.visible)continue;
@@ -861,9 +861,9 @@ function stepCht(now){if(!CHT.g||!CHT.on)return;for(const l of CHT.lbs)lifeLabel
   // at night the flock is asleep at the champion, and a little motel sign says so
   if(!CHT.sign){const cv=document.createElement('canvas');cv.width=512;cv.height=320;const q=cv.getContext('2d');q.fillStyle='#14161c';q.fillRect(0,0,512,320);q.strokeStyle='#e9b949';q.lineWidth=8;q.strokeRect(8,8,496,304);
     q.fillStyle='#f4e7c3';q.textAlign='center';q.font='800 54px system-ui,Arial,sans-serif';q.fillText('CHAMPION TREE',256,110);q.shadowColor='#ff2d55';q.shadowBlur=24;q.fillStyle='#ff4d6d';q.font='900 70px system-ui,Arial,sans-serif';q.fillText('NO VACANCY',256,225);
-    const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const g=new THREE.Group(),bd=new THREE.Mesh(new THREE.PlaneGeometry(26,16),new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide,fog:false}));bd.position.y=22;g.add(bd);
-    const post=new THREE.Mesh(new THREE.BoxGeometry(1,15,1),new THREE.MeshLambertMaterial({color:0x3a3a3a}));post.position.y=7;g.add(post);g.visible=false;scene.add(g);CHT.sign=g}
-  {const sg=CHT.sign,on=!fl0(e)&&sleepy()&&b.visible;if(sg.visible!==on)sg.visible=on;if(on){const r=(t.sm||20)*.75,x=t.x+r,z=t.z+r*.4;sg.position.set(x,hAt(x,z),z);sg.lookAt(camera.position.x,sg.position.y,camera.position.z)}}}
+    const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const g=new THREE.Group(),bd=new THREE.Mesh(new THREE.PlaneGeometry(13,8),new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide,fog:false}));bd.position.y=9;g.add(bd);
+    const post=new THREE.Mesh(new THREE.BoxGeometry(.6,6,.6),new THREE.MeshLambertMaterial({color:0x3a3a3a}));post.position.y=3;g.add(post);g.visible=false;scene.add(g);CHT.sign=g}
+  {const sg=CHT.sign,on=!fl0(e)&&sleepy()&&b.visible&&T.i===0;if(sg.visible!==on)sg.visible=on;if(on){const r=(t.sm||20)*1.5+10;let vx=camera.position.x-t.x,vz=camera.position.z-t.z;const vl=Math.hypot(vx,vz)||1;vx/=vl;vz/=vl;const x=t.x-vz*r,z=t.z+vx*r;sg.position.set(x,hAt(x,z),z);sg.lookAt(camera.position.x,sg.position.y,camera.position.z)}}}
 function fl0(e){return e<1}
 function chtHTML(i){chtSetup();const T=CHT.T,go='<p><button class="btn go2" data-cht="t">Fly with the meadowlark</button> <button class="btn go2" data-cht="m">Show them on the map</button></p>';
   if(i===0)return '<p>The Nebraska Forest Service keeps a register of the biggest tree of each kind in the state. Eight of them stand in Lincoln.</p>'+go

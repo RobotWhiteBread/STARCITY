@@ -113,6 +113,7 @@ function devBillLines(){
     if(nx)out.push(['NEXT'+(nx.ha==='home'?' AT HOME':' AWAY'),String(nx.opp).toUpperCase()+' · '+clock(nx.t),'#0d0f14','#ffd34d'])}catch(e){}
   // every crowd and venue record, read from the same list the records panel reads, so the board and the
   // card can never disagree. VBMSG.slice(6) is the crowds; the colors alternate so the board visibly turns.
+  try{vbTitles().forEach(m=>out.push([m[0],m[1],'#7d0a1d','#ffd34d']))}catch(e){}
   try{VBMSG.slice(6).forEach((m,k)=>out.push([m[0],m[1],k%2?'#7d0a1d':'#0d0f14',k%2?'#fff4d6':'#ffd34d']))}catch(e){}
   out.push(['NEBRASKA VOLLEYBALL','CENTER OF THE VOLLEYBALL UNIVERSE','#7d0a1d','#fff4d6']);
   return out}

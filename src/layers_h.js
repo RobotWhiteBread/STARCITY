@@ -12,11 +12,11 @@ const hkId=s=>s[5]||'158';
 function hkParse(e,id){id=id||'158';const c=e.competitions&&e.competitions[0];if(!c||!c.competitors)return null;const me=c.competitors.find(q=>q.team&&q.team.id===id),op=c.competitors.find(q=>q!==me);if(!me||!op)return null;
   const ty=((c.status||e.status||{}).type)||{},sc=q=>q.score==null?null:(typeof q.score==='object'?q.score.displayValue:String(q.score)),rk=q=>q.curatedRank&&q.curatedRank.current>0&&q.curatedRank.current<=25?q.curatedRank.current:0;
   return {id:e.id,t:Date.parse(e.date),ha:me.homeAway,neutral:!!c.neutralSite,opp:op.team.shortDisplayName||op.team.displayName||'',oa:op.team.abbreviation||'',st:ty.state||'pre',det:ty.shortDetail||ty.detail||'',done:!!ty.completed,my:sc(me),th:sc(op),win:me.winner,tie:sc(me)!=null&&sc(me)===sc(op)&&!me.winner&&!op.winner,
-    venue:(c.venue&&c.venue.fullName)||'',ls:(me.linescores||[]).map(l=>l.displayValue),lo:(op.linescores||[]).map(l=>l.displayValue),rk:rk(me),ork:rk(op)}}
+    venue:(c.venue&&c.venue.fullName)||'',note:(c.notes&&c.notes[0]&&c.notes[0].headline)||'',stype:(e.seasonType&&e.seasonType.type)||0,ls:(me.linescores||[]).map(l=>l.displayValue),lo:(op.linescores||[]).map(l=>l.displayValue),rk:rk(me),ork:rk(op)}}
 const hkSeason=s=>s[4].includes(lincolnNow().ymd/100%100|0);
 async function hkLoad(force){if(!hosted()||HK.busy||(!force&&Date.now()-HK.at<9e5))return;HK.busy=true;let any=false;
   await Promise.all(HK.sp.slice(1).filter(hkSeason).map(async s=>{try{const j=await (await fetch(ESPN+s[2]+'/teams/'+hkId(s)+'/schedule')).json(),ev=(j.events||[]).map(e=>hkParse(e,hkId(s))).filter(Boolean).sort((a,b)=>a.t-b.t);if(!ev.length)return;const old=HK.ev[s[0]]||[];for(const e of ev){const o=old.find(q=>q.id===e.id);if(o&&e.my==null&&o.my!=null&&e.st!=='pre'){e.my=o.my;e.th=o.th;e.ls=o.ls;e.lo=o.lo;e.det=o.det||e.det}}
-      HK.ev[s[0]]=ev;HK.rec[s[0]]=(j.team&&j.team.recordSummary)||hkRec(ev);any=true}catch(e){}}));
+      HK.ev[s[0]]=ev;HK.rec[s[0]]=(j.team&&j.team.recordSummary)||hkRec(ev);(HK.stand=HK.stand||{})[s[0]]=(j.team&&j.team.standingSummary)||'';any=true}catch(e){}}));
   HK.busy=false;HK.at=Date.now();HK.ok=HK.ok||any;HK.fail=!any&&!HK.ok;hkAfter();try{await Promise.race([hkTick(true),new Promise(r=>setTimeout(r,5000))])}catch(e){}hkAfter()}
 const hkRec=ev=>{const f=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null),w=f.filter(e=>e.win).length,d=f.filter(e=>e.tie).length;return w+'-'+(f.length-w-d)+(d?'-'+d:'')};
 const hkHot=e=>{const n=Date.now();return e.st==='in'||(e.st==='pre'&&e.t-n<12e5&&n-e.t<144e5)||(e.st==='post'&&n-e.t<144e5&&!e.sett)};
@@ -91,6 +91,22 @@ function hkGame(e,s,big){const k=s[0],su=HK.sum[e.id],fin=e.st==='post'&&e.done&
       else h+='<table><tr><th></th><th>Nebraska</th><th>'+esc(e.oa||e.opp)+'</th></tr>'+su.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')+'</table>'+su.stars.map(x=>`<small>${esc(x)}</small>`).join('')}
     if(big&&k==='vb')h+='<small>The feed carries set scores for volleyball, not kills or digs.</small>'}
   else h+=`<b>${e.ha==='home'?'vs':'at'} ${esc(e.opp)}</b><small>${esc(e.det||'postponed')}</small>`;return h+'</div>'}
+// where every tracked sport stands in its year: in season, in the postseason, finished, or off until its first month comes round again.
+// Titles are read from the feed's own game notes (a win in a game ESPN labels a championship or final), so they appear on their own.
+const HKMON=['','January','February','March','April','May','June','July','August','September','October','November','December'];
+function hkSeasonState(s,nowMs){const now=nowMs||Date.now(),k=s[0],ev=HK.ev[k],mo=new Date(now).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'numeric'})|0,day=t=>new Date(t).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'});
+  const back='back in '+HKMON[s[4][0]];if(!ev||!ev.length)return {st:'off',head:s[4].includes(mo)?'Schedule not read yet':'Off season',line:s[4].includes(mo)?'In season, but its schedule has not come through the feed.':'The season starts again in '+HKMON[s[4][0]]+'.',titles:[]};
+  const done=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null),up=ev.filter(e=>e.st==='pre'&&e.t>now-144e5),live=ev.find(e=>e.st==='in'),last=done[done.length-1];
+  const titles=done.filter(e=>e.win&&/champion|final\b|title game/i.test(e.note)&&!/semi|quarter/i.test(e.note)).map(e=>e.note.replace(/\s+/g,' ').trim());
+  const post=ev.some(e=>e.stype===3&&(e.st!=='pre'||e.t<now+12096e5)),rec=HK.rec[k]||hkRec(ev),stand=(HK.stand&&HK.stand[k]||'').replace(/big10/i,'the Big Ten');
+  let st,head,line;
+  if(live){st='live';head='Playing now';line=(live.ha==='home'?'vs ':'at ')+live.opp}
+  else if(up.length){const n=up[0];st=n.stype===3||post?'post':'in';head=st==='post'?'Postseason':'In season';line='Next: '+day(n.t)+(n.ha==='home'?' vs ':' at ')+n.opp+(n.note?' · '+n.note:'')}
+  else if(last&&now-last.t<21*864e5&&s[4].includes(mo)){st='wait';head=post?'Postseason':'In season';line='No next game is posted yet. Postseason dates appear once they are set.'}
+  else{st='over';head='Season over';line='Finished '+rec+(last?' on '+day(last.t):'')+', '+back+'.'}
+  return {st,head,line,rec,stand,titles}}
+function hkSeasonsHTML(nowMs){return '<h4>Where each season stands</h4>'+HK.sp.slice(1).map(s=>{const q=hkSeasonState(s,nowMs),dot={live:'#ff4d5e',in:'#58d68d',post:'#f5c542',wait:'#f5c542',over:'#8a8f98',off:'#8a8f98'}[q.st];
+    return `<div class="hg"><b><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${dot};margin-right:6px"></span>${esc(s[1])} · ${esc(q.head)}${q.rec&&q.st!=='off'?' · '+esc(q.rec):''}</b>${q.stand&&q.st!=='off'&&q.st!=='over'?`<small>${esc(q.stand)}</small>`:''}<small>${esc(q.line)}</small>${q.titles.map(t=>`<small>🏆 Won: ${esc(t)}</small>`).join('')}<small class="psub">Plays at ${esc(s[3])}</small></div>`}).join('')}
 function hkHTML(i){if(!hosted())return '<p>Scores are read live from ESPN\'s public scoreboard. That works on the website copy of the map, not inside the Claude app.</p>';if(!HK.ok)return HK.fail?'<p>The scoreboard could not be reached just now. It will try again in a few minutes. Inside the Claude app it cannot be reached at all: scores load on the website copy of the map.</p>':'<p>Reading the scoreboard…</p>';
   const note='<p class="psub">Scores come from ESPN\'s public scoreboard feed and refresh about every 20 seconds while a game is on. ESPN does not promise the feed, so if it goes quiet this panel will say so.</p>';
   if(i===0){let h='';const now=Date.now(),day=lincolnNow().ymd,ymd=t=>+new Date(t).toLocaleDateString('en-CA',{timeZone:'America/Chicago'}).replace(/-/g,''),live=[],today=[],rest=[],soon=[];
@@ -100,8 +116,8 @@ function hkHTML(i){if(!hosted())return '<p>Scores are read live from ESPN\'s pub
     if(live.length)h+='<h4>On now</h4>'+live.map(([s,e])=>`<p class="psub">${s[1]}</p>`+hkGame(e,s,true)).join('');
     if(today.length)h+='<h4>Today</h4>'+today.map(([s,e])=>`<p class="psub">${s[1]}</p>`+hkGame(e,s,true)).join('');
     if(!live.length&&!today.length)h+='<p>No Husker team in this feed plays today.</p>';
-    if(soon.length)h+='<h4>Coming up</h4>'+soon.slice(0,12).map(([s,e])=>`<p class="psub">${s[1]}</p>`+hkGame(e,s,false)).join('');h+='<h4>Latest results</h4>';return h+rest.join('')+note}
-  const s=HK.sp[i],ev=HK.ev[s[0]];if(!ev)return `<p>${s[1]} is out of season, or its schedule is not in the feed yet.</p>`+note;
+    if(soon.length)h+='<h4>Coming up</h4>'+soon.slice(0,12).map(([s,e])=>`<p class="psub">${s[1]}</p>`+hkGame(e,s,false)).join('');h+='<h4>Latest results</h4>';return h+rest.join('')+hkSeasonsHTML()+note}
+  const s=HK.sp[i],ev=HK.ev[s[0]];if(!ev){const q=hkSeasonState(s);return `<p>${s[1]}: ${q.head.toLowerCase()}. ${q.line}</p>`+note}
   let h=`<h4>${s[1]} · ${HK.rec[s[0]]}</h4>`;if(s[0]==='fb'){const o=hkOneScore();if(o)h+=`<p>In games decided by one score this season: ${o[0]}-${o[1]}.</p>`}
   const fin=ev.filter(e=>e.st!=='pre').reverse(),up=ev.filter(e=>e.st==='pre');return h+(up.length?'<h4>Coming up</h4>'+up.slice(0,6).map(e=>hkGame(e,s,false)).join(''):'')+'<h4>Results</h4>'+fin.map(e=>hkGame(e,s,e.st==='in')).join('')+note}
 function hkOneScore(){const ev=HK.ev.fb;if(!ev)return null;const f=ev.filter(e=>e.st==='post'&&e.done&&e.my!=null&&Math.abs(e.my-e.th)<=8);return [f.filter(e=>e.win).length,f.filter(e=>!e.win).length]}
