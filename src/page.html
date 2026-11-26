@@ -1675,7 +1675,7 @@ const BIRDS=[['Canada Goose','Branta canadensis',[[1,12]],'V',[7,19],9,[90,260],
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const birdMonth=()=>Math.floor(lincolnNow().ymd/100)%100;
 const inSeason=(b,m)=>b[2].some(q=>q[0]<=q[1]?(m>=q[0]&&m<=q[1]):(m>=q[0]||m<=q[1]));
-let birdMesh=null,flocks=[],nextFlock=0;
+let birdMesh=null,flocks=[],nextFlock=0;const RANDOM_FLOCKS=false;
 function setupBirds(){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute([0,0,-.34,.5,0,.05,0,0,.12, 0,0,-.34,0,0,.12,-.5,0,.05, 0,0,-.42,.07,0,.3,-.07,0,.3],3));
   birdMesh=new THREE.InstancedMesh(g,new THREE.MeshBasicMaterial({side:THREE.DoubleSide,fog:false}),420);birdMesh.count=0;birdMesh.frustumCulled=false;scene.add(birdMesh)}
 // Recent bird reports near Lincoln. iNaturalist's public feed needs no key; birds.json, when the site carries one, holds
@@ -1706,6 +1706,8 @@ function sightFlock(sg){const b=BIRDS.find(q=>q[1]===sg.s)||(q=>{q[3]='solo';ret
 function spawnFlock(){const t0=controls.target,R0=Math.min(4500,Math.max(420,camera.position.distanceTo(t0)*.8));
   // a real report near the view comes first, when there is one
   if(sightings.length&&!sleepy()&&Math.random()<.7){const near=sightings.filter(q=>Math.hypot(q.x-t0.x,q.z-t0.z)<R0*1.25&&!flocks.some(f=>f.sg&&f.sg.s===q.s&&Math.abs(f.sg.x-q.x)<1&&Math.abs(f.sg.z-q.z)<1));if(near.length){sightFlock(near[(Math.random()*near.length)|0]);return}}
+  // for now only birds tied to a real iNaturalist report fly; the made-up flocks drawn from the monthly species mix are switched off
+  if(!RANDOM_FLOCKS)return;
   const m=birdMonth();let b,share=0;
   // when the share of reports is known, each species turns up about as often as people report it
   {const pool=sleepy()?birdNightPool(m):birdPool(m);if(!pool.length)return;let r=Math.random()*pool.tot,q=pool[0];for(const w of pool){if((r-=w.p)<=0){q=w;break}}b=BIRDS.find(x=>x[1]===q.s)||birdLook(q.c,q.s);share=q.p/pool.all}
