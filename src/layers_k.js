@@ -34,7 +34,7 @@ function regionFrame(now){const L=dlTop,el=$('rv');if(!el)return;const on=!!(L&&
   if(first)layoutCard();dirty=true}
 function stepMore(dt,now){stepCreatures(dt,now);stepFlights(dt,now);bedsFlush()}
 // Bird's eye reset: every switch, filter, tour and panel added above goes back to where it started
-function resetAll(){reset2();if(DM.on)setVotes(false);civClear();if(FLT.on)setFlights(false);if(reAt>=0)reTour(-1);if(!CR.on)setCreatures(true);rollClose();trafH=1;wkSp=0;$('bNat').classList.remove('on');
+function resetAll(){reset2();resetExtras();if(DM.on)setVotes(false);civClear();if(FLT.on)setFlights(false);if(reAt>=0)reTour(-1);if(!CR.on)setCreatures(true);rollClose();trafH=1;wkSp=0;$('bNat').classList.remove('on');
   if($('q')){$('q').value='';$('res').style.display='none'}NUM.view=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
 // ---- Nader, the tornado. On a real warning he says what the Weather Service says. In the preview he says he is a preview.
 const NDIR=['north','northeast','east','southeast','south','southwest','west','northwest'];

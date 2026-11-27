@@ -768,3 +768,11 @@ function bbOpen(k){k=k||'racks';bbLoad().then(d=>{if(!d)return;const back={label
     g=plStart(T,B,[-4200,-4700,15000]);
     plPins(g,S,a=>a.sh?0x22c55e:a.b?0x38bdf8:0x94a3b8,14,a=>a.sh?150:a.b?90:40,a=>showCard('Bus stop, '+(a.n||'location not named'),(a.r.length?'Route'+(a.r.length>1?'s ':' ')+a.r.join(', ')+'. ':'')+(a.sh?'Shelter':'No shelter')+', '+(a.b?'bench':'no bench')+', '+(a.pad?'concrete pad':'no concrete pad')+'. '+(a.sw?'A sidewalk reaches it.':'No sidewalk reaches it.')+' '+(a.snow?'Snow is cleared here.':'No snow removal on record.')+(a.sign?' Has a live arrival sign.':'')+(a.imp?' Marked for a planned improvement.':'')+src,-1,back))}
   showCard(T,B,-1,undefined,bbBtns());try{$('cp').style.whiteSpace='pre-line'}catch(e){}})}
+
+// ---- Reset turns off every overlay, including the ones added after the first reset was written.
+// Each switch is tried on its own so one that is not loaded cannot stop the rest.
+function resetExtras(){const T=f=>{try{f()}catch(e){}};
+  T(()=>plOff());T(()=>crashOff());T(()=>{if(TOPO.on)topoSet(false)});T(()=>rainClear());T(()=>{RAIN.arm=false});T(()=>{if(PX.on)pxEnd(true)});
+  T(()=>hoaOff());T(()=>insOff());T(()=>moneyMapOff());T(()=>upOff());T(()=>grOff());T(()=>growClose());T(()=>arOff());T(()=>scopeOff());T(()=>swClear());T(()=>cpaClose());T(()=>finderOff());T(()=>chtStop());T(()=>fvStop());T(()=>guideOff());
+  for(const f of RESET_HOOKS)T(f);dirty=true}
+const RESET_HOOKS=[];   // off switches registered by layers that load later
