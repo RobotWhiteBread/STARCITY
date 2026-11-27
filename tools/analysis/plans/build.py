@@ -7,7 +7,7 @@ Left out on purpose: staff names (planner assigned, created by, edited by) and, 
 waivers and administrative amendments, the project name, because those are often a household's name.
 Coordinates are local meters from 40.77 N, 96.64 W (x east, z south), the same as data/areas.json.
 """
-import json, math, os, sys, collections
+import re, json, math, os, sys, collections
 import numpy as np, shapely
 from shapely.geometry import shape
 from shapely.ops import unary_union
@@ -30,7 +30,7 @@ def rings(g, tol, amin=1500):
 def line(g, tol=6):
     g = g.simplify(tol); return [[round(v) for xy in l.coords for v in xy] for l in (g.geoms if hasattr(g, 'geoms') else [g])]
 def pt(g): c = g.representative_point() if g.geom_type != 'Point' else g; return [round(c.x), round(c.y)]
-S = lambda v: '' if v in (None, 'None') else str(v).strip()
+S = lambda v: '' if v in (None, 'None', 'NULL') else str(v).strip()
 out = {'asof': 'November 23, 2026'}
 # --- transportation improvement program: active, site-specific projects
 tip = []
@@ -48,6 +48,13 @@ for e in sorted(tip, key=lambda e: e['y']): seen[(e['n'], e['w'], 'l' in e)] = e
 out['tip'] = list(seen.values())
 # --- planning applications since 2020
 HIDE = ('Board of Zoning Appeals', 'Administrative Amendments', 'Waiver', 'County Administrative Subdivision', 'Urban Design Record', 'Comp Plan Conformance')
+# Project names are kept only when they read as a development or business. Names that look like a person or household,
+# and small household requests (accessory units, garages, residences), show the file number only; the full record is in PATS.
+KW = re.compile(r"\b(addition|subdivision|pud|planned|development|center|park|plaza|street|road|drive|avenue|lane|court|place|estates?|village|commons?|station|church|school|college|university|hospital|clinic|apartments?|townhomes?|condominiums?|lofts?|square|crossing|ridge|hills?|heights|meadows?|creek|lake|pointe?|trail|gardens?|farms?|acres|woods?|grove|terrace|manor|landing|market|retail|office|industrial|business|hotel|storage|bank|annexation|amendment|vacation|lincoln|lancaster|county|city|downtown|haymarket|phase|outlot|replat|plat|campus|facility|llc|inc|company|corp|partners|properties|investments|holdings|association|trust|foundation|community|neighborhood|redevelopment|senior|living|medical|dental|cemetery|wireless|tower)\b", re.I)
+HH = re.compile(r"\b(adu|garage|residence|house|accessory|dwelling|home|family)\b", re.I)
+def pname(s):
+    s = S(s).title()
+    return s if s and KW.search(s) and not HH.search(s) else ''
 apps = []; cnt = collections.Counter()
 for f in L('Planning_Applications'):
     p = f['properties']; d = S(p['SUBMITTAL_DATE']) or S(p['EFFECTIVE_DATE'])
@@ -55,7 +62,7 @@ for f in L('Planning_Applications'):
     g = G(f)
     if g is None or not BOX.contains(g.representative_point()): continue
     t = S(p['SUBTYPE']); cnt[t] += 1
-    apps.append({'c': pt(g), 't': t, 'a': S(p['APPNUM']), 's': S(p['STATUS']).title(), 'y': int(d[:4]), 'n': '' if t in HIDE else S(p['PROJECT_NAME']).title(),
+    apps.append({'c': pt(g), 't': t, 'a': S(p['APPNUM']), 's': S(p['STATUS']).title(), 'y': int(d[:4]), 'n': '' if t in HIDE else pname(p['PROJECT_NAME']),
                  'u': int(float(p['NUMBER_OF_DUS'])) if S(p['NUMBER_OF_DUS']).replace('.', '').isdigit() else 0})
 out['apps'] = apps; out['apps_through'] = max(S(f['properties']['SUBMITTAL_DATE'])[:10] for f in L('Planning_Applications'))
 # --- approved subdivisions with homes still to be built (A approved, E existing, R remaining; A - E = R in the city's table)
