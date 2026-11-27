@@ -2179,8 +2179,11 @@ $('bNorth').onclick=()=>{if(walk.on){walk.yaw=0;dirty=true;return}stopTour();con
   flyTo({t:t.clone(),p:new THREE.Vector3(t.x,t.y+d*Math.sin(el),t.z+d*Math.cos(el))},900)};
 // search
 let sIndex=null;
+// One spelling for matching: "1234 S. 27th St" and "1234 South 27th Street" both become "1234 s 27 st".
+const SN_W={north:'n',south:'s',east:'e',west:'w',northwest:'nw',northeast:'ne',southwest:'sw',southeast:'se',street:'st',avenue:'ave',av:'ave',road:'rd',drive:'dr',boulevard:'blvd',lane:'ln',court:'ct',circle:'cir',place:'pl',parkway:'pkwy',highway:'hwy',terrace:'ter',trail:'trl',saint:'st',mount:'mt',apartment:'apt',suite:'ste'};
+function sNorm(t){return t.toLowerCase().replace(/[.,#]/g,' ').split(/\s+/).filter(Boolean).map(w=>SN_W[w]||w.replace(/^(\d+)(st|nd|rd|th)$/,'$1')).join(' ')}
 function buildIndex(){const ix=[];const seen=new Set();const first=new Map();const bi=S.b_info;for(let b=0;b<bi.length;b++){if(bi[b]&&!first.has(bi[b]))first.set(bi[b],b)}
-  for(const [id,b] of first){const t=H.infos[id];ix.push({t,l:t.toLowerCase(),k:/^\d/.test(t)?'address':'building',b})}
+  for(const [id,b] of first){const t=H.infos[id],ad=/^\d/.test(t),r={t,l:t.toLowerCase(),k:ad?'address':'building',b};if(ad){r.n=sNorm(t);const m=r.n.match(/^(\d+)[a-z]? (.+)$/);if(m){r.hn=+m[1];r.st=m[2]}}ix.push(r)}
   const st=new Map();for(const [n,x,nn,c] of H.slabels){if(!st.has(n))st.set(n,[]);st.get(n).push([x,-nn,c])}
   for(const [n,a] of st){const m=a[(a.length/2)|0];ix.push({t:n,l:n.toLowerCase(),k:'street',x:m[0],z:m[1],d:a.length>3?2600:900})}
   {const seenT=new Set();for(const [ti,x,nn] of H.tlabels||[]){if(seenT.has(ti))continue;seenT.add(ti);const t=H.tnames[ti];ix.push({t,l:t.toLowerCase(),k:'trail',x,z:-nn,d:1500,ti})}}
@@ -2192,9 +2195,15 @@ function goResult(r){$('res').style.display='none';$('q').blur();stopTour();
   else{flyTo(camTo(r.x,r.z,r.d,180,42),2400);if(r.k==='trail'){if(!trailsOn)setTrails(true);const w=LM.trails.findIndex(T=>T.tn===r.ti&&T.tc<3);if(w>=0)showTrail(w)}}}
 $('bFind').onclick=e=>{const f=$('find');const on=f.style.display!=='block';f.style.display=on?'block':'none';e.target.classList.toggle('on',on);if(on){if(!sIndex)sIndex=buildIndex();$('q').focus()}};
 $('q').oninput=()=>{const q=$('q').value.trim().toLowerCase();const host=$('res');host.innerHTML='';if(q.length<2){host.style.display='none';return}
-  const rank={building:0,trail:.5,street:1,park:2,neighborhood:3,address:4};const hits=[];for(const r of sIndex){const i=r.l.indexOf(q);if(i<0)continue;hits.push([ (i===0?0:10)+rank[r.k]+r.l.length*.01,r]);if(hits.length>400)break}
-  hits.sort((a,b)=>a[0]-b[0]);for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b);if(r.b!==undefined&&r.k==='address'){const s=document.createElement('button');s.textContent='↳ Neighborhood sheet for '+r.t;s.style.cssText='font-size:12px;opacity:.85;padding-left:22px';s.onclick=()=>{goResult(r);SPOT.arm=false;SPOT.x=LM.bc[2*r.b];SPOT.z=LM.bc[2*r.b+1];spotSheet(r.t)};host.appendChild(s)}}
-  host.style.display=hits.length?'block':'none'};
+  const rank={building:0,trail:.5,street:1,park:2,neighborhood:3,address:4},qn=sNorm(q),isAd=/^\d+[a-z]? \S/.test(qn);const hits=[];
+  for(const r of sIndex){let i=r.l.indexOf(q);if(i<0&&r.n&&isAd){i=r.n.indexOf(qn);if(i>0)i=-1}if(i<0)continue;hits.push([(i===0?0:10)+(isAd&&r.k==='address'?-6:rank[r.k])+r.l.length*.01,r])}
+  hits.sort((a,b)=>a[0]-b[0]);
+  // a house number the map has no building address for: offer the closest numbered building on the same street, and say so
+  if(isAd&&!hits.some(h=>h[1].k==='address'&&h[1].n.indexOf(qn)===0)){const m=qn.match(/^(\d+)[a-z]? (.+)$/),hn=+m[1],st=m[2];let best=null,bd=1e9;
+    if(st.length>1)for(const r of sIndex){if(r.hn===undefined||!(r.st===st||r.st.indexOf(st+' ')===0||(st.length>3&&r.st.indexOf(st)===0)))continue;const d=Math.abs(r.hn-hn)+((r.hn^hn)&1?.5:0);if(d<bd){bd=d;best=r}}
+    if(best&&bd<=400){const b=document.createElement('button');b.textContent='Closest on the map: '+best.t;const sm=document.createElement('small');sm.textContent='that exact number is not on the map yet';b.appendChild(sm);b.onclick=()=>goResult(best);host.appendChild(b)}}
+  for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b);if(r.b!==undefined&&r.k==='address'){const s=document.createElement('button');s.textContent='↳ Neighborhood sheet for '+r.t;s.style.cssText='font-size:12px;opacity:.85;padding-left:22px';s.onclick=()=>{goResult(r);SPOT.arm=false;SPOT.x=LM.bc[2*r.b];SPOT.z=LM.bc[2*r.b+1];spotSheet(r.t)};host.appendChild(s)}}
+  host.style.display=host.firstElementChild?'block':'none'};
 $('q').onkeydown=e=>{if(e.key==='Enter'){const b=$('res').firstElementChild;if(b)b.click()}};
 $('bTour').onclick=()=>tour?stopTour():tourMenu(0);
 $('bLabels').onclick=e=>{labelsOn=!labelsOn;e.target.classList.toggle('on',labelsOn);dirty=true};
