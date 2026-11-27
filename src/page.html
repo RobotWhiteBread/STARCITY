@@ -2190,19 +2190,25 @@ function buildIndex(){const ix=[];const seen=new Set();const first=new Map();con
   for(const [n,x,nn,a] of H.plabels)ix.push({t:n,l:n.toLowerCase(),k:'park',x,z:-nn,d:Math.min(3500,300+Math.sqrt(a)*2.2)});
   for(const [n,x,nn,k] of H.places)if(k!=='city')ix.push({t:n,l:n.toLowerCase(),k:'neighborhood',x,z:-nn,d:1800});
   return ix}
+// The city's own address list (data/addresses.json, about 108,000) joins the index the first time search is opened.
+let sAddr=0;
+function sAddrLoad(){if(sAddr)return;sAddr=1;fetch('data/addresses.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{if(!sIndex)sIndex=buildIndex();const have=new Set();for(const r of sIndex)if(r.n)have.add(r.n);let k=0;
+  for(const [st,f] of d.s){const sn=sNorm(st);for(let i=0;i<f.length;i+=3){const t=f[i]+' '+st,n=sNorm(t);if(have.has(n))continue;sIndex.push({t,l:t.toLowerCase(),n,k:'address',x:f[i+1],z:f[i+2],d:150,hn:parseInt(f[i]),st:sn,city:1});k++}}
+  sAddr=2;if($('q').value.trim().length>1)$('q').oninput()}).catch(()=>{sAddr=0})}
 function goResult(r){$('res').style.display='none';$('q').blur();stopTour();
+  if(r.city){const b=typeof bAt==='function'?bAt(r.x,r.z):-1;if(b>=0){const h=S.b_h[b]/10;flyTo(camTo(r.x,r.z,Math.max(160,h*5),200,32,h*.4),2400);showB(b);return}}
   if(r.b!==undefined){const x=LM.bc[2*r.b],z=LM.bc[2*r.b+1],h=S.b_h[r.b]/10;flyTo(camTo(x,z,Math.max(160,h*5),200,32,h*.4),2400);showB(r.b)}
   else{flyTo(camTo(r.x,r.z,r.d,180,42),2400);if(r.k==='trail'){if(!trailsOn)setTrails(true);const w=LM.trails.findIndex(T=>T.tn===r.ti&&T.tc<3);if(w>=0)showTrail(w)}}}
-$('bFind').onclick=e=>{const f=$('find');const on=f.style.display!=='block';f.style.display=on?'block':'none';e.target.classList.toggle('on',on);if(on){if(!sIndex)sIndex=buildIndex();$('q').focus()}};
+$('bFind').onclick=e=>{const f=$('find');const on=f.style.display!=='block';f.style.display=on?'block':'none';e.target.classList.toggle('on',on);if(on){if(!sIndex)sIndex=buildIndex();sAddrLoad();$('q').focus()}};
 $('q').oninput=()=>{const q=$('q').value.trim().toLowerCase();const host=$('res');host.innerHTML='';if(q.length<2){host.style.display='none';return}
   const rank={building:0,trail:.5,street:1,park:2,neighborhood:3,address:4},qn=sNorm(q),isAd=/^\d+[a-z]? \S/.test(qn);const hits=[];
-  for(const r of sIndex){let i=r.l.indexOf(q);if(i<0&&r.n&&isAd){i=r.n.indexOf(qn);if(i>0)i=-1}if(i<0)continue;hits.push([(i===0?0:10)+(isAd&&r.k==='address'?-6:rank[r.k])+r.l.length*.01,r])}
+  for(const r of sIndex){let i=r.l.indexOf(q);if(i>0&&isAd&&r.k==='address')i=-1;if(i<0&&r.n&&isAd){i=r.n.indexOf(qn);if(i>0)i=-1}if(i<0)continue;hits.push([(i===0?0:10)+(isAd&&r.k==='address'?-6:rank[r.k])+r.l.length*.01,r])}
   hits.sort((a,b)=>a[0]-b[0]);
   // a house number the map has no building address for: offer the closest numbered building on the same street, and say so
   if(isAd&&!hits.some(h=>h[1].k==='address'&&h[1].n.indexOf(qn)===0)){const m=qn.match(/^(\d+)[a-z]? (.+)$/),hn=+m[1],st=m[2];let best=null,bd=1e9;
     if(st.length>1)for(const r of sIndex){if(r.hn===undefined||!(r.st===st||r.st.indexOf(st+' ')===0||(st.length>3&&r.st.indexOf(st)===0)))continue;const d=Math.abs(r.hn-hn)+((r.hn^hn)&1?.5:0);if(d<bd){bd=d;best=r}}
-    if(best&&bd<=400){const b=document.createElement('button');b.textContent='Closest on the map: '+best.t;const sm=document.createElement('small');sm.textContent='that exact number is not on the map yet';b.appendChild(sm);b.onclick=()=>goResult(best);host.appendChild(b)}}
-  for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b);if(r.b!==undefined&&r.k==='address'){const s=document.createElement('button');s.textContent='↳ Neighborhood sheet for '+r.t;s.style.cssText='font-size:12px;opacity:.85;padding-left:22px';s.onclick=()=>{goResult(r);SPOT.arm=false;SPOT.x=LM.bc[2*r.b];SPOT.z=LM.bc[2*r.b+1];spotSheet(r.t)};host.appendChild(s)}}
+    if(best&&bd<=400){const b=document.createElement('button');b.textContent='Closest on the map: '+best.t;const sm=document.createElement('small');sm.textContent=sAddr===2?'the city has no address with that exact number':'still loading the full address list';b.appendChild(sm);b.onclick=()=>goResult(best);host.appendChild(b)}}
+  for(const [,r] of hits.slice(0,7)){const b=document.createElement('button');b.textContent=r.t;const sm=document.createElement('small');sm.textContent=r.k;b.appendChild(sm);b.onclick=()=>goResult(r);host.appendChild(b);if(r.k==='address'){const s=document.createElement('button');s.textContent='↳ Neighborhood sheet for '+r.t;s.style.cssText='font-size:12px;opacity:.85;padding-left:22px';s.onclick=()=>{goResult(r);SPOT.arm=false;SPOT.x=r.b!==undefined?LM.bc[2*r.b]:r.x;SPOT.z=r.b!==undefined?LM.bc[2*r.b+1]:r.z;spotSheet(r.t)};host.appendChild(s)}}
   host.style.display=host.firstElementChild?'block':'none'};
 $('q').onkeydown=e=>{if(e.key==='Enter'){const b=$('res').firstElementChild;if(b)b.click()}};
 $('bTour').onclick=()=>tour?stopTour():tourMenu(0);
